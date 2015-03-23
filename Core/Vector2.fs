@@ -1,4 +1,4 @@
-﻿namespace Math.Vector2
+﻿namespace Morgemil.Math.Vector2
 
 module Utility = 
   //Vector2i to Vector2f
