@@ -1,4 +1,4 @@
-﻿module Math.Vector2
+﻿namespace Math.Vector2
 
 type Vector2f = 
   struct
@@ -9,6 +9,8 @@ type Vector2f =
       { X = x
         Y = y }
     
+    //Identity
+    static member Identity = Vector2f(0.0, 1.0)
     //########## Operator overloads #####################################
     //Addition    
     static member (+) (vec1 : Vector2f, vec2 : Vector2f) = 
@@ -33,4 +35,8 @@ type Vector2f =
     //Distance
     member this.LengthSquared() = (this.X * this.X) + (this.Y + this.Y)
     member this.Length() = System.Math.Sqrt(this.LengthSquared())
+    //Normalization
+    member this.Normalize() = 
+      let length = this.Length()
+      Vector2f(this.X / length, this.Y / length)
   end
