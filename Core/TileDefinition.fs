@@ -7,3 +7,4 @@ type TileDefinition(id : int, name : string, description : string, blocksMovemen
   member this.Description = description
   member this.BlocksMovement = blocksMovement
   member this.BlocksSight = blocksSight
+  static member Default = TileDefinition(0, "Empty", "Nothing", true, true)

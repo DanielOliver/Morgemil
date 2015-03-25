@@ -47,7 +47,8 @@
     <Compile Include="Vector2.fs" />
     <Compile Include="Matrix2f.fs" />
     <Compile Include="TileDefinition.fs" />
-    <Compile Include="TileInstance.fs" />
+    <Compile Include="Box.fs" />
+    <Compile Include="Chunk.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
