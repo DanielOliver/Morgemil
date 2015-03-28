@@ -46,8 +46,8 @@
     <Compile Include="Vector2i.fs" />
     <Compile Include="Vector2.fs" />
     <Compile Include="Matrix2f.fs" />
+    <Compile Include="Rectangle.fs" />
     <Compile Include="TileDefinition.fs" />
-    <Compile Include="Box.fs" />
     <Compile Include="Chunk.fs" />
   </ItemGroup>
   <PropertyGroup>

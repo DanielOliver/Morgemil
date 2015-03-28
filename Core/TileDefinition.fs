@@ -1,6 +1,8 @@
 ﻿namespace Morgemil.Map
 
-//This defines a tile. Each tile instance will hold a reference to one of these.
+/// <summary>
+/// This defines a tile. Each tile instance will hold a reference to one of these as a base attribute.
+/// </summary>
 type TileDefinition(id : int, name : string, description : string, blocksMovement : bool, blocksSight : bool) = 
   member this.ID = id
   member this.Name = name

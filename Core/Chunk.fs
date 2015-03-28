@@ -1,7 +1,10 @@
 ﻿namespace Morgemil.Map
 
-open Morgemil.Math.Vector2
-
-type Chunk(area : Morgemil.Math.Shapes.Box) = 
-  member this.Box = area
-  member this.Tiles = Array.init area.Area (fun x -> TileDefinition.Default)
+/// <summary>
+/// A 2d Chunk of tiles. Used in the overworld and not in dungeons.
+/// </summary>
+/// <param name="tiles">2d array [row,column]</>
+type Chunk(area : Morgemil.Math.Rectangle, tiles : TileDefinition array) = 
+  member this.Area = area
+  member this.Tiles = tiles
+  member this.Tile x y = 5

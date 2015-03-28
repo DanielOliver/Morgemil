@@ -1,5 +1,8 @@
-﻿namespace Morgemil.Math.Vector2
+﻿namespace Morgemil.Math
 
+/// <summary>
+/// Use this in combination with <see cref="Morgemil.Math.Vector2f">Matrix2f</see> for floating point positions.
+/// </summary>
 type Vector2f = 
   struct
     val public X : float

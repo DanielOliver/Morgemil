@@ -1,5 +1,8 @@
-﻿namespace Morgemil.Math.Vector2
+﻿namespace Morgemil.Math
 
+/// <summary>
+/// Use this for tile-bound positioning
+/// </summary>
 type Vector2i = 
   struct
     val public X : int
