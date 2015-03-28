@@ -4,7 +4,11 @@
 /// Utility Vector2 functions that don't fit as a type
 /// </summary>
 module Vector2 = 
-  //Vector2i to Vector2f
+  /// <summary>
+  /// Vector2i to Vector2f
+  /// </summary>
   let Vector2iTof(veci : Vector2i) = Vector2f(float veci.X, float veci.Y)
-  //Vector2f to Vector2i
+  /// <summary>
+  /// Vector2f to Vector2i
+  /// </summary>
   let Vector2fToi(vecf : Vector2f) = Vector2i(int vecf.X, int vecf.Y)
