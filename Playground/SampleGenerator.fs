@@ -1,10 +1,10 @@
-﻿namespace Morgemil.Map.Samples
+﻿namespace Morgemil.Test
 
 module GrassSample = 
   /// <summary>
   /// Returns grass everywhere except the world borders which are TileDefinition.Default
   /// </summary>
-  let GrassGenerator(world : Morgemil.Map.OverWorld, area : Morgemil.Math.Rectangle) = 
+  let GrassGenerator(world : Morgemil.Map.OverWorld.OverWorldInfo, area : Morgemil.Math.Rectangle) = 
     let grass = 
       Morgemil.Map.TileDefinition
         (1, "Grassland", "Lush grassland hosts vast herds of bovine monsters", false, true)

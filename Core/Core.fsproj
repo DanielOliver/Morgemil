@@ -49,8 +49,9 @@
     <Compile Include="Rectangle.fs" />
     <Compile Include="TileDefinition.fs" />
     <Compile Include="Chunk.fs" />
-    <Compile Include="OverWorld.fs" />
-    <Compile Include="SampleGenerator.fs" />
+    <Compile Include="OverWorldTileDefinition.fs" />
+    <Compile Include="OverWorldMap.fs" />
+    <Compile Include="OverWorldInfo.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
