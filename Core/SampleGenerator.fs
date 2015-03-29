@@ -10,7 +10,7 @@ module GrassSample =
         (1, "Grassland", "Lush grassland hosts vast herds of bovine monsters", false, true)
     
     let generate (pos : Morgemil.Math.Vector2i) = 
-      if pos.X <= 0 || pos.Y <= 0 || pos.X = world.Area.Width || pos.Y = world.Area.Height then 
+      if pos.X <= 0 || pos.Y <= 0 || pos.X >= world.Area.Right || pos.Y >= world.Area.Bottom then 
         Morgemil.Map.TileDefinition.Default
       else grass
     Morgemil.Map.Chunk(area, 

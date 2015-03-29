@@ -12,6 +12,7 @@ type Vector2i =
       { X = x
         Y = y }
     
+    override this.ToString() = "(" + this.X.ToString() + "," + this.Y.ToString() + ")"
     //Identity
     static member Identity = Vector2i(0, 1)
     //########## Operator overloads #####################################
