@@ -3,7 +3,7 @@
 /// <summary>
 /// Edge-inclusive. Tile-Aligned
 /// </summary>
-type Rectangle(position : Vector2i, size : Vector2i) = 
+type Rectangle(position : Vector2i, size : Vector2i) =
   member this.Position = position
   member this.Size = size
   member this.PosX = position.X
@@ -16,17 +16,27 @@ type Rectangle(position : Vector2i, size : Vector2i) =
   member this.Right = position.X + size.X - 1
   member this.Bottom = position.Y + size.Y - 1
   override this.ToString() = "(" + this.Position.ToString() + "," + this.Size.ToString() + ")"
-  
-  member this.Contains(pt : Vector2i) = 
+
+  member this.Contains(pt : Vector2i) =
     let diff_pt = pt - position
     diff_pt.X < size.X && diff_pt.Y < size.Y
-  
+
   /// <summary>
-  /// A seq of all Vector2i contained within this Rectangle.
+  /// A seq of all contained local coordinates
   /// </summary>
-  member this.Coordinates = 
-    seq { 
+  member this.LocalCoordinates =
+    seq {
       for y in 0..(this.Height - 1) do
         for x in 0..(this.Width - 1) do
-          yield Vector2i(this.PosX + x, this.PosY + y)
+          yield Vector2i(x, y)
+    }
+
+  /// <summary>
+  /// A seq of all contained global coordinates
+  /// </summary>
+  member this.Coordinates =
+    seq {
+      for y in (this.Top)..(this.Bottom) do
+        for x in (this.Left)..(this.Right) do
+          yield Vector2i(x, y)
     }

@@ -43,4 +43,4 @@ type TileDefinition(id : int, name : string, description : string, blocksMovemen
   /// <summary>
   /// A default, minimal definition. Could be used as the edge of the map blackness?
   /// </summary>
-  static member Default = TileDefinition(0, "Empty", "Nothing", true, true, TileType.Void)
+  static member Default = TileDefinition(0, "Empty", "", true, true, TileType.Void)
