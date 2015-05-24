@@ -58,6 +58,7 @@
     <Compile Include="Chunk.fs" />
     <Content Include="packages.config" />
     <Compile Include="RNG.fs" />
+    <Compile Include="DungeonGeneration.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core">

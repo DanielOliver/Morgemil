@@ -18,4 +18,9 @@ type Chunk(area : Morgemil.Math.Rectangle, tiles : TileDefinition array) =
   /// <summary>
   /// Global coordinates. Zero-based indices relative to this.Area.Position
   ///</summary>
-  member this.Tile(vec2 : Morgemil.Math.Vector2i) = (vec2 - area.Position) |> this.TileLocal
+  member this.Tile(vec2 : Morgemil.Math.Vector2i) = tiles.[area.FlatCoord(vec2)]
+
+  /// <summary>
+  /// True if every tile is TileDefinition.Default
+  /// </summary>
+  member this.IsEmpty = this.Tiles |> Array.forall (TileDefinition.IsDefault)
