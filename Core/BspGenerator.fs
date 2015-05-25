@@ -41,16 +41,12 @@ module BspGenerator =
     match ax with
     | Axis.Horizontal ->
       let rng_width = RNG.Range rng (MinRoomSize.X) (area.Width - MinRoomSize.X)
-      let first = Rectangle(area.Position, Vector2i(rng_width, area.Height))
-      let second =
-        Rectangle(area.Position + Vector2i(rng_width, 0), area.Size - Vector2i(rng_width, 0))
-      (first, second)
+      (Rectangle(area.Position, Vector2i(rng_width, area.Height)),
+       Rectangle(area.Position + Vector2i(rng_width, 0), area.Size - Vector2i(rng_width, 0)))
     | Axis.Vertical ->
       let rng_height = RNG.Range rng (MinRoomSize.Y) (area.Height - MinRoomSize.Y)
-      let first = Rectangle(area.Position, Vector2i(area.Width, rng_height))
-      let second =
-        Rectangle(area.Position + Vector2i(0, rng_height), area.Size - Vector2i(0, rng_height))
-      (first, second)
+      (Rectangle(area.Position, Vector2i(area.Width, rng_height)),
+       Rectangle(area.Position + Vector2i(0, rng_height), area.Size - Vector2i(0, rng_height)))
 
   ///Recursively divides an area into a Binary Space Partitioning Tree
   let rec private BSP rng (area : Rectangle) (ax : Axis) =
