@@ -4,6 +4,7 @@
 /// Edge-inclusive. Tile-Aligned
 /// </summary>
 type Rectangle(position : Vector2i, size : Vector2i) =
+  new(size : Vector2i) = Rectangle(Vector2i(), size)
   member this.Position = position
   member this.Size = size
   member this.MinCoord = position
@@ -20,6 +21,9 @@ type Rectangle(position : Vector2i, size : Vector2i) =
   member this.Contains(pt : Vector2i) =
     let diff_pt = pt - position
     diff_pt.X < size.X && diff_pt.Y < size.Y
+
+  member this.IsOnEdge(pt : Vector2i) =
+    pt.X = this.Left || pt.X = this.Right || pt.Y = this.Top || pt.Y = this.Bottom
 
   ///[y * area.Width + x]
   ///As if accessing an array element in a Rectangle size.
@@ -45,7 +49,7 @@ type Rectangle(position : Vector2i, size : Vector2i) =
           yield Vector2i(x, y)
     }
 
-  ///Returns the minimum area to enclose both rectangles
+  ///Returns the minimum area to enclose both rectangles (union)
   static member (+) (rec1 : Rectangle, rec2 : Rectangle) =
     let minPos = rec1.MinCoord.Minimum(rec2.MinCoord)
     let maxPos = rec1.MaxCoord.Maximum(rec2.MaxCoord)

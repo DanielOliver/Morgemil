@@ -1,14 +1,13 @@
-﻿namespace Morgemil.Test
+﻿namespace Morgemil.Map
 
-open Morgemil.Map
 open Morgemil.Math
 
 module BspGenerator =
   ///The smallest room possible
-  let private MinRoomSize = Vector2i(45, 45)
+  let private MinRoomSize = Vector2i(55, 55)
 
-  ///Keep this as the max room size
-  let private MaxRoomSize = Vector2i(90, 90)
+  ///Average more towards this size in theory
+  let private TargetRoomSize = Vector2i(60, 60)
 
   type private Tree =
     | Node of Tree * Tree
@@ -24,7 +23,7 @@ module BspGenerator =
     | Axis.Vertical -> Axis.Horizontal
     | Axis.Horizontal -> Axis.Vertical
 
-  let CanDivideHorizontal(area : Rectangle) = area.Width > MinRoomSize.X * 2
+  let private CanDivideHorizontal(area : Rectangle) = area.Width > MinRoomSize.X * 2
   let private CanDivideVertical(area : Rectangle) = area.Height > MinRoomSize.Y * 2
   let private CanDivide(area : Rectangle) = CanDivideHorizontal area || CanDivideVertical area
 
@@ -38,7 +37,7 @@ module BspGenerator =
     | _ -> Opposite(ax)
 
   ///Rectangle * Rectangle
-  let private Divide (area : Rectangle) (ax : Axis) (rng : RNG.DefaultRNG) =
+  let private Divide (area : Rectangle) (ax : Axis) rng =
     match ax with
     | Axis.Horizontal ->
       let rng_width = RNG.Range rng (MinRoomSize.X) (area.Width - MinRoomSize.X)
@@ -54,9 +53,10 @@ module BspGenerator =
       (first, second)
 
   ///Recursively divides an area into a Binary Space Partitioning Tree
-  let rec private BSP (rng : RNG.DefaultRNG) (area : Rectangle) (ax : Axis) =
+  let rec private BSP rng (area : Rectangle) (ax : Axis) =
     let prob =
-      (decimal ((area.Size - MinRoomSize).Area) / decimal ((MaxRoomSize - MinRoomSize).Area)) / 2.0m
+      (decimal ((area.Size - MinRoomSize).Area) / decimal ((TargetRoomSize - MinRoomSize).Area))
+      / 2.0m
     let divide = CanDivide(area) && RNG.Probability rng prob
     match divide with
     | false -> Tree.Leaf area
@@ -66,12 +66,12 @@ module BspGenerator =
       Tree.Node(BSP rng first opAx, BSP rng second opAx)
 
   ///flatterns a BSPTree into Rectangle List
-  let rec private flatten treeNode =
+  let rec private FlattenBSPTree treeNode =
     match treeNode with
     | Tree.Leaf(rect) -> [ rect ]
     | Tree.Node(e1, e2) ->
-      [ flatten e1
-        flatten e2 ]
+      [ FlattenBSPTree e1
+        FlattenBSPTree e2 ]
       |> List.concat
 
   /// <summary>
@@ -79,5 +79,5 @@ module BspGenerator =
   /// </summary>
   /// <param name="rngSeed"></param>
   /// <param name="dungeonSize"></param>
-  let GenerateRoomDivides rngSeed dungeonSize =
-    BSP (RNG.SeedRNG(rngSeed)) (Rectangle(dungeonSize)) Axis.Horizontal |> flatten
+  let GenerateRoomDivides rng dungeonSize =
+    BSP rng (Rectangle(dungeonSize)) Axis.Horizontal |> FlattenBSPTree

@@ -21,3 +21,11 @@ let Probability (rng : DefaultRNG) chance =
 
 ///Inclusive range
 let Range (rng : DefaultRNG) min max = rng.Next(min, max + 1)
+
+///Edge-inclusive range
+let RandomPoint (rng : DefaultRNG) (area : Rectangle) =
+  Vector2i(Range rng area.Left area.Right, Range rng area.Top area.Bottom)
+
+///Edge-inclusive (0,0) to vec. Assume positive
+let RandomVector (rng : DefaultRNG) (vec : Vector2i) =
+  Vector2i(Range rng 0 vec.X, Range rng 0 vec.Y)

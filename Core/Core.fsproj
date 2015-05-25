@@ -49,15 +49,17 @@
   </Choose>
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
+    <Content Include="packages.config" />
     <Compile Include="Vector2f.fs" />
     <Compile Include="Vector2i.fs" />
     <Compile Include="Vector2.fs" />
     <Compile Include="Matrix2f.fs" />
     <Compile Include="Rectangle.fs" />
     <Compile Include="TileDefinition.fs" />
+    <Compile Include="Tiles.fs" />
     <Compile Include="Chunk.fs" />
-    <Content Include="packages.config" />
     <Compile Include="RNG.fs" />
+    <Compile Include="BspGenerator.fs" />
     <Compile Include="DungeonGeneration.fs" />
   </ItemGroup>
   <ItemGroup>
