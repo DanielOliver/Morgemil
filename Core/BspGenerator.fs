@@ -2,42 +2,36 @@
 
 open Morgemil.Math
 
-module BspGenerator =
-  ///The smallest room possible
-  let private MinRoomSize = Vector2i(55, 55)
+type private Tree =
+  | Node of Tree * Tree
+  | Leaf of Rectangle
 
-  ///Average more towards this size in theory
-  let private TargetRoomSize = Vector2i(60, 60)
-
-  type private Tree =
-    | Node of Tree * Tree
-    | Leaf of Rectangle
-
-  type private Axis =
-    | Horizontal
-    | Vertical
-
+type private Axis =
+  | Horizontal
+  | Vertical
   ///Choose the opisite Axis
-  let private Opposite(ax : Axis) =
-    match ax with
+  member this.Opposite =
+    match this with
     | Axis.Vertical -> Axis.Horizontal
     | Axis.Horizontal -> Axis.Vertical
 
-  let private CanDivideHorizontal(area : Rectangle) = area.Width > MinRoomSize.X * 2
-  let private CanDivideVertical(area : Rectangle) = area.Height > MinRoomSize.Y * 2
-  let private CanDivide(area : Rectangle) = CanDivideHorizontal area || CanDivideVertical area
+/// Subdivides a rectangular area into pseudo-random rectangles
+type BspGenerator(MinRoomSize : Vector2i, MaxRoomSize : Vector2i, DungeonSize : Vector2i) =
+  let CanDivideHorizontal(area : Rectangle) = area.Width > MinRoomSize.X * 2
+  let CanDivideVertical(area : Rectangle) = area.Height > MinRoomSize.Y * 2
+  let CanDivide(area : Rectangle) = CanDivideHorizontal area || CanDivideVertical area
 
   ///Chooses an axis to split on. Keeps ratios fairly square.
-  let private AxisToDivide (ax : Axis) (area : Rectangle) =
+  let AxisToDivide (ax : Axis) (area : Rectangle) =
     match area with
     | _ when not (CanDivideHorizontal area) -> Axis.Vertical
     | _ when not (CanDivideVertical area) -> Axis.Horizontal
     | _ when area.Height >= area.Width * 2 -> Axis.Vertical
     | _ when area.Width >= area.Height * 2 -> Axis.Horizontal
-    | _ -> Opposite(ax)
+    | _ -> ax.Opposite
 
   ///Rectangle * Rectangle
-  let private Divide (area : Rectangle) (ax : Axis) rng =
+  let Divide (area : Rectangle) (ax : Axis) rng =
     match ax with
     | Axis.Horizontal ->
       let rng_width = RNG.Range rng (MinRoomSize.X) (area.Width - MinRoomSize.X)
@@ -49,12 +43,10 @@ module BspGenerator =
        Rectangle(area.Position + Vector2i(0, rng_height), area.Size - Vector2i(0, rng_height)))
 
   ///Recursively divides an area into a Binary Space Partitioning Tree
-  let rec private BSP rng (area : Rectangle) (ax : Axis) =
+  let rec BSP rng (area : Rectangle) (ax : Axis) =
     let prob =
-      (decimal ((area.Size - MinRoomSize).Area) / decimal ((TargetRoomSize - MinRoomSize).Area))
-      / 2.0m
-    let divide = CanDivide(area) && RNG.Probability rng prob
-    match divide with
+      (decimal ((area.Size - MinRoomSize).Area) / decimal ((MaxRoomSize - MinRoomSize).Area)) / 2.0m
+    match CanDivide(area) && RNG.Probability rng prob with
     | false -> Tree.Leaf area
     | true ->
       let opAx = AxisToDivide ax area
@@ -62,7 +54,7 @@ module BspGenerator =
       Tree.Node(BSP rng first opAx, BSP rng second opAx)
 
   ///flatterns a BSPTree into Rectangle List
-  let rec private FlattenBSPTree treeNode =
+  let rec FlattenBSPTree treeNode =
     match treeNode with
     | Tree.Leaf(rect) -> [ rect ]
     | Tree.Node(e1, e2) ->
@@ -70,10 +62,6 @@ module BspGenerator =
         FlattenBSPTree e2 ]
       |> List.concat
 
-  /// <summary>
   /// Returns the list of rectangles BSP subdivided the area into.
-  /// </summary>
-  /// <param name="rngSeed"></param>
-  /// <param name="dungeonSize"></param>
-  let GenerateRoomDivides rng dungeonSize =
-    BSP rng (Rectangle(dungeonSize)) Axis.Horizontal |> FlattenBSPTree
+  member this.GenerateRoomDivides rng =
+    BSP rng (Rectangle(DungeonSize)) Axis.Horizontal |> FlattenBSPTree

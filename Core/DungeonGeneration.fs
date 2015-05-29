@@ -2,18 +2,16 @@
 
 open Morgemil.Math
 
-/// <summary>
-/// The existence of a mutable structure is necessary as a dungeon requires multiple passes to generate
-/// </summary>
-type private DungeonMap(roomSize : Rectangle) =
-  let internal_map = Array.create roomSize.Area (TileDefinition.Default)
-  member this.SetValue pos tile = internal_map.[roomSize.FlatCoord pos] <- tile
-  ///Return a single giant chunk to feed into the Visualizer
-  member this.CreateChunk() = Chunk(roomSize, internal_map)
-
 ///Creates a Dungeon
 module DungeonGeneration =
-  ///The absolute minimum room area toleratred
+  /// The existence of a mutable structure is necessary as a dungeon requires multiple passes to generate
+  type private DungeonMap(roomSize : Rectangle) =
+    let internal_map = Array.create roomSize.Area (TileDefinition.Default)
+    member this.SetValue pos tile = internal_map.[roomSize.FlatCoord pos] <- tile
+    ///Return a single giant chunk to feed into the Visualizer
+    member this.CreateChunk() = Chunk(roomSize, internal_map)
+
+  ///The absolute minimum room area tolerated
   let private MinimumRoomArea = Rectangle(Vector2i(33, 33))
 
   ///Randomizes a room's position and size within the defined area
@@ -38,9 +36,14 @@ module DungeonGeneration =
     let dungeon_size = Rectangle(Vector2i(512, 512))
     //Empty map
     let dungeon_map = DungeonMap(dungeon_size)
-    //BSP rooms with randomized size (Rectangle List). And feeds them to the map.
-    BspGenerator.GenerateRoomDivides rng dungeon_size.Size
-    |> List.map (RandomizeRoom rng)
-    |> List.iter (GenerateRoom dungeon_map)
+    //Room params
+    let min_room_size = Vector2i(35, 35)
+    let max_room_size = Vector2i(61, 61)
+    //BSP rooms with randomized size (Rectangle List).
+    let rooms =
+      BspGenerator(min_room_size, max_room_size, dungeon_size.Size).GenerateRoomDivides rng
+      |> List.map (RandomizeRoom rng)
+    //Feed the randomized rooms to the map
+    rooms |> List.iter (GenerateRoom dungeon_map)
     //Return a chunk to feed to visualizer
     dungeon_map.CreateChunk()

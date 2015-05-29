@@ -1,7 +1,7 @@
 ﻿namespace Morgemil.Math
 
 /// <summary>
-/// Edge-inclusive. Tile-Aligned
+/// Edge-inclusive. Axis-aligned bounding box (AABB)
 /// </summary>
 type Rectangle(position : Vector2i, size : Vector2i) =
   new(size : Vector2i) = Rectangle(Vector2i(), size)
@@ -24,6 +24,12 @@ type Rectangle(position : Vector2i, size : Vector2i) =
 
   member this.IsOnEdge(pt : Vector2i) =
     pt.X = this.Left || pt.X = this.Right || pt.Y = this.Top || pt.Y = this.Bottom
+
+  ///True if any overlap
+  member this.Intersects(rect : Rectangle) =
+    not
+      (this.Left >= rect.Right || this.Right <= rect.Left || this.Top >= rect.Bottom
+       || this.Bottom <= rect.Top)
 
   ///[y * area.Width + x]
   ///As if accessing an array element in a Rectangle size.
@@ -54,3 +60,9 @@ type Rectangle(position : Vector2i, size : Vector2i) =
     let minPos = rec1.MinCoord.Minimum(rec2.MinCoord)
     let maxPos = rec1.MaxCoord.Maximum(rec2.MaxCoord)
     Rectangle(minPos, maxPos - minPos + 1)
+
+  ///Returns a rectangle which encloses both points
+  static member Enclose (vec1 : Vector2i) (vec2 : Vector2i) =
+    let min = vec1.Minimum vec2
+    let max = vec1.Maximum vec2
+    Rectangle(min, max - min + 1)
