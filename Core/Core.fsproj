@@ -50,6 +50,8 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Content Include="packages.config" />
+    <Compile Include="Axis.fs" />
+    <Compile Include="Graph.fs" />
     <Compile Include="Vector2f.fs" />
     <Compile Include="Vector2i.fs" />
     <Compile Include="Vector2.fs" />

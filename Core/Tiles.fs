@@ -5,3 +5,6 @@ let DungeonFloor =
 let DungeonWall =
   TileDefinition
     (2, "Wall", "Dungeon walls are built from the prisoner's bones", true, true, TileType.Land)
+let DungeonCorridor =
+  TileDefinition
+    (3, "Corridor", "Dungeon halls are long and misleading", false, false, TileType.Land)

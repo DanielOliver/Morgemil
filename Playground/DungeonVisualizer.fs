@@ -19,10 +19,9 @@ module DungeonVisualizer =
     let DrawTile(tile : TileDefinition, pos : Vector2i) =
       let tileColor =
         match tile with
-        | _ when TileDefinition.IsDefault tile -> Color.Black
         | _ when Tiles.DungeonFloor.ID = tile.ID -> Color.White
-        | _ when Tiles.DungeonWall.ID = tile.ID -> Color.Red
-        | _ -> Color.Gray
+        | _ when Tiles.DungeonCorridor.ID = tile.ID -> Color.Red
+        | _ -> Color.Black
       resultingImage.SetPixel(pos.X, pos.Y, tileColor)
 
     let DrawChunk(chunk : Chunk) =

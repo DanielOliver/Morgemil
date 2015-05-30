@@ -1,8 +1,6 @@
 ﻿namespace Morgemil.Math
 
-/// <summary>
 /// Edge-inclusive. Axis-aligned bounding box (AABB)
-/// </summary>
 type Rectangle(position : Vector2i, size : Vector2i) =
   new(size : Vector2i) = Rectangle(Vector2i(), size)
   member this.Position = position
@@ -18,6 +16,12 @@ type Rectangle(position : Vector2i, size : Vector2i) =
   member this.Bottom = position.Y + size.Y - 1
   override this.ToString() = "(" + this.Position.ToString() + "," + this.Size.ToString() + ")"
 
+  member this.Corners =
+    [| Vector2i(this.Left, this.Top)
+       Vector2i(this.Right, this.Top)
+       Vector2i(this.Left, this.Bottom)
+       Vector2i(this.Right, this.Bottom) |]
+
   member this.Contains(pt : Vector2i) =
     let diff_pt = pt - position
     diff_pt.X < size.X && diff_pt.Y < size.Y
@@ -25,11 +29,14 @@ type Rectangle(position : Vector2i, size : Vector2i) =
   member this.IsOnEdge(pt : Vector2i) =
     pt.X = this.Left || pt.X = this.Right || pt.Y = this.Top || pt.Y = this.Bottom
 
+  ///Expands in every direction
+  member this.Expand(scalar) = Rectangle(position - scalar, size + (scalar * 2))
+
   ///True if any overlap
   member this.Intersects(rect : Rectangle) =
     not
-      (this.Left >= rect.Right || this.Right <= rect.Left || this.Top >= rect.Bottom
-       || this.Bottom <= rect.Top)
+      (this.Left > rect.Right || this.Right < rect.Left || this.Top > rect.Bottom
+       || this.Bottom < rect.Top)
 
   ///[y * area.Width + x]
   ///As if accessing an array element in a Rectangle size.

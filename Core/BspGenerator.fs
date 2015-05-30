@@ -6,15 +6,6 @@ type private Tree =
   | Node of Tree * Tree
   | Leaf of Rectangle
 
-type private Axis =
-  | Horizontal
-  | Vertical
-  ///Choose the opisite Axis
-  member this.Opposite =
-    match this with
-    | Axis.Vertical -> Axis.Horizontal
-    | Axis.Horizontal -> Axis.Vertical
-
 /// Subdivides a rectangular area into pseudo-random rectangles
 type BspGenerator(MinRoomSize : Vector2i, MaxRoomSize : Vector2i, DungeonSize : Vector2i) =
   let CanDivideHorizontal(area : Rectangle) = area.Width > MinRoomSize.X * 2
