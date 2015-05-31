@@ -56,6 +56,7 @@
   <ItemGroup>
     <Compile Include="DungeonVisualizer.fs" />
     <Compile Include="SampleGenerator.fs" />
+    <Compile Include="Walkabout.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
     <Content Include="packages.config" />

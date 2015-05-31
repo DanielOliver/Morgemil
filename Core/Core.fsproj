@@ -63,6 +63,10 @@
     <Compile Include="RNG.fs" />
     <Compile Include="BspGenerator.fs" />
     <Compile Include="DungeonGeneration.fs" />
+    <Compile Include="Actions.fs" />
+    <Compile Include="Race.fs" />
+    <Compile Include="Body.fs" />
+    <Compile Include="Person.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core">

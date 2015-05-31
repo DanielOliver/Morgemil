@@ -80,10 +80,7 @@ module DungeonGeneration =
   ///For each room, tests it against every room after it
   let rec private CreateRoomCorridors(L : list<Rectangle>) =
     match L with
-    | head :: tail ->
-      tail
-      |> List.choose (Corridor head)
-      |> List.append (CreateRoomCorridors tail)
+    | head :: tail -> List.choose (Corridor head) tail |> List.append (CreateRoomCorridors tail)
     | [] -> []
 
   let Generate rngSeed =
