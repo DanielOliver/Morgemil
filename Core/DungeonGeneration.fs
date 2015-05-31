@@ -8,7 +8,7 @@ module DungeonGeneration =
   /// The existence of a mutable structure is necessary as a dungeon requires multiple passes to generate
   type private DungeonMap(roomSize : Rectangle) =
     let internal_map = Array.create roomSize.Area (Tiles.DungeonWall)
-    member this.SetValue pos tile = internal_map.[roomSize.FlatCoord pos] <- tile
+    member this.SetValue tile pos = internal_map.[roomSize.FlatCoord pos] <- tile
     ///Return a single giant chunk to feed into the Visualizer
     member this.CreateChunk() = Chunk(roomSize, internal_map)
 
@@ -24,36 +24,36 @@ module DungeonGeneration =
 
   ///Writes directly on the map (side-effects). returns nothing
   let private GenerateRoom (dungeonMap : DungeonMap) (area : Rectangle) =
-    area.Coordinates |> Seq.iter (fun coord -> dungeonMap.SetValue coord Tiles.DungeonFloor)
+    area.Coordinates |> Seq.iter (dungeonMap.SetValue Tiles.DungeonFloor)
 
   ///Writes directly on the map (side-effects). returns nothing
   let private GenerateCorridor (dungeonMap : DungeonMap) (area : Rectangle) =
-    area.Coordinates |> Seq.iter (fun coord -> dungeonMap.SetValue coord Tiles.DungeonCorridor)
+    area.Coordinates |> Seq.iter (dungeonMap.SetValue Tiles.DungeonCorridor)
 
-  let ShareHorizontal (rect1 : Rectangle) (rect2 : Rectangle) =
+  let private ShareHorizontal (rect1 : Rectangle) (rect2 : Rectangle) =
     not (rect1.Left > rect2.Right || rect1.Right < rect2.Left)
-  let ShareVertical (rect1 : Rectangle) (rect2 : Rectangle) =
+  let private ShareVertical (rect1 : Rectangle) (rect2 : Rectangle) =
     not (rect1.Top > rect2.Bottom || rect1.Bottom < rect2.Top)
 
   ///Assuming non-intersecting rectangles
-  let ShareAxis (rect1 : Rectangle) (rect2 : Rectangle) =
+  let private ShareAxis (rect1 : Rectangle) (rect2 : Rectangle) =
     match rect1 with
     | _ when ShareHorizontal rect1 rect2 -> Some(Axis.Horizontal)
     | _ when ShareVertical rect1 rect2 -> Some(Axis.Vertical)
     | _ -> None
 
-  let SortVertical (rect1 : Rectangle) (rect2 : Rectangle) =
+  let private SortVertical (rect1 : Rectangle) (rect2 : Rectangle) =
     match rect1.Bottom < rect2.Top with
     | true -> rect1, rect2
     | false -> rect2, rect1
 
-  let SortHorizontal (rect1 : Rectangle) (rect2 : Rectangle) =
+  let private SortHorizontal (rect1 : Rectangle) (rect2 : Rectangle) =
     match rect1.Right < rect2.Left with
     | true -> rect1, rect2
     | false -> rect2, rect1
 
   ///Returns success and a axis-aligned corridor between the two rectangles if it exists.
-  let Corridor (rect1 : Rectangle) (rect2 : Rectangle) =
+  let private Corridor (rect1 : Rectangle) (rect2 : Rectangle) =
     match ShareAxis rect1 rect2 with
     | None -> None
     | Some(ax) ->
@@ -77,6 +77,15 @@ module DungeonGeneration =
         let pos2 = Vector2i(second.Left - 1, minY)
         Some(Rectangle.Enclose pos1 pos2)
 
+  ///For each room, tests it against every room after it
+  let rec private CreateRoomCorridors(L : list<Rectangle>) =
+    match L with
+    | head :: tail ->
+      tail
+      |> List.choose (Corridor head)
+      |> List.append (CreateRoomCorridors tail)
+    | [] -> []
+
   let Generate rngSeed =
     let rng = RNG.SeedRNG rngSeed
     //Hardcoded dungeon size
@@ -92,15 +101,6 @@ module DungeonGeneration =
       |> List.map (RandomizeRoom rng)
     //Feed the randomized rooms to the map
     dungeonRooms |> List.iter (GenerateRoom dungeon_map)
-    ///For each room, tests it against every room after it
-    let rec CreateRoomCorridors(L : list<Rectangle>) =
-      match L with
-      | head :: tail ->
-        tail
-        |> List.choose (Corridor head)
-        |> List.append (CreateRoomCorridors tail)
-      | [] -> []
-
     ///Tests for collisions with rooms
     let Collides(corr : Rectangle) = dungeonRooms |> List.exists (corr.Intersects)
 
