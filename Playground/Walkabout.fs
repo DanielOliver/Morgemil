@@ -14,5 +14,5 @@ type Walkabout(dungeon : Morgemil.Map.Chunk, player : Morgemil.Game.Person) =
       | Morgemil.Game.MoveSouth -> Vector2i(0, -1)
     Walkabout(dungeon,
               { Id = player.Id
-                Body = player.Body
+                //Body = player.Body
                 Position = player.Position + offset })

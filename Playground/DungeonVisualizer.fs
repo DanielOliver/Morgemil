@@ -6,6 +6,9 @@ module DungeonVisualizer =
   open Morgemil.Map
   open Morgemil.Math
 
+  let DrawPlayer (player : Morgemil.Game.Person) (image : Bitmap) =
+    image.SetPixel(player.Position.X, player.Position.Y, Color.BlueViolet)
+
   ///Draws chunks to the minimum image space necessary
   let Visualize(chunks : seq<Chunk>) =
     let minimumImageSize =
