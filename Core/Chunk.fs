@@ -24,3 +24,7 @@ type Chunk(area : Morgemil.Math.Rectangle, tiles : TileDefinition array) =
   /// True if every tile is TileDefinition.Default
   /// </summary>
   member this.IsEmpty = this.Tiles |> Array.forall (TileDefinition.IsDefault)
+
+  ///Seq<Math.Vector2i * TileDefinition>
+  member this.TileCoordinates =
+    Seq.map (fun coord -> coord, (this.Tile coord)) this.Area.Coordinates
