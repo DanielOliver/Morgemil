@@ -54,6 +54,7 @@
   </Choose>
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
+    <Compile Include="Camera2d.fs" />
     <Compile Include="GameView.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />

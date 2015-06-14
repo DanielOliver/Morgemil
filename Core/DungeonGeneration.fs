@@ -13,13 +13,13 @@ module DungeonGeneration =
     member this.CreateChunk() = Chunk(roomSize, internal_map)
 
   ///The absolute minimum room area tolerated
-  let private MinimumRoomArea = Vector2i(21, 21)
+  let private MinimumRoomArea = Vector2i(13, 13)
 
   ///Randomizes a room's position and size within the defined area
   let private RandomizeRoom rng (maxArea : Rectangle) =
     //Randomize size before placing the room randomly
-    let room_size = MinimumRoomArea + RNG.RandomVector rng (maxArea.Size - MinimumRoomArea)
-    let room_position = maxArea.Position + RNG.RandomVector rng (maxArea.Size - room_size)
+    let room_size = MinimumRoomArea + RNG.RandomVector rng (maxArea.Size - MinimumRoomArea) - 2
+    let room_position = maxArea.Position + 1 + RNG.RandomVector rng (maxArea.Size - room_size - 2)
     Rectangle(room_position, room_size)
 
   ///Writes directly on the map (side-effects). returns nothing
@@ -86,12 +86,12 @@ module DungeonGeneration =
   let Generate rngSeed =
     let rng = RNG.SeedRNG rngSeed
     //Hardcoded dungeon size
-    let dungeon_size = Rectangle(Vector2i(561, 354))
+    let dungeon_size = Rectangle(Vector2i(124, 90))
     //Empty map
     let dungeon_map = DungeonMap(dungeon_size)
     //Room params
     let min_room_size = MinimumRoomArea + 5
-    let max_room_size = Vector2i(61, 61)
+    let max_room_size = Vector2i(25, 25)
     //BSP rooms with randomized size (Rectangle List).
     let dungeonRooms =
       BspGenerator(min_room_size, max_room_size, dungeon_size.Size).GenerateRoomDivides rng
