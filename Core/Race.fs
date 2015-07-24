@@ -1,7 +1,7 @@
 ﻿namespace Morgemil.Game
 
 ///Wight, human, etc.
-type Race =
+type Race = 
   { Id : int
     ///Proper noun
     Noun : string
