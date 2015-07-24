@@ -8,7 +8,13 @@ module SimpleDungeon =
   let DungeonGenerator = 
     let dungeonLength = 10 ///Lets make 3 rooms.
     
-    let dungeonFloor = TileDefinition(1, "Floor", "Dungeon floors are often trapped", false, true, TileType.Land)
+    let dungeonFloor = 
+      { Id = 1
+        Name = "Floor"
+        Description = "Dungeon floors are often trapped"
+        BlocksMovement = false
+        BlocksSight = true
+        TileType = TileType.Land }
     
     let chunkSize = 90 //A chunk will be 10x10 square
     
@@ -32,6 +38,7 @@ module SimpleDungeon =
         |> Seq.map (ChooseTile)
         |> Seq.toArray
       
-      Chunk(roomArea, tileArray)
+      { Area = roomArea
+        Tiles = tileArray }
     
     chunksToCreatePositions |> Seq.map (CreateRoomChunk)
