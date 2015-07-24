@@ -10,6 +10,7 @@ let Prompt() =
   | _ -> None
 
 let rec Continue (depth : int) (walkabout : Morgemil.Test.Walkabout) = 
+  System.Console.WriteLine(walkabout.Player.Position)
   match Prompt() with
   | None -> ()
   | Some(act) -> 
