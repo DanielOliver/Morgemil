@@ -102,13 +102,10 @@ module DungeonGeneration =
     dungeonRooms |> List.iter (GenerateRoom dungeon_map)
     ///Tests for collisions with rooms
     let Collides(corr : Rectangle) = dungeonRooms |> List.exists (corr.Intersects)
-    
-    let dungeonCorridors = 
-      dungeonRooms
-      |> CreateRoomCorridors
-      |> List.filter (Collides >> not)
-    
     //Draw the corridors on the map
-    dungeonCorridors |> List.iter (GenerateCorridor dungeon_map)
+    dungeonRooms
+    |> CreateRoomCorridors
+    |> List.filter (Collides >> not)
+    |> List.iter (GenerateCorridor dungeon_map)
     //Return a chunk to feed to visualizer
     dungeon_map.CreateChunk()
