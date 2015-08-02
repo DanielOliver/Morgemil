@@ -27,14 +27,7 @@ let main argv =
   let walkAbout = 
     Morgemil.Test.Walkabout(createdBspDungeon, 
                             { Id = 5
-                              Body = 
-                                { Id = 5
-                                  Size = Morgemil.Math.Vector2i(1, 1)
-                                  Race = 
-                                    { Id = 5
-                                      Noun = "Dwarf"
-                                      Adjective = "Dwarven"
-                                      Description = "I am a dwarf" } }
+                              Race = Morgemil.Game.Race.Lookup.[0]
                               Position = Morgemil.Math.Vector2i(5, 5) })
   Instruct()
   Continue 0 walkAbout
