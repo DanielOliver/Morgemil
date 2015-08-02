@@ -85,8 +85,8 @@ module DungeonGeneration =
     | head :: tail -> List.choose (Corridor head) tail |> List.append (CreateRoomCorridors tail)
     | [] -> []
   
-  let Generate rngSeed = 
-    let rng = RNG.SeedRNG rngSeed
+  let private GenerateBSP(param : DungeonParameter) = 
+    let rng = RNG.SeedRNG param.RngSeed
     //Hardcoded dungeon size
     let dungeon_size = Rectangle(Vector2i(124, 90))
     //Empty map
@@ -109,3 +109,18 @@ module DungeonGeneration =
     |> List.iter (GenerateCorridor dungeon_map)
     //Return a level to feed to visualizer
     dungeon_map.CreateLevel()
+  
+  let private GenerateSquare(param : DungeonParameter) = 
+    let rng = RNG.SeedRNG param.RngSeed
+    //Hardcoded dungeon size
+    let dungeon_size = Rectangle(Vector2i(124, 90))
+    //Empty map
+    let dungeon_map = DungeonMap(dungeon_size)
+    GenerateRoom dungeon_map (Rectangle(dungeon_size.MinCoord + 1, dungeon_size.Size - 2))
+    //Return a level to feed to visualizer
+    dungeon_map.CreateLevel()
+  
+  let Generate(param : DungeonParameter) = 
+    match param.Type with
+    | DungeonGenerationType.BSP -> GenerateBSP param
+    | DungeonGenerationType.Square -> GenerateSquare param
