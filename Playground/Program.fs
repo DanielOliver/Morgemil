@@ -1,6 +1,6 @@
 ﻿let Instruct() = printfn "(E)ast (N)orth (W)est (S)outh (Q)uit"
 
-let Prompt() =
+let Prompt() = 
   let response = System.Console.ReadLine()
   match System.Char.ToLower(response.[0]) with
   | 'e' -> Some(Morgemil.Game.MoveEast)
@@ -9,10 +9,11 @@ let Prompt() =
   | 's' -> Some(Morgemil.Game.MoveSouth)
   | _ -> None
 
-let rec Continue (depth : int) (walkabout : Morgemil.Test.Walkabout) =
+let rec Continue (depth : int) (walkabout : Morgemil.Test.Walkabout) = 
+  System.Console.WriteLine(walkabout.Player.Position)
   match Prompt() with
   | None -> ()
-  | Some(act) ->
+  | Some(act) -> 
     let filename = "map_test" + depth.ToString("0000") + ".bmp"
     let dungeonDraw = Morgemil.Test.DungeonVisualizer.Visualize [| walkabout.Dungeon |]
     Morgemil.Test.DungeonVisualizer.DrawPlayer walkabout.Player dungeonDraw
@@ -20,12 +21,13 @@ let rec Continue (depth : int) (walkabout : Morgemil.Test.Walkabout) =
     Continue (depth + 1) (walkabout.Act act)
 
 [<EntryPoint>]
-let main argv =
+let main argv = 
   let createdBspDungeon = Morgemil.Map.DungeonGeneration.Generate 656556
-
-  let walkAbout =
-    Morgemil.Test.Walkabout(createdBspDungeon,
+  
+  let walkAbout = 
+    Morgemil.Test.Walkabout(createdBspDungeon, 
                             { Id = 5
+                              Race = Morgemil.Game.Race.Lookup.[0]
                               Position = Morgemil.Math.Vector2i(5, 5) })
   Instruct()
   Continue 0 walkAbout

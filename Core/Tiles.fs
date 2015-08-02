@@ -1,10 +1,25 @@
 ﻿module Morgemil.Map.Tiles
 
-let DungeonFloor =
-  TileDefinition(1, "Floor", "Dungeon floors are often trapped", false, false, TileType.Land)
-let DungeonWall =
-  TileDefinition
-    (2, "Wall", "Dungeon walls are built from the prisoner's bones", true, true, TileType.Land)
-let DungeonCorridor =
-  TileDefinition
-    (3, "Corridor", "Dungeon halls are long and misleading", false, false, TileType.Land)
+let DungeonFloor = 
+  { Id = 1
+    Name = "Floor"
+    Description = "Dungeon floors are often trapped"
+    BlocksMovement = false
+    BlocksSight = false
+    TileType = TileType.Land }
+
+let DungeonWall = 
+  { Id = 2
+    Name = "Wall"
+    Description = "Dungeon halls are long and misleading"
+    BlocksMovement = true
+    BlocksSight = true
+    TileType = TileType.Land }
+
+let DungeonCorridor = 
+  { Id = 3
+    Name = "Corridor"
+    Description = "Dungeon halls are long and misleading"
+    BlocksMovement = false
+    BlocksSight = false
+    TileType = TileType.Land }
