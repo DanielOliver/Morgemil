@@ -33,5 +33,5 @@ type Race =
        { Id = 3
          Noun = "Dragon"
          Adjective = "Dragon"
-         Description = "Fear"
-         Size = Vector2i(1, 1) } |]
+         Description = "Fear giant lizards that eat everything"
+         Size = Vector2i(4, 4) } |]

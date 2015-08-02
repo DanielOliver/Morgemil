@@ -7,7 +7,7 @@ type TileType =
 
 /// This defines a tile. Each tile instance will hold a reference to one of these as a base attribute.
 type TileDefinition = 
-  { ///Use this in file storage. When saving a chunk or map, use this ID.
+  { ///Use this in file storage. When saving a level or map, use this ID.
     Id : int
     /// A short name. eg: "Lush Grass"
     Name : string

@@ -9,8 +9,8 @@ module DungeonGeneration =
   type private DungeonMap(roomSize : Rectangle) = 
     let internal_map = Array.create roomSize.Area (Tiles.DungeonWall)
     member this.SetValue tile pos = internal_map.[roomSize.FlatCoord pos] <- tile
-    ///Return a single giant chunk to feed into the Visualizer
-    member this.CreateChunk() = 
+    ///Return a single giant level to feed into the Visualizer
+    member this.CreateLevel() = 
       { Area = roomSize
         Tiles = internal_map }
   
@@ -107,5 +107,5 @@ module DungeonGeneration =
     |> CreateRoomCorridors
     |> List.filter (Collides >> not)
     |> List.iter (GenerateCorridor dungeon_map)
-    //Return a chunk to feed to visualizer
-    dungeon_map.CreateChunk()
+    //Return a level to feed to visualizer
+    dungeon_map.CreateLevel()

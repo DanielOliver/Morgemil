@@ -58,7 +58,7 @@
     <Compile Include="Rectangle.fs" />
     <Compile Include="TileDefinition.fs" />
     <Compile Include="Tiles.fs" />
-    <Compile Include="Chunk.fs" />
+    <Compile Include="Level.fs" />
     <Compile Include="RNG.fs" />
     <Compile Include="BspGenerator.fs" />
     <Compile Include="DungeonGeneration.fs" />

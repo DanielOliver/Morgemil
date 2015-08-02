@@ -1,11 +1,11 @@
 ﻿namespace Morgemil.Map
 
 /// <summary>
-/// A 2d Chunk of tiles. Used in the overworld and in dungeons.
+/// A 2d Level.
 /// </summary>
 /// <param name="area">edge-inclusive area of tiles</param>
 /// <param name="tiles">2d array [row,column]</param>
-type Chunk = 
+type Level = 
   { Area : Morgemil.Math.Rectangle
     Tiles : TileDefinition array }
   

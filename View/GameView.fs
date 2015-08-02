@@ -6,7 +6,7 @@ open Microsoft.Xna.Framework.Input
 
 type GameView() as this =
   inherit Game()
-  let chunk = Morgemil.Map.DungeonGeneration.Generate 216798
+  let level = Morgemil.Map.DungeonGeneration.Generate 216798
   let graphics = new GraphicsDeviceManager(this)
   do graphics.PreferredBackBufferWidth <- 1024
   do graphics.PreferredBackBufferHeight <- 768
@@ -19,7 +19,7 @@ type GameView() as this =
     Camera2d(zoom, Vector2(float32 (-tileLocation.X), float32 (-tileLocation.Y)))
 
   let mutable camera =
-    CenterCamera 8.0f (Morgemil.Math.Vector2i(chunk.Area.Width / 2, chunk.Area.Height / 2))
+    CenterCamera 8.0f (Morgemil.Math.Vector2i(level.Area.Width / 2, level.Area.Height / 2))
 
   let ChooseColor(tileDef : Morgemil.Map.TileDefinition) =
     match tileDef.BlocksMovement with
@@ -53,5 +53,5 @@ type GameView() as this =
            float32 (graphics.PreferredBackBufferHeight / 2), 0.0f)
     spriteBatch.Begin
       (SpriteSortMode.Deferred, null, null, null, null, null, new System.Nullable<Matrix>(transform))
-    chunk.TileCoordinates |> Seq.iter (DrawTile)
+    level.TileCoordinates |> Seq.iter (DrawTile)
     spriteBatch.End()

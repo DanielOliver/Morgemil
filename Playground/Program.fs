@@ -15,7 +15,7 @@ let rec Continue (depth : int) (walkabout : Morgemil.Test.Walkabout) =
   | None -> ()
   | Some(act) -> 
     let filename = "map_test" + depth.ToString("0000") + ".bmp"
-    let dungeonDraw = Morgemil.Test.DungeonVisualizer.Visualize [| walkabout.Dungeon |]
+    let dungeonDraw = Morgemil.Test.DungeonVisualizer.Visualize walkabout.Dungeon
     Morgemil.Test.DungeonVisualizer.DrawPlayer walkabout.Player dungeonDraw
     dungeonDraw.Save(filename)
     Continue (depth + 1) (walkabout.Act act)
