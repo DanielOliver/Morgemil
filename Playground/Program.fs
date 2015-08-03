@@ -22,13 +22,17 @@ let rec Continue (depth : int) (walkabout : Morgemil.Test.Walkabout) =
 
 [<EntryPoint>]
 let main argv = 
-  let createdBspDungeon = Morgemil.Map.DungeonGeneration.Generate 656556
+  let createdBspDungeon = 
+    Morgemil.Map.DungeonGeneration.Generate { Type = Morgemil.Map.DungeonGenerationType.BSP
+                                              Depth = 1
+                                              RngSeed = 656556 }
   
   let walkAbout = 
     Morgemil.Test.Walkabout(createdBspDungeon, 
                             { Id = 5
                               Race = Morgemil.Game.Race.Lookup.[0]
                               Position = Morgemil.Math.Vector2i(5, 5) })
+  
   Instruct()
   Continue 0 walkAbout
   //  let filename2 = "map_test2.bmp"
