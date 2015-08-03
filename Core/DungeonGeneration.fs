@@ -12,7 +12,8 @@ module DungeonGeneration =
     ///Return a single giant level to feed into the Visualizer
     member this.CreateLevel() = 
       { Area = roomSize
-        Tiles = internal_map }
+        Tiles = internal_map
+        TileModifiers = Map.empty }
   
   ///The absolute minimum room area tolerated
   let private MinimumRoomArea = Vector2i(13, 13)
@@ -118,7 +119,12 @@ module DungeonGeneration =
     let dungeon_map = DungeonMap(dungeon_size)
     GenerateRoom dungeon_map (Rectangle(dungeon_size.MinCoord + 1, dungeon_size.Size - 2))
     //Return a level to feed to visualizer
-    dungeon_map.CreateLevel()
+    let center = dungeon_size.MinCoord + (dungeon_size.Size / 2)
+    { dungeon_map.CreateLevel() with TileModifiers = 
+                                       Map.ofList [ center, 
+                                                    Stairs { Type = DungeonGenerationType.Square
+                                                             Depth = 2
+                                                             RngSeed = 1337 } ] }
   
   let Generate(param : DungeonParameter) = 
     match param.Type with
