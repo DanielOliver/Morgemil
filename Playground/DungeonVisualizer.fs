@@ -9,12 +9,9 @@ module DungeonVisualizer =
   let DrawPlayer (player : Morgemil.Game.Person) (image : Bitmap) = 
     image.SetPixel(player.Position.X, player.Position.Y, Color.BlueViolet)
   
-  ///Draws chunks to the minimum image space necessary
-  let Visualize(chunks : seq<Chunk>) = 
-    let minimumImageSize = 
-      chunks
-      |> Seq.map (fun chun -> chun.Area)
-      |> Seq.reduce (+)
+  ///Draws a level to the minimum image space necessary
+  let Visualize(level : Level) = 
+    let minimumImageSize = level.Area
     
     ///Not a true FP structure. So modify at will.
     let resultingImage = new Bitmap(minimumImageSize.Width, minimumImageSize.Height)
@@ -27,10 +24,7 @@ module DungeonVisualizer =
         | _ -> Color.Black
       resultingImage.SetPixel(pos.X, pos.Y, tileColor)
     
-    let DrawChunk(chunk : Chunk) = 
-      chunk.Area.Coordinates
-      |> Seq.map (fun xy -> (chunk.Tile xy, xy - minimumImageSize.MinCoord))
-      |> Seq.iter (DrawTile)
-    
-    chunks |> Seq.iter (DrawChunk)
+    level.Area.Coordinates
+    |> Seq.map (fun xy -> (level.Tile xy, xy - minimumImageSize.MinCoord))
+    |> Seq.iter (DrawTile)
     resultingImage

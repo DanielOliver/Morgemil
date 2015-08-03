@@ -15,20 +15,24 @@ let rec Continue (depth : int) (walkabout : Morgemil.Test.Walkabout) =
   | None -> ()
   | Some(act) -> 
     let filename = "map_test" + depth.ToString("0000") + ".bmp"
-    let dungeonDraw = Morgemil.Test.DungeonVisualizer.Visualize [| walkabout.Dungeon |]
+    let dungeonDraw = Morgemil.Test.DungeonVisualizer.Visualize walkabout.Dungeon
     Morgemil.Test.DungeonVisualizer.DrawPlayer walkabout.Player dungeonDraw
     dungeonDraw.Save(filename)
     Continue (depth + 1) (walkabout.Act act)
 
 [<EntryPoint>]
 let main argv = 
-  let createdBspDungeon = Morgemil.Map.DungeonGeneration.Generate 656556
+  let createdBspDungeon = 
+    Morgemil.Map.DungeonGeneration.Generate { Type = Morgemil.Map.DungeonGenerationType.BSP
+                                              Depth = 1
+                                              RngSeed = 656556 }
   
   let walkAbout = 
     Morgemil.Test.Walkabout(createdBspDungeon, 
                             { Id = 5
                               Race = Morgemil.Game.Race.Lookup.[0]
                               Position = Morgemil.Math.Vector2i(5, 5) })
+  
   Instruct()
   Continue 0 walkAbout
   //  let filename2 = "map_test2.bmp"
