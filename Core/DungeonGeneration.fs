@@ -6,14 +6,15 @@ open System
 ///Creates a Dungeon
 module DungeonGeneration = 
   /// The existence of a mutable structure is necessary as a dungeon requires multiple passes to generate
-  type private DungeonMap(roomSize : Rectangle) = 
+  type private DungeonMap(roomSize : Rectangle, depth : int) = 
     let internal_map = Array.create roomSize.Area (Tiles.DungeonWall)
     member this.SetValue tile pos = internal_map.[roomSize.FlatCoord pos] <- tile
     ///Return a single giant level to feed into the Visualizer
     member this.CreateLevel() = 
       { Area = roomSize
         Tiles = internal_map
-        TileModifiers = Map.empty }
+        TileModifiers = Map.empty
+        Depth = depth }
   
   ///The absolute minimum room area tolerated
   let private MinimumRoomArea = Vector2i(13, 13)
@@ -91,7 +92,7 @@ module DungeonGeneration =
     //Hardcoded dungeon size
     let dungeon_size = Rectangle(Vector2i(124, 90))
     //Empty map
-    let dungeon_map = DungeonMap(dungeon_size)
+    let dungeon_map = DungeonMap(dungeon_size, param.Depth)
     //Room params
     let min_room_size = MinimumRoomArea + 5
     let max_room_size = Vector2i(25, 25)
@@ -116,14 +117,14 @@ module DungeonGeneration =
     //Hardcoded dungeon size
     let dungeon_size = Rectangle(Vector2i(124, 90))
     //Empty map
-    let dungeon_map = DungeonMap(dungeon_size)
+    let dungeon_map = DungeonMap(dungeon_size, param.Depth)
     GenerateRoom dungeon_map (Rectangle(dungeon_size.MinCoord + 1, dungeon_size.Size - 2))
     //Return a level to feed to visualizer
     let center = dungeon_size.MinCoord + (dungeon_size.Size / 2)
     { dungeon_map.CreateLevel() with TileModifiers = 
                                        Map.ofList [ center, 
                                                     Stairs { Type = DungeonGenerationType.Square
-                                                             Depth = 2
+                                                             Depth = param.Depth + 1
                                                              RngSeed = 1337 } ] }
   
   let Generate(param : DungeonParameter) = 

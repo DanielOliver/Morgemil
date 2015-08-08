@@ -11,7 +11,8 @@ type Level =
   { ///[0,0] (MaxX,MaxY)
     Area : Rectangle
     Tiles : TileDefinition array
-    TileModifiers : Map<Vector2i, TileModifier> }
+    TileModifiers : Map<Vector2i, TileModifier>
+    Depth: int }
   
   /// <summary>
   /// Global coordinates. Zero-based indices relative to this.Area.Position
