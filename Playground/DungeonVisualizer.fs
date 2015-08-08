@@ -10,7 +10,7 @@ module DungeonVisualizer =
     image.SetPixel(player.Position.X, player.Position.Y, Color.BlueViolet)
   
   ///Draws a level to the minimum image space necessary
-  let Visualize(level : Level) = 
+  let Visualize(level : LevelDefinition) = 
     let minimumImageSize = level.Area
     
     ///Not a true FP structure. So modify at will.
