@@ -3,7 +3,7 @@
 open Morgemil.Math
 
 ///Wight, human, etc.
-type Race = 
+type RaceDefinition = 
   { Id : int
     ///Proper noun
     Noun : string
@@ -19,19 +19,19 @@ type Race =
          Noun = "Human"
          Adjective = "Human"
          Description = "Humans are no longer the primary race."
-         Size = Vector2i(1, 1) }
+         Size = Vector2i(1) }
        { Id = 1
          Noun = "Dwarf"
          Adjective = "Dwarven"
          Description = "Tribal, rampaging war machines"
-         Size = Vector2i(1, 1) }
+         Size = Vector2i(1) }
        { Id = 2
          Noun = "Goblin"
          Adjective = "Goblin"
          Description = "A fun loving, daring, matriarchal people"
-         Size = Vector2i(1, 1) }
+         Size = Vector2i(1) }
        { Id = 3
          Noun = "Dragon"
          Adjective = "Dragon"
          Description = "Fear giant lizards that eat everything"
-         Size = Vector2i(4, 4) } |]
+         Size = Vector2i(4) } |]

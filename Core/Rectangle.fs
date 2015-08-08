@@ -7,9 +7,11 @@ type Rectangle(position : Vector2i, size : Vector2i) =
   member this.Size = size
   member this.MinCoord = position
   member this.MaxCoord = position + size - 1
+  //Area
   member this.Width = size.X
   member this.Height = size.Y
   member this.Area = this.Width * this.Height
+  //Edges
   member this.Left = position.X
   member this.Top = position.Y
   member this.Right = position.X + size.X - 1
@@ -30,6 +32,9 @@ type Rectangle(position : Vector2i, size : Vector2i) =
   
   ///Expands in every direction
   member this.Expand(scalar) = Rectangle(position - scalar, size + (scalar * 2))
+  
+  ///Expands 
+  member this.Expand(vec : Vector2i) = Rectangle(position - vec, size + (vec * 2))
   
   ///True if any overlap
   member this.Intersects(rect : Rectangle) = 

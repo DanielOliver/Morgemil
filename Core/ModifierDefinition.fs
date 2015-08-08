@@ -1,4 +1,4 @@
 ﻿namespace Morgemil.Map
 
-type TileModifier = 
+type ModifierDefinition = 
   | Stairs of Parameter : DungeonParameter
