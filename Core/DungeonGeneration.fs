@@ -17,7 +17,7 @@ module DungeonGeneration =
         Depth = depth }
   
   ///The absolute minimum room area tolerated
-  let private MinimumRoomArea = Vector2i(13, 13)
+  let private MinimumRoomArea = Vector2i(13)
   
   ///Randomizes a room's position and size within the defined area
   let private RandomizeRoom rng (maxArea : Rectangle) = 
@@ -95,7 +95,7 @@ module DungeonGeneration =
     let dungeon_map = DungeonMap(dungeon_size, param.Depth)
     //Room params
     let min_room_size = MinimumRoomArea + 5
-    let max_room_size = Vector2i(25, 25)
+    let max_room_size = Vector2i(25)
     //BSP rooms with randomized size (Rectangle List).
     let dungeonRooms = 
       BspGenerator(min_room_size, max_room_size, dungeon_size.Size).GenerateRoomDivides rng 
@@ -115,17 +115,17 @@ module DungeonGeneration =
   let private GenerateSquare(param : DungeonParameter) = 
     let rng = RNG.SeedRNG param.RngSeed
     //Hardcoded dungeon size
-    let dungeon_size = Rectangle(Vector2i(124, 90))
+    let dungeon_size = Rectangle(Vector2i(60) + RNG.RandomVector rng (Vector2i(60)))
     //Empty map
     let dungeon_map = DungeonMap(dungeon_size, param.Depth)
-    GenerateRoom dungeon_map (Rectangle(dungeon_size.MinCoord + 1, dungeon_size.Size - 2))
+    GenerateRoom dungeon_map (dungeon_size.Expand -1)
     //Return a level to feed to visualizer
     let center = dungeon_size.MinCoord + (dungeon_size.Size / 2)
     { dungeon_map.CreateLevel() with TileModifiers = 
                                        Map.ofList [ center, 
                                                     Stairs { Type = DungeonGenerationType.Square
                                                              Depth = param.Depth + 1
-                                                             RngSeed = 1337 } ] }
+                                                             RngSeed = rng.Next() } ] }
   
   let Generate(param : DungeonParameter) = 
     match param.Type with
