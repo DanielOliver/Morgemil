@@ -2,7 +2,7 @@
 
 open Morgemil.Math
 
-type Walkabout(dungeon : Morgemil.Map.Level, player : Morgemil.Game.Person) = 
+type Walkabout(dungeon : Morgemil.Map.Level, player : Morgemil.Game.PersonDefinition) = 
   member this.Dungeon = dungeon
   member this.Player = player
   member this.Act(act : Morgemil.Game.Actions) = 
