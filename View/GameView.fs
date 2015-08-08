@@ -25,12 +25,12 @@ type GameView() as this =
   
   let mutable camera = CenterCamera 8.0f (Morgemil.Math.Vector2i(level.Area.Width / 2, level.Area.Height / 2))
   
-  let ChooseColor(tileDef : Morgemil.Map.TileDefinition) = 
+  let ChooseColor(tileDef : Morgemil.Map.Tile) = 
     match tileDef.BlocksMovement with
     | true -> Color.Red
     | false -> Color.White
   
-  let DrawTile(pos : Morgemil.Math.Vector2i, tileDef : Morgemil.Map.TileDefinition) = 
+  let DrawTile(pos : Morgemil.Math.Vector2i, tileDef : Morgemil.Map.Tile) = 
     let drawArea = Rectangle(pos.X, pos.Y, 1, 1)
     spriteBatch.Draw(spriteTexture, drawArea, ChooseColor tileDef)
   

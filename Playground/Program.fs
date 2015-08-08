@@ -30,7 +30,7 @@ let main argv =
   let walkAbout = 
     Morgemil.Test.Walkabout(createdBspDungeon, 
                             { Id = 5
-                              Race = Morgemil.Game.RaceDefinition.Lookup.[0]
+                              Race = Morgemil.Game.Race.Lookup.[0]
                               Position = Morgemil.Math.Vector2i(5, 5) })
   
   Instruct()

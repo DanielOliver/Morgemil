@@ -6,17 +6,17 @@ module DungeonVisualizer =
   open Morgemil.Map
   open Morgemil.Math
   
-  let DrawPlayer (player : Morgemil.Game.PersonDefinition) (image : Bitmap) = 
+  let DrawPlayer (player : Morgemil.Game.Person) (image : Bitmap) = 
     image.SetPixel(player.Position.X, player.Position.Y, Color.BlueViolet)
   
   ///Draws a level to the minimum image space necessary
-  let Visualize(level : LevelDefinition) = 
+  let Visualize(level : Level) = 
     let minimumImageSize = level.Area
     
     ///Not a true FP structure. So modify at will.
     let resultingImage = new Bitmap(minimumImageSize.Width, minimumImageSize.Height)
     
-    let DrawTile(tile : TileDefinition, pos : Vector2i) = 
+    let DrawTile(tile : Tile, pos : Vector2i) = 
       let tileColor = 
         match tile with
         | _ when Tiles.DungeonFloor.Id = tile.Id -> Color.White

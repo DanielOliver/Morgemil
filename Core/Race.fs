@@ -3,7 +3,7 @@
 open Morgemil.Math
 
 ///Wight, human, etc.
-type RaceDefinition = 
+type Race = 
   { Id : int
     ///Proper noun
     Noun : string

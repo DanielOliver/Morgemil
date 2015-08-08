@@ -7,11 +7,11 @@ open Morgemil.Math
 /// </summary>
 /// <param name="area">edge-inclusive area of tiles</param>
 /// <param name="tiles">2d array [row,column]</param>
-type LevelDefinition = 
+type Level = 
   { ///[0,0] (MaxX,MaxY)
     Area : Rectangle
-    Tiles : TileDefinition array
-    TileModifiers : Map<Vector2i, ModifierDefinition>
+    Tiles : Tile array
+    TileModifiers : Map<Vector2i, TileModifier>
     Depth: int }
   
   /// <summary>
