@@ -12,6 +12,12 @@ type Camera2d(Zoom : float32, Position : Vector2, graphics : GraphicsDeviceManag
     * Matrix.CreateTranslation
         (float32 (graphics.PreferredBackBufferWidth / 2), float32 (graphics.PreferredBackBufferHeight / 2), 0.0f)
   
+  ///Used to convert screen to world
+  member this.InvertMatrix = Matrix.Invert(this.Matrix)
+  
+  ///Screen to world coordinates
+  member this.ScreenCoordinatesToWorld(screenCoord : Vector2) = Vector2.Transform(screenCoord, this.InvertMatrix)
+  
   member this.Zoom = Zoom
   member this.Position = Position
   
