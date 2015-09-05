@@ -18,32 +18,38 @@ type GameView() as this =
   do graphics.ApplyChanges()
   let mutable spriteBatch = Unchecked.defaultof<SpriteBatch> //null
   let mutable spriteTexture = Unchecked.defaultof<Texture2D> //null
-  let mutable camera = Camera2d.Default
+  let mutable camera = Camera2d.Default graphics
   let mutable hasGraphicsChanges = false
   
+  ///Chooses a color for a map tile 
   let ChooseColor(tileDef : Morgemil.Map.Tile) = 
     match tileDef.BlocksMovement with
     | true -> Color.Red
     | false -> Color.White
   
+  ///Draws a map tile
   let DrawTile(pos : Morgemil.Math.Vector2i, tileDef : Morgemil.Map.Tile) = 
     let drawArea = Rectangle(pos.X, pos.Y, 1, 1)
     spriteBatch.Draw(spriteTexture, drawArea, ChooseColor tileDef)
   
+  ///Zooms out to show the map
+  member private this.ShowMap() = 
+    camera <- Camera2d.ShowMap level 
+                (Morgemil.Math.Vector2i(base.Window.ClientBounds.Width, base.Window.ClientBounds.Height)) graphics
+  
+  ///Resizes the graphics buffer to match window resolution
   member private this.ResizeWindow() = 
     graphics.PreferredBackBufferWidth <- base.Window.ClientBounds.Width
     graphics.PreferredBackBufferHeight <- base.Window.ClientBounds.Height
-    camera <- Camera2d.ShowMap level 
-                (Morgemil.Math.Vector2i(base.Window.ClientBounds.Width, base.Window.ClientBounds.Height))
     hasGraphicsChanges <- true
+    this.ShowMap()
   
   override this.Initialize() = 
     base.Initialize()
     base.Window.Title <- "Morgemil"
     base.Window.AllowUserResizing <- true
     base.Window.ClientSizeChanged.Add(fun evArgs -> this.ResizeWindow())
-    camera <- Camera2d.ShowMap level 
-                (Morgemil.Math.Vector2i(base.Window.ClientBounds.Width, base.Window.ClientBounds.Height))
+    this.ShowMap()
   
   override this.LoadContent() = 
     spriteBatch <- new SpriteBatch(this.GraphicsDevice)
@@ -62,10 +68,7 @@ type GameView() as this =
   override this.Draw(gameTime) = 
     this.GraphicsDevice.Clear Color.Black
     //Adjust the camera by the buffer size
-    let transform = 
-      camera.Matrix 
-      * Matrix.CreateTranslation
-          (float32 (graphics.PreferredBackBufferWidth / 2), float32 (graphics.PreferredBackBufferHeight / 2), 0.0f)
+    let transform = camera.Matrix
     spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, new System.Nullable<Matrix>(transform))
     level.TileCoordinates |> Seq.iter (DrawTile)
     spriteBatch.End()
