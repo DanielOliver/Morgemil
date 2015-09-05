@@ -79,6 +79,11 @@
       <Project>{6cc909f9-f95c-4d22-be11-0ebcd3b75a51}</Project>
       <Private>True</Private>
     </ProjectReference>
+    <ProjectReference Include="..\Playground\Playground.fsproj">
+      <Name>Playground</Name>
+      <Project>{ccb83e99-b139-41c9-9e91-72ef9823789f}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
