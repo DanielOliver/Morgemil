@@ -13,17 +13,13 @@ type GameView() as this =
                                               RngSeed = 6456 }
   
   let graphics = new GraphicsDeviceManager(this)
-  do graphics.PreferredBackBufferWidth <- 1024
-  do graphics.PreferredBackBufferHeight <- 768
+  do graphics.PreferredBackBufferWidth <- 640
+  do graphics.PreferredBackBufferHeight <- 480
   do graphics.ApplyChanges()
   let mutable spriteBatch = Unchecked.defaultof<SpriteBatch> //null
   let mutable spriteTexture = Unchecked.defaultof<Texture2D> //null
-  
-  ///Returns a centered camera. Given the tile location
-  let CenterCamera zoom (tileLocation : Morgemil.Math.Vector2i) = 
-    Camera2d(zoom, Vector2(float32 (-tileLocation.X), float32 (-tileLocation.Y)))
-  
-  let mutable camera = CenterCamera 8.0f (Morgemil.Math.Vector2i(level.Area.Width / 2, level.Area.Height / 2))
+  let mutable camera = Camera2d.Default
+  let mutable hasGraphicsChanges = false
   
   let ChooseColor(tileDef : Morgemil.Map.Tile) = 
     match tileDef.BlocksMovement with
@@ -34,9 +30,20 @@ type GameView() as this =
     let drawArea = Rectangle(pos.X, pos.Y, 1, 1)
     spriteBatch.Draw(spriteTexture, drawArea, ChooseColor tileDef)
   
+  member private this.ResizeWindow() = 
+    graphics.PreferredBackBufferWidth <- base.Window.ClientBounds.Width
+    graphics.PreferredBackBufferHeight <- base.Window.ClientBounds.Height
+    camera <- Camera2d.ShowMap level 
+                (Morgemil.Math.Vector2i(base.Window.ClientBounds.Width, base.Window.ClientBounds.Height))
+    hasGraphicsChanges <- true
+  
   override this.Initialize() = 
     base.Initialize()
     base.Window.Title <- "Morgemil"
+    base.Window.AllowUserResizing <- true
+    base.Window.ClientSizeChanged.Add(fun evArgs -> this.ResizeWindow())
+    camera <- Camera2d.ShowMap level 
+                (Morgemil.Math.Vector2i(base.Window.ClientBounds.Width, base.Window.ClientBounds.Height))
   
   override this.LoadContent() = 
     spriteBatch <- new SpriteBatch(this.GraphicsDevice)
@@ -45,8 +52,13 @@ type GameView() as this =
   
   override this.Update(gameTime) = 
     let state = Keyboard.GetState()
-    if state.IsKeyDown(Keys.A) then camera <- camera.AddZoom(1.0f)
+    if hasGraphicsChanges then 
+      graphics.ApplyChanges()
+      hasGraphicsChanges <- false
+    ()
   
+  //    if state.IsKeyDown(Keys.A) then camera <- camera.AddZoom(1.0f)
+  //    if state.IsKeyDown(Keys.D) then camera <- camera.SetZoom(camera.Zoom * 0.95f)
   override this.Draw(gameTime) = 
     this.GraphicsDevice.Clear Color.Black
     //Adjust the camera by the buffer size
