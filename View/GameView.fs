@@ -10,7 +10,7 @@ type GameView() as this =
   let level = 
     Morgemil.Map.DungeonGeneration.Generate { Type = Morgemil.Map.DungeonGenerationType.Square
                                               Depth = 1
-                                              RngSeed = 656556 }
+                                              RngSeed = 6456 }
   
   let graphics = new GraphicsDeviceManager(this)
   do graphics.PreferredBackBufferWidth <- 1024

@@ -11,7 +11,7 @@ type Level =
   { ///[0,0] (MaxX,MaxY)
     Area : Rectangle
     Tiles : Tile array
-    TileModifiers : Map<Vector2i, TileModifier>
+    TileModifiers : List<TileModifier>
     Depth: int }
   
   /// <summary>

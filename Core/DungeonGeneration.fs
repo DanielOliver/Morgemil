@@ -13,7 +13,7 @@ module DungeonGeneration =
     member this.CreateLevel() = 
       { Area = roomSize
         Tiles = internal_map
-        TileModifiers = Map.empty
+        TileModifiers = List.empty
         Depth = depth }
   
   ///The absolute minimum room area tolerated
@@ -114,7 +114,7 @@ module DungeonGeneration =
   
   let private GenerateSquare(param : DungeonParameter) = 
     let rng = RNG.SeedRNG param.RngSeed
-    //Hardcoded dungeon size
+    //Slightly randomized dungeon size
     let dungeon_size = Rectangle(Vector2i(60) + RNG.RandomVector rng (Vector2i(60)))
     //Empty map
     let dungeon_map = DungeonMap(dungeon_size, param.Depth)
@@ -122,10 +122,11 @@ module DungeonGeneration =
     //Return a level to feed to visualizer
     let center = dungeon_size.MinCoord + (dungeon_size.Size / 2)
     { dungeon_map.CreateLevel() with TileModifiers = 
-                                       Map.ofList [ center, 
-                                                    Stairs { Type = DungeonGenerationType.Square
-                                                             Depth = param.Depth + 1
-                                                             RngSeed = rng.Next() } ] }
+                                       [ TileModifier.Stairs { DungeonParameter = 
+                                                                 { Type = DungeonGenerationType.Square
+                                                                   Depth = param.Depth + 1
+                                                                   RngSeed = rng.Next() }
+                                                               Area = Rectangle(center, Vector2i(1)) } ] }
   
   let Generate(param : DungeonParameter) = 
     match param.Type with
