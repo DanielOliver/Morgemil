@@ -6,7 +6,7 @@ type TileType =
   | Water = 2
 
 /// This defines a tile. Each tile instance will hold a reference to one of these as a base attribute.
-type TileDefinition = 
+type Tile = 
   { ///Use this in file storage. When saving a level or map, use this ID.
     Id : int
     /// A short name. eg: "Lush Grass"
@@ -31,4 +31,4 @@ type TileDefinition =
       BlocksSight = true
       TileType = TileType.Void }
   
-  static member IsDefault(tile : TileDefinition) = (tile.Id = TileDefinition.Default.Id)
+  static member IsDefault(tile : Tile) = (tile.Id = Tile.Default.Id)

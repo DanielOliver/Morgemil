@@ -7,9 +7,12 @@ type Rectangle(position : Vector2i, size : Vector2i) =
   member this.Size = size
   member this.MinCoord = position
   member this.MaxCoord = position + size - 1
+  //Area
   member this.Width = size.X
   member this.Height = size.Y
   member this.Area = this.Width * this.Height
+  member this.IsEmpty = size.X = 0 || size.Y = 0
+  //Edges
   member this.Left = position.X
   member this.Top = position.Y
   member this.Right = position.X + size.X - 1
@@ -26,10 +29,14 @@ type Rectangle(position : Vector2i, size : Vector2i) =
     let diff_pt = pt - position
     diff_pt.X < size.X && diff_pt.Y < size.Y
   
-  member this.IsOnEdge(pt : Vector2i) = pt.X = this.Left || pt.X = this.Right || pt.Y = this.Top || pt.Y = this.Bottom
+  member this.IsOnEdge(pt : Vector2i) = 
+    (not this.IsEmpty) && (pt.X = this.Left || pt.X = this.Right || pt.Y = this.Top || pt.Y = this.Bottom)
   
   ///Expands in every direction
   member this.Expand(scalar) = Rectangle(position - scalar, size + (scalar * 2))
+  
+  ///Expands 
+  member this.Expand(vec : Vector2i) = Rectangle(position - vec, size + (vec * 2))
   
   ///True if any overlap
   member this.Intersects(rect : Rectangle) = 

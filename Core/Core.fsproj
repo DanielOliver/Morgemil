@@ -56,9 +56,10 @@
     <Compile Include="Vector2.fs" />
     <Compile Include="Matrix2f.fs" />
     <Compile Include="Rectangle.fs" />
-    <Compile Include="TileDefinition.fs" />
+    <Compile Include="Tile.fs" />
     <Compile Include="Tiles.fs" />
     <Compile Include="DungeonParameter.fs" />
+    <Compile Include="Stairs.fs" />
     <Compile Include="TileModifier.fs" />
     <Compile Include="Level.fs" />
     <Compile Include="RNG.fs" />

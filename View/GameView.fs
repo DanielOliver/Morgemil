@@ -10,33 +10,47 @@ type GameView() as this =
   let level = 
     Morgemil.Map.DungeonGeneration.Generate { Type = Morgemil.Map.DungeonGenerationType.Square
                                               Depth = 1
-                                              RngSeed = 656556 }
+                                              RngSeed = 6456 }
   
   let graphics = new GraphicsDeviceManager(this)
-  do graphics.PreferredBackBufferWidth <- 1024
-  do graphics.PreferredBackBufferHeight <- 768
+  do graphics.PreferredBackBufferWidth <- 640
+  do graphics.PreferredBackBufferHeight <- 480
   do graphics.ApplyChanges()
   let mutable spriteBatch = Unchecked.defaultof<SpriteBatch> //null
   let mutable spriteTexture = Unchecked.defaultof<Texture2D> //null
+  let mutable camera = Camera2d.Default graphics level
+  let mutable hasGraphicsChanges = false
   
-  ///Returns a centered camera. Given the tile location
-  let CenterCamera zoom (tileLocation : Morgemil.Math.Vector2i) = 
-    Camera2d(zoom, Vector2(float32 (-tileLocation.X), float32 (-tileLocation.Y)))
-  
-  let mutable camera = CenterCamera 8.0f (Morgemil.Math.Vector2i(level.Area.Width / 2, level.Area.Height / 2))
-  
-  let ChooseColor(tileDef : Morgemil.Map.TileDefinition) = 
+  ///Chooses a color for a map tile 
+  let ChooseColor(tileDef : Morgemil.Map.Tile) = 
     match tileDef.BlocksMovement with
     | true -> Color.Red
     | false -> Color.White
   
-  let DrawTile(pos : Morgemil.Math.Vector2i, tileDef : Morgemil.Map.TileDefinition) = 
+  ///Draws a map tile
+  let DrawTile(pos : Morgemil.Math.Vector2i, tileDef : Morgemil.Map.Tile) = 
     let drawArea = Rectangle(pos.X, pos.Y, 1, 1)
     spriteBatch.Draw(spriteTexture, drawArea, ChooseColor tileDef)
+  
+  let mutable firstFire = true
+  
+  ///Zooms out to show the map
+  member private this.ShowMap() = camera <- camera.ShowMap()
+  
+  ///Resizes the graphics buffer to match window resolution
+  member private this.ResizeWindow() = 
+    graphics.PreferredBackBufferWidth <- base.Window.ClientBounds.Width
+    graphics.PreferredBackBufferHeight <- base.Window.ClientBounds.Height
+    hasGraphicsChanges <- true
+    this.ShowMap()
   
   override this.Initialize() = 
     base.Initialize()
     base.Window.Title <- "Morgemil"
+    base.Window.AllowUserResizing <- true
+    base.Window.ClientSizeChanged.Add(fun evArgs -> this.ResizeWindow())
+    base.IsMouseVisible <- true
+    this.ShowMap()
   
   override this.LoadContent() = 
     spriteBatch <- new SpriteBatch(this.GraphicsDevice)
@@ -45,15 +59,25 @@ type GameView() as this =
   
   override this.Update(gameTime) = 
     let state = Keyboard.GetState()
-    if state.IsKeyDown(Keys.A) then camera <- camera.AddZoom(1.0f)
+    if hasGraphicsChanges then 
+      graphics.ApplyChanges()
+      hasGraphicsChanges <- false
+    if state.IsKeyDown(Keys.Space) then 
+      if firstFire then 
+        let mouse_state = Mouse.GetState().Position.ToVector2()
+        System.Diagnostics.Debug.WriteLine(camera.ScreenCoordinatesToWorld(mouse_state))
+      firstFire <- false
+    if state.IsKeyUp(Keys.Space) then firstFire <- true
+    ()
   
   override this.Draw(gameTime) = 
     this.GraphicsDevice.Clear Color.Black
     //Adjust the camera by the buffer size
-    let transform = 
-      camera.Matrix 
-      * Matrix.CreateTranslation
-          (float32 (graphics.PreferredBackBufferWidth / 2), float32 (graphics.PreferredBackBufferHeight / 2), 0.0f)
+    let transform = camera.Matrix
     spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, new System.Nullable<Matrix>(transform))
     level.TileCoordinates |> Seq.iter (DrawTile)
+    let mouse_state = Mouse.GetState().Position.ToVector2()
+    let world = camera.ScreenCoordinatesToWorld(mouse_state)
+    let drawArea = Rectangle(world.X, world.Y, 1, 1)
+    spriteBatch.Draw(spriteTexture, drawArea, Color.Green)
     spriteBatch.End()

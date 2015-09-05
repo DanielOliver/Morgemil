@@ -16,7 +16,7 @@ module DungeonVisualizer =
     ///Not a true FP structure. So modify at will.
     let resultingImage = new Bitmap(minimumImageSize.Width, minimumImageSize.Height)
     
-    let DrawTile(tile : TileDefinition, pos : Vector2i) = 
+    let DrawTile(tile : Tile, pos : Vector2i) = 
       let tileColor = 
         match tile with
         | _ when Tiles.DungeonFloor.Id = tile.Id -> Color.White
