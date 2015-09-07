@@ -102,6 +102,7 @@ type GameView() as this =
     if (state.IsKeyUp(lastKey)) then 
       System.Diagnostics.Debug.WriteLine(walkAbout.Player.Position)
       firstFire <- true
+    camera <- camera.CenterCamera(64.0f,walkAbout.Player.Area.Position)
     ()
   
   override this.Draw(gameTime) = 

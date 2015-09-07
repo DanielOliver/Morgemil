@@ -39,7 +39,7 @@ type Camera2d(zoom : float32, position : Vector2, graphics : GraphicsDeviceManag
   
   ///Centers the camera and gives each tile a (zoom,zoom) pixels
   member this.CenterCamera(zoom, (tileLocation : Vector2i)) = 
-    self zoom (new Vector2(float32 (tileLocation.X), float32 (tileLocation.Y)))
+    self zoom (new Vector2(float32 (tileLocation.X) + 0.5f, float32 (tileLocation.Y) + 0.5f))
   
   ///Centers the camera and gives each tile a (zoom,zoom) pixels
   member this.CenterCamera tileLocation = this.CenterCamera(zoom, tileLocation)
