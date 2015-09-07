@@ -61,6 +61,10 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="MathNet.Numerics">
+      <HintPath>..\packages\MathNet.Numerics.3.7.0\lib\net40\MathNet.Numerics.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="MonoGame.Framework">
       <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.4.0.459\lib\net40\MonoGame.Framework.dll</HintPath>
       <Private>True</Private>
@@ -77,6 +81,11 @@
     <ProjectReference Include="..\Core\Core.fsproj">
       <Name>Core</Name>
       <Project>{6cc909f9-f95c-4d22-be11-0ebcd3b75a51}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Playground\Playground.fsproj">
+      <Name>Playground</Name>
+      <Project>{ccb83e99-b139-41c9-9e91-72ef9823789f}</Project>
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>

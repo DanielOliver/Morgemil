@@ -3,14 +3,34 @@
 open Microsoft.Xna.Framework
 open Microsoft.Xna.Framework.Graphics
 open Microsoft.Xna.Framework.Input
+open Morgemil.Game
+open Morgemil.Map
+open Morgemil.Test
 
 type GameView() as this = 
   inherit Game()
   
   let level = 
-    Morgemil.Map.DungeonGeneration.Generate { Type = Morgemil.Map.DungeonGenerationType.Square
-                                              Depth = 1
-                                              RngSeed = 6456 }
+    DungeonGeneration.Generate { Type = DungeonGenerationType.Square
+                                 Depth = 1
+                                 RngSeed = 656556 }
+  
+  //Assumes there is at least one entrance. Takes the first one
+  let entrance = 
+    (TileModifier.Entrance(Morgemil.Math.Rectangle(Morgemil.Math.Vector2i(5, 5), Morgemil.Math.Vector2i(1))) 
+     :: level.TileModifiers)
+    |> List.choose (function 
+         | TileModifier.Entrance(location) -> Some(location)
+         | _ -> None)
+    |> List.rev
+    |> List.head
+  
+  //Replace the player
+  let mutable walkAbout = 
+    Walkabout(level, 
+              { Id = 5
+                Race = Race.Lookup.[0]
+                Position = entrance.Position })
   
   let graphics = new GraphicsDeviceManager(this)
   do graphics.PreferredBackBufferWidth <- 640
@@ -33,6 +53,7 @@ type GameView() as this =
     spriteBatch.Draw(spriteTexture, drawArea, ChooseColor tileDef)
   
   let mutable firstFire = true
+  let mutable lastKey = Keys.Space
   
   ///Zooms out to show the map
   member private this.ShowMap() = camera <- camera.ShowMap()
@@ -62,12 +83,26 @@ type GameView() as this =
     if hasGraphicsChanges then 
       graphics.ApplyChanges()
       hasGraphicsChanges <- false
-    if state.IsKeyDown(Keys.Space) then 
-      if firstFire then 
-        let mouse_state = Mouse.GetState().Position.ToVector2()
-        System.Diagnostics.Debug.WriteLine(camera.ScreenCoordinatesToWorld(mouse_state))
+    if state.IsKeyDown(Keys.Left) && firstFire then 
+      walkAbout <- walkAbout.Act(Actions.MoveWest)
+      lastKey <- Keys.Left
       firstFire <- false
-    if state.IsKeyUp(Keys.Space) then firstFire <- true
+    if state.IsKeyDown(Keys.Right) && firstFire then 
+      walkAbout <- walkAbout.Act(Actions.MoveEast)
+      lastKey <- Keys.Right
+      firstFire <- false
+    if state.IsKeyDown(Keys.Up) && firstFire then 
+      walkAbout <- walkAbout.Act(Actions.MoveSouth)
+      lastKey <- Keys.Up
+      firstFire <- false
+    if state.IsKeyDown(Keys.Down) && firstFire then 
+      walkAbout <- walkAbout.Act(Actions.MoveNorth)
+      lastKey <- Keys.Down
+      firstFire <- false
+    if (state.IsKeyUp(lastKey)) then 
+      System.Diagnostics.Debug.WriteLine(walkAbout.Player.Position)
+      firstFire <- true
+    camera <- camera.CenterCamera(64.0f,walkAbout.Player.Area.Position)
     ()
   
   override this.Draw(gameTime) = 
@@ -80,4 +115,6 @@ type GameView() as this =
     let world = camera.ScreenCoordinatesToWorld(mouse_state)
     let drawArea = Rectangle(world.X, world.Y, 1, 1)
     spriteBatch.Draw(spriteTexture, drawArea, Color.Green)
+    spriteBatch.Draw
+      (spriteTexture, Rectangle(walkAbout.Player.Position.X, walkAbout.Player.Position.Y, 1, 1), Color.Blue)
     spriteBatch.End()

@@ -121,12 +121,17 @@ module DungeonGeneration =
     GenerateRoom dungeon_map (dungeon_size.Expand -1)
     //Return a level to feed to visualizer
     let center = dungeon_size.MinCoord + (dungeon_size.Size / 2)
-    { dungeon_map.CreateLevel() with TileModifiers = 
-                                       [ TileModifier.Stairs { DungeonParameter = 
-                                                                 { Type = DungeonGenerationType.Square
-                                                                   Depth = param.Depth + 1
-                                                                   RngSeed = rng.Next() }
-                                                               Area = Rectangle(center, Vector2i(1)) } ] }
+    //Creates an empty dungeon level
+    let level = dungeon_map.CreateLevel()
+    //Take the first passable tile as the level entrance
+    let (entrance_coord, _) = level.TileCoordinates |> Seq.find (fun (vec2, tile) -> not (tile.BlocksMovement))
+    { level with TileModifiers = 
+                   [ TileModifier.Stairs { DungeonParameter = 
+                                             { Type = DungeonGenerationType.Square
+                                               Depth = param.Depth + 1
+                                               RngSeed = rng.Next() }
+                                           Area = Rectangle(center, Vector2i(1)) }
+                     TileModifier.Entrance(Rectangle(entrance_coord, Vector2i(1))) ] }
   
   let Generate(param : DungeonParameter) = 
     match param.Type with
