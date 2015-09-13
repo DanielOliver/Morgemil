@@ -1,5 +1,7 @@
 ﻿namespace Morgemil.Math
 
+open System
+
 /// Edge-inclusive. Axis-aligned bounding box (AABB)
 type Rectangle(position : Vector2i, size : Vector2i) = 
   new(size : Vector2i) = Rectangle(Vector2i(), size)
@@ -45,6 +47,14 @@ type Rectangle(position : Vector2i, size : Vector2i) =
   ///[y * area.Width + x]
   ///As if accessing an array element in a Rectangle size.
   member this.FlatCoord(pt : Vector2i) = (pt.Y - this.Top) * this.Width + (pt.X - this.Left)
+  
+  ///Gets a point contained by this rectangle closest to the given point
+  member this.GetClosestInsidePoint(pt : Vector2i) = 
+    if this.Contains(pt) then pt
+    else 
+      let x = Math.Min(Math.Max(pt.X, this.Left), this.Right)
+      let y = Math.Min(Math.Max(pt.Y, this.Top), this.Bottom)
+      Vector2i(x, y)
   
   /// <summary>
   /// A seq of all contained local coordinates
