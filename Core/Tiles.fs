@@ -1,4 +1,4 @@
-﻿module Morgemil.Map.Tiles
+﻿module Morgemil.Core.Tiles
 
 let DungeonFloor = 
   { Id = 1

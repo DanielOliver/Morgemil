@@ -1,4 +1,4 @@
-﻿module Morgemil.Math.RNG
+﻿module Morgemil.Core.RNG
 
 open MathNet.Numerics.Random
 

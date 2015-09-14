@@ -1,4 +1,4 @@
-﻿namespace Morgemil.Map
+﻿namespace Morgemil.Core
 
 type TileType = 
   | Void = 0

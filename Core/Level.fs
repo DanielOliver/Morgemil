@@ -1,6 +1,6 @@
-﻿namespace Morgemil.Map
+﻿namespace Morgemil.Core
 
-open Morgemil.Math
+open Morgemil.Core
 
 /// <summary>
 /// A 2d Level.

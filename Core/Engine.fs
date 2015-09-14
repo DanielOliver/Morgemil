@@ -1,6 +1,6 @@
 ﻿namespace Morgemil.Game
 
-open Morgemil.Map
+open Morgemil.Core
 
 type Engine = 
   { People: List<Person>
