@@ -69,7 +69,7 @@
     <Compile Include="Actions.fs" />
     <Compile Include="Race.fs" />
     <Compile Include="Person.fs" />
-    <Compile Include="Engine.fs" />
+    <Compile Include="Entity.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core">

@@ -1,6 +1,4 @@
-﻿namespace Morgemil.Game
-
-open Morgemil.Core
+﻿namespace Morgemil.Core
 
 ///Wight, human, etc.
 type Race = 
