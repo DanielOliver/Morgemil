@@ -50,6 +50,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions.fs" />
     <Compile Include="Message.fs" />
     <Compile Include="TurnQueue.fs" />
   </ItemGroup>

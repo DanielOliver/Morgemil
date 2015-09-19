@@ -1,9 +1,19 @@
 ﻿namespace Morgemil.Logic
 
 ///Discriminated union of all possible messages created
-type Message = 
+type EventMessage = 
   | EntitySummoning
   | EntityFatality
+  | EntityMovement
 
-///The callback to emit a message.
-type MessageEmit = Message -> unit
+///The results of an event
+type EventResult = 
+  | EntitySummoned
+  | EntityDeath
+  | EntityMoved
+
+///Emits a new message
+type EventMessageEmit = EventMessage -> unit
+
+///The callback to handle a message.
+type EventMessageHandler = EventMessageEmit -> EventMessage -> EventResult
