@@ -70,6 +70,7 @@
     <Compile Include="Race.fs" />
     <Compile Include="Person.fs" />
     <Compile Include="Entity.fs" />
+    <Compile Include="Components.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core">

@@ -53,6 +53,7 @@
     <Compile Include="Extensions.fs" />
     <Compile Include="Message.fs" />
     <Compile Include="TurnQueue.fs" />
+    <Compile Include="Game.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>

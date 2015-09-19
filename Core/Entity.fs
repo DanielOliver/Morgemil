@@ -1,4 +1,4 @@
-﻿namespace Morgemil.Logic
+﻿namespace Morgemil.Core
 
 type EntityType = 
   | Person

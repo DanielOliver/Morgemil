@@ -17,7 +17,9 @@ module TurnQueue =
         |> (fun request -> 
         request |> _processedEvents.Add
         request |> handler _emit)
-        |> _eventResults.Add
+        |> (function 
+        | Some(x) -> x |> _eventResults.Add
+        | _ -> ())
         _handle()
     _handle()
     (List.ofSeq _processedEvents, List.ofSeq _eventResults) //The processed messages are for development purposes. The eventResults matter though
