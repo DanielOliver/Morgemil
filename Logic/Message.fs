@@ -34,9 +34,3 @@ type EventResult =
   | EntityDeath
   | EntityMoved of ResultMoved
   | EntityResourceChange of ResultResourceChange
-
-///Emits a new Request
-type EventRequestEmit = EventRequest -> unit
-
-///The callback to handle a request and results.
-type EventMessageHandler = EventRequestEmit -> EventRequest -> EventResult option

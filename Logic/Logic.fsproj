@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="Extensions.fs" />
     <Compile Include="Message.fs" />
+    <Compile Include="TurnBuilder.fs" />
     <Compile Include="TurnQueue.fs" />
     <Compile Include="Game.fs" />
   </ItemGroup>

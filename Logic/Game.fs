@@ -24,28 +24,30 @@ type Game(level : Level, entities : seq<Entity>, positions : seq<PositionCompone
   //TODO: fix
   let mutable _globalTurnQueue = entities |> List.ofSeq
   
-  let _handleRequest (emit : EventRequestEmit) request = 
-    match request with
-    | EventRequest.EntityMovement(req) -> //TODO: moveEntity        
-      let oldPosition = _positions.[req.EntityId]
-      let newPositionVec = oldPosition.Position + req.Direction
-      //TODO: Check that this move is actually valid
-      _positions <- _positions.Replace(req.EntityId, fun old -> { old with Position = newPositionVec })
-      //Movement takes one resource. More for testing purposes. 
-      emit (EventRequest.EntityResourceChange { EntityId = oldPosition.Entity.Id
-                                                ResourceChange = -1.0 })
-      Some(EventResult.EntityMoved { Entity = oldPosition.Entity
-                                     MovedFrom = oldPosition.Position
-                                     MovedTo = newPositionVec })
-    | EventRequest.EntityResourceChange(req) -> 
-      let oldResource = _resources.[req.EntityId]
-      let newResourceAmount = oldResource.ResourceAmount + req.ResourceChange
-      _resources <- _resources.Replace(req.EntityId, fun old -> { old with ResourceAmount = newResourceAmount })
-      Some(EventResult.EntityResourceChange { Entity = _entities.[req.EntityId]
-                                              OldValue = oldResource.ResourceAmount
-                                              NewValue = newResourceAmount
-                                              ResourceChanged = req.ResourceChange })
-    | _ -> None
+  let _handleRequest request = 
+    TurnBuilder () { 
+      match request with
+      | EventRequest.EntityMovement(req) -> //TODO: moveEntity        
+        let oldPosition = _positions.[req.EntityId]
+        let newPositionVec = oldPosition.Position + req.Direction
+        //TODO: Check that this move is actually valid
+        _positions <- _positions.Replace(req.EntityId, fun old -> { old with Position = newPositionVec })
+        //Movement takes one resource. More for testing purposes. 
+        yield EventRequest.EntityResourceChange { EntityId = oldPosition.Entity.Id
+                                                  ResourceChange = -1.0 }
+        yield EventResult.EntityMoved { Entity = oldPosition.Entity
+                                        MovedFrom = oldPosition.Position
+                                        MovedTo = newPositionVec }
+      | EventRequest.EntityResourceChange(req) -> 
+        let oldResource = _resources.[req.EntityId]
+        let newResourceAmount = oldResource.ResourceAmount + req.ResourceChange
+        _resources <- _resources.Replace(req.EntityId, fun old -> { old with ResourceAmount = newResourceAmount })
+        yield EventResult.EntityResourceChange { Entity = _entities.[req.EntityId]
+                                                 OldValue = oldResource.ResourceAmount
+                                                 NewValue = newResourceAmount
+                                                 ResourceChanged = req.ResourceChange }
+      | _ -> ()
+    }
   
   member this.Update() = 
     let nextEntity = _globalTurnQueue.Head //TODO: Actually have more than one entity (the player)
