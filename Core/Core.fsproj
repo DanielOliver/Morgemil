@@ -71,6 +71,7 @@
     <Compile Include="Person.fs" />
     <Compile Include="Entity.fs" />
     <Compile Include="Components.fs" />
+    <Compile Include="World.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core">

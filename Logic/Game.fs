@@ -3,11 +3,7 @@
 open Morgemil.Core
 open Morgemil.Logic.Extensions
 
-type GameState = 
-  | AiTurn
-  | HumanTurn
-
-type Game(level : Level, entities : seq<Entity>, positions : seq<PositionComponent>, controllers : seq<ControlComponent>) = 
+type Game(level : Level, entities : seq<Entity>, positions : seq<PositionComponent>, controllers : seq<ControlComponent>, resources : seq<ResourceComponent>) = 
   
   let mutable _entities = 
     [ for ent in entities -> ent.Id, ent ]
@@ -22,29 +18,25 @@ type Game(level : Level, entities : seq<Entity>, positions : seq<PositionCompone
     |> Map.ofSeq
   
   let mutable _resources = 
-    [ for ent in entities -> 
-        ent.Id, 
-        { ResourceComponent.Entity = ent
-          ResourceAmount = 50.0 } ] //TODO: fix. Start off with 50 resources because testing
+    [ for res in resources -> res.Entity.Id, res ]
     |> Map.ofSeq
   
   //TODO: fix
   let mutable _globalTurnQueue = entities |> List.ofSeq
-  let mutable _currentGameState = GameState.AiTurn
   
   let _handleRequest (emit : EventRequestEmit) request = 
     match request with
     | EventRequest.EntityMovement(req) -> //TODO: moveEntity        
       let oldPosition = _positions.[req.EntityId]
-      let newPosition = oldPosition.Position + req.Direction
+      let newPositionVec = oldPosition.Position + req.Direction
       //TODO: Check that this move is actually valid
-      _positions <- _positions.Replace(req.EntityId, fun old -> { old with Position = newPosition })
+      _positions <- _positions.Replace(req.EntityId, fun old -> { old with Position = newPositionVec })
       //Movement takes one resource. More for testing purposes. 
       emit (EventRequest.EntityResourceChange { EntityId = oldPosition.Entity.Id
                                                 ResourceChange = -1.0 })
       Some(EventResult.EntityMoved { Entity = oldPosition.Entity
                                      MovedFrom = oldPosition.Position
-                                     MovedTo = newPosition })
+                                     MovedTo = newPositionVec })
     | EventRequest.EntityResourceChange(req) -> 
       let oldResource = _resources.[req.EntityId]
       let newResourceAmount = oldResource.ResourceAmount + req.ResourceChange
@@ -56,21 +48,16 @@ type Game(level : Level, entities : seq<Entity>, positions : seq<PositionCompone
     | _ -> None
   
   member this.Update() = 
-    let nextEntity = _globalTurnQueue.Head
+    let nextEntity = _globalTurnQueue.Head //TODO: Actually have more than one entity (the player)
     let controller = _controllers.[nextEntity.Id]
-    _currentGameState <- match controller.IsHumanControlled with
-                         | true -> GameState.HumanTurn
-                         | false -> GameState.AiTurn
-    //TODO: process AI turn
-    _currentGameState
+    match controller.IsHumanControlled with
+    | true -> ()
+    | false -> () //TODO: process AI turn
   
   ///Returns whether the human had a valid request
   member this.HumanRequest(request : EventRequest) = 
-    match _currentGameState with
-    | GameState.HumanTurn -> 
-      let (processedEvents, results) = TurnQueue.HandleMessages _handleRequest request
-      //TODO: Display results through gui
-      printfn ""
-      results |> Seq.iter (fun res -> printfn "%A" res)
-      true
-    | GameState.AiTurn -> false
+    let (processedEvents, results) = TurnQueue.HandleMessages _handleRequest request
+    //TODO: Display results through gui
+    printfn ""
+    results |> Seq.iter (fun res -> printfn "%A" res)
+    true

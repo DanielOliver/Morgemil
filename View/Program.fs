@@ -16,12 +16,16 @@ let main argv =
     { ControlComponent.Entity = player
       IsHumanControlled = true }
   
+  let resource = 
+    { ResourceComponent.Entity = player
+      ResourceAmount = 50.0 }
+  
   let level = 
     Morgemil.Core.DungeonGeneration.Generate({ DungeonParameter.Depth = 1
                                                RngSeed = 5
                                                Type = DungeonGenerationType.Square })
   
-  let game = Morgemil.Logic.Game(level, [| player |], [| position |], [| controller |])
+  let game = Morgemil.Logic.Game(level, [| player |], [| position |], [| controller |], [| resource |])
   
   let rec _continue() = 
     game.Update()
