@@ -1,9 +1,9 @@
-﻿namespace Morgemil.Math
+﻿namespace Morgemil.Core
 
 open System
 
 /// <summary>
-/// Linear transformations ONLY. Use in combination with <see cref="Morgemil.Math.Vector2f">Vector2f</see>
+/// Linear transformations ONLY. Use in combination with <see cref="Morgemil.Core.Vector2f">Vector2f</see>
 /// </summary>
 type Matrix2f = 
   struct

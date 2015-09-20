@@ -1,4 +1,4 @@
-﻿namespace Morgemil.Math
+﻿namespace Morgemil.Core
 
 /// <summary>
 /// Utility Vector2 functions that don't fit as a type

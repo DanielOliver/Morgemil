@@ -1,4 +1,4 @@
-﻿namespace Morgemil.Game
+﻿namespace Morgemil.Core
 
 ///The actions available to an entity.
 type Actions = 

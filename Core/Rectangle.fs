@@ -1,10 +1,11 @@
-﻿namespace Morgemil.Math
+﻿namespace Morgemil.Core
 
 open System
 
 /// Edge-inclusive. Axis-aligned bounding box (AABB)
 type Rectangle(position : Vector2i, size : Vector2i) = 
   new(size : Vector2i) = Rectangle(Vector2i(), size)
+  new() = Rectangle(Vector2i(), Vector2i())
   member this.Position = position
   member this.Size = size
   member this.MinCoord = position
