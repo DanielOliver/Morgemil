@@ -13,7 +13,7 @@ let main argv =
       Mobile = true }
   
   let controller = 
-    { ControlComponent.Entity = player
+    { ControllerComponent.Entity = player
       IsHumanControlled = true }
   
   let resource = 

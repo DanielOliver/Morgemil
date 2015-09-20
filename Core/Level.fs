@@ -12,7 +12,13 @@ type Level =
     Area : Rectangle
     Tiles : Tile array
     TileModifiers : List<TileModifier>
-    Depth: int }
+    Depth : int }
+  
+  static member Empty = 
+    { Area = Rectangle()
+      Tiles = Array.empty
+      TileModifiers = List.empty
+      Depth = 0 }
   
   /// <summary>
   /// Global coordinates. Zero-based indices relative to this.Area.Position

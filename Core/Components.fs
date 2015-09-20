@@ -5,7 +5,7 @@ type PositionComponent =
     Position : Vector2i
     Mobile : bool }
 
-type ControlComponent = 
+type ControllerComponent = 
   { Entity : Entity
     IsHumanControlled : bool }
 
@@ -15,5 +15,5 @@ type ResourceComponent =
 
 type Components = 
   | Position of PositionComponent
-  | Control of ControlComponent
+  | Control of ControllerComponent
   | Resource of ResourceComponent

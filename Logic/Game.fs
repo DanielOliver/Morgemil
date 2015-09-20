@@ -3,7 +3,7 @@
 open Morgemil.Core
 open Morgemil.Logic.Extensions
 
-type Game(level : Level, entities : seq<Entity>, positions : seq<PositionComponent>, controllers : seq<ControlComponent>, resources : seq<ResourceComponent>) = 
+type Game(level : Level, entities : seq<Entity>, positions : seq<PositionComponent>, controllers : seq<ControllerComponent>, resources : seq<ResourceComponent>) = 
   
   let mutable _entities = 
     [ for ent in entities -> ent.Id, ent ]
