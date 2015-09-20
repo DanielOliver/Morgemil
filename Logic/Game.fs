@@ -3,7 +3,7 @@
 open Morgemil.Core
 open Morgemil.Logic.Extensions
 
-type Game(level : Level, entities : seq<Entity>, positions : seq<PositionComponent>, controllers : seq<ControllerComponent>, resources : seq<ResourceComponent>) = 
+type Game(level : Level, entities : seq<Entity>, positions : seq<PositionComponent>, players : seq<PlayerComponent>, resources : seq<ResourceComponent>) = 
   
   let mutable _entities = 
     [ for ent in entities -> ent.Id, ent ]
@@ -13,8 +13,8 @@ type Game(level : Level, entities : seq<Entity>, positions : seq<PositionCompone
     [ for pos in positions -> pos.Entity.Id, pos ]
     |> Map.ofSeq
   
-  let mutable _controllers = 
-    [ for cont in controllers -> cont.Entity.Id, cont ]
+  let mutable _players = 
+    [ for cont in players -> cont.Entity.Id, cont ]
     |> Map.ofSeq
   
   let mutable _resources = 
@@ -51,8 +51,8 @@ type Game(level : Level, entities : seq<Entity>, positions : seq<PositionCompone
   
   member this.Update() = 
     let nextEntity = _globalTurnQueue.Head //TODO: Actually have more than one entity (the player)
-    let controller = _controllers.[nextEntity.Id]
-    match controller.IsHumanControlled with
+    let player = _players.[nextEntity.Id]
+    match player.IsHumanControlled with
     | true -> ()
     | false -> () //TODO: process AI turn
   

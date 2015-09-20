@@ -5,7 +5,7 @@ type PositionComponent =
     Position : Vector2i
     Mobile : bool }
 
-type ControllerComponent = 
+type PlayerComponent = 
   { Entity : Entity
     IsHumanControlled : bool }
 
@@ -15,10 +15,10 @@ type ResourceComponent =
 
 type Components = 
   | Position of PositionComponent
-  | Control of ControllerComponent
+  | Player of PlayerComponent
   | Resource of ResourceComponent
   member this.EntityId = 
     match this with
     | Components.Position(x) -> x.Entity.Id
-    | Components.Control(x) -> x.Entity.Id
+    | Components.Player(x) -> x.Entity.Id
     | Components.Resource(x) -> x.Entity.Id

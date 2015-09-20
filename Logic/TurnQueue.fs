@@ -10,7 +10,6 @@ module TurnQueue =
     let _processedEvents = new System.Collections.Generic.List<EventRequest>()
     let _eventQueue = new System.Collections.Generic.Queue<EventRequest>()
     let _eventResults = new System.Collections.Generic.List<EventResult>()
-    let _emit message = _eventQueue.Enqueue(message)
     
     let rec _handle() = 
       match _eventQueue.Count with
