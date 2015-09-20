@@ -7,8 +7,13 @@ type PositionComponent =
 
 type ControlComponent = 
   { Entity : Entity
-    HumanControlled : bool }
+    IsHumanControlled : bool }
+
+type ResourceComponent = 
+  { Entity : Entity
+    ResourceAmount : double }
 
 type Components = 
   | Position of PositionComponent
   | Control of ControlComponent
+  | Resource of ResourceComponent
