@@ -38,8 +38,8 @@ let main argv =
       | System.ConsoleKey.N -> Vector2i(0, -1)
       | System.ConsoleKey.S -> Vector2i(0, 1)
       | _ -> Vector2i()
-    game.HumanRequest(EventRequest.EntityMovement { RequestMovement.EntityId = player.Id
-                                                    Direction = direction })
+    game.HumanRequest({ RequestedMovement.EntityId = player.Id
+                        Direction = direction })
     |> ignore
     _continue()
   _continue()
