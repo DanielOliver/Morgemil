@@ -8,16 +8,16 @@ let main argv =
       Type = EntityType.Person }
   
   let position = 
-    { PositionComponent.Entity = player
+    { PositionComponent.EntityId = player.Id
       Position = Vector2i(5, 5)
       Mobile = true }
   
   let controller = 
-    { PlayerComponent.Entity = player
+    { PlayerComponent.EntityId = player.Id
       IsHumanControlled = true }
   
   let resource = 
-    { ResourceComponent.Entity = player
+    { ResourceComponent.EntityId = player.Id
       ResourceAmount = 50.0 }
   
   let level = 

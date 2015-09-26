@@ -3,16 +3,16 @@
 open Morgemil.Core
 
 type RequestedMovement = 
-  { EntityId : int
+  { EntityId : EntityId
     Direction : Vector2i }
 
 type ResultMoved = 
-  { Entity : Entity
+  { EntityId : EntityId
     MovedFrom : Vector2i
     MovedTo : Vector2i }
 
 type ResultResourceChanged = 
-  { Entity : Entity
+  { EntityId : EntityId
     ResourceChanged : double
     OldValue : double
     NewValue : double }

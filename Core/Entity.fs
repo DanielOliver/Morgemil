@@ -1,5 +1,7 @@
 ﻿namespace Morgemil.Core
 
+type EntityId = int
+
 type EntityType = 
   | Person
   | Door
@@ -7,5 +9,5 @@ type EntityType =
   | Object
 
 type Entity = 
-  { Id : int
+  { Id : EntityId
     Type : EntityType }

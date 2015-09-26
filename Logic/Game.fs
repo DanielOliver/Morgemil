@@ -10,15 +10,15 @@ type Game(level : Level, entities : seq<Entity>, positions : seq<PositionCompone
     |> Map.ofSeq
   
   let mutable _positions = 
-    [ for pos in positions -> pos.Entity.Id, pos ]
+    [ for pos in positions -> pos.EntityId, pos ]
     |> Map.ofSeq
   
   let mutable _players = 
-    [ for cont in players -> cont.Entity.Id, cont ]
+    [ for cont in players -> cont.EntityId, cont ]
     |> Map.ofSeq
   
   let mutable _resources = 
-    [ for res in resources -> res.Entity.Id, res ]
+    [ for res in resources -> res.EntityId, res ]
     |> Map.ofSeq
   
   //TODO: fix
@@ -36,11 +36,11 @@ type Game(level : Level, entities : seq<Entity>, positions : seq<PositionCompone
         let oldResource = _resources.[req.EntityId]
         let newResourceAmount = oldResource.ResourceAmount - 1.0
         _resources <- _resources.Replace(req.EntityId, fun old -> { old with ResourceAmount = newResourceAmount })
-        yield EventResult.EntityResourceChanged { Entity = _entities.[req.EntityId]
+        yield EventResult.EntityResourceChanged { EntityId = req.EntityId
                                                   OldValue = oldResource.ResourceAmount
                                                   NewValue = newResourceAmount
                                                   ResourceChanged = oldResource.ResourceAmount - newResourceAmount }
-        yield EventResult.EntityMoved { Entity = oldPosition.Entity
+        yield EventResult.EntityMoved { EntityId = oldPosition.EntityId
                                         MovedFrom = oldPosition.Position
                                         MovedTo = newPositionVec }
       | _ -> ()
