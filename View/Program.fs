@@ -4,7 +4,7 @@ open Morgemil.Logic
 [<EntryPoint>]
 let main argv = 
   let player = 
-    { Entity.Id = 3
+    { Entity.Id = EntityId 3
       Type = EntityType.Person }
   
   let position = 

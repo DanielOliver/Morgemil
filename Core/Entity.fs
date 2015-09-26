@@ -1,6 +1,6 @@
 ﻿namespace Morgemil.Core
 
-type EntityId = int
+type EntityId = EntityId of int
 
 type EntityType = 
   | Person
