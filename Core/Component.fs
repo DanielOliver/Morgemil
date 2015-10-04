@@ -13,12 +13,13 @@ type ResourceComponent =
   { EntityId : EntityId
     ResourceAmount : double }
 
-type Components = 
+type Component = 
   | Position of PositionComponent
   | Player of PlayerComponent
   | Resource of ResourceComponent
+  
   member this.EntityId = 
     match this with
-    | Components.Position(x) -> x.EntityId
-    | Components.Player(x) -> x.EntityId
-    | Components.Resource(x) -> x.EntityId
+    | Component.Position(x) -> x.EntityId
+    | Component.Player(x) -> x.EntityId
+    | Component.Resource(x) -> x.EntityId
