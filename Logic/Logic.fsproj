@@ -52,7 +52,6 @@
   <ItemGroup>
     <Compile Include="Extensions.fs" />
     <Compile Include="ComponentSystem.fs" />
-    <Compile Include="SpatialSystem.fs" />
     <Compile Include="Message.fs" />
     <Compile Include="TurnBuilder.fs" />
     <Compile Include="TurnQueue.fs" />

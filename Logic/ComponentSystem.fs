@@ -2,23 +2,32 @@
 
 open Morgemil.Core
 
-[<AbstractClass>]
-type ComponentSystem<'T>(convertFrom : Component -> 'T, convertTo : 'T -> Component, add : 'T -> unit, remove : 'T -> unit) = 
-  let _components = new System.Collections.Generic.Dictionary<EntityId, Component>()
+type ComponentSystem(initialComponents : seq<Component>) = 
+  let mutable _components : Set<Component> = Set.empty
+  let _added = new Event<Component>()
+  let _removed = new Event<Component>()
+  let _replaced = new Event<Component * Component>()
+  let _matches entityId (item : Component) = (item.EntityId = entityId)
+  new() = ComponentSystem(Seq.empty)
+  member this.ComponentRemoved = _removed.Publish
+  member this.ComponentAdded = _added.Publish
+  member this.ComponentReplaced = _replaced.Publish
+  member this.Find entityId = _components |> Set.filter (_matches entityId)
   
   member this.Add item = 
-    let comp = convertTo item
-    _components.Add(comp.EntityId, comp)
-    add item
+    _components <- _components.Add item
+    _added.Trigger(item)
   
   member this.Remove item = 
-    let comp = convertTo item
-    _components.Remove(comp.EntityId) |> ignore
-    remove item
+    _components <- _components.Remove item
+    _removed.Trigger(item)
   
-  member this.Replace entityId (replacement : 'T -> 'T) = 
-    let old_val = _components.[entityId] |> convertFrom
-    remove old_val
-    let new_val = old_val |> replacement
-    _components.[entityId] <- (convertTo new_val)
-    add new_val
+  member this.Remove entityId = 
+    let (to_remove, to_keep) = Set.partition (_matches entityId) _components
+    _components <- to_keep
+    to_remove |> Seq.iter _removed.Trigger
+  
+  member this.Replace (old_value : Component) new_value = 
+    this.Remove old_value
+    this.Add new_value
+    _replaced.Trigger(old_value, new_value)
