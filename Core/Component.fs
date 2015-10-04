@@ -1,24 +1,25 @@
 ﻿namespace Morgemil.Core
 
 type PositionComponent = 
-  { Entity : Entity
+  { EntityId : EntityId
     Position : Vector2i
     Mobile : bool }
 
-type ControllerComponent = 
-  { Entity : Entity
+type PlayerComponent = 
+  { EntityId : EntityId
     IsHumanControlled : bool }
 
 type ResourceComponent = 
-  { Entity : Entity
+  { EntityId : EntityId
     ResourceAmount : double }
 
-type Components = 
+type Component = 
   | Position of PositionComponent
-  | Control of ControllerComponent
+  | Player of PlayerComponent
   | Resource of ResourceComponent
+  
   member this.EntityId = 
     match this with
-    | Components.Position(x) -> x.Entity.Id
-    | Components.Control(x) -> x.Entity.Id
-    | Components.Resource(x) -> x.Entity.Id
+    | Component.Position(x) -> x.EntityId
+    | Component.Player(x) -> x.EntityId
+    | Component.Resource(x) -> x.EntityId

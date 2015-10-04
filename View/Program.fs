@@ -4,20 +4,20 @@ open Morgemil.Logic
 [<EntryPoint>]
 let main argv = 
   let player = 
-    { Entity.Id = 3
+    { Entity.Id = EntityId 3
       Type = EntityType.Person }
   
   let position = 
-    { PositionComponent.Entity = player
+    { PositionComponent.EntityId = player.Id
       Position = Vector2i(5, 5)
       Mobile = true }
   
   let controller = 
-    { ControllerComponent.Entity = player
+    { PlayerComponent.EntityId = player.Id
       IsHumanControlled = true }
   
   let resource = 
-    { ResourceComponent.Entity = player
+    { ResourceComponent.EntityId = player.Id
       ResourceAmount = 50.0 }
   
   let level = 
@@ -38,8 +38,8 @@ let main argv =
       | System.ConsoleKey.N -> Vector2i(0, -1)
       | System.ConsoleKey.S -> Vector2i(0, 1)
       | _ -> Vector2i()
-    game.HumanRequest(EventRequest.EntityMovement { RequestMovement.EntityId = player.Id
-                                                    Direction = direction })
+    game.HumanRequest({ RequestedMovement.EntityId = player.Id
+                        Direction = direction })
     |> ignore
     _continue()
   _continue()
