@@ -4,38 +4,22 @@ open Morgemil.Core
 open Morgemil.Logic.Extensions
 
 type Game(level : Level, entities : seq<Entity>, positions : seq<PositionComponent>, players : seq<PlayerComponent>, resources : seq<ResourceComponent>) = 
-  
-  let mutable _entities = 
-    [ for ent in entities -> ent.Id, ent ]
-    |> Map.ofSeq
-  
-  let mutable _positions = 
-    [ for pos in positions -> pos.EntityId, pos ]
-    |> Map.ofSeq
-  
-  let mutable _players = 
-    [ for cont in players -> cont.EntityId, cont ]
-    |> Map.ofSeq
-  
-  let mutable _resources = 
-    [ for res in resources -> res.EntityId, res ]
-    |> Map.ofSeq
-  
+  let _world = World(level, Set.ofSeq (positions), Set.ofSeq (resources), Set.ofSeq (players))
   //TODO: fix
-  let mutable _globalTurnQueue = entities |> List.ofSeq
+  let mutable _globalTurnQueue = (entities |> Seq.toList).Head
   
   let _handleRequest request = 
     TurnBuilder () { 
       match request with
       | EventResult.EntityMovementRequested(req) -> //TODO: moveEntity        
-        let oldPosition = _positions.[req.EntityId]
+        let oldPosition = _world.Spatial.[req.EntityId]
         let newPositionVec = oldPosition.Position + req.Direction
         //TODO: Check that this move is actually valid
-        _positions <- _positions.Replace(req.EntityId, fun old -> { old with Position = newPositionVec })
+        _world.Spatial.Replace(oldPosition, { oldPosition with Position = newPositionVec })
         //Movement takes one resource. More for testing purposes. 
-        let oldResource = _resources.[req.EntityId]
+        let oldResource = _world.Resources.[req.EntityId]
         let newResourceAmount = oldResource.ResourceAmount - 1.0
-        _resources <- _resources.Replace(req.EntityId, fun old -> { old with ResourceAmount = newResourceAmount })
+        _world.Resources.Replace(oldResource, { oldResource with ResourceAmount = newResourceAmount })
         yield EventResult.EntityResourceChanged { EntityId = req.EntityId
                                                   OldValue = oldResource.ResourceAmount
                                                   NewValue = newResourceAmount
@@ -47,8 +31,8 @@ type Game(level : Level, entities : seq<Entity>, positions : seq<PositionCompone
     }
   
   member this.Update() = 
-    let nextEntity = _globalTurnQueue.Head //TODO: Actually have more than one entity (the player)
-    let player = _players.[nextEntity.Id]
+    let nextEntity = _globalTurnQueue //TODO: Actually have more than one entity (the player)
+    let player = _world.Players.[nextEntity.Id]
     match player.IsHumanControlled with
     | true -> ()
     | false -> () //TODO: process AI turn
