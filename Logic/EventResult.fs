@@ -13,9 +13,9 @@ type ResultMoved =
 
 type ResultResourceChanged = 
   { EntityId : EntityId
-    ResourceChanged : double
     OldValue : double
     NewValue : double }
+  member this.ResourceChanged = this.OldValue - this.NewValue
 
 ///This represents the results of an action
 type EventResult = 

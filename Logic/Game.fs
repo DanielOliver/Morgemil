@@ -13,20 +13,16 @@ type Game(level : Level, entities : seq<Entity>, positions : seq<PositionCompone
       match request with
       | EventResult.EntityMovementRequested(req) -> //TODO: moveEntity        
         let old_position = _world.Spatial.[req.EntityId]
-        let newPositionVec = old_position.Position + req.Direction
         //TODO: Check that this move is actually valid
-        _world.Spatial.Replace old_position { old_position with Position = newPositionVec }
+        let new_position = 
+          _world.Spatial.Replace(old_position, { old_position with Position = old_position.Position + req.Direction })
         //Movement takes one resource. More for testing purposes. 
         let old_resource = _world.Resources.[req.EntityId]
-        let newResourceAmount = old_resource.ResourceAmount - 1.0
-        _world.Resources.Replace old_resource { old_resource with ResourceAmount = newResourceAmount }
-        yield EventResult.EntityResourceChanged { EntityId = req.EntityId
-                                                  OldValue = old_resource.ResourceAmount
-                                                  NewValue = newResourceAmount
-                                                  ResourceChanged = old_resource.ResourceAmount - newResourceAmount }
-        yield EventResult.EntityMoved { EntityId = old_position.EntityId
-                                        MovedFrom = old_position.Position
-                                        MovedTo = newPositionVec }
+        let new_resource = 
+          _world.Resources.Replace
+            (old_resource, { old_resource with ResourceAmount = old_resource.ResourceAmount - 1.0 })
+        yield Message.ResourceChange(old_resource, new_resource)
+        yield Message.PositionChange(old_position, new_position)
       | _ -> ()
     }
   

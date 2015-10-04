@@ -54,7 +54,8 @@
     <Compile Include="ComponentSystem.fs" />
     <Compile Include="SpatialSystem.fs" />
     <Compile Include="World.fs" />
-    <Compile Include="Message.fs" />
+    <Compile Include="EventResult.fs" />
+    <Compile Include="MessageCreation.fs" />
     <Compile Include="TurnBuilder.fs" />
     <Compile Include="TurnQueue.fs" />
     <Compile Include="Game.fs" />
