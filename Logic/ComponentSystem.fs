@@ -32,8 +32,7 @@ type ComponentSystem<'T when 'T : comparison>(initialComponents : Set<'T>, getId
   abstract Add : 'T -> unit
   abstract Remove : 'T -> unit
   abstract Remove : EntityId -> unit
-  abstract Replace : 'T * 'T -> unit
-  abstract Replace : EntityId * ('T -> 'T) -> unit
+  abstract Replace : 'T -> 'T -> unit
   
   override this.Add item = 
     _components <- _components.Add(getId item, item)
@@ -44,13 +43,7 @@ type ComponentSystem<'T when 'T : comparison>(initialComponents : Set<'T>, getId
     _removed.Trigger(item)
   
   override this.Remove entityId = this.Remove _components.[entityId]
-  
-  override this.Replace(old_value : 'T, new_value) = 
+  override this.Replace old_value new_value = 
     this.Remove old_value
     this.Add new_value
     _replaced.Trigger(old_value, new_value)
-  
-  override this.Replace(entityId : EntityId, replacement : 'T -> 'T) = 
-    match this.Find entityId with
-    | Some(old) -> this.Replace(old, replacement old)
-    | _ -> ()

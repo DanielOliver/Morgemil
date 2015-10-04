@@ -12,20 +12,20 @@ type Game(level : Level, entities : seq<Entity>, positions : seq<PositionCompone
     TurnBuilder () { 
       match request with
       | EventResult.EntityMovementRequested(req) -> //TODO: moveEntity        
-        let oldPosition = _world.Spatial.[req.EntityId]
-        let newPositionVec = oldPosition.Position + req.Direction
+        let old_position = _world.Spatial.[req.EntityId]
+        let newPositionVec = old_position.Position + req.Direction
         //TODO: Check that this move is actually valid
-        _world.Spatial.Replace(oldPosition, { oldPosition with Position = newPositionVec })
+        _world.Spatial.Replace old_position { old_position with Position = newPositionVec }
         //Movement takes one resource. More for testing purposes. 
-        let oldResource = _world.Resources.[req.EntityId]
-        let newResourceAmount = oldResource.ResourceAmount - 1.0
-        _world.Resources.Replace(oldResource, { oldResource with ResourceAmount = newResourceAmount })
+        let old_resource = _world.Resources.[req.EntityId]
+        let newResourceAmount = old_resource.ResourceAmount - 1.0
+        _world.Resources.Replace old_resource { old_resource with ResourceAmount = newResourceAmount }
         yield EventResult.EntityResourceChanged { EntityId = req.EntityId
-                                                  OldValue = oldResource.ResourceAmount
+                                                  OldValue = old_resource.ResourceAmount
                                                   NewValue = newResourceAmount
-                                                  ResourceChanged = oldResource.ResourceAmount - newResourceAmount }
-        yield EventResult.EntityMoved { EntityId = oldPosition.EntityId
-                                        MovedFrom = oldPosition.Position
+                                                  ResourceChanged = old_resource.ResourceAmount - newResourceAmount }
+        yield EventResult.EntityMoved { EntityId = old_position.EntityId
+                                        MovedFrom = old_position.Position
                                         MovedTo = newPositionVec }
       | _ -> ()
     }
