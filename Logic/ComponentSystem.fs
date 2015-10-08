@@ -1,6 +1,7 @@
 ﻿namespace Morgemil.Logic
 
 open Morgemil.Core
+open Morgemil.Logic.Extensions
 
 type ComponentSystem<'T when 'T : comparison>(initialComponents : Set<'T>, getId : 'T -> EntityId) = 
   
@@ -24,32 +25,23 @@ type ComponentSystem<'T when 'T : comparison>(initialComponents : Set<'T>, getId
     | _ -> None
   
   member this.Item 
-    with get (entityId : EntityId) = 
-      match this.Find entityId with
-      | Some(x) -> x
-      | _ -> invalidOp "ComponentSystem.Item"
+    with get (entityId : EntityId) = _components.[entityId]
   
-  abstract Add : 'T -> unit
-  abstract Remove : 'T -> unit
-  abstract Remove : EntityId -> unit
-  abstract Replace : 'T * 'T -> 'T
-  abstract Replace : EntityId * ('T -> 'T) -> 'T * 'T
-  
-  override this.Add item = 
+  member this.Add item = 
     _components <- _components.Add(getId item, item)
     _added.Trigger(item)
   
-  override this.Remove item = 
+  member this.Remove item = 
     _components <- _components.Remove(getId item)
     _removed.Trigger(item)
   
-  override this.Remove entityId = this.Remove _components.[entityId]
+  member this.Remove entityId = this.Remove _components.[entityId]
   
-  override this.Replace(old_value : 'T, new_value) = 
-    _components <- _components.Remove(getId old_value).Add(getId new_value, new_value)
+  member this.Replace(old_value : 'T, new_value : 'T) = 
+    _components <- _components.Replace(getId old_value, new_value)
     _replaced.Trigger(old_value, new_value)
     new_value
   
-  override this.Replace(entityId : EntityId, replacement) = 
+  member this.Replace(entityId : EntityId, replacement) = 
     let old_value = this.[entityId]
     (old_value, this.Replace(old_value, replacement old_value))
