@@ -3,7 +3,7 @@
 open Morgemil.Core
 open Morgemil.Logic.Extensions
 
-type ComponentSystem<'T when 'T : comparison>(initialComponents : Set<'T>, getId : 'T -> EntityId) = 
+type ComponentSystem<'T when 'T : comparison>(initialComponents : seq<'T>, getId : 'T -> EntityId) = 
   
   let mutable _components : Map<EntityId, 'T> = 
     [ for item in initialComponents -> (getId item), item ]
@@ -13,7 +13,7 @@ type ComponentSystem<'T when 'T : comparison>(initialComponents : Set<'T>, getId
   let _removed = new Event<'T>()
   let _replaced = new Event<'T * 'T>()
   let _matches entityId (item : 'T) = (getId (item) = entityId)
-  new(getId) = ComponentSystem(Set.empty, getId)
+  new(getId) = ComponentSystem(Seq.empty, getId)
   member this.Components = _components |> Seq.map (fun t -> t.Value)
   member this.ComponentRemoved = _removed.Publish
   member this.ComponentAdded = _added.Publish
@@ -45,3 +45,5 @@ type ComponentSystem<'T when 'T : comparison>(initialComponents : Set<'T>, getId
   member this.Replace(entityId : EntityId, replacement) = 
     let old_value = this.[entityId]
     (old_value, this.Replace(old_value, replacement old_value))
+  
+  member this.Copy() = ComponentSystem(this.Components, getId)

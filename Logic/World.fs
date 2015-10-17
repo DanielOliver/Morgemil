@@ -11,4 +11,5 @@ type World(level, spatialComponents, resourceComponents, playerComponents) =
   member this.Level = _level
   member this.Resources = _resources
   member this.Players = _players
-  static member Empty = World(Level.Empty, Set.empty, Set.empty, Set.empty)
+  member this.Copy() = World(level, _spatial.Components, _resources.Components, _players.Components)
+  static member Empty = World(Level.Empty, Seq.empty, Seq.empty, Seq.empty)
