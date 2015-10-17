@@ -2,4 +2,4 @@
 
 type Stairs = 
   { DungeonParameter : DungeonParameter
-    Area: Morgemil.Core.Rectangle }
+    Area : Morgemil.Core.Rectangle }

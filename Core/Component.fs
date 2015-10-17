@@ -17,7 +17,6 @@ type Component =
   | Position of PositionComponent
   | Player of PlayerComponent
   | Resource of ResourceComponent
-  
   member this.EntityId = 
     match this with
     | Component.Position(x) -> x.EntityId

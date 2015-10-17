@@ -1,7 +1,6 @@
 ﻿namespace Morgemil.Logic
 
 open Morgemil.Core
-open Morgemil.Logic.Extensions
 
 type Game(level : Level, entities : seq<Entity>, positions : seq<PositionComponent>, players : seq<PlayerComponent>, resources : seq<ResourceComponent>) = 
   let _world = World(level, Set.ofSeq (positions), Set.ofSeq (resources), Set.ofSeq (players))
