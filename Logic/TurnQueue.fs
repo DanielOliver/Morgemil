@@ -22,4 +22,4 @@ module TurnQueue =
         _handle()
     _eventQueue.Enqueue(initialRequest)
     _handle()
-    (List.ofSeq _processedEvents) //The processed messages are for development purposes. The eventResults matter though
+    (List.ofSeq _processedEvents)

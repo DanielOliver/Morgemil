@@ -11,17 +11,11 @@ type Game(level : Level, entities : seq<Entity>, positions : seq<PositionCompone
     TurnBuilder () { 
       match request with
       | EventResult.EntityMovementRequested(req) -> 
-        let old_position = _world.Spatial.[req.EntityId]
-        //TODO: Check that this move is actually valid
-        let new_position = 
-          _world.Spatial.Replace(old_position, { old_position with Position = old_position.Position + req.Direction })
-        yield Message.PositionChange(old_position, new_position)
-        //Movement takes one resource. More for testing purposes. 
-        let old_resource = _world.Resources.[req.EntityId]
-        let new_resource = 
-          _world.Resources.Replace
-            (old_resource, { old_resource with ResourceAmount = old_resource.ResourceAmount - 1.0 })
-        yield Message.ResourceChange(old_resource, new_resource)
+        yield Message.PositionChange
+                (_world.Spatial.Replace(req.EntityId, fun old -> { old with Position = old.Position + req.Direction }))
+        yield Message.ResourceChange
+                (_world.Resources.Replace
+                   (req.EntityId, fun old -> { old with ResourceAmount = old.ResourceAmount - 1.0 }))
       | _ -> ()
     }
   
