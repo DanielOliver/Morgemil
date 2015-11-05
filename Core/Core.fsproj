@@ -70,6 +70,7 @@
     <Compile Include="Race.fs" />
     <Compile Include="Person.fs" />
     <Compile Include="Entity.fs" />
+    <Compile Include="Trigger.fs" />
     <Compile Include="Component.fs" />
   </ItemGroup>
   <ItemGroup>

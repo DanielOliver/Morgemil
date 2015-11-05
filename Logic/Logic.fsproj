@@ -58,6 +58,7 @@
     <Compile Include="MessageCreation.fs" />
     <Compile Include="TurnBuilder.fs" />
     <Compile Include="TurnQueue.fs" />
+    <Compile Include="TriggerSystem.fs" />
     <Compile Include="Game.fs" />
   </ItemGroup>
   <PropertyGroup>
