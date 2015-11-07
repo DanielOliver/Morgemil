@@ -25,11 +25,14 @@ type World(level, spatialComponents, resourceComponents, playerComponents, trigg
     _actions.Remove entityId |> ignore
     _entities.Free entityId
   
+  member this.Reserve() = _entities.Generate()
+  
   member this.Entity entityId = 
     { new ComponentAggregator(entityId) with
-        member this.Position = _spatial.Find(entityId)
-        member this.Player = _players.Find(entityId)
-        member this.Resource = _resources.Find(entityId)
-        member this.Action = _actions.Find(entityId) }
+        member this.Position = _spatial.Find entityId
+        member this.Player = _players.Find entityId
+        member this.Resource = _resources.Find entityId
+        member this.Action = _actions.Find entityId
+        member this.Triggers = _triggers.Find entityId }
   
   static member Empty = World(Level.Empty, Seq.empty, Seq.empty, Seq.empty, Seq.empty, Seq.empty, Seq.empty)

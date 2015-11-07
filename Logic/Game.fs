@@ -31,7 +31,7 @@ type Game(level : Level, entities : seq<Entity>, positions : seq<PositionCompone
     }
   
   //TODO: REMOVE TRIGGER TEST CODE
-  do _world.Triggers.Add(fun t -> Trigger.Empty(EntityId 5, { EmptyTrigger.Name = "" }, t)) |> ignore
+  do _world.Triggers.Add(fun t -> Trigger.Empty(_world.Reserve(), { EmptyTrigger.Name = "" }, t)) |> ignore
   
   do 
     _world.Players.Components

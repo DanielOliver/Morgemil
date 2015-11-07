@@ -23,6 +23,11 @@ type TriggerSystem(triggers : seq<Trigger>) =
   
   member this.Items = _triggers |> Seq.map (fun t -> t.Value)
   
+  member this.Find entityId = 
+    _triggers
+    |> Seq.filter (fun t -> t.Value.EntityId = entityId)
+    |> Seq.map (fun t -> t.Value)
+  
   member this.Add(create : TriggerId -> Trigger) = 
     let gen = _identity.Generate()
     let result = create gen

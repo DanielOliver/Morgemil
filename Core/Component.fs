@@ -38,3 +38,4 @@ type ComponentAggregator(entityId : EntityId) =
   abstract Player : PlayerComponent option
   abstract Resource : ResourceComponent option
   abstract Action : ActionComponent option
+  abstract Triggers : seq<Trigger>
