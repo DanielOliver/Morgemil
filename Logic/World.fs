@@ -19,33 +19,9 @@ type World(level, spatialComponents, resourceComponents, playerComponents, trigg
   
   member this.Entity entityId = 
     { new ComponentAggregator(entityId) with
-        
-        member this.Position 
-          with get () = _spatial.Find(entityId)
-          and set (value) = 
-            match value with
-            | Some(x) -> _spatial.AddOrReplace(entityId, x)
-            | None -> _spatial.Remove entityId
-        
-        member this.Player 
-          with get () = _players.Find(entityId)
-          and set (value) = 
-            match value with
-            | Some(x) -> _players.AddOrReplace(entityId, x)
-            | None -> _players.Remove entityId
-        
-        member this.Resource 
-          with get () = _resources.Find(entityId)
-          and set (value) = 
-            match value with
-            | Some(x) -> _resources.AddOrReplace(entityId, x)
-            | None -> _resources.Remove entityId
-        
-        member this.Action 
-          with get () = _actions.Find(entityId)
-          and set (value) = 
-            match value with
-            | Some(x) -> _actions.AddOrReplace(entityId, x)
-            | None -> _actions.Remove entityId }
+        member this.Position = _spatial.Find(entityId)
+        member this.Player = _players.Find(entityId)
+        member this.Resource = _resources.Find(entityId)
+        member this.Action = _actions.Find(entityId) }
   
   static member Empty = World(Level.Empty, Seq.empty, Seq.empty, Seq.empty, Seq.empty, Seq.empty, Seq.empty)

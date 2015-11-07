@@ -34,7 +34,7 @@ type Component =
 [<AbstractClass>]
 type ComponentAggregator(entityId : EntityId) = 
   member this.EntityId = entityId
-  abstract Position : PositionComponent option with get, set
-  abstract Player : PlayerComponent option with get, set
-  abstract Resource : ResourceComponent option with get, set
-  abstract Action : ActionComponent option with get, set
+  abstract Position : PositionComponent option
+  abstract Player : PlayerComponent option
+  abstract Resource : ResourceComponent option
+  abstract Action : ActionComponent option
