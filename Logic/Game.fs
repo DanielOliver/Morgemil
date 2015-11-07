@@ -3,7 +3,7 @@
 open Morgemil.Core
 
 type Game(level : Level, entities : seq<Entity>, positions : seq<PositionComponent>, players : seq<PlayerComponent>, resources : seq<ResourceComponent>) = 
-  let _world = World(level, Set.ofSeq (positions), Set.ofSeq (resources), Set.ofSeq (players))
+  let _world = World(level, Set.ofSeq (positions), Set.ofSeq (resources), Set.ofSeq (players), Seq.empty)
   //TODO: fix
   let mutable _globalTurnQueue = (entities |> Seq.toList).Head
   

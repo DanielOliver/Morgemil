@@ -1,7 +1,5 @@
 ﻿namespace Morgemil.Logic
 
-type TurnStep = List<EventResult>
-
 type TurnBuilder() = 
   member this.Bind(x, f) = f x
   member this.Zero() = TurnStep.Empty
