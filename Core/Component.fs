@@ -30,3 +30,11 @@ type Component =
     | Component.Player(x) -> x.EntityId
     | Component.Resource(x) -> x.EntityId
     | Component.Action(x) -> x.EntityId
+
+[<AbstractClass>]
+type ComponentAggregator(entityId : EntityId) = 
+  member this.EntityId = entityId
+  abstract Position : PositionComponent option with get, set
+  abstract Player : PlayerComponent option with get, set
+  abstract Resource : ResourceComponent option with get, set
+  abstract Action : ActionComponent option with get, set

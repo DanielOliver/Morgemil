@@ -35,7 +35,10 @@ type ComponentSystem<'T when 'T : comparison>(initialComponents : seq<'T>, getId
     _components <- _components.Remove(getId item)
     _removed.Trigger(item)
   
-  member this.Remove entityId = this.Remove _components.[entityId]
+  member this.Remove entityId = 
+    match this.Find(entityId) with
+    | Some(x) -> this.Remove x
+    | _ -> ()
   
   member this.Replace(old_value : 'T, new_value : 'T) = 
     _components <- _components.Replace(getId old_value, new_value)
@@ -45,5 +48,10 @@ type ComponentSystem<'T when 'T : comparison>(initialComponents : seq<'T>, getId
   member this.Replace(entityId : EntityId, replacement) = 
     let old_value = this.[entityId]
     (old_value, this.Replace(old_value, replacement old_value))
+  
+  member this.AddOrReplace(entityId, value) = 
+    match this.Find(entityId) with
+    | Some(x) -> this.Replace(x, value) |> ignore
+    | _ -> this.Add value
   
   member this.Copy() = ComponentSystem(this.Components, getId)

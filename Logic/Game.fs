@@ -51,7 +51,7 @@ type Game(level : Level, entities : seq<Entity>, positions : seq<PositionCompone
     printfn "Current Entity %A" nextEntity.EntityId
     printfn "Current time %f" _world.Actions.CurrentTime
     results |> Seq.iter (fun res -> printfn "%A" res)
-    while not (_world.Players.[_world.Actions.Next.EntityId].IsHumanControlled) do
+    while not ((_world.Entity _world.Actions.Next.EntityId).Player.Value.IsHumanControlled) do
       let ne = _world.Actions.StepToNext()
       printfn "%A" ne
       _world.Actions.Act(ne.EntityId, 0.8<GameTime>)
