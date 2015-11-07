@@ -3,18 +3,17 @@
 open Morgemil.Core
 
 type Game(level : Level, entities : seq<Entity>, positions : seq<PositionComponent>, players : seq<PlayerComponent>, resources : seq<ResourceComponent>) = 
-  let _world = World(level, Set.ofSeq (positions), Set.ofSeq (resources), Set.ofSeq (players), Seq.empty, Seq.empty)
-  //TODO: fix
-  let mutable _globalTurnQueue = (entities |> Seq.toList).Head
+  let _world = 
+    World(level, Set.ofSeq (positions), Set.ofSeq (resources), Set.ofSeq (players), Seq.empty, Seq.empty, Seq.empty)
   
   let _handleTrigger (event : EventResult) (trigger : Trigger) = 
     TriggerBuilder (trigger) { 
       match event, trigger with
-      | EventResult.EntityMovementRequested(req), Trigger.Empty(x, y, z) -> 
+      | EventResult.EntityMoved(req), Trigger.Empty(x, y, z) -> 
         yield Message.ResourceChange
                 (_world.Resources.Replace
                    (req.EntityId, fun old -> { old with ResourceAmount = old.ResourceAmount - 1.0 }))
-        return TriggerStatus.NoAction
+        return TriggerStatus.Done
       | _ -> ()
     }
   
@@ -34,17 +33,20 @@ type Game(level : Level, entities : seq<Entity>, positions : seq<PositionCompone
   //TODO: REMOVE TRIGGER TEST CODE
   do _world.Triggers.Add(fun t -> Trigger.Empty(EntityId 5, { EmptyTrigger.Name = "" }, t)) |> ignore
   
-  member this.Update() = 
-    let nextEntity = _globalTurnQueue //TODO: Actually have more than one entity (the player)
-    let player = _world.Players.[nextEntity.Id]
-    match player.IsHumanControlled with
-    | true -> ()
-    | false -> () //TODO: process AI turn
+  do 
+    _world.Players.Components
+    |> Seq.map (fun t -> 
+         { ActionComponent.EntityId = t.EntityId
+           TimeOfNextAction = 1.0<GameTime> })
+    |> Seq.iter (_world.Actions.Add)
   
   ///Humans can only move units right now
   member this.HumanRequest(request : RequestedMovement) = 
+    let nextEntity = _world.Actions.StepToNext()
     let results = TurnQueue.HandleMessages _handleRequest (EventResult.EntityMovementRequested request)
+    _world.Actions.Act(nextEntity.EntityId, 1.0<GameTime>)
     //TODO: Display results through gui
     printfn ""
+    printfn "Current time %f" _world.Actions.CurrentTime
     results |> Seq.iter (fun res -> printfn "%A" res)
     true

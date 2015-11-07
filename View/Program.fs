@@ -28,7 +28,6 @@ let main argv =
   let game = Morgemil.Logic.Game(level, [| player |], [| position |], [| controller |], [| resource |])
   
   let rec _continue() = 
-    game.Update()
     let key = System.Console.ReadKey()
     
     let direction = 
