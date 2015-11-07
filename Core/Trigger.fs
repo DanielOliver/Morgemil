@@ -13,15 +13,15 @@ type SomeTrigger =
   { Name : string }
 
 type Trigger = 
-  | EmptyTrigger of EntityId : EntityId * Data : EmptyTrigger * TriggerId : TriggerId
-  | SomeTrigger of EntityId : EntityId * Data : SomeTrigger * TriggerId : TriggerId
+  | Empty of EntityId : EntityId * Data : EmptyTrigger * TriggerId : TriggerId
+  | SomeT of EntityId : EntityId * Data : SomeTrigger * TriggerId : TriggerId
   
   member this.Id = 
     match this with
-    | EmptyTrigger(_, _, id) -> id
-    | SomeTrigger(_, _, id) -> id
+    | Empty(_, _, id) -> id
+    | SomeT(_, _, id) -> id
   
   member this.Entity = 
     match this with
-    | EmptyTrigger(id, _, _) -> id
-    | SomeTrigger(id, _, _) -> id
+    | Empty(id, _, _) -> id
+    | SomeT(id, _, _) -> id

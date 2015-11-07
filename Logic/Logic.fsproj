@@ -56,6 +56,7 @@
     <Compile Include="ComponentSystem.fs" />
     <Compile Include="SpatialSystem.fs" />
     <Compile Include="TriggerSystem.fs" />
+    <Compile Include="TriggerBuilder.fs" />
     <Compile Include="World.fs" />
     <Compile Include="MessageCreation.fs" />
     <Compile Include="TurnBuilder.fs" />
