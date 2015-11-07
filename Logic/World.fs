@@ -17,6 +17,14 @@ type World(level, spatialComponents, resourceComponents, playerComponents, trigg
   member this.Triggers = _triggers
   member this.Actions = _actions
   
+  member this.Free(entityId : EntityId) = 
+    _spatial.Remove entityId |> ignore
+    _resources.Remove entityId |> ignore
+    _players.Remove entityId |> ignore
+    _triggers.Remove entityId |> ignore
+    _actions.Remove entityId |> ignore
+    _entities.Free entityId
+  
   member this.Entity entityId = 
     { new ComponentAggregator(entityId) with
         member this.Position = _spatial.Find(entityId)

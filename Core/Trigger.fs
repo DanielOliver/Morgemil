@@ -21,7 +21,7 @@ type Trigger =
     | Empty(_, _, id) -> id
     | SomeT(_, _, id) -> id
   
-  member this.Entity = 
+  member this.EntityId = 
     match this with
     | Empty(id, _, _) -> id
     | SomeT(id, _, _) -> id
