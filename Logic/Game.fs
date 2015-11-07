@@ -11,8 +11,7 @@ type Game(level : Level, entities : seq<Entity>, positions : seq<PositionCompone
       match event, trigger with
       | EventResult.EntityMoved(req), Trigger.Empty(x, y, z) -> 
         yield Message.ResourceChange
-                (_world.Resources.Replace
-                   (req.EntityId, fun old -> { old with ResourceAmount = old.ResourceAmount - 1.0 }))
+                (_world.Resources.Replace(req.EntityId, fun old -> { old with Stamina = old.Stamina - 1.0<Stamina> }))
         return TriggerStatus.Done
       | _ -> ()
     }
@@ -25,8 +24,7 @@ type Game(level : Level, entities : seq<Entity>, positions : seq<PositionCompone
         yield Message.PositionChange
                 (_world.Spatial.Replace(req.EntityId, fun old -> { old with Position = old.Position + req.Direction }))
         yield Message.ResourceChange
-                (_world.Resources.Replace
-                   (req.EntityId, fun old -> { old with ResourceAmount = old.ResourceAmount - 1.0 }))
+                (_world.Resources.Replace(req.EntityId, fun old -> { old with Stamina = old.Stamina - 1.0<Stamina> }))
       | _ -> ()
     }
   
@@ -51,10 +49,16 @@ type Game(level : Level, entities : seq<Entity>, positions : seq<PositionCompone
     printfn "Current Entity %A" nextEntity.EntityId
     printfn "Current time %f" _world.Actions.CurrentTime
     results |> Seq.iter (fun res -> printfn "%A" res)
-    while not ((_world.Entity _world.Actions.Next.EntityId).Player.Value.IsHumanControlled) do
+
+
+    let currentEntity() = _world.Entity(_world.Actions.Next.EntityId)
+    while not (currentEntity().Player.Value.IsHumanControlled) do
       let ne = _world.Actions.StepToNext()
       printfn ""
+      printfn "###########  BEGIN AI TURN"
       printfn "Current time %f" _world.Actions.CurrentTime
       printfn "%A" ne
       _world.Actions.Act(ne.EntityId, 0.8<GameTime>)
+      printfn "###########  END AI TURN"
+    printfn ""
     true

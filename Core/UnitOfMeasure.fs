@@ -2,3 +2,6 @@
 
 [<Measure>]
 type GameTime
+
+[<Measure>]
+type Stamina
