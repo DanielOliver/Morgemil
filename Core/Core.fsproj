@@ -57,6 +57,7 @@
     <Compile Include="Vector2.fs" />
     <Compile Include="Matrix2f.fs" />
     <Compile Include="Rectangle.fs" />
+    <Compile Include="UnitOfMeasure.fs" />
     <Compile Include="Tile.fs" />
     <Compile Include="Tiles.fs" />
     <Compile Include="DungeonParameter.fs" />

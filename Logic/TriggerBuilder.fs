@@ -14,6 +14,7 @@ type TriggerBuilder(noAction : Trigger) =
   member this.Return(expr : TriggerStatus) = expr
   member this.Return(expr : TurnStep -> TriggerStatus) = expr results
   member this.Return(expr : Trigger * TurnStep -> TriggerStatus) = expr (noAction, results)
+  member this.Return(expr : Trigger -> TriggerStatus) = expr noAction
   member this.Yield(expr) = ()
   member this.Combine(a : TurnStep, b : TriggerStatus) = b
   member this.Delay(f) = f()

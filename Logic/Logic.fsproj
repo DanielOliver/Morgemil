@@ -55,6 +55,7 @@
     <Compile Include="IdentityPool.fs" />
     <Compile Include="ComponentSystem.fs" />
     <Compile Include="SpatialSystem.fs" />
+    <Compile Include="ActionSystem.fs" />
     <Compile Include="TriggerSystem.fs" />
     <Compile Include="TriggerBuilder.fs" />
     <Compile Include="World.fs" />

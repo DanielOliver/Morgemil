@@ -11,12 +11,10 @@ type Game(level : Level, entities : seq<Entity>, positions : seq<PositionCompone
     TriggerBuilder (trigger) { 
       match event, trigger with
       | EventResult.EntityMovementRequested(req), Trigger.Empty(x, y, z) -> 
-        //        yield Message.PositionChange
-        //                (_world.Spatial.Replace(req.EntityId, fun old -> { old with Position = old.Position + req.Direction }))
         yield Message.ResourceChange
                 (_world.Resources.Replace
                    (req.EntityId, fun old -> { old with ResourceAmount = old.ResourceAmount - 1.0 }))
-        return TriggerStatus.Continue
+        return TriggerStatus.NoAction
       | _ -> ()
     }
   
