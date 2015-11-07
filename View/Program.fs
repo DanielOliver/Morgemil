@@ -25,7 +25,11 @@ let main argv =
                                                RngSeed = 5
                                                Type = DungeonGenerationType.Square })
   
-  let game = Morgemil.Logic.Game(level, [| player |], [| position |], [| controller |], [| resource |])
+  let game = 
+    Morgemil.Logic.Game(level, [| player |], [| position |], 
+                        [| controller
+                           { PlayerComponent.EntityId = EntityId 0
+                             IsHumanControlled = false } |], [| resource |])
   
   let rec _continue() = 
     let key = System.Console.ReadKey()
@@ -41,5 +45,6 @@ let main argv =
                         Direction = direction })
     |> ignore
     _continue()
+  
   _continue()
   0

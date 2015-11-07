@@ -15,7 +15,9 @@ type ResourceComponent =
 
 type ActionComponent = 
   { EntityId : EntityId
+    TimeOfRequest : float<GameTime>
     TimeOfNextAction : float<GameTime> }
+  member this.Duration = this.TimeOfNextAction - this.TimeOfRequest
 
 type Component = 
   | Position of PositionComponent

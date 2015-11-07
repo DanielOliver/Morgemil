@@ -35,9 +35,10 @@ type Game(level : Level, entities : seq<Entity>, positions : seq<PositionCompone
   
   do 
     _world.Players.Components
-    |> Seq.map (fun t -> 
+    |> Seq.mapi (fun i t -> 
          { ActionComponent.EntityId = t.EntityId
-           TimeOfNextAction = 1.0<GameTime> })
+           TimeOfRequest = 0.0<GameTime>
+           TimeOfNextAction = 1.0<GameTime> / ((float i) + 1.0) })
     |> Seq.iter (_world.Actions.Add)
   
   ///Humans can only move units right now
@@ -47,6 +48,11 @@ type Game(level : Level, entities : seq<Entity>, positions : seq<PositionCompone
     _world.Actions.Act(nextEntity.EntityId, 1.0<GameTime>)
     //TODO: Display results through gui
     printfn ""
+    printfn "Current Entity %A" nextEntity.EntityId
     printfn "Current time %f" _world.Actions.CurrentTime
     results |> Seq.iter (fun res -> printfn "%A" res)
+    while not (_world.Players.[_world.Actions.Next.EntityId].IsHumanControlled) do
+      let ne = _world.Actions.StepToNext()
+      printfn "%A" ne
+      _world.Actions.Act(ne.EntityId, 0.8<GameTime>)
     true
