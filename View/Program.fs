@@ -1,4 +1,6 @@
-﻿open Morgemil.Core
+﻿module Program
+
+open Morgemil.Core
 open Morgemil.Logic
 
 [<EntryPoint>]
