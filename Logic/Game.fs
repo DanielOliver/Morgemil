@@ -9,10 +9,7 @@ type Game(level : Level, entities : seq<Entity>, positions : seq<PositionCompone
   let _handleTrigger (event : EventResult) (trigger : Trigger) = 
     TriggerBuilder (trigger) { 
       match event, trigger with
-      | EventResult.EntityMoved(req), Trigger.Empty(x, y, z) -> 
-        yield Message.ResourceChange
-                (_world.Resources.Replace(req.EntityId, fun old -> { old with Stamina = old.Stamina - 1.0<Stamina> }))
-        return TriggerStatus.Done
+      | EventResult.EntityMoved(req), Trigger.Empty(x, y, z) -> return TriggerStatus.Done
       | _ -> ()
     }
   
