@@ -9,18 +9,14 @@ type Window() as this =
   let graphics = new GraphicsDeviceManager(this)
   let mutable spriteBatch = Unchecked.defaultof<SpriteBatch>
   
-  override x.Initialize() = 
-    spriteBatch <- new SpriteBatch(graphics.GraphicsDevice)
+  override this.Initialize() = 
     base.Initialize()
-    ()
+    this.Window.Title <- "Morgemil"
+    spriteBatch <- new SpriteBatch(graphics.GraphicsDevice)
   
-  override x.LoadContent() = ()
-  override x.Update(gameTime) = ()
-  
-  override x.Draw(gameTime) = 
-    do x.GraphicsDevice.Clear Color.Black
-    ()
-  
+  override this.LoadContent() = ()
+  override this.Update(gameTime) = ()
+  override this.Draw(gameTime) = this.GraphicsDevice.Clear Color.Black
   ///Creates a new window and starts it
   static member Start() = 
     let window = new Window()
