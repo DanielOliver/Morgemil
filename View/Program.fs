@@ -1,4 +1,6 @@
-﻿open Morgemil.Core
+﻿module Program
+
+open Morgemil.Core
 open Morgemil.Logic
 
 [<EntryPoint>]
@@ -18,7 +20,7 @@ let main argv =
   
   let resource = 
     { ResourceComponent.EntityId = player.Id
-      ResourceAmount = 50.0 }
+      Stamina = 50.0<Stamina> }
   
   let level = 
     Morgemil.Core.DungeonGeneration.Generate({ DungeonParameter.Depth = 1

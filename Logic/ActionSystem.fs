@@ -2,7 +2,7 @@
 
 open Morgemil.Core
 
-type ActionSystem(initial, initialTime) as this = 
+type ActionSystem(initial, initialTime) = 
   inherit ComponentSystem<ActionComponent>(initial, (fun action -> action.EntityId))
   let mutable _currentTime : float<GameTime> = initialTime
   let _stepTo (time : float<GameTime>) = _currentTime <- time

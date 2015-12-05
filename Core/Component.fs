@@ -11,7 +11,7 @@ type PlayerComponent =
 
 type ResourceComponent = 
   { EntityId : EntityId
-    ResourceAmount : double }
+    Stamina : float<Stamina> }
 
 type ActionComponent = 
   { EntityId : EntityId
