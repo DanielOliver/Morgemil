@@ -21,10 +21,16 @@ type Game(level : Level, entities : seq<Entity>, positions : seq<PositionCompone
       yield _world.Triggers.Handle(_handleTrigger request)
       match request with
       | EventResult.EntityMovementRequested(req) -> 
-        yield Message.PositionChange
-                (_world.Spatial.Replace(req.EntityId, fun old -> { old with Position = old.Position + req.Direction }))
-        yield Message.ResourceChange
-                (_world.Resources.Replace(req.EntityId, fun old -> { old with Stamina = old.Stamina - 1.0<Stamina> }))
+        let entity = _world.Entity(req.EntityId)
+        let position = entity.Position.Value
+        let newPosition = position.Position + req.Direction
+        if not (_world.Level.Tile(newPosition).BlocksMovement) && position.Mobile then 
+          yield Message.PositionChange
+                  (_world.Spatial.Replace(req.EntityId, fun _ -> { position with Position = newPosition }))
+          yield Message.ResourceChange
+                  (_world.Resources.Replace(req.EntityId, fun old -> { old with Stamina = old.Stamina - 1.0<Stamina> }))
+          _world.Actions.Act(req.EntityId, 1.0<GameTime>)
+        else _world.Actions.Act(req.EntityId, 0.0<GameTime>)
       | _ -> ()
     }
   
@@ -43,7 +49,6 @@ type Game(level : Level, entities : seq<Entity>, positions : seq<PositionCompone
   member this.HumanRequest(request : RequestedMovement) = 
     let nextEntity = _world.Actions.StepToNext()
     let results = TurnQueue.HandleMessages _handleRequest (EventResult.EntityMovementRequested request)
-    _world.Actions.Act(nextEntity.EntityId, 1.0<GameTime>)
     //TODO: Display results through gui
     printfn ""
     printfn "Current Entity %A" nextEntity.EntityId
