@@ -14,7 +14,9 @@ type IdentityPool<'U>(initial, fromInt : int -> 'U, toInt : 'U -> int) =
     fromInt (match _available.IsEmpty with
              | true -> 
                match _pool.IsEmpty with
-               | true -> 0
+               | true -> 
+                 _pool <- _pool.Add(0)
+                 0
                | _ -> 
                  let result = _pool.MaximumElement + 1
                  _pool <- _pool.Add(result)

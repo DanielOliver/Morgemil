@@ -53,6 +53,7 @@
     <Content Include="packages.config" />
     <Compile Include="Screen.fs" />
     <Compile Include="Element.fs" />
+    <Compile Include="Gui.fs" />
     <Compile Include="Window.fs" />
   </ItemGroup>
   <ItemGroup>
@@ -72,6 +73,11 @@
     <ProjectReference Include="..\Core\Core.fsproj">
       <Name>Core</Name>
       <Project>{6cc909f9-f95c-4d22-be11-0ebcd3b75a51}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Logic\Logic.fsproj">
+      <Name>Logic</Name>
+      <Project>{a6851d83-00f3-4ad3-af15-53750e097198}</Project>
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>

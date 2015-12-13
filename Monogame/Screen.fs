@@ -29,6 +29,7 @@ type ScreenVector2 =
     { X = ScreenSize.Zero
       Y = ScreenSize.Zero }
 
+
 type ScreenRectangle = 
   { Position : ScreenVector2
     Size : ScreenVector2 }
