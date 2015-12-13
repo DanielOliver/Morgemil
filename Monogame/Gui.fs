@@ -1,8 +1,8 @@
 ﻿module Morgemil.Monogame.Gui
 
 ///Create the gui from an ID generation function
-let create (gui : (unit -> int) -> ElementType<'a>) (x) = 
-  let root = gui x
+let create (gui : (unit -> int) -> ElementType<'a>) generate = 
+  let root = gui generate
   let setters = root.Setters |> Map.ofList
   
   let set (vm : 'a) = 
@@ -10,6 +10,11 @@ let create (gui : (unit -> int) -> ElementType<'a>) (x) =
     |> List.map (fun (id, prop) -> id, prop (vm))
     |> Map.ofList
   (root, setters, set)
+
+///Destroys each element from the Id
+let rec free loose (root : ElementType<_>) = 
+  root.Children |> List.iter (free loose)
+  loose (root.Id)
 
 ///Create a readonly textbox
 let textbox vm = (fun x -> ElementType.Textbox(vm, x()))
