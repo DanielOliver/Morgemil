@@ -9,8 +9,6 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "View", "View\View.fsproj", 
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Logic", "Logic\Logic.fsproj", "{A6851D83-00F3-4AD3-AF15-53750E097198}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Monogame", "Monogame\Monogame.fsproj", "{EAE6907E-A843-4D37-9CDF-0F9BC7D01575}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{A6851D83-00F3-4AD3-AF15-53750E097198}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A6851D83-00F3-4AD3-AF15-53750E097198}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A6851D83-00F3-4AD3-AF15-53750E097198}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EAE6907E-A843-4D37-9CDF-0F9BC7D01575}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EAE6907E-A843-4D37-9CDF-0F9BC7D01575}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EAE6907E-A843-4D37-9CDF-0F9BC7D01575}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EAE6907E-A843-4D37-9CDF-0F9BC7D01575}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

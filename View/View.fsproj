@@ -55,17 +55,26 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="GameWindow.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
     <Content Include="packages.config" />
+    <None Include="Fonts\IBM8x16.png" />
+    <None Include="Fonts\IBM.font" />
+    <None Include="Fonts\Cheepicus_12x12.png" />
+    <None Include="Fonts\Cheepicus12.font" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">
-      <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.4.0.459\lib\net40\MonoGame.Framework.dll</HintPath>
+      <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.3.0.0\lib\net40\MonoGame.Framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SadConsole.Platforms.Windows.Core">
+      <HintPath>..\packages\EdCanHack.SadConsole.Platforms.Windows.Core.2.0.1.1\lib\net45\SadConsole.Platforms.Windows.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -81,11 +90,6 @@
     <ProjectReference Include="..\Logic\Logic.fsproj">
       <Name>Logic</Name>
       <Project>{a6851d83-00f3-4ad3-af15-53750e097198}</Project>
-      <Private>True</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\Monogame\Monogame.fsproj">
-      <Name>Monogame</Name>
-      <Project>{eae6907e-a843-4d37-9cdf-0f9bc7d01575}</Project>
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>

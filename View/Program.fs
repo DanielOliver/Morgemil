@@ -1,6 +1,6 @@
-﻿module Program
+﻿module Morgemil.View.Program
 
 [<EntryPoint>]
 let main argv = 
-  Morgemil.Monogame.Window.Start()
+  GameWindow.Start()
   0
