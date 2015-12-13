@@ -59,8 +59,12 @@
     <Compile Include="Program.fs" />
     <None Include="App.config" />
     <Content Include="packages.config" />
-    <None Include="Fonts\IBM8x16.png" />
-    <None Include="Fonts\IBM.font" />
+    <None Include="Fonts\IBM8x16.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Fonts\IBM.font">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Fonts\Cheepicus_12x12.png" />
     <None Include="Fonts\Cheepicus12.font" />
   </ItemGroup>
