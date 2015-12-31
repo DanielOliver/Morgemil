@@ -55,6 +55,7 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="SplashConsole.fs" />
     <Compile Include="GameWindow.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
@@ -65,8 +66,15 @@
     <None Include="Fonts\IBM.font">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Fonts\Cheepicus_12x12.png" />
-    <None Include="Fonts\Cheepicus12.font" />
+    <None Include="Fonts\Cheepicus_12x12.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Fonts\Cheepicus12.font">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Content Include="mountains.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">
