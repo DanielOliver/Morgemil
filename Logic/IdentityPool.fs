@@ -1,19 +1,13 @@
 ﻿namespace Morgemil.Logic
 
-type IdentityStatus = 
-  | Live
-  | Dead
-
 type IdentityPool<'U>(initial, fromInt : int -> 'U, toInt : 'U -> int) = 
   let mutable _pool : Set<int> = initial
-  let mutable _dead : Set<int> = Set.empty
   
-  let getAvailable() = 
+  let mutable _available : Set<int> = 
     match initial.IsEmpty with
     | true -> Set.empty
     | _ -> set [ (_pool.MinimumElement)..(_pool.MaximumElement) ] |> Set.difference (_pool)
   
-  let mutable _available : Set<int> = getAvailable()
   member this.Items = seq _pool
   
   member this.Generate() = 
@@ -33,17 +27,10 @@ type IdentityPool<'U>(initial, fromInt : int -> 'U, toInt : 'U -> int) =
                _available <- _available.Remove(result)
                result)
   
-  member this.Status id = 
-    let intId = toInt id
-    if _dead.Contains(intId) then IdentityStatus.Dead
-    else IdentityStatus.Live
-  
-  ///Marks this entity to be freed next update.
   member this.Free id = 
     let intId = toInt id
-    _dead <- _dead.Add(intId)
-  
-  member this.Update() = 
-    if not (_dead.IsEmpty) then 
-      _pool <- _pool - _dead
-      _available <- getAvailable()
+    _pool <- _pool.Remove(intId)
+    if _pool.Count = 0 then _available <- Set.empty
+    else if _pool.MaximumElement <= intId then 
+      _available <- _available |> Set.filter (fun t -> t <= _pool.MaximumElement)
+    else _available <- _available.Add(intId)
