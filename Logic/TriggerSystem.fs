@@ -36,12 +36,12 @@ type TriggerSystem(triggers : seq<Trigger>) =
 
   member this.Remove triggerId =
     _triggers <- _triggers.Remove(triggerId)
-    _identity.Free triggerId
+    _identity.Kill triggerId
 
   member this.Remove entityId =
     let (remove, keep) = _triggers |> Map.partition (fun _ t -> t.EntityId = entityId)
     _triggers <- keep
-    remove |> Seq.iter (fun t -> _identity.Free t.Key)
+    remove |> Seq.iter (fun t -> _identity.Kill t.Key)
     remove |> Seq.map (fun l -> l.Value)
 
   member this.Handle(action : TriggerAction) : TurnStep =

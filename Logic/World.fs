@@ -2,13 +2,11 @@
 
 open Morgemil.Core
 
-type World(level, triggers, entities) =
+type World(level) = 
   let _level : Level = level
-  let _entities = EntitySystem(entities)
-  let _triggers = TriggerSystem(triggers)
-
+  let _entities = EntitySystem()
+  let _actions = ActionSystem(0.0<GameTime>, _entities)
   member this.Level = _level
   member this.Entities = _entities
-  member this.Triggers = _triggers
-
-  static member Empty = World(Level.Empty, Seq.empty, Seq.empty)
+  member this.Actions = _actions
+  static member Empty = World(Level.Empty)

@@ -54,6 +54,7 @@
     <Compile Include="EventResult.fs" />
     <Compile Include="IdentityPool.fs" />
     <Compile Include="EntitySystem.fs" />
+    <Compile Include="EntityView.fs" />
     <Compile Include="ActionSystem.fs" />
     <Compile Include="TriggerSystem.fs" />
     <Compile Include="TriggerBuilder.fs" />

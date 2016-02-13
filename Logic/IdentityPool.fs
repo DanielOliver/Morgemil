@@ -1,14 +1,12 @@
 ﻿namespace Morgemil.Logic
 
-type IdentityPool<'U>(initial, fromInt : int -> 'U, toInt : 'U -> int) = 
+type IdentityPool<'U when 'U : comparison>(initial, fromInt : int -> 'U, toInt : 'U -> int) = 
   let mutable _pool : Set<int> = initial
-  
-  let mutable _available : Set<int> = 
-    match initial.IsEmpty with
-    | true -> Set.empty
-    | _ -> set [ (_pool.MinimumElement)..(_pool.MaximumElement) ] |> Set.difference (_pool)
-  
-  member this.Items = seq _pool
+  let mutable _dead : Set<int> = Set.empty
+  let getAvailable() = set [ (_pool.MinimumElement)..(_pool.MaximumElement) ] |> Set.difference (_pool)
+  let mutable _available : Set<int> = getAvailable()
+  member this.Items = _pool |> Seq.map (fromInt)
+  member this.Raw = seq _pool
   
   member this.Generate() = 
     fromInt (match _available.IsEmpty with
@@ -27,10 +25,13 @@ type IdentityPool<'U>(initial, fromInt : int -> 'U, toInt : 'U -> int) =
                _available <- _available.Remove(result)
                result)
   
-  member this.Free id = 
-    let intId = toInt id
-    _pool <- _pool.Remove(intId)
-    if _pool.Count = 0 then _available <- Set.empty
-    else if _pool.MaximumElement <= intId then 
-      _available <- _available |> Set.filter (fun t -> t <= _pool.MaximumElement)
-    else _available <- _available.Add(intId)
+  member this.Kill id = _dead <- _dead.Add(toInt id)
+  
+  member this.Free() = 
+    let toRemove = _dead
+    _dead <- Set.empty
+    _pool <- _pool |> Set.difference _dead
+    _available <- getAvailable()
+    toRemove |> Set.map (fromInt)
+  
+  member this.IsDead id = _dead.Contains(toInt id)
