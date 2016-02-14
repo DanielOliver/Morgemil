@@ -2,22 +2,24 @@
 
 open Morgemil.Core
 
-type ActionSystem(initial, initialTime) = 
-  inherit ComponentSystem<ActionComponent>(initial, (fun action -> action.EntityId))
-  let mutable _currentTime : float<GameTime> = initialTime
-  let _stepTo (time : float<GameTime>) = _currentTime <- time
-  member this.CurrentTime = _currentTime
-  member this.Next = this.Components |> Seq.minBy (fun x -> x.TimeOfNextAction)
+type ActionSystem(initialTime : float<GameTime>, entitySystem : EntitySystem) = 
   
-  member this.StepToNext() = 
-    let next = this.Next
-    _stepTo (next.TimeOfNextAction)
-    this.Remove(next)
-    next
+  inherit EntityView<ActionComponent>(entitySystem, ComponentType.Action, 
+                                      (fun t -> 
+                                      match t with
+                                      | Component.Action(x) -> Some(x)
+                                      | _ -> None), Component.Action)
   
-  member this.Act(entityId, timeUntil) = 
-    this.Add({ ActionComponent.EntityId = entityId
-               TimeOfRequest = _currentTime
-               TimeOfNextAction = timeUntil + _currentTime })
+  ///The current time
+  member val CurrentTime = initialTime with get, set
   
-  static member Empty = ActionSystem(Seq.empty, 0.0<GameTime>)
+  ///The next entity to act. Will repeat if not replaced. Throws error if none found
+  member this.Next() = 
+    base.Transformed()
+    |> Seq.sortBy (fun t -> t.TimeOfNextAction)
+    |> Seq.head
+  
+  member this.Act(entityId, time : float<GameTime>) = 
+    let old = this.[entityId]
+    this.[entityId] <- { old with TimeOfNextAction = old.TimeOfNextAction + time
+                                  TimeOfRequest = old.TimeOfNextAction }
