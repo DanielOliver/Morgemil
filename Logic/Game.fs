@@ -3,7 +3,7 @@
 open Morgemil.Core
 
 type Game(level : Level) = 
-  let _world = World(level)
+  let _world = World(level, Set.empty)
   
   let _handleRequest request = 
     TurnBuilder () { 
