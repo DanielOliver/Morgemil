@@ -1,13 +1,15 @@
 ﻿namespace Morgemil.Core
 
-type EntityId =
+type EntityId = 
   | EntityId of int
-  member this.Value =
+  
+  member this.Value = 
     match this with
     | EntityId(id) -> id
-  static member IsDefault (x: EntityId) = x.Value < 0
+  
+  static member IsDefault(x : EntityId) = x.Value < 0
 
-type EntityType =
+type EntityType = 
   | Person
   | Door
   | Stairs

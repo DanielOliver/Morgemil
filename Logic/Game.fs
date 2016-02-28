@@ -2,8 +2,8 @@
 
 open Morgemil.Core
 
-type Game(level : Level) = 
-  let _world = World(level)
+type Game(world : World, callback : unit -> EventResult) = 
+  let _world = world
   
   let _handleRequest request = 
     TurnBuilder () { 
@@ -11,6 +11,7 @@ type Game(level : Level) =
       | EventResult.EntityMovementRequested(req) -> 
         let positionComponent = _world.Positions.[req.EntityId]
         let newPosition = positionComponent.Position + req.Direction
+        let movementCost = 1.0<GameTime>
         //If able to move, move
         if not (_world.Level.Tile(newPosition).BlocksMovement) && positionComponent.Mobile then 
           let newPositionComponent = { positionComponent with Position = newPosition }
@@ -23,16 +24,17 @@ type Game(level : Level) =
             _world.Resources.[req.EntityId] <- newResources
             yield Message.ResourceChange(oldResources, newResources)
           | None -> ()
-          _world.Actions.Act(req.EntityId, 1.0<GameTime>)
+          _world.Actions.Act(req.EntityId, movementCost, _world.CurrentTime)
         //else dont move
-        else _world.Actions.Act(req.EntityId, 0.0<GameTime>)
+        else _world.Actions.Act(req.EntityId, movementCost, _world.CurrentTime)
       | _ -> ()
     }
   
-  member this.HumanRequest(request : RequestedMovement) = 
+  member this.Loop() = 
     let nextAction = _world.Actions.Next()
-    let results = TurnQueue.HandleMessages _handleRequest (EventResult.EntityMovementRequested request)
+    let action = callback()
+    let results = TurnQueue.HandleMessages _handleRequest action
     results |> Seq.iter (fun res -> printfn "%A" res)
     _world.Entities.Free()
     printfn ""
-    true
+    this.Loop()

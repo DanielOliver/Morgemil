@@ -1,10 +1,12 @@
 ﻿namespace Morgemil.Logic
 
 open Morgemil.Core
+open Morgemil.Math
 
 type RequestedMovement = 
   { EntityId : EntityId
     Direction : Vector2i }
+  member this.MovementMultiplier() = (this.Direction.Length) * 1.0<GameTime>
 
 type ResultMoved = 
   { EntityId : EntityId

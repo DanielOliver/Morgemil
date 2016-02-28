@@ -1,4 +1,4 @@
-﻿namespace Morgemil.Core
+﻿namespace Morgemil.Math
 
 /// <summary>
 /// Utility Vector2 functions that don't fit as a type
@@ -12,4 +12,4 @@ module Vector2 =
   /// <summary>
   /// Vector2f to Vector2i
   /// </summary>
-  let Vector2fToi(vecf : Vector2f) = Vector2i(int vecf.X, int vecf.Y)
+  let Vector2fToi(vecf : Vector2f) = Vector2i.From(int vecf.X, int vecf.Y)

@@ -1,4 +1,4 @@
-﻿namespace Morgemil.Core
+﻿namespace Morgemil.Math
 
 /// <summary>
 /// Use this in combination with <see cref="Morgemil.Core.Vector2f">Matrix2f</see> for floating point positions.

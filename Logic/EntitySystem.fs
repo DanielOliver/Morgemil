@@ -3,16 +3,33 @@
 open Morgemil.Core
 open Morgemil.Logic.Extensions
 
-type EntitySystem() = 
-  let mutable _components : Map<ComponentType, Map<EntityId, Component>> = Map.empty
+type EntitySystem(initial : seq<Component>) = 
+  
+  let initialComponents = 
+    initial
+    |> Seq.groupBy (fun t -> t.Type)
+    |> Seq.map (fun (k, v) -> 
+         (k, 
+          v
+          |> Seq.map (fun m -> (m.EntityId, m))
+          |> Map.ofSeq))
+    |> Map.ofSeq
+  
+  let mutable _components : Map<ComponentType, Map<EntityId, Component>> = initialComponents
   let _added = new Event<Component>()
   let _removed = new Event<Component>()
   let _replaced = new Event<Component * Component>()
   let _entityDeath = new Event<EntityId>()
-  let _identities = IdentityPool(Set.empty, EntityId.EntityId, fun t -> t.Value)
+  let _identities = 
+    IdentityPool(set (initial |> Seq.map (fun t -> t.EntityId.Value)), EntityId.EntityId, fun t -> t.Value)
+  //Gets all components in a sequence
+  member this.Components = _components |> Seq.collect (fun k -> k.Value |> Seq.map (fun v -> v.Value))
   
   ///Gets all components with this ComponentType.
-  member this.ByType(componentType : ComponentType) = _components.[componentType]
+  member this.ByType(componentType : ComponentType) = 
+    match _components.TryFind(componentType) with
+    | Some(x) -> x
+    | None -> Map.empty
   
   ///A component has been added
   member this.ComponentAdded = _added.Publish
@@ -40,7 +57,9 @@ type EntitySystem() =
   
   ///Adds a component to an entity
   member this.Add(item : Component) = 
-    _components <- _components.Replace(item.Type, fun t -> t.Add(item.EntityId, item))
+    if _components.ContainsKey(item.Type) then 
+      _components <- _components.Replace(item.Type, fun t -> t.Add(item.EntityId, item))
+    else _components <- _components.Add(item.Type, Map.ofSeq [ item.EntityId, item ])
     _added.Trigger(item)
   
   ///Removes a specific component

@@ -1,6 +1,7 @@
 ﻿namespace Morgemil.Core
 
 open Morgemil.Core
+open Morgemil.Math
 
 type private Tree = 
   | Node of Tree * Tree
@@ -26,12 +27,12 @@ type BspGenerator(minRoomSize : Vector2i, maxRoomSize : Vector2i, dungeonSize : 
     match ax with
     | Axis.Horizontal -> 
       let rng_width = RNG.Range rng (minRoomSize.X) (area.Width - minRoomSize.X)
-      (Rectangle(area.Position, Vector2i(rng_width, area.Height)), 
-       Rectangle(area.Position + Vector2i(rng_width, 0), area.Size - Vector2i(rng_width, 0)))
+      (Rectangle.From(area.Position, Vector2i.From(rng_width, area.Height)), 
+       Rectangle.From(area.Position + Vector2i.From(rng_width, 0), area.Size - Vector2i.From(rng_width, 0)))
     | Axis.Vertical -> 
       let rng_height = RNG.Range rng (minRoomSize.Y) (area.Height - minRoomSize.Y)
-      (Rectangle(area.Position, Vector2i(area.Width, rng_height)), 
-       Rectangle(area.Position + Vector2i(0, rng_height), area.Size - Vector2i(0, rng_height)))
+      (Rectangle.From(area.Position, Vector2i.From(area.Width, rng_height)), 
+       Rectangle.From(area.Position + Vector2i.From(0, rng_height), area.Size - Vector2i.From(0, rng_height)))
   
   ///Recursively divides an area into a Binary Space Partitioning Tree
   let rec bsp rng (area : Rectangle) (ax : Axis) = 
@@ -53,4 +54,4 @@ type BspGenerator(minRoomSize : Vector2i, maxRoomSize : Vector2i, dungeonSize : 
       |> List.concat
   
   /// Returns the list of rectangles BSP subdivided the area into.
-  member this.GenerateRoomDivides rng = bsp rng (Rectangle(dungeonSize)) Axis.Horizontal |> flattenBSPTree
+  member this.GenerateRoomDivides rng = bsp rng (Rectangle.From(dungeonSize)) Axis.Horizontal |> flattenBSPTree

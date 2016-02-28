@@ -51,46 +51,50 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Content Include="packages.config" />
-    <Compile Include="Axis.fs" />
-    <Compile Include="Vector2f.fs" />
-    <Compile Include="Vector2i.fs" />
-    <Compile Include="Vector2.fs" />
-    <Compile Include="Matrix2f.fs" />
-    <Compile Include="Rectangle.fs" />
     <Compile Include="UnitOfMeasure.fs" />
     <Compile Include="Tile.fs" />
     <Compile Include="Tiles.fs" />
     <Compile Include="DungeonParameter.fs" />
-    <Compile Include="Stairs.fs" />
     <Compile Include="TileModifier.fs" />
     <Compile Include="Level.fs" />
-    <Compile Include="RNG.fs" />
     <Compile Include="BspGenerator.fs" />
     <Compile Include="DungeonGeneration.fs" />
     <Compile Include="Actions.fs" />
     <Compile Include="Race.fs" />
+    <Compile Include="Races.fs" />
     <Compile Include="Person.fs" />
     <Compile Include="EntityId.fs" />
-    <Compile Include="Trigger.fs" />
     <Compile Include="Component.fs" />
+    <Compile Include="Trigger.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Core">
-      <HintPath>..\packages\FSharp.Core.3.1.2.1\lib\net40\FSharp.Core.dll</HintPath>
+      <HintPath>..\packages\FSharp.Core.3.1.2.5\lib\net40\FSharp.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="MathNet.Numerics">
-      <HintPath>..\packages\MathNet.Numerics.3.7.0\lib\net40\MathNet.Numerics.dll</HintPath>
+      <HintPath>..\packages\MathNet.Numerics.3.11.0\lib\net40\MathNet.Numerics.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="MathNet.Numerics.FSharp">
-      <HintPath>..\packages\MathNet.Numerics.FSharp.3.7.0\lib\net40\MathNet.Numerics.FSharp.dll</HintPath>
+      <HintPath>..\packages\MathNet.Numerics.FSharp.3.11.0\lib\net40\MathNet.Numerics.FSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="mscorlib" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Math\Math.fsproj">
+      <Name>Math</Name>
+      <Project>{98929076-0ccc-4e88-898b-9c89d1b88303}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

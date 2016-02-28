@@ -23,3 +23,10 @@ let DungeonCorridor =
     BlocksMovement = false
     BlocksSight = false
     TileType = TileType.Land }
+
+let Items = [| DungeonFloor; DungeonWall; DungeonCorridor |]
+
+let Lookup = 
+  Items
+  |> Seq.map (fun t -> (t.Id, t))
+  |> Map.ofSeq
