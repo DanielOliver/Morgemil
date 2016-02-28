@@ -3,7 +3,12 @@
 type IdentityPool<'U when 'U : comparison>(initial, fromInt : int -> 'U, toInt : 'U -> int) = 
   let mutable _pool : Set<int> = initial
   let mutable _dead : Set<int> = Set.empty
-  let getAvailable() = set [ (_pool.MinimumElement)..(_pool.MaximumElement) ] |> Set.difference (_pool)
+  
+  let getAvailable() = 
+    match _pool.IsEmpty with
+    | true -> Set.empty
+    | _ -> set [ (_pool.MinimumElement)..(_pool.MaximumElement) ] |> Set.difference (_pool)
+  
   let mutable _available : Set<int> = getAvailable()
   member this.Items = _pool |> Seq.map (fromInt)
   member this.Raw = seq _pool

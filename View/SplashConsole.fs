@@ -13,17 +13,17 @@ type SplashConsole() as this =
   
   let TextImage(lines : seq<string>) = 
     (lines, 
-     Vector2i(lines
-              |> Seq.map (fun t -> t.Length)
-              |> Seq.max, lines |> Seq.length))
+     Vector2i.From(lines
+                   |> Seq.map (fun t -> t.Length)
+                   |> Seq.max, lines |> Seq.length))
   
-  let GetSize() = Vector2i(this.CellData.Width, this.CellData.Height)
+  let GetSize() = Vector2i.From(this.CellData.Width, this.CellData.Height)
   
   ///Draws text on the center of the screen
   let DrawCenter(text) = 
     let windowSize = GetSize()
     let (_, textSize) = TextImage(text)
-    let drawRectangle = Rectangle((windowSize - textSize) / 2, textSize)
+    let drawRectangle = Rectangle.From((windowSize - textSize) / 2, textSize)
     
     let xOffset = 
       if drawRectangle.Left < 0 then 0 - drawRectangle.Left

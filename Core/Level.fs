@@ -16,7 +16,7 @@ type Level =
     Depth : int }
   
   static member Empty = 
-    { Area = Rectangle()
+    { Area = Rectangle.From()
       Tiles = Array.empty
       TileModifiers = List.empty
       Depth = 0 }

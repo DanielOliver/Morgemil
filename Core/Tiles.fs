@@ -24,7 +24,9 @@ let DungeonCorridor =
     BlocksSight = false
     TileType = TileType.Land }
 
+let Items = [| DungeonFloor; DungeonWall; DungeonCorridor |]
+
 let Lookup = 
-  [ DungeonFloor; DungeonWall; DungeonCorridor ]
+  Items
   |> Seq.map (fun t -> (t.Id, t))
   |> Map.ofSeq

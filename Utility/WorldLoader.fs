@@ -31,12 +31,14 @@ type LevelSerialized =
 
 type WorldSerialized = 
   { LevelSerialized : LevelSerialized
-    Components : seq<Component> }
+    Components : seq<Component>
+    CurrentTime : float<GameTime> }
 
 let SaveWorld(filename : string, world : World) = 
   let write = 
     { WorldSerialized.Components = world.Entities.Components
-      LevelSerialized = LevelSerialized.FromLevel(world.Level) }
+      LevelSerialized = LevelSerialized.FromLevel(world.Level)
+      CurrentTime = world.CurrentTime }
   
   let json = JsonConvert.SerializeObject(write)
   System.IO.File.WriteAllText(filename, json)
@@ -44,4 +46,4 @@ let SaveWorld(filename : string, world : World) =
 let OpenWorld(filename : string) = 
   let json = System.IO.File.ReadAllText(filename)
   let save = JsonConvert.DeserializeObject<WorldSerialized>(json)
-  World(save.LevelSerialized.ToLevel(), save.Components)
+  World(save.LevelSerialized.ToLevel(), save.Components, save.CurrentTime)

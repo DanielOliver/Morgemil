@@ -13,7 +13,9 @@ let Pixie =
     Adjective = "Pixie"
     Description = "These agile faerie creatures are magically inclined but avoid confrontation." }
 
+let Items = [| Human; Pixie |]
+
 let Lookup = 
-  [ Human; Pixie ]
+  Items
   |> Seq.map (fun t -> (t.Id, t))
   |> Map.ofSeq
