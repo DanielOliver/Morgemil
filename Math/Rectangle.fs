@@ -1,13 +1,20 @@
 ﻿namespace Morgemil.Math
 
+open Newtonsoft.Json
 open System
 
 /// Edge-inclusive. Axis-aligned bounding box (AABB)
+[<JsonObject(MemberSerialization.OptIn)>]
 type Rectangle(position : Vector2i, size : Vector2i) = 
   new(size : Vector2i) = Rectangle(Vector2i(), size)
   new() = Rectangle(Vector2i(), Vector2i())
+  
+  [<JsonProperty>]
   member this.Position = position
+  
+  [<JsonProperty>]
   member this.Size = size
+  
   member this.MinCoord = position
   member this.MaxCoord = position + size - 1
   //Area

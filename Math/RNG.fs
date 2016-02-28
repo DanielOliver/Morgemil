@@ -1,7 +1,6 @@
-﻿module Morgemil.Core.RNG
+﻿module Morgemil.Math.RNG
 
 open MathNet.Numerics.Random
-open Morgemil.Math
 
 /// <summary>
 /// Type alias for a System.Random implementation
