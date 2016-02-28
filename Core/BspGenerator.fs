@@ -1,6 +1,7 @@
 ﻿namespace Morgemil.Core
 
 open Morgemil.Core
+open Morgemil.Math
 
 type private Tree = 
   | Node of Tree * Tree

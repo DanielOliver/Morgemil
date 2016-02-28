@@ -1,6 +1,7 @@
 ﻿namespace Morgemil.Core
 
 open Morgemil.Core
+open Morgemil.Math
 open System
 
 ///Creates a Dungeon

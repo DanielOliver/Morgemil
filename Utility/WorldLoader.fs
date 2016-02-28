@@ -10,5 +10,5 @@ let SaveWorld(filename : string, world : World) =
 
 let OpenWorld(filename : string) = 
   let json = System.IO.File.ReadAllText(filename)
-  let components = JsonConvert.DeserializeObject<seq<Component>>(json)
-  World(Level.Empty, components)
+  let save = JsonConvert.DeserializeObject<seq<Component>>(json)
+  World(Level.Empty, save)

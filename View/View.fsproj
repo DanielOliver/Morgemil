@@ -77,6 +77,11 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Math\Math.fsproj">
+      <Name>Math</Name>
+      <Project>{98929076-0ccc-4e88-898b-9c89d1b88303}</Project>
+      <Private>True</Private>
+    </ProjectReference>
     <ProjectReference Include="..\Utility\Utility.fsproj">
       <Name>Utility</Name>
       <Project>{de77d8ce-9371-4921-928e-9cbec1c38a5a}</Project>

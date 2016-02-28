@@ -1,6 +1,7 @@
 ﻿namespace Morgemil.Logic
 
 open Morgemil.Core
+open Morgemil.Math
 
 type RequestedMovement = 
   { EntityId : EntityId

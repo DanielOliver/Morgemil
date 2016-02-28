@@ -1,4 +1,4 @@
-﻿namespace Morgemil.Core
+﻿namespace Morgemil.Math
 
 type Axis = 
   | Horizontal

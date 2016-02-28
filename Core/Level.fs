@@ -1,6 +1,7 @@
 ﻿namespace Morgemil.Core
 
 open Morgemil.Core
+open Morgemil.Math
 
 /// <summary>
 /// A 2d Level.

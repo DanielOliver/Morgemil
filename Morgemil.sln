@@ -11,6 +11,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Logic", "Logic\Logic.fsproj
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Utility", "Utility\Utility.fsproj", "{DE77D8CE-9371-4921-928E-9CBEC1C38A5A}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Math", "Math\Math.fsproj", "{98929076-0CCC-4E88-898B-9C89D1B88303}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{DE77D8CE-9371-4921-928E-9CBEC1C38A5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE77D8CE-9371-4921-928E-9CBEC1C38A5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE77D8CE-9371-4921-928E-9CBEC1C38A5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98929076-0CCC-4E88-898B-9C89D1B88303}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98929076-0CCC-4E88-898B-9C89D1B88303}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98929076-0CCC-4E88-898B-9C89D1B88303}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98929076-0CCC-4E88-898B-9C89D1B88303}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

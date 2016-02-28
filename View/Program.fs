@@ -1,6 +1,7 @@
 ﻿module Morgemil.View.Program
 
 open Morgemil.Core
+open Morgemil.Math
 
 [<EntryPoint>]
 let main argv = 

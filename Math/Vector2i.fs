@@ -1,13 +1,17 @@
-﻿namespace Morgemil.Core
+﻿namespace Morgemil.Math
 
 open System
+open Newtonsoft.Json
 
 /// <summary>
 /// Use this for tile-bound positioning
 /// </summary>
+[<JsonObject(MemberSerialization.OptIn)>]
 type Vector2i =
   struct
+    [<JsonProperty>]
     val public X : int
+    [<JsonProperty>]
     val public Y : int
 
     new(x, y) =

@@ -1,5 +1,7 @@
 ﻿namespace Morgemil.Core
 
+open Morgemil.Math
+
 ///Wight, human, etc.
 type Race = 
   { Id : int
