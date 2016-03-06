@@ -1,5 +1,7 @@
 ﻿namespace Morgemil.Core
 
+open Morgemil.Math
+
 type DungeonGenerationType = 
   | Square
   | BSP

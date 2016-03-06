@@ -8,24 +8,20 @@ open System
 module DungeonGeneration = 
   /// The existence of a mutable structure is necessary as a dungeon requires multiple passes to generate
   type private DungeonMap(roomSize : Rectangle, depth : int) = 
-    let internal_map = Array.create roomSize.Area (Tiles.DungeonWall)
-    member this.SetValue tile pos = internal_map.[roomSize.FlatCoord pos] <- tile
+    let internal_map = Array2D.create roomSize.Width roomSize.Height Tiles.DungeonWall
+    member this.SetValue tile (pos : Vector2i) = internal_map.[pos.X, pos.Y] <- tile
     ///Return a single giant level to feed into the Visualizer
-    member this.CreateLevel() = 
-      { Area = roomSize
-        Tiles = internal_map
-        TileModifiers = List.empty
-        Depth = depth }
+    member this.CreateLevel() = Level(internal_map, depth)
   
   ///The absolute minimum room area tolerated
-  let private minimumRoomArea = Vector2i.From(13)
+  let private minimumRoomArea = Vector2i(13)
   
   ///Randomizes a room's position and size within the defined area
   let private randomizeRoom rng (maxArea : Rectangle) = 
     //Randomize size before placing the room randomly
     let room_size = minimumRoomArea + RNG.RandomVector rng (maxArea.Size - minimumRoomArea) - 2
     let room_position = maxArea.Position + 1 + RNG.RandomVector rng (maxArea.Size - room_size - 2)
-    Rectangle.From(room_position, room_size)
+    Rectangle(room_position, room_size)
   
   ///Writes directly on the map (side-effects). returns nothing
   let private generateRoom (dungeonMap : DungeonMap) (area : Rectangle) = 
@@ -65,21 +61,21 @@ module DungeonGeneration =
       match ax with
       | Axis.Horizontal -> 
         let first, second = sortVertical rect1 rect2
-        let pos1 = Vector2i.From(Math.Max(first.Left, second.Left), first.Bottom + 1)
+        let pos1 = Vector2i(Math.Max(first.Left, second.Left), first.Bottom + 1)
         
         ///Make corridor of width 2 if possible. But also handles a corridor of one width
         let minX = Math.Min(pos1.X + 1, Math.Min(first.Right, second.Right))
         
-        let pos2 = Vector2i.From(minX, second.Top - 1)
+        let pos2 = Vector2i(minX, second.Top - 1)
         Some(Rectangle.Enclose pos1 pos2)
       | Axis.Vertical -> 
         let first, second = sortHorizontal rect1 rect2
-        let pos1 = Vector2i.From(first.Right + 1, Math.Max(first.Top, second.Top))
+        let pos1 = Vector2i(first.Right + 1, Math.Max(first.Top, second.Top))
         
         ///Make corridor of heighth 2 if possible. But also handles a corridor of one height
         let minY = Math.Min(pos1.Y + 1, Math.Min(first.Bottom, second.Bottom))
         
-        let pos2 = Vector2i.From(second.Left - 1, minY)
+        let pos2 = Vector2i(second.Left - 1, minY)
         Some(Rectangle.Enclose pos1 pos2)
   
   ///For each room, tests it against every room after it
@@ -91,12 +87,12 @@ module DungeonGeneration =
   let private generateBSP (param : DungeonParameter) = 
     let rng = RNG.SeedRNG param.RngSeed
     //Hardcoded dungeon size
-    let dungeon_size = Rectangle.From(Vector2i.From(124, 90))
+    let dungeon_size = Rectangle(Vector2i(124, 90))
     //Empty map
     let dungeon_map = DungeonMap(dungeon_size, param.Depth)
     //Room params
     let min_room_size = minimumRoomArea + 5
-    let max_room_size = Vector2i.From(25)
+    let max_room_size = Vector2i(25)
     //BSP rooms with randomized size (Rectangle List).
     let dungeonRooms = 
       BspGenerator(min_room_size, max_room_size, dungeon_size.Size).GenerateRoomDivides rng 
@@ -116,7 +112,7 @@ module DungeonGeneration =
   let private generateSquare (param : DungeonParameter) = 
     let rng = RNG.SeedRNG param.RngSeed
     //Slightly randomized dungeon size
-    let dungeon_size = Rectangle.From(Vector2i.From(60) + RNG.RandomVector rng (Vector2i.From(60)))
+    let dungeon_size = Rectangle(Vector2i(60) + RNG.RandomVector rng (Vector2i(60)))
     //Empty map
     let dungeon_map = DungeonMap(dungeon_size, param.Depth)
     generateRoom dungeon_map (dungeon_size.Expand -1)
@@ -124,15 +120,8 @@ module DungeonGeneration =
     let center = dungeon_size.MinCoord + (dungeon_size.Size / 2)
     //Creates an empty dungeon level
     let level = dungeon_map.CreateLevel()
-    //Take the first passable tile as the level entrance
-    let (entrance_coord, _) = level.TileCoordinates |> Seq.find (fun (vec2, tile) -> not (tile.BlocksMovement))
-    { level with TileModifiers = 
-                   [ TileModifier.Stairs { DungeonParameter = 
-                                             { Type = DungeonGenerationType.Square
-                                               Depth = param.Depth + 1
-                                               RngSeed = rng.Next() }
-                                           Area = Rectangle.From(center, Vector2i.From(1)) }
-                     TileModifier.Entrance(Rectangle.From(entrance_coord, Vector2i.From(1))) ] }
+    level.TileModifier(center) <- Some(TileModifier.Stairs({ DungeonParameter.Type =  DungeonGenerationType.Square; Depth = param.Depth + 1; RngSeed = rng.Next() }))
+    level
   
   let Generate(param : DungeonParameter) = 
     match param.Type with

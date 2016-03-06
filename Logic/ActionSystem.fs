@@ -16,7 +16,7 @@ type ActionSystem(entitySystem : EntitySystem) =
     |> Seq.sortBy (fun t -> t.TimeOfNextAction)
     |> Seq.head
   
-  member this.Act(entityId, time : float<GameTime>, currentTime : float<GameTime>) = 
+  member this.Act(entityId, time : decimal<GameTime>, currentTime : decimal<GameTime>) = 
     let current = this.Find(entityId)
     match current with
     | Some(old) -> 
