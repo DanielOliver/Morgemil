@@ -3,6 +3,12 @@
 open Morgemil.Core
 open Morgemil.Math
 
+type EventResultType = 
+  | EntityMoved
+  | EntityMovementRequested
+  | EntityResourceChanged
+  | Exit
+
 type RequestedMovement = 
   { EntityId : EntityId
     Direction : Vector2i }
@@ -25,5 +31,12 @@ type EventResult =
   | EntityMovementRequested of RequestedMovement
   | EntityResourceChanged of ResultResourceChanged
   | Exit
-
+  
+  member this.Type = 
+    match this with
+    | EventResult.EntityMoved(_) -> EventResultType.EntityMoved
+    | EventResult.EntityMovementRequested(_) -> EventResultType.EntityMovementRequested
+    | EventResult.EntityResourceChanged(_) -> EventResultType.EntityResourceChanged
+    | _ -> EventResultType.Exit
+  
 type TurnStep = List<EventResult>

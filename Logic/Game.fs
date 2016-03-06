@@ -9,6 +9,7 @@ type Game(world : World, callback : unit -> EventResult) =
   let _positions = PositionSystem(world)
   let _resources = ResourceSystem(world)
   let _players = PlayerSystem(world)
+  //Completely Fake AI
   let mutable one = false
   
   let _artificalPlayer (action : ActionComponent) = 
@@ -18,28 +19,32 @@ type Game(world : World, callback : unit -> EventResult) =
                                             Vector2i(if one then 1
                                                      else -1) })
   
-  let _handleRequest request = 
+  let _requestedMovement (request : RequestedMovement) = 
+    TurnBuilder () { 
+      let positionComponent = _positions.[request.EntityId]
+      let newPosition = positionComponent.Position + request.Direction
+      //If able to move, move
+      if not (_world.Level.Tile(newPosition).BlocksMovement) && positionComponent.Mobile then 
+        let movementcost = System.Math.Round(decimal (request.Direction.Length), 2) * 1M<GameTime>
+        let newPositionComponent = { positionComponent with Position = newPosition }
+        _positions.[request.EntityId] <- newPositionComponent
+        yield Message.PositionChange(positionComponent, newPositionComponent)
+        //Spend resources if possible
+        match _resources.Find(request.EntityId) with
+        | Some(oldResources) -> 
+          let newResources = { oldResources with Stamina = oldResources.Stamina - 1.0<Stamina> }
+          _resources.[request.EntityId] <- newResources
+          yield Message.ResourceChange(oldResources, newResources)
+        | None -> ()
+        _actions.Act(request.EntityId, movementcost)
+      //else dont move
+      else _actions.Act(request.EntityId, 0.0M<GameTime>)
+    }
+  
+  let _handleRequest (request, history : EventResult list) = 
     TurnBuilder () { 
       match request with
-      | EventResult.EntityMovementRequested(req) -> 
-        let positionComponent = _positions.[req.EntityId]
-        let newPosition = positionComponent.Position + req.Direction
-        //If able to move, move
-        if not (_world.Level.Tile(newPosition).BlocksMovement) && positionComponent.Mobile then 
-          let movementcost = System.Math.Round(decimal (req.Direction.Length), 2) * 1M<GameTime>
-          let newPositionComponent = { positionComponent with Position = newPosition }
-          _positions.[req.EntityId] <- newPositionComponent
-          yield Message.PositionChange(positionComponent, newPositionComponent)
-          //Spend resources if possible
-          match _resources.Find(req.EntityId) with
-          | Some(oldResources) -> 
-            let newResources = { oldResources with Stamina = oldResources.Stamina - 1.0<Stamina> }
-            _resources.[req.EntityId] <- newResources
-            yield Message.ResourceChange(oldResources, newResources)
-          | None -> ()
-          _actions.Act(req.EntityId, movementcost)
-        //else dont move
-        else _actions.Act(req.EntityId, 0.0M<GameTime>)
+      | EventResult.EntityMovementRequested(req) -> yield _requestedMovement (req)
       | _ -> ()
     }
   

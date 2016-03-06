@@ -31,7 +31,9 @@ let main argv =
                          TimeOfNextAction = 1.1M<GameTime>
                          TimeOfRequest = 0.1M<GameTime> })
       Component.Player({ PlayerComponent.EntityId = entityFive
-                         IsHumanControlled = true }) ]
+                         IsHumanControlled = true })
+      Component.Resource({ ResourceComponent.EntityId = entityFive
+                           ResourceComponent.Stamina = 50.0<Stamina> }) ]
   
   let worldOne = Morgemil.Logic.World(level, components, 1.0M<GameTime>)
   
