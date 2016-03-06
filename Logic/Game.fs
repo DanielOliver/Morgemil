@@ -8,7 +8,7 @@ type Game(world : World, callback : unit -> EventResult) =
   
   let _artificalPlayer (action : ActionComponent) = 
     EventResult.EntityMovementRequested({ RequestedMovement.EntityId = action.EntityId
-                                          RequestedMovement.Direction = Vector2i.From(1) })
+                                          RequestedMovement.Direction = Vector2i(1) })
   
   let _handleRequest request = 
     TurnBuilder () { 

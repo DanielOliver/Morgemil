@@ -19,10 +19,10 @@ let main argv =
   
   let components = 
     [ Component.Position({ PositionComponent.EntityId = entityFive
-                           Position = Vector2i.From(5, 5)
+                           Position = Vector2i(5, 5)
                            Mobile = true })
       Component.Position({ PositionComponent.EntityId = entityAI
-                           Position = Vector2i.From(5, 6)
+                           Position = Vector2i(5, 6)
                            Mobile = true })
       Component.Action({ ActionComponent.EntityId = entityFive
                          TimeOfNextAction = 1.0M<GameTime>
@@ -39,16 +39,16 @@ let main argv =
     match Console.ReadKey().Key with
     | ConsoleKey.W -> 
       EventResult.EntityMovementRequested { RequestedMovement.EntityId = entityFive
-                                            Direction = Vector2i.From(-1, 0) }
+                                            Direction = Vector2i(-1, 0) }
     | ConsoleKey.E -> 
       EventResult.EntityMovementRequested { RequestedMovement.EntityId = entityFive
-                                            Direction = Vector2i.From(1, 0) }
+                                            Direction = Vector2i(1, 0) }
     | ConsoleKey.S -> 
       EventResult.EntityMovementRequested { RequestedMovement.EntityId = entityFive
-                                            Direction = Vector2i.From(0, 1) }
+                                            Direction = Vector2i(0, 1) }
     | ConsoleKey.N -> 
       EventResult.EntityMovementRequested { RequestedMovement.EntityId = entityFive
-                                            Direction = Vector2i.From(0, -1) }
+                                            Direction = Vector2i(0, -1) }
     | ConsoleKey.Escape -> EventResult.Exit
     | _ -> getAction()
   

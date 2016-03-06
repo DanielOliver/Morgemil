@@ -10,10 +10,10 @@ open Morgemil.Math
 /// <param name="area">edge-inclusive area of tiles</param>
 /// <param name="tiles">2d array [row,column]</param>
 type Level(tiles : Tile [,], depth : int) = 
-  let _size = Vector2i.From(Array2D.length1 tiles, Array2D.length2 tiles)
+  let _size = Vector2i(Array2D.length1 tiles, Array2D.length2 tiles)
   let _entities : EntityId option [,] = Array2D.zeroCreate _size.X _size.Y
   let _tileModifiers : TileModifier option [,] = Array2D.zeroCreate _size.X _size.Y
-  member this.Area = Rectangle.From(Vector2i.Zero, _size)
+  member this.Area = Rectangle(Vector2i(), _size)
   member this.Tiles = tiles
   member this.Depth = depth
   
