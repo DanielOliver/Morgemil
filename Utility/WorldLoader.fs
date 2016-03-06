@@ -32,7 +32,7 @@ type LevelSerialized =
 type WorldSerialized = 
   { LevelSerialized : LevelSerialized
     Components : seq<Component>
-    CurrentTime : float<GameTime> }
+    CurrentTime : decimal<GameTime> }
 
 let SaveWorld(filename : string, world : World) = 
   let write = 

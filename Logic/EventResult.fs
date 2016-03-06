@@ -24,5 +24,6 @@ type EventResult =
   | EntityMoved of ResultMoved
   | EntityMovementRequested of RequestedMovement
   | EntityResourceChanged of ResultResourceChanged
+  | Exit
 
 type TurnStep = List<EventResult>

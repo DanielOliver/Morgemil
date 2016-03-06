@@ -26,8 +26,8 @@ and ResourceComponent =
 
 and ActionComponent = 
   { EntityId : EntityId
-    TimeOfRequest : float<GameTime>
-    TimeOfNextAction : float<GameTime> }
+    TimeOfRequest : decimal<GameTime>
+    TimeOfNextAction : decimal<GameTime> }
   member this.Duration = this.TimeOfNextAction - this.TimeOfRequest
   member this.ToComponent() = Component.Action(this)
 

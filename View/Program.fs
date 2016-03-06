@@ -15,18 +15,25 @@ let main argv =
   
   let level = Morgemil.Core.DungeonGeneration.Generate(parameters)
   let entityFive = EntityId(5)
+  let entityAI = EntityId(2)
   
   let components = 
     [ Component.Position({ PositionComponent.EntityId = entityFive
                            Position = Vector2i.From(5, 5)
                            Mobile = true })
+      Component.Position({ PositionComponent.EntityId = entityAI
+                           Position = Vector2i.From(5, 6)
+                           Mobile = true })
       Component.Action({ ActionComponent.EntityId = entityFive
-                         TimeOfNextAction = 1.0<GameTime>
-                         TimeOfRequest = 0.0<GameTime> }) ]
+                         TimeOfNextAction = 1.0M<GameTime>
+                         TimeOfRequest = 0.0M<GameTime> })
+      Component.Action({ ActionComponent.EntityId = entityAI
+                         TimeOfNextAction = 1.1M<GameTime>
+                         TimeOfRequest = 0.1M<GameTime> })
+      Component.Player({ PlayerComponent.EntityId = entityFive
+                         IsHumanControlled = true }) ]
   
-  let worldOne = Morgemil.Logic.World(level, components, 1.0<GameTime>)
-  Morgemil.Utility.WorldLoader.SaveWorld("output.txt", worldOne)
-  let worldTwo = Morgemil.Utility.WorldLoader.OpenWorld("output.txt")
+  let worldOne = Morgemil.Logic.World(level, components, 1.0M<GameTime>)
   
   let rec getAction() = 
     match Console.ReadKey().Key with
@@ -42,8 +49,10 @@ let main argv =
     | ConsoleKey.N -> 
       EventResult.EntityMovementRequested { RequestedMovement.EntityId = entityFive
                                             Direction = Vector2i.From(0, -1) }
+    | ConsoleKey.Escape -> EventResult.Exit
     | _ -> getAction()
   
-  let game = Morgemil.Logic.Game(worldTwo, getAction)
+  let game = Morgemil.Logic.Game(worldOne, getAction)
   game.Loop()
+  Morgemil.Utility.WorldLoader.SaveWorld("output.txt", worldOne)
   0

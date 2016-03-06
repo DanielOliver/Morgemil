@@ -44,7 +44,11 @@ type Vector2i =
   //########## Member methods #########################################
   //Distance
   member this.LengthSquared = float ((this.X * this.X) + (this.Y + this.Y))
-  member this.Length = System.Math.Sqrt(this.LengthSquared)
+  
+  member this.Length = 
+    match this.LengthSquared with
+    | 0.0 -> 0.0
+    | x -> System.Math.Sqrt(x)
   
   ///The area as though this were a rectangle size
   member this.Area = this.X * this.Y
