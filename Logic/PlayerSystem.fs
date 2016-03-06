@@ -2,8 +2,8 @@
 
 open Morgemil.Core
 
-type PlayerSystem(entitySystem : EntitySystem) = 
-  inherit EntityView<PlayerComponent>(entitySystem, ComponentType.Player, 
+type PlayerSystem(world : World) = 
+  inherit EntityView<PlayerComponent>(world.Entities, ComponentType.Player, 
                                       (fun t -> 
                                       match t with
                                       | Component.Player(x) -> Some(x)

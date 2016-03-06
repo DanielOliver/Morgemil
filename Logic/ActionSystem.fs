@@ -2,9 +2,9 @@
 
 open Morgemil.Core
 
-type ActionSystem(entitySystem : EntitySystem) = 
+type ActionSystem(world : World) = 
   
-  inherit EntityView<ActionComponent>(entitySystem, ComponentType.Action, 
+  inherit EntityView<ActionComponent>(world.Entities, ComponentType.Action, 
                                       (fun t -> 
                                       match t with
                                       | Component.Action(x) -> Some(x)
@@ -16,13 +16,13 @@ type ActionSystem(entitySystem : EntitySystem) =
     |> Seq.sortBy (fun t -> t.TimeOfNextAction)
     |> Seq.head
   
-  member this.Act(entityId, time : decimal<GameTime>, currentTime : decimal<GameTime>) = 
+  member this.Act(entityId, timeDelay : decimal<GameTime>) = 
     let current = this.Find(entityId)
     match current with
     | Some(old) -> 
-      this.[entityId] <- { old with TimeOfNextAction = old.TimeOfNextAction + time
+      this.[entityId] <- { old with TimeOfNextAction = old.TimeOfNextAction + timeDelay
                                     TimeOfRequest = old.TimeOfNextAction }
     | None -> 
       this.[entityId] <- { EntityId = entityId
-                           TimeOfNextAction = currentTime + time
-                           TimeOfRequest = currentTime }
+                           TimeOfNextAction = world.CurrentTime + timeDelay
+                           TimeOfRequest = world.CurrentTime }
