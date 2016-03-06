@@ -11,7 +11,7 @@ type PositionSystem(world : World) as this =
   let remove(c: PositionComponent) = world.Level.Entity(c.Position) <- None
   let add(c: PositionComponent) = world.Level.Entity(c.Position) <- Some(c.EntityId)
 
-  do this.Add(add)
-     this.Remove(remove)
-     this.Replace(fun (oldC, newC) -> if oldC.Position <> newC.Position then remove(oldC)
-                                                                             add(newC))
+  do this.HandleAdd(add)
+     this.HandleRemove(remove)
+     this.HandleReplace(fun (oldC, newC) -> if oldC.Position <> newC.Position then remove(oldC)
+                                                                                   add(newC))
