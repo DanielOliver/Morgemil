@@ -80,7 +80,11 @@ type EntitySystem(initial : seq<Component>) =
     let rec remove (ids, components : Map<EntityId, Component>) = 
       match ids with
       | [] -> components
-      | [ head ] -> components.Remove(head)
+      | [ head ] -> 
+        let item = components.Item(head)
+        let result = components.Remove(head)
+        _removed.Trigger(item)
+        result
       | head :: tail -> remove(tail, components).Remove(head)
     _components <- _components |> Map.map (fun k v -> remove (dead, v))
   

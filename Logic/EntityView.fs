@@ -5,6 +5,22 @@ open Morgemil.Core
 ///Convenience functions over a view
 type EntityView<'U>(entitySystem : EntitySystem, componentType : ComponentType, fromComponent : Component -> 'U option, toComponent : 'U -> Component) = 
   
+  member this.Add(add : 'U -> unit) = 
+    entitySystem.ComponentAdded.Add(fromComponent >> (fun t -> 
+                                    match t with
+                                    | Some(x) -> add (x)
+                                    | _ -> ()))
+  
+  member this.Replace(replace : 'U * 'U -> unit) = 
+    entitySystem.ComponentReplaced.Add(fun (oldC, newC) -> 
+      if oldC.Type = componentType then replace ((fromComponent (oldC)).Value, (fromComponent (newC)).Value))
+  
+  member this.Remove(remove : 'U -> unit) = 
+    entitySystem.ComponentAdded.Add(fromComponent >> (fun t -> 
+                                    match t with
+                                    | Some(x) -> remove (x)
+                                    | _ -> ()))
+  
   ///Returns raw map access
   member this.Components() = entitySystem.ByType(componentType)
   

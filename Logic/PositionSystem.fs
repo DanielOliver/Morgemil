@@ -2,9 +2,16 @@
 
 open Morgemil.Core
 
-type PositionSystem(entitySystem : EntitySystem) = 
-  inherit EntityView<PositionComponent>(entitySystem, ComponentType.Position, 
+type PositionSystem(world : World) as this = 
+  inherit EntityView<PositionComponent>(world.Entities, ComponentType.Position, 
                                         (fun t -> 
                                         match t with
                                         | Component.Position(x) -> Some(x)
                                         | _ -> None), Component.Position)
+  let remove(c: PositionComponent) = world.Level.Entity(c.Position) <- None
+  let add(c: PositionComponent) = world.Level.Entity(c.Position) <- Some(c.EntityId)
+
+  do this.Add(add)
+     this.Remove(remove)
+     this.Replace(fun (oldC, newC) -> if oldC.Position <> newC.Position then remove(oldC)
+                                                                             add(newC))
