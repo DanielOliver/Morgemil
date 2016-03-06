@@ -1,5 +1,6 @@
 ﻿namespace Morgemil.Core
 
+open Microsoft.FSharp.Collections
 open Morgemil.Core
 open Morgemil.Math
 
@@ -8,23 +9,31 @@ open Morgemil.Math
 /// </summary>
 /// <param name="area">edge-inclusive area of tiles</param>
 /// <param name="tiles">2d array [row,column]</param>
-type Level = 
-  { ///[0,0] (MaxX,MaxY)
-    Area : Rectangle
-    Tiles : Tile array
-    TileModifiers : List<TileModifier>
-    Depth : int }
-  
-  static member Empty = 
-    { Area = Rectangle.From()
-      Tiles = Array.empty
-      TileModifiers = List.empty
-      Depth = 0 }
+type Level(tiles : Tile [,], depth : int) = 
+  let _size = Vector2i.From(Array2D.length1 tiles, Array2D.length2 tiles)
+  let _entities : EntityId option [,] = Array2D.zeroCreate _size.X _size.Y
+  let _tileModifiers : TileModifier option [,] = Array2D.zeroCreate _size.X _size.Y
+  member this.Area = Rectangle.From(Vector2i.Zero, _size)
+  member this.Tiles = tiles
+  member this.Depth = depth
   
   /// <summary>
-  /// Global coordinates. Zero-based indices relative to this.Area.Position
+  /// Zero-based indices relative to this.Area.Position
   ///</summary>
-  member this.Tile(vec2 : Vector2i) = this.Tiles.[this.Area.FlatCoord(vec2)]
+  member this.Tile 
+    with get (index : Vector2i) = tiles.[index.X, index.Y]
+    and set (index : Vector2i) value = tiles.[index.X, index.Y] <- value
   
-  ///Seq<Math.Vector2i * TileDefinition>
-  member this.TileCoordinates = Seq.map (fun coord -> coord, (this.Tile coord)) this.Area.Coordinates
+  /// <summary>
+  /// Zero-based indices relative to this.Area.Position
+  ///</summary>
+  member this.Entity 
+    with get (index : Vector2i) = _entities.[index.X, index.Y]
+    and set (index : Vector2i) value = _entities.[index.X, index.Y] <- value
+  
+  /// <summary>
+  /// Zero-based indices relative to this.Area.Position
+  ///</summary>
+  member this.TileModifier 
+    with get (index : Vector2i) = _tileModifiers.[index.X, index.Y]
+    and set (index : Vector2i) value = _tileModifiers.[index.X, index.Y] <- value

@@ -54,5 +54,4 @@ let main argv =
   
   let game = Morgemil.Logic.Game(worldOne, getAction)
   game.Loop()
-  Morgemil.Utility.WorldLoader.SaveWorld("output.txt", worldOne)
   0

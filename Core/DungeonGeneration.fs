@@ -8,14 +8,10 @@ open System
 module DungeonGeneration = 
   /// The existence of a mutable structure is necessary as a dungeon requires multiple passes to generate
   type private DungeonMap(roomSize : Rectangle, depth : int) = 
-    let internal_map = Array.create roomSize.Area (Tiles.DungeonWall)
-    member this.SetValue tile pos = internal_map.[roomSize.FlatCoord pos] <- tile
+    let internal_map = Array2D.create roomSize.Width roomSize.Height Tiles.DungeonWall
+    member this.SetValue tile (pos : Vector2i) = internal_map.[pos.X, pos.Y] <- tile
     ///Return a single giant level to feed into the Visualizer
-    member this.CreateLevel() = 
-      { Area = roomSize
-        Tiles = internal_map
-        TileModifiers = List.empty
-        Depth = depth }
+    member this.CreateLevel() = Level(internal_map, depth)
   
   ///The absolute minimum room area tolerated
   let private minimumRoomArea = Vector2i.From(13)
@@ -124,15 +120,8 @@ module DungeonGeneration =
     let center = dungeon_size.MinCoord + (dungeon_size.Size / 2)
     //Creates an empty dungeon level
     let level = dungeon_map.CreateLevel()
-    //Take the first passable tile as the level entrance
-    let (entrance_coord, _) = level.TileCoordinates |> Seq.find (fun (vec2, tile) -> not (tile.BlocksMovement))
-    { level with TileModifiers = 
-                   [ TileModifier.Stairs { DungeonParameter = 
-                                             { Type = DungeonGenerationType.Square
-                                               Depth = param.Depth + 1
-                                               RngSeed = rng.Next() }
-                                           Area = Rectangle.From(center, Vector2i.From(1)) }
-                     TileModifier.Entrance(Rectangle.From(entrance_coord, Vector2i.From(1))) ] }
+    level.TileModifier(center) <- Some(TileModifier.Stairs({ DungeonParameter.Type =  DungeonGenerationType.Square; Depth = param.Depth + 1; RngSeed = rng.Next() }))
+    level
   
   let Generate(param : DungeonParameter) = 
     match param.Type with

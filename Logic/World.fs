@@ -16,4 +16,3 @@ type World(level, components, currentTime) =
   member this.Positions = _positions
   member this.Resources = _resources
   member this.Players = _players
-  static member Empty = World(Level.Empty, Seq.empty, 0.0M<GameTime>)

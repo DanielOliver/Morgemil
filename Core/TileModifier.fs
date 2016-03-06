@@ -1,11 +1,19 @@
 ﻿namespace Morgemil.Core
 
-
-type Stairs = 
-  { DungeonParameter : DungeonParameter
-    Area : Morgemil.Math.Rectangle }
-
+open Morgemil.Math
 
 type TileModifier = 
-  | Stairs of Stairs
-  | Entrance of Location : Morgemil.Math.Rectangle
+  | Entrance of Vector2i
+  | Stairs of DungeonParameter
+  | ClosedDoor
+  | OpenDoor
+  
+  member this.BlocksMovement = 
+    match this with
+    | ClosedDoor -> true
+    | _ -> false
+  
+  member this.BlocksSight = 
+    match this with
+    | ClosedDoor -> true
+    | _ -> false

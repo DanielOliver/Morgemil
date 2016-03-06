@@ -50,7 +50,6 @@
   </Choose>
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
-    <Compile Include="WorldLoader.fs" />
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
