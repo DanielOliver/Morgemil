@@ -59,22 +59,14 @@
     <Compile Include="GameWindow.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
-    <Content Include="packages.config" />
-    <None Include="Fonts\IBM8x16.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Fonts\IBM.font">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Fonts\Cheepicus_12x12.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Fonts\Cheepicus12.font">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <Content Include="mountains.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="packages.config" />
+    <None Include="Fonts\IBM8x16.png" />
+    <None Include="Fonts\IBM.font" />
+    <None Include="Fonts\Cheepicus_12x12.png" />
+    <None Include="Fonts\Cheepicus12.font" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Math\Math.fsproj">
@@ -88,15 +80,15 @@
       <Private>True</Private>
     </ProjectReference>
     <Reference Include="MonoGame.Framework">
-      <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.3.0.0\lib\net40\MonoGame.Framework.dll</HintPath>
+      <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.5.0.1678\lib\net40\MonoGame.Framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Private>True</Private>
     </Reference>
-    <Reference Include="SadConsole.Platforms.Windows.Core">
-      <HintPath>..\packages\EdCanHack.SadConsole.Platforms.Windows.Core.2.0.1.1\lib\net45\SadConsole.Platforms.Windows.Core.dll</HintPath>
+    <Reference Include="SadConsole.Core">
+      <HintPath>..\packages\SadConsole.Core.2.5.0.0\lib\net45\SadConsole.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
