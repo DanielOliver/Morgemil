@@ -42,15 +42,29 @@ let main argv =
     | ConsoleKey.W -> 
       EventResult.EntityMovementRequested { RequestedMovement.EntityId = entityFive
                                             Direction = Vector2i(-1, 0) }
-    | ConsoleKey.E -> 
+    | ConsoleKey.X -> 
       EventResult.EntityMovementRequested { RequestedMovement.EntityId = entityFive
                                             Direction = Vector2i(1, 0) }
-    | ConsoleKey.S -> 
+    | ConsoleKey.D -> 
       EventResult.EntityMovementRequested { RequestedMovement.EntityId = entityFive
                                             Direction = Vector2i(0, 1) }
-    | ConsoleKey.N -> 
+    | ConsoleKey.A -> 
       EventResult.EntityMovementRequested { RequestedMovement.EntityId = entityFive
                                             Direction = Vector2i(0, -1) }
+
+    | ConsoleKey.Q -> 
+      EventResult.EntityMovementRequested { RequestedMovement.EntityId = entityFive
+                                            Direction = Vector2i(-1, -1) }
+    | ConsoleKey.E -> 
+      EventResult.EntityMovementRequested { RequestedMovement.EntityId = entityFive
+                                            Direction = Vector2i(-1, 1) }
+    | ConsoleKey.Z -> 
+      EventResult.EntityMovementRequested { RequestedMovement.EntityId = entityFive
+                                            Direction = Vector2i(1, -1) }
+    | ConsoleKey.C -> 
+      EventResult.EntityMovementRequested { RequestedMovement.EntityId = entityFive
+                                            Direction = Vector2i(1, 1) }
+
     | ConsoleKey.Escape -> EventResult.Exit
     | _ -> getAction()
   

@@ -2,34 +2,46 @@
 
 open Morgemil.Core
 open Morgemil.Logic.Extensions
+open System.Collections
 
-type EntitySystem(initial : seq<Component>) = 
-  
-  let initialComponents = 
+
+type EntitySystem(initial : seq<Component>) =
+
+  let _components = new Generic.Dictionary<ComponentType, Generic.Dictionary< EntityId, Component>>()
+
+  do //Populate the initial items
     initial
-    |> Seq.groupBy (fun t -> t.Type)
-    |> Seq.map (fun (k, v) -> 
-         (k, 
-          v
-          |> Seq.map (fun m -> (m.EntityId, m))
-          |> Map.ofSeq))
-    |> Map.ofSeq
+    |> Seq.groupBy(fun comp -> comp.Type)
+    |> Seq.iter(fun (componentType, items) -> 
+      _components.[componentType] <- new Generic.Dictionary<EntityId, Component>(items 
+                                                                                 |> Seq.map(fun t -> t.EntityId, t) 
+                                                                                 |> Map.ofSeq))
   
-  let mutable _components : Map<ComponentType, Map<EntityId, Component>> = initialComponents
   let _added = new Event<Component>()
   let _removed = new Event<Component>()
   let _replaced = new Event<Component * Component>()
   let _entityDeath = new Event<EntityId>()
   let _identities = 
     IdentityPool(set (initial |> Seq.map (fun t -> t.EntityId.Value)), EntityId.EntityId, fun t -> t.Value)
+
+  let getType(componentType : ComponentType) = 
+    match _components.TryGetValue(componentType) with
+    | true, items -> items
+    | false, _ -> let next = new Generic.Dictionary<EntityId, Component>()
+                  _components.Add(componentType, next)
+                  next
+
+  let findItem(entityId: EntityId, componentType: ComponentType) =
+    match getType(componentType).TryGetValue(entityId) with
+    | true, item -> Some(item)
+    | false, _ -> None
+
+                  
   //Gets all components in a sequence
   member this.Components = _components |> Seq.collect (fun k -> k.Value |> Seq.map (fun v -> v.Value))
   
   ///Gets all components with this ComponentType.
-  member this.ByType(componentType : ComponentType) = 
-    match _components.TryFind(componentType) with
-    | Some(x) -> x
-    | None -> Map.empty
+  member this.ByType(componentType : ComponentType) = getType(componentType)
   
   ///A component has been added
   member this.ComponentAdded = _added.Publish
@@ -50,22 +62,17 @@ type EntitySystem(initial : seq<Component>) =
   member this.Generate() = _identities.Generate()
   
   ///Returns component associated with an entity
-  member this.Find(entityId : EntityId, componentType : ComponentType) = 
-    match _components.TryFind(componentType) with
-    | Some(x) -> x.TryFind(entityId)
-    | _ -> None
+  member this.Find(entityId : EntityId, componentType : ComponentType) = findItem(entityId, componentType)
   
   ///Adds a component to an entity
   member this.Add(item : Component) = 
-    if _components.ContainsKey(item.Type) then 
-      _components <- _components.Replace(item.Type, fun t -> t.Add(item.EntityId, item))
-    else _components <- _components.Add(item.Type, Map.ofSeq [ item.EntityId, item ])
+    getType(item.Type).Add(item.EntityId, item)
     _added.Trigger(item)
   
   ///Removes a specific component
   member this.Remove(item : Component) = 
-    _components <- _components.Replace(item.Type, fun t -> t.Remove(item.EntityId))
-    _removed.Trigger(item)
+    if getType(item.Type).Remove(item.EntityId) then
+      _removed.Trigger(item)
   
   ///Marks an entity for cleanup
   member this.Kill entityId = _identities.Kill entityId
@@ -76,19 +83,21 @@ type EntitySystem(initial : seq<Component>) =
   ///Removes all entities marked as dead. Doesn't fire Component Removed event.
   member this.Free() = 
     let dead = List.ofSeq (_identities.Free())
-    dead |> Seq.iter (_entityDeath.Trigger)
-    let rec remove (ids, components : Map<EntityId, Component>) = 
-      match ids with
-      | [] -> components
-      | [ head ] -> 
-        let item = components.Item(head)
-        let result = components.Remove(head)
-        _removed.Trigger(item)
-        result
-      | head :: tail -> remove(tail, components).Remove(head)
-    _components <- _components |> Map.map (fun k v -> remove (dead, v))
+
+    dead 
+    |> Seq.iter (_entityDeath.Trigger)
+    
+    _components 
+    |> Seq.iter(fun comp -> dead 
+                            |> List.iter(comp.Value.Remove >> ignore))
   
   ///Replaces an entity with a new value
   member this.Replace(old_value : Component, new_value : Component) = 
-    _components <- _components.Replace(old_value.Type, fun t -> t.Replace(old_value.EntityId, fun w -> new_value))
+    getType(old_value.Type).[old_value.EntityId] <- new_value
     _replaced.Trigger(old_value, new_value)
+    
+  ///Replaces an entity with a new value
+  member this.Replace(new_value : Component) = 
+    match findItem(new_value.EntityId, new_value.Type) with
+    | Some(x) -> this.Replace(x, new_value)
+    | None -> failwithf "Failed to replace entity \"%A\" and type \"%A\"" new_value.EntityId new_value.Type

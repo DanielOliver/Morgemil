@@ -12,9 +12,12 @@ type ActionSystem(world : World) =
   
   ///The next entity to act. Will repeat if not replaced. Throws error if none found
   member this.Next() = 
-    base.Transformed()
-    |> Seq.sortBy (fun t -> t.TimeOfNextAction)
-    |> Seq.head
+    try
+      base.Transformed()
+      |> Seq.sortBy (fun t -> t.TimeOfNextAction)
+      |> Seq.head
+    with
+      | _ -> failwith "No action specified as next"
   
   member this.Act(entityId, timeDelay : decimal<GameTime>) = 
     let current = this.Find(entityId)

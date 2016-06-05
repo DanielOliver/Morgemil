@@ -24,7 +24,7 @@ type Game(world : World, callback : unit -> EventResult) =
       let positionComponent = _positions.[request.EntityId]
       let newPosition = positionComponent.Position + request.Direction
       //If able to move, move
-      if not (_world.Level.Tile(newPosition).BlocksMovement) && positionComponent.Mobile then 
+      if not (_world.Level.BlocksMovement(newPosition)) && positionComponent.Mobile then 
         let movementcost = System.Math.Round(decimal (request.Direction.Length), 2) * 1M<GameTime>
         let newPositionComponent = { positionComponent with Position = newPosition }
         _positions.[request.EntityId] <- newPositionComponent
