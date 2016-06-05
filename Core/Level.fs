@@ -34,6 +34,28 @@ type Level(tiles : Tile [,], depth : int) =
   /// <summary>
   /// Zero-based indices relative to this.Area.Position
   ///</summary>
-  member this.TileModifier 
+  member this.TileModifier
     with get (index : Vector2i) = _tileModifiers.[index.X, index.Y]
     and set (index : Vector2i) value = _tileModifiers.[index.X, index.Y] <- value
+  
+  /// <summary>
+  /// Zero-based indices relative to this.Area.Position
+  ///</summary>
+  member this.BlocksMovement
+    with get (index : Vector2i) = 
+      if this.Tile(index).BlocksMovement then true
+      else 
+        match this.TileModifier(index) with
+        | Some(modifier) -> modifier.BlocksMovement
+        | _ -> false
+  
+  /// <summary>
+  /// Zero-based indices relative to this.Area.Position
+  ///</summary>
+  member this.BlocksSight 
+    with get (index : Vector2i) = 
+      if this.Tile(index).BlocksSight then true
+      else 
+        match this.TileModifier(index) with
+        | Some(modifier) -> modifier.BlocksSight
+        | _ -> false

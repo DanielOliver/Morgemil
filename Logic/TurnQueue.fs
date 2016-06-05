@@ -16,10 +16,11 @@ module TurnQueue =
       | _ -> 
         let request = _eventQueue.Dequeue()
         //Assume that this list is never empty
-        let head :: tail = request
-        _processedEvents <- head :: _processedEvents
-        handler (head, tail) |> Seq.iter (fun t -> _eventQueue.Enqueue(t :: request))
-        _handle()
+        match request with
+        | head :: tail -> _processedEvents <- head :: _processedEvents
+                          handler (head, tail) |> Seq.iter (fun t -> _eventQueue.Enqueue(t :: request))
+                          _handle()
+        | _ -> failwith "TurnQueue.HandleMessages expected items"
     _eventQueue.Enqueue([ initialRequest ])
     _handle()
     _processedEvents

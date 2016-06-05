@@ -7,7 +7,6 @@ type EventResultType =
   | EntityMoved
   | EntityMovementRequested
   | EntityResourceChanged
-  | Exit
 
 type RequestedMovement = 
   { EntityId : EntityId
@@ -30,13 +29,11 @@ type EventResult =
   | EntityMoved of ResultMoved
   | EntityMovementRequested of RequestedMovement
   | EntityResourceChanged of ResultResourceChanged
-  | Exit
-  
-  member this.Type = 
-    match this with
-    | EventResult.EntityMoved(_) -> EventResultType.EntityMoved
-    | EventResult.EntityMovementRequested(_) -> EventResultType.EntityMovementRequested
-    | EventResult.EntityResourceChanged(_) -> EventResultType.EntityResourceChanged
-    | _ -> EventResultType.Exit
+
+  static member FromEntityAction entityId action =
+    match action with
+    | EntityAction.Movement(direction) -> EventResult.EntityMovementRequested({ RequestedMovement.EntityId = entityId
+                                                                                Direction = direction })
+    | _ -> failwithf "Action not implemented for %A" action
   
 type TurnStep = List<EventResult>
