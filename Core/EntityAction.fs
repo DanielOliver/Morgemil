@@ -3,5 +3,7 @@
 open Morgemil.Math
 
 ///The actions available to an entity.
-type Actions = 
+type EntityAction = 
   | Movement of Direction : Vector2i
+  | DownStairs
+  | Exit

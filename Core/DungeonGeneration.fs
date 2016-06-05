@@ -112,7 +112,7 @@ module DungeonGeneration =
   let private generateSquare (param : DungeonParameter) = 
     let rng = RNG.SeedRNG param.RngSeed
     //Slightly randomized dungeon size
-    let dungeon_size = Rectangle(Vector2i(60) + RNG.RandomVector rng (Vector2i(60)))
+    let dungeon_size = Rectangle(Vector2i(120) + RNG.RandomVector rng (Vector2i(60)))
     //Empty map
     let dungeon_map = DungeonMap(dungeon_size, param.Depth)
     generateRoom dungeon_map (dungeon_size.Expand -1)

@@ -57,7 +57,7 @@
     <Compile Include="DungeonParameter.fs" />
     <Compile Include="TileModifier.fs" />
     <Compile Include="BspGenerator.fs" />
-    <Compile Include="Actions.fs" />
+    <Compile Include="EntityAction.fs" />
     <Compile Include="Race.fs" />
     <Compile Include="Races.fs" />
     <Compile Include="Person.fs" />

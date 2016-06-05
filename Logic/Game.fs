@@ -3,7 +3,7 @@
 open Morgemil.Core
 open Morgemil.Math
 
-type Game(world : World, callback : unit -> EventResult) = 
+type Game(world : World, callback : EntityId -> EntityAction) = 
   let _world = world
   let _actions = ActionSystem(world)
   let _positions = PositionSystem(world)
@@ -14,18 +14,17 @@ type Game(world : World, callback : unit -> EventResult) =
   
   let _artificalPlayer (action : ActionComponent) = 
     one <- not (one)
-    EventResult.EntityMovementRequested({ RequestedMovement.EntityId = action.EntityId
-                                          RequestedMovement.Direction = 
-                                            Vector2i(if one then 1
-                                                     else -1) })
+    EntityAction.Movement(Vector2i(if one then 1 else -1))
   
+  let _goDownStairs() = ()
+
   let _requestedMovement (request : RequestedMovement) = 
     TurnBuilder () { 
       let positionComponent = _positions.[request.EntityId]
       let newPosition = positionComponent.Position + request.Direction
+      let movementcost = System.Math.Round(decimal (request.Direction.Length), 2) * 1M<GameTime>
       //If able to move, move
       if not (_world.Level.BlocksMovement(newPosition)) && positionComponent.Mobile then 
-        let movementcost = System.Math.Round(decimal (request.Direction.Length), 2) * 1M<GameTime>
         let newPositionComponent = { positionComponent with Position = newPosition }
         _positions.[request.EntityId] <- newPositionComponent
         yield Message.PositionChange(positionComponent, newPositionComponent)
@@ -38,7 +37,7 @@ type Game(world : World, callback : unit -> EventResult) =
         | None -> ()
         _actions.Act(request.EntityId, movementcost)
       //else dont move
-      else _actions.Act(request.EntityId, 0.0M<GameTime>)
+      else _actions.Act(request.EntityId, movementcost)
     }
   
   let _handleRequest (request, history : EventResult list) = 
@@ -51,19 +50,26 @@ type Game(world : World, callback : unit -> EventResult) =
   member this.Loop() = 
     let nextAction = _actions.Next()
     _world.CurrentTime <- nextAction.TimeOfNextAction
-    let action = 
-      match _players.Find(nextAction.EntityId) with
-      | Some(x) -> 
-        match x.IsHumanControlled with
-        | true -> callback()
-        | _ -> _artificalPlayer nextAction
-      | _ -> _artificalPlayer nextAction
+    
+    let currentEntity = nextAction.EntityId
+
+    let action, IsHumanControlled  = 
+      match _players.Find(currentEntity) with
+      | Some(x) when x.IsHumanControlled -> callback currentEntity, true
+      | _ -> _artificalPlayer nextAction, false
+
     match action with
-    | EventResult.Exit -> ()
+    | EntityAction.Exit -> ()
+    | EntityAction.DownStairs -> _goDownStairs() 
     | _ -> 
-      let results = TurnQueue.HandleMessages _handleRequest action
-      results |> Seq.iter (fun res -> printfn "%A" res)
-      printfn "time %f" _world.CurrentTime
+      let request = EventResult.FromEntityAction currentEntity action
+      let results = TurnQueue.HandleMessages _handleRequest request
+      
+      if IsHumanControlled then
+        printfn "EntityID %A" nextAction.EntityId
+        printfn "Current time %f       Time since last %f" _world.CurrentTime nextAction.Duration
+        results |> Seq.iter (fun res -> printfn "%A" res)
+        printfn ""
+
       _world.Entities.Free()
-      printfn ""
       this.Loop()
