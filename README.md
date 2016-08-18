@@ -1,2 +1,2 @@
 # Morgemil
-An open-world, single-player RPG framework
+A dungeon-crawler, single-player RPG framework and game.
