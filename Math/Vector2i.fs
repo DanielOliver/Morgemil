@@ -41,8 +41,7 @@ type Vector2i =
     member this.Length = 
       match this.LengthSquared with
       | 0.0 -> 0.0
-      | x -> Math.Sqrt(if x < 0.0 then Math.Abs(x)
-                       else x)
+      | x -> Math.Sqrt(x)
 
     ///The area as though this were a rectangle size
     member this.Area = Math.Abs(this.X * this.Y)

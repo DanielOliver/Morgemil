@@ -1,5 +1,7 @@
 ﻿namespace Morgemil.Math
 
+open System
+
 /// <summary>
 /// Use this in combination with <see cref="Morgemil.Core.Vector2f">Matrix2f</see> for floating point positions.
 /// </summary>
@@ -11,6 +13,7 @@ type Vector2f =
     new(x, y) = 
       { X = x
         Y = y }
+    new(scalar) = Vector2f(scalar, scalar)
     
     //Identity
     static member Identity = Vector2f(0.0, 1.0)
@@ -32,10 +35,23 @@ type Vector2f =
     static member (/) (vec1 : Vector2f, scalar) = Vector2f(vec1.X / scalar, vec1.Y * scalar)
     //########## Member methods #########################################
     //Distance
-    member this.LengthSquared() = (this.X * this.X) + (this.Y + this.Y)
-    member this.Length() = System.Math.Sqrt(this.LengthSquared())
+    member this.LengthSquared = (this.X * this.X) + (this.Y * this.Y)
+    member this.Length =
+      match this.LengthSquared with
+      | 0.0 -> 0.0
+      | x -> System.Math.Sqrt(x)
+      
+    ///The area as though this were a rectangle size
+    member this.Area = Math.Abs(this.X * this.Y)
+    
+    ///Minimum (x,y) of both elements
+    member this.Minimum(vec1 : Vector2f) = Vector2f(Math.Min(this.X, vec1.X), Math.Min(this.Y, vec1.Y))
+    
+    ///Maximum (x,y) of both elements
+    member this.Maximum(vec1 : Vector2f) = Vector2f(Math.Max(this.X, vec1.X), Math.Max(this.Y, vec1.Y))
+
     //Normalization
     member this.Normalize() = 
-      let length = this.Length()
+      let length = this.Length
       Vector2f(this.X / length, this.Y / length)
   end
