@@ -9,6 +9,10 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Logic", "Logic\Logic.fsproj
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Math", "Math\Math.fsproj", "{98929076-0CCC-4E88-898B-9C89D1B88303}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8C286D7D-B2C1-42AE-922C-2FC1AACBEC26}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Math.Tests", "Math.Tests\Math.Tests.fsproj", "{C7051903-04B3-4AA2-89F2-32D36E65FE21}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,8 +31,15 @@ Global
 		{98929076-0CCC-4E88-898B-9C89D1B88303}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{98929076-0CCC-4E88-898B-9C89D1B88303}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{98929076-0CCC-4E88-898B-9C89D1B88303}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7051903-04B3-4AA2-89F2-32D36E65FE21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7051903-04B3-4AA2-89F2-32D36E65FE21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7051903-04B3-4AA2-89F2-32D36E65FE21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7051903-04B3-4AA2-89F2-32D36E65FE21}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C7051903-04B3-4AA2-89F2-32D36E65FE21} = {8C286D7D-B2C1-42AE-922C-2FC1AACBEC26}
 	EndGlobalSection
 EndGlobal
