@@ -45,7 +45,7 @@ type Vector2i =
                        else x)
 
     ///The area as though this were a rectangle size
-    member this.Area = this.X * this.Y
+    member this.Area = Math.Abs(this.X * this.Y)
     
     ///Minimum (x,y) of both elements
     member this.Minimum(vec1 : Vector2i) = Vector2i(Math.Min(this.X, vec1.X), Math.Min(this.Y, vec1.Y))

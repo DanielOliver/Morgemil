@@ -52,6 +52,7 @@
   <ItemGroup>
     <Content Include="packages.config" />
     <Compile Include="Vector2i.Tests.fs" />
+    <Compile Include="Rectangle.Tests.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />

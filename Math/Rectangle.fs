@@ -10,9 +10,10 @@ type Rectangle =
     
     new(position : Vector2i, size : Vector2i) = 
       { Position = position
-        Size = size }
-    
+        Size = size }    
     new(size : Vector2i) = Rectangle(Vector2i(), size)
+    new(x, y, width, height) = Rectangle(Vector2i(x, y), Vector2i(width, height))
+
     member this.MinCoord = this.Position
     member this.MaxCoord = this.Position + this.Size - 1
     //Area
