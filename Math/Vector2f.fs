@@ -3,7 +3,7 @@
 open System
 
 /// <summary>
-/// Use this in combination with <see cref="Morgemil.Core.Vector2f">Matrix2f</see> for floating point positions.
+/// Use this in combination with <see cref="Morgemil.Math.Matrix2f">Matrix2f</see> for floating point positions.
 /// </summary>
 type Vector2f = 
   struct

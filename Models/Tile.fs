@@ -1,13 +1,15 @@
 ﻿namespace Morgemil.Models
 
+[<RequireQualifiedAccess>]
 type TileType = 
   | Void = 0
   | Solid = 1
   | Ground = 2
-  | Water = 3
 
 type Tile = 
   { ID : int
+    ///The general specification of this tile
+    TileType: TileType
     /// A short name. eg: "Lush Grass"
     Name : string
     ///A long description. eg: "Beware the burning sand. Scorpions and asps make their home here."

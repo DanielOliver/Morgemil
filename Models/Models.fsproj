@@ -54,6 +54,8 @@
     <Compile Include="Race.fs" />
     <Compile Include="Tile.fs" />
     <Compile Include="Weapon.fs" />
+    <Compile Include="Wearable.fs" />
+    <Compile Include="Item.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>

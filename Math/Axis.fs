@@ -1,5 +1,6 @@
 ﻿namespace Morgemil.Math
 
+[<RequireQualifiedAccess>]
 type Axis = 
   | Horizontal
   | Vertical
