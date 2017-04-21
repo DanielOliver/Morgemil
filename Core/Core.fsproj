@@ -60,7 +60,6 @@
     <Compile Include="Races.fs" />
     <Compile Include="Person.fs" />
     <Compile Include="EntityId.fs" />
-    <Compile Include="Component.fs" />
     <Compile Include="Trigger.fs" />
     <Compile Include="Level.fs" />
     <Compile Include="DungeonGeneration.fs" />
