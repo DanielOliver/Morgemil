@@ -3,7 +3,7 @@
 open NUnit.Framework
 open Morgemil.Math
 
-let rect1 = Rectangle(Vector2i.create(-5, 5), Vector2i.create(10, 4))
+let rect1 = Rectangle.create(Vector2i.create(-5, 5), Vector2i.create(10, 4))
 
 [<Test>]
 let ``Test Rectangle Properties``() =
@@ -26,13 +26,13 @@ let ``Test Rectangle IsOnEdge``() =
   
 [<Test>]
 let ``Test Rectangle Expand``() =
-  Assert.AreEqual(Rectangle(-6, 4, 12, 6), rect1.Expand 1)
-  Assert.AreEqual(Rectangle(-6, 4, 12, 6), rect1.Expand(Vector2i.create(1)))
+  Assert.AreEqual(Rectangle.create(-6, 4, 12, 6), rect1.Expand 1)
+  Assert.AreEqual(Rectangle.create(-6, 4, 12, 6), rect1.Expand(Vector2i.create(1)))
   
 [<Test>]
 let ``Test Rectangle Intersect``() =
-  Assert.IsTrue(rect1.Intersects( Rectangle(-6, 4, 12, 6)))
-  Assert.IsFalse(rect1.Intersects( Rectangle(5, 8, 1, 1)))
-  Assert.IsTrue(rect1.Intersects( Rectangle(-5, 5, 1, 1)))
+  Assert.IsTrue(rect1.Intersects( Rectangle.create(-6, 4, 12, 6)))
+  Assert.IsFalse(rect1.Intersects( Rectangle.create(5, 8, 1, 1)))
+  Assert.IsTrue(rect1.Intersects( Rectangle.create(-5, 5, 1, 1)))
 
 

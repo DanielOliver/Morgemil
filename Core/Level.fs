@@ -13,7 +13,7 @@ type Level(tiles : Tile [,], depth : int) =
   let _size = Vector2i.create(Array2D.length1 tiles, Array2D.length2 tiles)
   let _entities : EntityId option [,] = Array2D.zeroCreate _size.X _size.Y
   let _tileModifiers : TileModifier option [,] = Array2D.zeroCreate _size.X _size.Y
-  member this.Area = Rectangle(Vector2i.Zero, _size)
+  member this.Area = Rectangle.create(Vector2i.Zero, _size)
   member this.Tiles = tiles
   member this.Depth = depth
   

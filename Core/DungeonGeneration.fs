@@ -21,7 +21,7 @@ module DungeonGeneration =
     //Randomize size before placing the room randomly
     let room_size = minimumRoomArea + RNG.RandomVector rng (maxArea.Size - minimumRoomArea) - 2
     let room_position = maxArea.Position + 1 + RNG.RandomVector rng (maxArea.Size - room_size - 2)
-    Rectangle(room_position, room_size)
+    Rectangle.create(room_position, room_size)
   
   ///Writes directly on the map (side-effects). returns nothing
   let private generateRoom (dungeonMap : DungeonMap) (area : Rectangle) = 
@@ -87,7 +87,7 @@ module DungeonGeneration =
   let private generateBSP (param : DungeonParameter) = 
     let rng = RNG.SeedRNG param.RngSeed
     //Hardcoded dungeon size
-    let dungeon_size = Rectangle(Vector2i.create(124, 90))
+    let dungeon_size = Rectangle.create(Vector2i.create(124, 90))
     //Empty map
     let dungeon_map = DungeonMap(dungeon_size, param.Depth)
     //Room params
@@ -112,7 +112,7 @@ module DungeonGeneration =
   let private generateSquare (param : DungeonParameter) = 
     let rng = RNG.SeedRNG param.RngSeed
     //Slightly randomized dungeon size
-    let dungeon_size = Rectangle(Vector2i.create(120) + RNG.RandomVector rng (Vector2i.create(60)))
+    let dungeon_size = Rectangle.create(Vector2i.create(120) + RNG.RandomVector rng (Vector2i.create(60)))
     //Empty map
     let dungeon_map = DungeonMap(dungeon_size, param.Depth)
     generateRoom dungeon_map (dungeon_size.Expand -1)
