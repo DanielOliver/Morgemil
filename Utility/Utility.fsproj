@@ -52,6 +52,7 @@
   <ItemGroup>
     <Content Include="packages.config" />
     <Compile Include="DataLoader.fs" />
+    <Compile Include="Generic.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Data">

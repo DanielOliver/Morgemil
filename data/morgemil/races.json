@@ -3,6 +3,15 @@
 		"noun": "Human",
 		"adjective": "Human",
 		"description": "The kings of the overworld. How shall you fare in the darkness?",
+		"racialmodifiers": [ 1 ],
+		"tags": {
+			"playeroption": {}
+		}
+	},
+	{	"id": "2",
+		"noun": "Wight",
+		"adjective": "Wightish",
+		"description": "That shape in the darkness?  He was your friend, care to test your friendship now?",
 		"racialmodifiers": [ 1, 2 ],
 		"tags": {
 		}

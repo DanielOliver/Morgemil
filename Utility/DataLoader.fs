@@ -8,6 +8,7 @@ type ScenarioData =
   { Races: Race []
     Tiles: Tile []
     Items: Item []
+    RaceModifiers: RaceModifier []
   }
 
 
@@ -42,9 +43,21 @@ module JsonLoad =
         Tags = LoadTags(item?tags)
         AvailableRacialModifiers = item?racialmodifiers.AsArray() |> Array.map(fun t -> t.AsInteger())
       }
-    )
+    ) 
     |> Seq.toArray
     
+  let LoadRaceModifiers(values: JsonValue) = 
+    values.AsArray()
+    |> Seq.map(fun item -> 
+      { RaceModifier.ID = item?id.AsInteger()
+        Noun = item?noun.AsString()
+        Adjective = item?adjective.AsString()
+        Description = item?description.AsString()
+        Tags = LoadTags(item?tags)
+      }
+    ) 
+    |> Seq.toArray
+
   let LoadTiles(values: JsonValue) =
     values.AsArray()
     |> Seq.map(fun item ->
@@ -56,7 +69,7 @@ module JsonLoad =
         BlocksSight = item?blockssight.AsBoolean()
         Tags = LoadTags(item?tags)
       }
-    )
+    ) 
     |> Seq.toArray
     
   let LoadSubItem(values: JsonValue, itemType: ItemType) = 
@@ -110,12 +123,14 @@ type DataLoader(baseGamePath: string) =
     let readText fileName = (scenario.BasePath + fileName) |> System.IO.File.ReadAllText |> JsonValue.Parse
 
     let racesData = readText "/races.json"
+    let racemodifiersData = readText "/racemodifiers.json"
     let tilesData = readText "/tiles.json"
     let itemsData = readText "/items.json"
 
     { ScenarioData.Races = racesData |> JsonLoad.LoadRaces
       Tiles =  tilesData |> JsonLoad.LoadTiles
       Items = itemsData |> JsonLoad.LoadItems
+      RaceModifiers = racemodifiersData |> JsonLoad.LoadRaceModifiers
     }
     
 
