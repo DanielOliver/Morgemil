@@ -39,6 +39,7 @@ let LoadFloorGenerationParameters(values: JsonValue) =
       Strategy = item?strategy |> CastEnum<FloorGenerationStrategy>
     }
   )
+  |> Seq.sortBy(fun t -> t.ID)
   |> Seq.toArray
 
 let LoadScenario(values: JsonValue, basePath: string) =
@@ -52,14 +53,25 @@ let LoadScenario(values: JsonValue, basePath: string) =
 let LoadRaces(values: JsonValue) =
   values.AsArray()
   |> Seq.map(fun item ->
+    let raceModifiers = 
+      item?racialmodifiers.AsArray() 
+      |> Array.map (fun item ->
+        { RaceModifierRatio.RaceModifierID = item.TryGetProperty("id") |> Option.map(JsonExtensions.AsInteger)
+          Ratio = item?ratio.AsInteger()
+        }
+      )
+
+    raceModifiers |> Array.sortInPlaceBy(fun t -> t.RaceModifierID)
+
     { Race.ID = item?id.AsInteger()
       Noun = item?noun.AsString()        
       Adjective = item?adjective.AsString()
       Description = item?description.AsString()
       Tags = LoadTags(item?tags)
-      AvailableRacialModifiers = LoadIntegerArray(item?racialmodifiers)
+      RaceModifiers = raceModifiers
     }
-  ) 
+  )
+  |> Seq.sortBy(fun t -> t.ID) 
   |> Seq.toArray
     
 let LoadRaceModifiers(values: JsonValue) = 
@@ -72,6 +84,7 @@ let LoadRaceModifiers(values: JsonValue) =
       Tags = LoadTags(item?tags)
     }
   ) 
+  |> Seq.sortBy(fun t -> t.ID)
   |> Seq.toArray
 
 let LoadTiles(values: JsonValue) =
@@ -86,6 +99,7 @@ let LoadTiles(values: JsonValue) =
       Tags = LoadTags(item?tags)
     }
   ) 
+  |> Seq.sortBy(fun t -> t.ID)
   |> Seq.toArray
     
 let LoadSubItem(values: JsonValue, itemType: ItemType) = 
@@ -101,7 +115,6 @@ let LoadSubItem(values: JsonValue, itemType: ItemType) =
       WearableType = values?wearabletype |> CastEnum<WearableType>
     } |> SubItem.Wearable
   | _ -> failwithf "Undefined Sub Item Type %A" itemType
-
     
 
 let LoadItems(values: JsonValue) =
@@ -117,4 +130,5 @@ let LoadItems(values: JsonValue) =
       SubItem = LoadSubItem(item?subitem, itemType)
     }
   )
+  |> Seq.sortBy(fun t -> t.ID)
   |> Seq.toArray

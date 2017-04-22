@@ -1,5 +1,5 @@
 [
-	{	"id": "1",
+	{	"id": "0",
 		"tiles": [ 1, 2, 3 ],
 		"sizerange": {
 			"position": { "x": 5, "y": 5 },

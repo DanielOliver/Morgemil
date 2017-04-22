@@ -4,16 +4,33 @@ open FSharp.Data
 open FSharp.Data.JsonExtensions
 open Morgemil.Models
 
-type ScenarioData =
-  { Races: Race []
-    Tiles: Tile []
-    Items: Item []
-    RaceModifiers: RaceModifier []
-    FloorGenerationParameters: FloorGenerationParameter []
-  }
-
 type DataLoader(baseGamePath: string) =
   let _basePath = System.IO.DirectoryInfo(baseGamePath).FullName
+
+  member this.ValidateScenarioData(scenarioData: ScenarioData) =
+    
+    for index in [0..scenarioData.FloorGenerationParameters.Length-1] do
+      if scenarioData.FloorGenerationParameters.[index].ID <> index then
+        failwithf "Scenario FloorGenerationParameters not indexed correctly"
+
+    for index in [0..scenarioData.Items.Length-1] do
+      if scenarioData.Items.[index].ID <> index then
+        failwithf "Scenario Items not indexed correctly"
+        
+    for index in [0..scenarioData.RaceModifiers.Length-1] do
+      if scenarioData.RaceModifiers.[index].ID <> index then
+        failwithf "Scenario RaceModifiers not indexed correctly"
+        
+    for index in [0..scenarioData.Races.Length-1] do
+      let item = scenarioData.Races.[index]
+      if item.ID <> index then
+        failwithf "Scenario Races not indexed correctly"
+      if not(item.RaceModifiers |> Seq.choose(fun t -> t.RaceModifierID) |> Seq.forall(Generic.IsValidArrayIndex scenarioData.RaceModifiers)) then
+        failwithf "Race Modifier does not exist"
+        
+    for index in [0..scenarioData.Tiles.Length-1] do
+      if scenarioData.Tiles.[index].ID <> index then
+        failwithf "Scenario Tiles not indexed correctly"
 
 
   member this.LoadScenarios() =
@@ -39,9 +56,12 @@ type DataLoader(baseGamePath: string) =
     let itemsData = readText "/items.json"
     let floorgenerationData = readText "/floorgeneration.json"
 
-    { ScenarioData.Races = racesData |> JsonLoad.LoadRaces
-      Tiles =  tilesData |> JsonLoad.LoadTiles
-      Items = itemsData |> JsonLoad.LoadItems
-      RaceModifiers = racemodifiersData |> JsonLoad.LoadRaceModifiers
-      FloorGenerationParameters = floorgenerationData |> JsonLoad.LoadFloorGenerationParameters
-    }
+    let result = 
+      { ScenarioData.Races = racesData |> JsonLoad.LoadRaces
+        Tiles =  tilesData |> JsonLoad.LoadTiles
+        Items = itemsData |> JsonLoad.LoadItems
+        RaceModifiers = racemodifiersData |> JsonLoad.LoadRaceModifiers
+        FloorGenerationParameters = floorgenerationData |> JsonLoad.LoadFloorGenerationParameters
+      }
+    this.ValidateScenarioData result
+    result

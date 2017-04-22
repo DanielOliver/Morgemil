@@ -50,14 +50,14 @@
   </Choose>
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
-    <Compile Include="DungeonParameter.fs" />
-    <Compile Include="TileModifier.fs" />
-    <Compile Include="BspGenerator.fs" />
-    <Compile Include="EntityAction.fs" />
-    <Compile Include="EntityId.fs" />
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Models\Models.fsproj">
+      <Name>Models</Name>
+      <Project>{66402d8e-b21a-4dbf-8b54-348aa6faceba}</Project>
+      <Private>True</Private>
+    </ProjectReference>
     <Reference Include="FSharp.Core">
       <HintPath>..\packages\FSharp.Core.4.1.12\lib\net45\FSharp.Core.dll</HintPath>
     </Reference>

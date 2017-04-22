@@ -1,5 +1,5 @@
 [
-	{	"id": "1",
+	{	"id": "0",
 		"tiletype": "2",
 		"name": "Cobble Floor",
 		"description": "A seemingly solid cobble floor may hide a number of traps.",
@@ -8,7 +8,7 @@
 		"tags": {
 		}
 	},
-	{	"id": "2",
+	{	"id": "1",
 		"tiletype": "1",
 		"name": "Cobble Wall",
 		"description": "A seemingly solid cobble wall may hide a secret door.",
@@ -17,7 +17,7 @@
 		"tags": {
 		}
 	},
-	{	"id": "3",
+	{	"id": "2",
 		"tiletype": "0",
 		"name": "Reinforced wall",
 		"description": "A very solid wall without any perceptible weakness.",
