@@ -29,7 +29,7 @@ type DataLoader(baseGamePath: string) =
     values.AsArray()
     |> Seq.map(fun item ->
       { Race.ID = item?id.AsInteger()
-        Noun = item?isunique.AsString()        
+        Noun = item?noun.AsString()        
         Adjective = item?adjective.AsString()
         Description = item?description.AsString()
         Tags = _loadTags(item?tags)
