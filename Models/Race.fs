@@ -9,4 +9,4 @@ type Race =
     ///User-visible description
     Description : string
     ///A list of Tags that this Race possesses, along with the Value(s)
-    Tags : Map<Tag, TagValue> }
+    Tags : Map<TagType, Tag> }

@@ -50,12 +50,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Tags.fs" />
     <Compile Include="Tag.fs" />
     <Compile Include="Race.fs" />
     <Compile Include="Tile.fs" />
     <Compile Include="Weapon.fs" />
     <Compile Include="Wearable.fs" />
     <Compile Include="Item.fs" />
+    <Compile Include="Scenario.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>

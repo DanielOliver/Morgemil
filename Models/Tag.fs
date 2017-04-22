@@ -1,14 +1,14 @@
 ﻿namespace Morgemil.Models
 
 [<RequireQualifiedAccess>]
-type Tag =
+type TagType =
   | One = 1
-  
+
 [<RequireQualifiedAccess>]
-///Lists the parser types for TagValue as an Enum
-type TagValueType =
-  | Null = 1
-  
-[<RequireQualifiedAccess>]
-type TagValue =
-  | Null
+type Tag =
+  | One of Tags.One
+
+  member this.TagType =
+    match this with
+    | One _ -> TagType.One
+

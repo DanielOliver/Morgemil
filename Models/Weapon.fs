@@ -8,6 +8,8 @@ type WeaponRangeType =
 type Weapon =
   { ///Type of this weapon
     RangeType: WeaponRangeType
+    ///Base Range
+    BaseRange: int
     ///The number of hands required to wield this weapon
     HandCount: int
     ///The weight of this item. Used in stamina

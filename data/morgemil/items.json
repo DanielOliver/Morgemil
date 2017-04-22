@@ -1,0 +1,15 @@
+[
+	{	"id": "1",
+		"noun": "short sword",
+		"isunique": "false",
+		"itemtype": "0",
+		"subitem": {
+			"rangetype": "0",
+			"baserange": "1",
+			"handcount": "1",
+			"weight": "5.0"
+		}
+		"tags": {
+		}
+	}
+]

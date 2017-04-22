@@ -19,4 +19,4 @@ type Tile =
     ///If true, this tile ALWAYS blocks ALL Line-Of-Sight of ANYTHING.
     BlocksSight : bool
     ///A list of Tags that this Tile possesses, along with the Value(s)
-    Tags : Map<Tag, TagValue> }
+    Tags : Map<TagType, Tag> }

@@ -26,6 +26,6 @@ type Item =
     ///If true, then never appears more than once in a game.
     IsUnique: bool
     ///A list of Tags that this Item possesses, along with the Value(s)
-    Tags : Map<Tag, TagValue>    
+    Tags : Map<TagType, Tag>    
   }
 
