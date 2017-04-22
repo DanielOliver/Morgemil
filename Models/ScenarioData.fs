@@ -6,5 +6,7 @@ type ScenarioData =
     Tiles: Tile []
     Items: Item []
     RaceModifiers: RaceModifier []
+    RaceModifierLinks: RaceModifierLink []
     FloorGenerationParameters: FloorGenerationParameter []
+    Scenario: Scenario
   }

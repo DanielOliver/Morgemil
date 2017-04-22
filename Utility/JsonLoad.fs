@@ -50,25 +50,26 @@ let LoadScenario(values: JsonValue, basePath: string) =
     Description = values?description.AsString()
   }
 
+let LoadRaceModifierLinks(values: JsonValue, races: Race[], raceModifiers: RaceModifier[]) =
+  values.AsArray()
+  |> Seq.mapi(fun index item ->
+    { RaceModifierLink.ID = index
+      RaceModifier = item.TryGetProperty("racemodifierid") |> Option.map(JsonExtensions.AsInteger >> (fun t -> raceModifiers.[t]))
+      Race = races.[item?raceid.AsInteger()]
+      Ratio = item?ratio.AsInteger()
+    }
+  )
+  |> Seq.sortBy(fun t -> t.ID) 
+  |> Seq.toArray
+  
 let LoadRaces(values: JsonValue) =
   values.AsArray()
   |> Seq.map(fun item ->
-    let raceModifiers = 
-      item?racialmodifiers.AsArray() 
-      |> Array.map (fun item ->
-        { RaceModifierRatio.RaceModifierID = item.TryGetProperty("id") |> Option.map(JsonExtensions.AsInteger)
-          Ratio = item?ratio.AsInteger()
-        }
-      )
-
-    raceModifiers |> Array.sortInPlaceBy(fun t -> t.RaceModifierID)
-
     { Race.ID = item?id.AsInteger()
       Noun = item?noun.AsString()        
       Adjective = item?adjective.AsString()
       Description = item?description.AsString()
       Tags = LoadTags(item?tags)
-      RaceModifiers = raceModifiers
     }
   )
   |> Seq.sortBy(fun t -> t.ID) 
