@@ -10,9 +10,7 @@
 			"weight": "5.0"
 		},
 		"tags": {
-			"one": {
-				"value": "5"
-			}
+			"playeroption": {}
 		}
 	}
 ]

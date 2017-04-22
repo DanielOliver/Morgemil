@@ -27,8 +27,8 @@ module JsonLoad =
     values.Properties
     |> Seq.map(fun (name, json) -> 
       match name.ToLower() with
-      | "one" ->  
-        TagType.One, Tag.One({ Tags.Value = json?value.AsInteger() })
+      | "playeroption" ->  
+        TagType.PlayerOption, Tag.PlayerOption
       | _ -> failwithf "Unknown tag %s" name)
     |> Map.ofSeq
 
@@ -40,6 +40,7 @@ module JsonLoad =
         Adjective = item?adjective.AsString()
         Description = item?description.AsString()
         Tags = LoadTags(item?tags)
+        AvailableRacialModifiers = item?racialmodifiers.AsArray() |> Array.map(fun t -> t.AsInteger())
       }
     )
     |> Seq.toArray

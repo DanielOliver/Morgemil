@@ -2,13 +2,14 @@
 
 [<RequireQualifiedAccess>]
 type TagType =
-  | One = 1
+  | PlayerOption
+
 
 [<RequireQualifiedAccess>]
 type Tag =
-  | One of Tags.One
+  | PlayerOption
 
   member this.TagType =
     match this with
-    | One _ -> TagType.One
+    | PlayerOption -> TagType.PlayerOption
 

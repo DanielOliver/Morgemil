@@ -3,6 +3,7 @@
 		"noun": "Human",
 		"adjective": "Human",
 		"description": "The kings of the overworld. How shall you fare in the darkness?",
+		"racialmodifiers": [ 1, 2 ],
 		"tags": {
 		}
 	}
