@@ -51,6 +51,7 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Content Include="packages.config" />
+    <Compile Include="JsonLoad.fs" />
     <Compile Include="DataLoader.fs" />
     <Compile Include="Generic.fs" />
   </ItemGroup>
