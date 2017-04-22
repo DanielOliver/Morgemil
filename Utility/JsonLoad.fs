@@ -29,11 +29,11 @@ let LoadTags(values: JsonValue): Map<TagType, Tag> =
     | _ -> failwithf "Unknown tag (%s)" name)
   |> Map.ofSeq
 
-let LoadFloorGenerationParameters(values: JsonValue) = 
+let LoadFloorGenerationParameters(values: JsonValue, tiles: Tile []) = 
   values.AsArray()
   |> Seq.map(fun item ->
     { FloorGenerationParameter.ID = item?id.AsInteger()
-      Tiles = LoadIntegerArray(item?tiles)
+      Tiles = LoadIntegerArray(item?tiles) |> Array.map(fun t -> tiles.[t])
       SizeRange = LoadRectangle(item?sizerange)
       Tags = LoadTags(item?tags)
       Strategy = item?strategy |> CastEnum<FloorGenerationStrategy>
@@ -59,7 +59,7 @@ let LoadRaceModifierLinks(values: JsonValue, races: Race[], raceModifiers: RaceM
       Ratio = item?ratio.AsInteger()
     }
   )
-  |> Seq.sortBy(fun t -> t.ID) 
+  |> Seq.sortBy(fun t -> t.ID)
   |> Seq.toArray
   
 let LoadRaces(values: JsonValue) =

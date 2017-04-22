@@ -9,7 +9,7 @@ type FloorGenerationStrategy =
 type FloorGenerationParameter =
   { ID: int
     ///Tiles used
-    Tiles: int []
+    Tiles: Tile []
     ///Size generation
     SizeRange: Morgemil.Math.Rectangle
     ///Generation Strategy

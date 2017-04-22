@@ -60,7 +60,7 @@ type DataLoader(baseGamePath: string) =
     let tiles = tilesData |> JsonLoad.LoadTiles
     let items = itemsData |> JsonLoad.LoadItems
     let raceModifiers = racemodifiersData |> JsonLoad.LoadRaceModifiers
-    let floorGenerationParameters = floorgenerationData |> JsonLoad.LoadFloorGenerationParameters
+    let floorGenerationParameters = JsonLoad.LoadFloorGenerationParameters(floorgenerationData, tiles)
     let raceModifierLinks = JsonLoad.LoadRaceModifierLinks( racemodifierlinksData, races, raceModifiers)
 
     let result = 
