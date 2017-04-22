@@ -1,5 +1,6 @@
 ﻿namespace Morgemil.Core
 
+[<Struct>]
 type EntityId = 
   | EntityId of int
   
