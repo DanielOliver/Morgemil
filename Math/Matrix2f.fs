@@ -30,7 +30,7 @@ type Matrix2f =
       Matrix2f(Math.Cos(rotation), -Math.Sin(rotation), 0.0, Math.Sin(rotation), Math.Cos(rotation), 0.0)
     static member RotationMatrixDegrees(rotation) = Matrix2f.RotationMatrixRadians(rotation / 180.0 * Math.PI)
     static member TranslationMatrix(vec2 : Vector2f) = Matrix2f(1.0, 0.0, vec2.X, 0.0, 1.0, vec2.Y)
-    static member TranslationMatrix(x : float, y : float) = Matrix2f.TranslationMatrix(Vector2f(x, y))
+    static member TranslationMatrix(x : float, y : float) = Matrix2f.TranslationMatrix(Vector2f.create(x, y))
     //########## Operator overloads #########################################
     //Multiplication
     static member (*) (matL : Matrix2f, matR : Matrix2f) = 
@@ -39,5 +39,5 @@ type Matrix2f =
          matL.a0 * matR.a2 + matL.a1 * matR.b2 + matL.a2, matL.b0 * matR.a0 + matL.b1 * matR.b0, 
          matL.b0 * matR.a1 + matL.b1 * matR.b1, matL.b0 * matR.a2 + matL.b1 * matR.b2 + matL.a2)
     static member (*) (mat : Matrix2f, vec : Vector2f) = 
-      Vector2f(mat.a0 * vec.X + mat.a1 * vec.Y + mat.a2, mat.b0 * vec.X + mat.b1 * vec.Y + mat.b2)
+      Vector2f.create(mat.a0 * vec.X + mat.a1 * vec.Y + mat.a2, mat.b0 * vec.X + mat.b1 * vec.Y + mat.b2)
   end

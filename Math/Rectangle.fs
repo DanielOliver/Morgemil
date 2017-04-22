@@ -11,8 +11,8 @@ type Rectangle =
     new(position : Vector2i, size : Vector2i) = 
       { Position = position
         Size = size }    
-    new(size : Vector2i) = Rectangle(Vector2i(), size)
-    new(x, y, width, height) = Rectangle(Vector2i(x, y), Vector2i(width, height))
+    new(size : Vector2i) = Rectangle(Vector2i.Zero, size)
+    new(x, y, width, height) = Rectangle(Vector2i.create(x, y), Vector2i.create(width, height))
 
     member this.MinCoord = this.Position
     member this.MaxCoord = this.Position + this.Size - 1
@@ -29,10 +29,10 @@ type Rectangle =
     override this.ToString() = "(" + this.Position.ToString() + "," + this.Size.ToString() + ")"
     
     member this.Corners = 
-      [| Vector2i(this.Left, this.Top)
-         Vector2i(this.Right, this.Top)
-         Vector2i(this.Left, this.Bottom)
-         Vector2i(this.Right, this.Bottom) |]
+      [| Vector2i.create(this.Left, this.Top)
+         Vector2i.create(this.Right, this.Top)
+         Vector2i.create(this.Left, this.Bottom)
+         Vector2i.create(this.Right, this.Bottom) |]
     
     member this.Contains(pt : Vector2i) = 
       let diff_pt = pt - this.Position
@@ -61,7 +61,7 @@ type Rectangle =
       else 
         let x = Math.Min(Math.Max(pt.X, this.Left), this.Right)
         let y = Math.Min(Math.Max(pt.Y, this.Top), this.Bottom)
-        Vector2i(x, y)
+        Vector2i.create(x, y)
     
     /// <summary>
     /// A seq of all contained local coordinates
@@ -72,7 +72,7 @@ type Rectangle =
       seq { 
         for y in 0..height do
           for x in 0..width do
-            yield Vector2i(x, y)
+            yield Vector2i.create(x, y)
       }
     
     /// <summary>
@@ -86,7 +86,7 @@ type Rectangle =
       seq { 
         for y in top..bottom do
           for x in left..right do
-            yield Vector2i(x, y)
+            yield Vector2i.create(x, y)
       }
     
     ///Returns the minimum area to enclose both rectangles (union)

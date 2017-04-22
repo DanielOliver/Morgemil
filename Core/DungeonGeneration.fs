@@ -14,7 +14,7 @@ module DungeonGeneration =
     member this.CreateLevel() = Level(internal_map, depth)
   
   ///The absolute minimum room area tolerated
-  let private minimumRoomArea = Vector2i(13)
+  let private minimumRoomArea = Vector2i.create(13)
   
   ///Randomizes a room's position and size within the defined area
   let private randomizeRoom rng (maxArea : Rectangle) = 
@@ -61,21 +61,21 @@ module DungeonGeneration =
       match ax with
       | Axis.Horizontal -> 
         let first, second = sortVertical rect1 rect2
-        let pos1 = Vector2i(Math.Max(first.Left, second.Left), first.Bottom + 1)
+        let pos1 = Vector2i.create(Math.Max(first.Left, second.Left), first.Bottom + 1)
         
         ///Make corridor of width 2 if possible. But also handles a corridor of one width
         let minX = Math.Min(pos1.X + 1, Math.Min(first.Right, second.Right))
         
-        let pos2 = Vector2i(minX, second.Top - 1)
+        let pos2 = Vector2i.create(minX, second.Top - 1)
         Some(Rectangle.Enclose pos1 pos2)
       | Axis.Vertical -> 
         let first, second = sortHorizontal rect1 rect2
-        let pos1 = Vector2i(first.Right + 1, Math.Max(first.Top, second.Top))
+        let pos1 = Vector2i.create(first.Right + 1, Math.Max(first.Top, second.Top))
         
         ///Make corridor of heighth 2 if possible. But also handles a corridor of one height
         let minY = Math.Min(pos1.Y + 1, Math.Min(first.Bottom, second.Bottom))
         
-        let pos2 = Vector2i(second.Left - 1, minY)
+        let pos2 = Vector2i.create(second.Left - 1, minY)
         Some(Rectangle.Enclose pos1 pos2)
   
   ///For each room, tests it against every room after it
@@ -87,12 +87,12 @@ module DungeonGeneration =
   let private generateBSP (param : DungeonParameter) = 
     let rng = RNG.SeedRNG param.RngSeed
     //Hardcoded dungeon size
-    let dungeon_size = Rectangle(Vector2i(124, 90))
+    let dungeon_size = Rectangle(Vector2i.create(124, 90))
     //Empty map
     let dungeon_map = DungeonMap(dungeon_size, param.Depth)
     //Room params
     let min_room_size = minimumRoomArea + 5
-    let max_room_size = Vector2i(25)
+    let max_room_size = Vector2i.create(25)
     //BSP rooms with randomized size (Rectangle List).
     let dungeonRooms = 
       BspGenerator(min_room_size, max_room_size, dungeon_size.Size).GenerateRoomDivides rng 
@@ -112,7 +112,7 @@ module DungeonGeneration =
   let private generateSquare (param : DungeonParameter) = 
     let rng = RNG.SeedRNG param.RngSeed
     //Slightly randomized dungeon size
-    let dungeon_size = Rectangle(Vector2i(120) + RNG.RandomVector rng (Vector2i(60)))
+    let dungeon_size = Rectangle(Vector2i.create(120) + RNG.RandomVector rng (Vector2i.create(60)))
     //Empty map
     let dungeon_map = DungeonMap(dungeon_size, param.Depth)
     generateRoom dungeon_map (dungeon_size.Expand -1)

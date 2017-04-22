@@ -27,12 +27,12 @@ type BspGenerator(minRoomSize : Vector2i, maxRoomSize : Vector2i, dungeonSize : 
     match ax with
     | Axis.Horizontal -> 
       let rng_width = RNG.Range rng (minRoomSize.X) (area.Width - minRoomSize.X)
-      (Rectangle(area.Position, Vector2i(rng_width, area.Height)), 
-       Rectangle(area.Position + Vector2i(rng_width, 0), area.Size - Vector2i(rng_width, 0)))
+      (Rectangle(area.Position, Vector2i.create(rng_width, area.Height)), 
+       Rectangle(area.Position + Vector2i.create(rng_width, 0), area.Size - Vector2i.create(rng_width, 0)))
     | Axis.Vertical -> 
       let rng_height = RNG.Range rng (minRoomSize.Y) (area.Height - minRoomSize.Y)
-      (Rectangle(area.Position, Vector2i(area.Width, rng_height)), 
-       Rectangle(area.Position + Vector2i(0, rng_height), area.Size - Vector2i(0, rng_height)))
+      (Rectangle(area.Position, Vector2i.create(area.Width, rng_height)), 
+       Rectangle(area.Position + Vector2i.create(0, rng_height), area.Size - Vector2i.create(0, rng_height)))
   
   ///Recursively divides an area into a Binary Space Partitioning Tree
   let rec bsp rng (area : Rectangle) (ax : Axis) = 
