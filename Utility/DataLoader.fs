@@ -24,7 +24,13 @@ module JsonLoad =
     }
 
   let LoadTags(values: JsonValue): Map<TagType, Tag> = 
-    Map.empty
+    values.Properties
+    |> Seq.map(fun (name, json) -> 
+      match name.ToLower() with
+      | "one" ->  
+        TagType.One, Tag.One({ Tags.Value = json?value.AsInteger() })
+      | _ -> failwithf "Unknown tag %s" name)
+    |> Map.ofSeq
 
   let LoadRaces(values: JsonValue) =
     values.AsArray()
