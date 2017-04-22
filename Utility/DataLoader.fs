@@ -11,10 +11,11 @@ type ScenarioData =
   }
 
 
-type DataLoader(baseGamePath: string) =
-  let _basePath = System.IO.DirectoryInfo(baseGamePath).FullName
+module JsonLoad =
+  let CastEnum<'t>(value) =
+    System.Enum.Parse(typeof<'t>, value) :?> 't
 
-  let _loadScenario(values: JsonValue, basePath: string) =
+  let LoadScenario(values: JsonValue, basePath: string) =
     { Morgemil.Models.Scenario.BasePath = basePath
       Version = values?version.AsString()
       Date = values?date.AsDateTime()
@@ -22,20 +23,69 @@ type DataLoader(baseGamePath: string) =
       Description = values?description.AsString()
     }
 
-  let _loadTags(values: JsonValue): Map<TagType, Tag> = 
+  let LoadTags(values: JsonValue): Map<TagType, Tag> = 
     Map.empty
 
-  let _loadRaces(values: JsonValue) =
+  let LoadRaces(values: JsonValue) =
     values.AsArray()
     |> Seq.map(fun item ->
       { Race.ID = item?id.AsInteger()
         Noun = item?noun.AsString()        
         Adjective = item?adjective.AsString()
         Description = item?description.AsString()
-        Tags = _loadTags(item?tags)
+        Tags = LoadTags(item?tags)
       }
     )
     |> Seq.toArray
+    
+  let LoadTiles(values: JsonValue) =
+    values.AsArray()
+    |> Seq.map(fun item ->
+      { Tile.ID = item?id.AsInteger()
+        TileType = item?tiletype.AsString() |> CastEnum<TileType>
+        Name = item?name.AsString()
+        Description = item?description.AsString()
+        BlocksMovement = item?blocksmovement.AsBoolean()
+        BlocksSight = item?blockssight.AsBoolean()
+        Tags = LoadTags(item?tags)
+      }
+    )
+    |> Seq.toArray
+    
+  let LoadSubItem(values: JsonValue, itemType: ItemType) = 
+    match itemType with
+    | ItemType.Weapon ->
+      { Weapon.BaseRange = values?baserange.AsInteger()
+        RangeType = values?rangetype.AsString() |> CastEnum<WeaponRangeType>
+        HandCount = values?handcount.AsInteger()
+        Weight = values?weight.AsDecimal()
+      } |> SubItem.Weapon
+    | ItemType.Wearable ->
+      { Wearable.Weight = values?weight.AsDecimal()
+        WearableType = values?wearabletype.AsString() |> CastEnum<WearableType>
+      } |> SubItem.Wearable
+    | _ -> failwithf "Undefined Sub Item Type %A" itemType
+
+    
+
+  let LoadItems(values: JsonValue) =
+    values.AsArray()
+    |> Seq.map(fun item ->
+      let itemType = item?itemtype.AsString() |> CastEnum<ItemType>
+
+      { Item.ID = item?id.AsInteger()
+        Noun = item?noun.AsString()
+        IsUnique = item?isunique.AsBoolean()
+        ItemType = itemType
+        Tags = LoadTags(item?tags)
+        SubItem = LoadSubItem(item?subitem, itemType)
+      }
+    )
+    |> Seq.toArray
+
+type DataLoader(baseGamePath: string) =
+  let _basePath = System.IO.DirectoryInfo(baseGamePath).FullName
+
 
   member this.LoadScenarios() =
     let files = System.IO.DirectoryInfo(_basePath).GetDirectories() |> Array.collect(fun t -> t.GetFiles("game.json"))
@@ -45,22 +95,20 @@ type DataLoader(baseGamePath: string) =
     |> Seq.map(fun gameFileInfo -> 
       let fileContents = System.IO.File.ReadAllText gameFileInfo.FullName
       let json = JsonValue.Parse(fileContents)
-      _loadScenario(json, gameFileInfo.DirectoryName)
+      JsonLoad.LoadScenario(json, gameFileInfo.DirectoryName)
       )
     |> Seq.toList
-
     
   member this.LoadScenario(scenario: Scenario) =
-
-    let readText fileName = (scenario.BasePath + fileName) |> System.IO.File.ReadAllText
+    let readText fileName = (scenario.BasePath + fileName) |> System.IO.File.ReadAllText |> JsonValue.Parse
 
     let racesData = readText "/races.json"
     let tilesData = readText "/tiles.json"
     let itemsData = readText "/items.json"
 
-    { ScenarioData.Races = racesData |> JsonValue.Parse |> _loadRaces
-      Tiles = [||]
-      Items = [||]
+    { ScenarioData.Races = racesData |> JsonLoad.LoadRaces
+      Tiles =  tilesData |> JsonLoad.LoadTiles
+      Items = itemsData |> JsonLoad.LoadItems
     }
     
 

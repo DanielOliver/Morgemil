@@ -51,6 +51,7 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Content Include="packages.config" />
+    <Compile Include="Utility.Tests.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Models\Models.fsproj">
