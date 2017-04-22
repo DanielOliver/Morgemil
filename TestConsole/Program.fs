@@ -11,14 +11,5 @@ let main argv =
     printfn ""
     printfn "%A" scenarioData
 
-
-    let playableRaces = scenarioData.Races |> Seq.filter Morgemil.Utility.Generic.IsPlayerOption
-    printfn ""
-    printfn "Playable Races %A" playableRaces
-    
-    let playableModifiers = scenarioData.Races |> Seq.filter Morgemil.Utility.Generic.IsPlayerOption
-    printfn ""
-    printfn "Playable Races %A" playableRaces
-
   System.Console.ReadLine() |> ignore
   0 // return an integer exit code

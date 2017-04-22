@@ -1,8 +1,26 @@
 [
 	{	"id": "1",
+		"tiletype": "2",
+		"name": "Cobble Floor",
+		"description": "A seemingly solid cobble floor may hide a number of traps.",
+		"blocksmovement": "false",
+		"blockssight": "false",
+		"tags": {
+		}
+	},
+	{	"id": "2",
 		"tiletype": "1",
-		"name": "Floor",
-		"description": "A seemingly solid floor may hide a number of traps.",
+		"name": "Cobble Wall",
+		"description": "A seemingly solid cobble wall may hide a secret door.",
+		"blocksmovement": "true",
+		"blockssight": "true",
+		"tags": {
+		}
+	},
+	{	"id": "3",
+		"tiletype": "0",
+		"name": "Reinforced wall",
+		"description": "A very solid wall without any perceptible weakness.",
 		"blocksmovement": "true",
 		"blockssight": "true",
 		"tags": {

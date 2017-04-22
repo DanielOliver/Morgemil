@@ -59,6 +59,7 @@
     <Compile Include="Wearable.fs" />
     <Compile Include="Item.fs" />
     <Compile Include="Scenario.fs" />
+    <Compile Include="FloorGenerationParameter.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>

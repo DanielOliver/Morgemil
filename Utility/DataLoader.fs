@@ -1,37 +1,61 @@
 ﻿namespace Morgemil.Utility
 
-open Morgemil.Models
 open FSharp.Data
 open FSharp.Data.JsonExtensions
+open Morgemil.Models
 
 type ScenarioData =
   { Races: Race []
     Tiles: Tile []
     Items: Item []
     RaceModifiers: RaceModifier []
+    FloorGenerationParameters: FloorGenerationParameter []
   }
 
 
 module JsonLoad =
-  let CastEnum<'t>(value) =
-    System.Enum.Parse(typeof<'t>, value) :?> 't
+  let CastEnum<'t>(value:JsonValue) =
+    System.Enum.Parse(typeof<'t>, value.AsString()) :?> 't
+
+  let LoadIntegerArray(value: JsonValue) =
+    value.AsArray() |> Array.map(fun t -> t.AsInteger())
+
+  let LoadVector2i(values: JsonValue) =
+    Morgemil.Math.Vector2i.create(values?x.AsInteger(), values?y.AsInteger())
+    
+  let LoadRectangle(values: JsonValue) =
+    Morgemil.Math.Rectangle.create( LoadVector2i(values?position), LoadVector2i(values?position))
+    
+  let LoadTags(values: JsonValue): Map<TagType, Tag> = 
+    values.Properties
+    |> Seq.map(fun (name, json) -> 
+      match TagType.TryParse(name, true) with
+      | true, tagType ->
+        match tagType with
+        | TagType.PlayerOption -> tagType, Tag.PlayerOption
+        | _ -> failwithf "Unknown tag (%s) of (%A)" name tagType
+      | _ -> failwithf "Unknown tag (%s)" name)
+    |> Map.ofSeq
+
+  let LoadFloorGenerationParameters(values: JsonValue) = 
+    values.AsArray()
+    |> Seq.map(fun item ->
+      { FloorGenerationParameter.ID = item?id.AsInteger()
+        Tiles = LoadIntegerArray(item?tiles)
+        SizeRange = LoadRectangle(item?sizerange)
+        Tags = LoadTags(item?tags)
+        Strategy = item?strategy |> CastEnum<FloorGenerationStrategy>
+      }
+    )
+    |> Seq.toArray
 
   let LoadScenario(values: JsonValue, basePath: string) =
-    { Morgemil.Models.Scenario.BasePath = basePath
+    { Scenario.BasePath = basePath
       Version = values?version.AsString()
       Date = values?date.AsDateTime()
       Name = values?name.AsString()
       Description = values?description.AsString()
     }
-
-  let LoadTags(values: JsonValue): Map<TagType, Tag> = 
-    values.Properties
-    |> Seq.map(fun (name, json) -> 
-      match name.ToLower() with
-      | "playeroption" ->  
-        TagType.PlayerOption, Tag.PlayerOption
-      | _ -> failwithf "Unknown tag %s" name)
-    |> Map.ofSeq
 
   let LoadRaces(values: JsonValue) =
     values.AsArray()
@@ -41,7 +65,7 @@ module JsonLoad =
         Adjective = item?adjective.AsString()
         Description = item?description.AsString()
         Tags = LoadTags(item?tags)
-        AvailableRacialModifiers = item?racialmodifiers.AsArray() |> Array.map(fun t -> t.AsInteger())
+        AvailableRacialModifiers = LoadIntegerArray(item?racialmodifiers)
       }
     ) 
     |> Seq.toArray
@@ -62,7 +86,7 @@ module JsonLoad =
     values.AsArray()
     |> Seq.map(fun item ->
       { Tile.ID = item?id.AsInteger()
-        TileType = item?tiletype.AsString() |> CastEnum<TileType>
+        TileType = item?tiletype |> CastEnum<TileType>
         Name = item?name.AsString()
         Description = item?description.AsString()
         BlocksMovement = item?blocksmovement.AsBoolean()
@@ -76,13 +100,13 @@ module JsonLoad =
     match itemType with
     | ItemType.Weapon ->
       { Weapon.BaseRange = values?baserange.AsInteger()
-        RangeType = values?rangetype.AsString() |> CastEnum<WeaponRangeType>
+        RangeType = values?rangetype |> CastEnum<WeaponRangeType>
         HandCount = values?handcount.AsInteger()
         Weight = values?weight.AsDecimal()
       } |> SubItem.Weapon
     | ItemType.Wearable ->
       { Wearable.Weight = values?weight.AsDecimal()
-        WearableType = values?wearabletype.AsString() |> CastEnum<WearableType>
+        WearableType = values?wearabletype |> CastEnum<WearableType>
       } |> SubItem.Wearable
     | _ -> failwithf "Undefined Sub Item Type %A" itemType
 
@@ -91,7 +115,7 @@ module JsonLoad =
   let LoadItems(values: JsonValue) =
     values.AsArray()
     |> Seq.map(fun item ->
-      let itemType = item?itemtype.AsString() |> CastEnum<ItemType>
+      let itemType = item?itemtype |> CastEnum<ItemType>
 
       { Item.ID = item?id.AsInteger()
         Noun = item?noun.AsString()
@@ -126,11 +150,13 @@ type DataLoader(baseGamePath: string) =
     let racemodifiersData = readText "/racemodifiers.json"
     let tilesData = readText "/tiles.json"
     let itemsData = readText "/items.json"
+    let floorgenerationData = readText "/floorgeneration.json"
 
     { ScenarioData.Races = racesData |> JsonLoad.LoadRaces
       Tiles =  tilesData |> JsonLoad.LoadTiles
       Items = itemsData |> JsonLoad.LoadItems
       RaceModifiers = racemodifiersData |> JsonLoad.LoadRaceModifiers
+      FloorGenerationParameters = floorgenerationData |> JsonLoad.LoadFloorGenerationParameters
     }
     
 

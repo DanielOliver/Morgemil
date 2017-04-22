@@ -2,8 +2,7 @@
 
 [<RequireQualifiedAccess>]
 type TagType =
-  | PlayerOption
-
+  | PlayerOption = 1
 
 [<RequireQualifiedAccess>]
 type Tag =

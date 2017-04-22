@@ -1,0 +1,12 @@
+[
+	{	"id": "1",
+		"tiles": [ 1, 2, 3 ],
+		"sizerange": {
+			"position": { "x": 5, "y": 5 },
+			"size": { "x": 5, "y": 5 }
+		},
+		"strategy": "0",
+		"tags": {
+		}
+	}
+]
