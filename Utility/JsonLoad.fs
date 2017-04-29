@@ -4,6 +4,7 @@
 open FSharp.Data
 open FSharp.Data.JsonExtensions
 open Morgemil.Models
+open Microsoft.Xna.Framework
 
 
 let CastEnum<'t>(value:JsonValue) =
@@ -18,6 +19,25 @@ let LoadVector2i(values: JsonValue) =
 let LoadRectangle(values: JsonValue) =
   Morgemil.Math.Rectangle.create( LoadVector2i(values?position), LoadVector2i(values?position))
     
+let LoadChar(values: JsonValue) =
+  let text = values.AsString()
+  if text.Length > 1 then
+    match System.Int32.TryParse(text) with
+    | true, textInt -> char textInt
+    | false, _ -> failwithf "Failed to convert %s to a character representation" text
+  else text.[0]
+  
+let LoadColor(values: JsonValue) =
+  if values.Properties.Length = 0 then None
+  else
+    Some (Color( values?r.AsInteger(), values?g.AsInteger(), values?b.AsInteger(), values?a.AsInteger()))
+
+let LoadTileRepresentation(values: JsonValue) =
+  { TileRepresentation.AnsiCharacter = LoadChar(values?char)
+    ForegroundColor = (values.TryGetProperty "foreground") |> Option.bind(LoadColor)
+    BackGroundColor = (values.TryGetProperty "background") |> Option.bind(LoadColor)
+  }
+
 let LoadTags(values: JsonValue): Map<TagType, Tag> = 
   values.Properties
   |> Seq.map(fun (name, json) -> 
@@ -98,6 +118,7 @@ let LoadTiles(values: JsonValue) =
       BlocksMovement = item?blocksmovement.AsBoolean()
       BlocksSight = item?blockssight.AsBoolean()
       Tags = LoadTags(item?tags)
+      Representation = LoadTileRepresentation(item?representation)
     }
   ) 
   |> Seq.sortBy(fun t -> t.ID)

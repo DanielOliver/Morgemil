@@ -5,6 +5,15 @@
 		"description": "A seemingly solid cobble floor may hide a number of traps.",
 		"blocksmovement": "false",
 		"blockssight": "false",
+		"representation": {
+			"char": "075",
+			"foreground": {
+				"a": "255", "r": "255", "g": "255", "b": "255"
+			},
+			"background": {
+				"a": "255", "r": "0", "g": "0", "b": "0"
+			}
+		},
 		"tags": {
 		}
 	},
@@ -14,6 +23,15 @@
 		"description": "A seemingly solid cobble wall may hide a secret door.",
 		"blocksmovement": "true",
 		"blockssight": "true",
+		"representation": {
+			"char": "075",
+			"foreground": {
+				"a": "255", "r": "255", "g": "255", "b": "255"
+			},
+			"background": {
+				"a": "255", "r": "0", "g": "0", "b": "0"
+			}
+		},
 		"tags": {
 		}
 	},
@@ -23,6 +41,15 @@
 		"description": "A very solid wall without any perceptible weakness.",
 		"blocksmovement": "true",
 		"blockssight": "true",
+		"representation": {
+			"char": "075",
+			"foreground": {
+				"a": "255", "r": "255", "g": "255", "b": "255"
+			},
+			"background": {
+				"a": "255", "r": "0", "g": "0", "b": "0"
+			}
+		},
 		"tags": {
 		}
 	}

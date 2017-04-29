@@ -18,5 +18,7 @@ type Tile =
     BlocksMovement : bool
     ///If true, this tile ALWAYS blocks ALL Line-Of-Sight of ANYTHING.
     BlocksSight : bool
+    ///What this tile looks like.
+    Representation: TileRepresentation
     ///A list of Tags that this Tile possesses, along with the Value(s)
     Tags : Map<TagType, Tag> }

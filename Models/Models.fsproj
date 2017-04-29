@@ -33,37 +33,6 @@
     <WarningLevel>3</WarningLevel>
     <DocumentationFile>bin\Release\Models.XML</DocumentationFile>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="mscorlib" />
-    <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Numerics" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Math\Math.fsproj">
-      <Name>Math</Name>
-      <Project>{98929076-0ccc-4e88-898b-9c89d1b88303}</Project>
-      <Private>True</Private>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Tags.fs" />
-    <Compile Include="Tag.fs" />
-    <Compile Include="Race.fs" />
-    <Compile Include="RaceModifier.fs" />
-    <Compile Include="RaceModifierLink.fs" />
-    <Compile Include="Tile.fs" />
-    <Compile Include="Weapon.fs" />
-    <Compile Include="Wearable.fs" />
-    <Compile Include="Consumable.fs" />
-    <Compile Include="Item.fs" />
-    <Compile Include="Scenario.fs" />
-    <Compile Include="FloorGenerationParameter.fs" />
-    <Compile Include="ScenarioData.fs" />
-  </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
   </PropertyGroup>
@@ -80,6 +49,40 @@
     </Otherwise>
   </Choose>
   <Import Project="$(FSharpTargetsPath)" />
+  <ItemGroup>
+    <Compile Include="TileRepresentation.fs" />
+    <Compile Include="Tags.fs" />
+    <Compile Include="Tag.fs" />
+    <Compile Include="Race.fs" />
+    <Compile Include="RaceModifier.fs" />
+    <Compile Include="RaceModifierLink.fs" />
+    <Compile Include="Tile.fs" />
+    <Compile Include="Weapon.fs" />
+    <Compile Include="Wearable.fs" />
+    <Compile Include="Consumable.fs" />
+    <Compile Include="Item.fs" />
+    <Compile Include="Scenario.fs" />
+    <Compile Include="FloorGenerationParameter.fs" />
+    <Compile Include="ScenarioData.fs" />
+    <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="MonoGame.Framework">
+      <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.6.0.1625\lib\net40\MonoGame.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib" />
+    <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
+    <ProjectReference Include="..\Math\Math.fsproj">
+      <Name>Math</Name>
+      <Project>{98929076-0ccc-4e88-898b-9c89d1b88303}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
