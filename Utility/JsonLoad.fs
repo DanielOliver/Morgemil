@@ -28,7 +28,15 @@ let LoadChar(values: JsonValue) =
   else text.[0]
   
 let LoadColor(values: JsonValue) =
-  if values.Properties.Length = 0 then None
+  if values.Properties.Length = 0 then
+    let text = values.InnerText().Trim()
+    let convert v = System.Convert.ToInt32(text.[v..(v+1)], 16)
+    let r = convert 2
+    let g = convert 4
+    let b = convert 6
+    let a = if text.Length = 10 then convert 8
+            else 255
+    Some (Color(r, g, b, a))
   else
     Some (Color( values?r.AsInteger(), values?g.AsInteger(), values?b.AsInteger(), values?a.AsInteger()))
 

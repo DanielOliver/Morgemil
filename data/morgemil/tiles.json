@@ -7,12 +7,8 @@
 		"blockssight": "false",
 		"representation": {
 			"char": "075",
-			"foreground": {
-				"a": "255", "r": "255", "g": "255", "b": "255"
-			},
-			"background": {
-				"a": "255", "r": "0", "g": "0", "b": "0"
-			}
+			"foreground": "0xFF0000",
+			"background": "0xFF2200"
 		},
 		"tags": {
 		}
@@ -25,12 +21,7 @@
 		"blockssight": "true",
 		"representation": {
 			"char": "075",
-			"foreground": {
-				"a": "255", "r": "255", "g": "255", "b": "255"
-			},
-			"background": {
-				"a": "255", "r": "0", "g": "0", "b": "0"
-			}
+			"background": "0xFF2200"
 		},
 		"tags": {
 		}
@@ -43,12 +34,7 @@
 		"blockssight": "true",
 		"representation": {
 			"char": "075",
-			"foreground": {
-				"a": "255", "r": "255", "g": "255", "b": "255"
-			},
-			"background": {
-				"a": "255", "r": "0", "g": "0", "b": "0"
-			}
+			"foreground": "0xFF0000"
 		},
 		"tags": {
 		}
