@@ -6,7 +6,7 @@
 		"blocksmovement": "false",
 		"blockssight": "false",
 		"representation": {
-			"char": "075",
+			"char": "0x75",
 			"foreground": "0xFF0000",
 			"background": "0xFF2200"
 		},
@@ -20,7 +20,7 @@
 		"blocksmovement": "true",
 		"blockssight": "true",
 		"representation": {
-			"char": "075",
+			"char": "0x75",
 			"background": "0xFF2200"
 		},
 		"tags": {
@@ -33,7 +33,7 @@
 		"blocksmovement": "true",
 		"blockssight": "true",
 		"representation": {
-			"char": "075",
+			"char": "M",
 			"foreground": "0xFF0000"
 		},
 		"tags": {

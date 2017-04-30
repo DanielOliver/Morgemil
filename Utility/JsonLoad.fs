@@ -21,10 +21,7 @@ let LoadRectangle(values: JsonValue) =
     
 let LoadChar(values: JsonValue) =
   let text = values.AsString()
-  if text.Length > 1 then
-    match System.Int32.TryParse(text) with
-    | true, textInt -> char textInt
-    | false, _ -> failwithf "Failed to convert %s to a character representation" text
+  if text.StartsWith("0x") then char(System.Convert.ToInt32(text, 16))
   else text.[0]
   
 let LoadColor(values: JsonValue) =
