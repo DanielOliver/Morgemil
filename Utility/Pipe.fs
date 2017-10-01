@@ -197,6 +197,13 @@ module Pipe =
         previousPipeCall agent
         agent.PostAndReply(End)
         
+    ///Iterate over all items in the Pipe asynchronously.
+    let IterAsync (action: 'a -> Async<unit>) (pipe: Pipe<'a,'b>) =
+        let agent = iterAgentAsync action
+        let (Pipe.Pipe previousPipeCall) = pipe
+        previousPipeCall agent
+        agent.PostAndReply(End)      
+
     ///Collects all results of Pipe into a list.
     let Collect (pipe: Pipe<'a,'b>) =
         let agent = collectAgent()
