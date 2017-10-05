@@ -170,9 +170,9 @@ module Pipe =
                     replyChannel.Reply()
                 | Done(replyChannel) ->
                     replyChannel.Reply()
-                    return! messageLoop(current, isCached)
+                    return! messageLoop(current |> List.rev, isCached)
                 | Collect(replyChannel) ->
-                    replyChannel.Reply(current |> List.rev)
+                    replyChannel.Reply(current)
                     return! messageLoop(current, isCached)
             }
             messageLoop([],false)
@@ -253,5 +253,6 @@ module Pipe =
         Pipe.Pipe(
             fun nextAgent ->
                 items.Force()
-                |> Seq.iter (Message >> nextAgent.Post)                
+                |> Seq.iter (Message >> nextAgent.Post)   
+                nextAgent.PostAndReply Done
         )
