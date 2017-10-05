@@ -7,19 +7,22 @@ type Message<'a> =
     | Done of AsyncReplyChannel<unit>
     | Collect of AsyncReplyChannel<'a list>
 
-///Assumptions: Message.End ends the processing.
-///             Message.Done indicates the previous agents are done sending messages.
-///             Message.Message is sent from one agent to the next.
-///             Message.Collect is used to return results from the end of an agent's processing.
+///An actor to process messages sequentially
 type Agent<'a>(messageLoop) =
     let mailbox =
         MailboxProcessor<Message<'a>>.Start(messageLoop)
-    member this.Post msg = mailbox.Post msg
-    member this.PostAndReply msg = mailbox.PostAndReply msg
+    ///Tells this agent a message
+    member this.Tell msg = mailbox.Post <| Message msg
+    ///Kills this agent
+    member this.Die() = mailbox.PostAndReply End
+    ///Indicates the previous agent is done sending messages.
+    member this.Done() = mailbox.PostAndReply Done
+    ///Used to return results from the end of an agent's processing
+    member this.Collect() = mailbox.PostAndReply Collect
     
     interface System.IDisposable with
         member this.Dispose() = 
-            mailbox.PostAndReply End
+            this.Die()
 
 ///A Pipe is a function that feeds all of its data to the next Agent in the Pipe.
 [<RequireQualifiedAccess>]
@@ -36,12 +39,12 @@ module Pipe =
                 match msg with
                 | Message(x) ->
                     let mappedItem = map x
-                    nextAgent.Post (Message mappedItem)
+                    nextAgent.Tell mappedItem
                     return! messageLoop()
                 | End(replyChannel) ->
                     replyChannel.Reply()
                 | Done(replyChannel) ->
-                    nextAgent.PostAndReply(Done)
+                    nextAgent.Done()
                     replyChannel.Reply()
                     return! messageLoop()
                 | Collect(replyChannel) ->
@@ -58,12 +61,12 @@ module Pipe =
                 match msg with
                 | Message(x) ->
                     let! mappedItem = map x
-                    nextAgent.Post (Message mappedItem)
+                    nextAgent.Tell mappedItem
                     return! messageLoop()
                 | End(replyChannel) ->
                     replyChannel.Reply()
                 | Done(replyChannel) ->
-                    nextAgent.PostAndReply(Done)
+                    nextAgent.Done()
                     replyChannel.Reply()
                     return! messageLoop()
                 | Collect(replyChannel) ->
@@ -81,12 +84,12 @@ module Pipe =
                 | Message(x) ->
                     let isAcceptable = condition x
                     if isAcceptable then
-                        nextAgent.Post msg
+                        nextAgent.Tell x
                     return! messageLoop()
                 | End(replyChannel) ->
                     replyChannel.Reply()
                 | Done(replyChannel) ->
-                    nextAgent.PostAndReply(Done)
+                    nextAgent.Done()
                     replyChannel.Reply()
                     return! messageLoop()                
                 | Collect(replyChannel) ->
@@ -104,12 +107,12 @@ module Pipe =
                 | Message(x) ->
                     let! isAcceptable = condition x
                     if isAcceptable then
-                        nextAgent.Post msg
+                        nextAgent.Tell x
                     return! messageLoop()
                 | End(replyChannel) ->
                     replyChannel.Reply()
                 | Done(replyChannel) ->
-                    nextAgent.PostAndReply(Done)
+                    nextAgent.Done()
                     replyChannel.Reply()
                     return! messageLoop()
                 | Collect(replyChannel) ->
@@ -183,8 +186,8 @@ module Pipe =
         Pipe.Pipe(
             fun nextAgent -> 
                 use agent = mapAgent nextAgent id
-                items |> Seq.iter (Message >> agent.Post)
-                agent.PostAndReply(Done)
+                items |> Seq.iter (agent.Tell)
+                agent.Done()
         )
         
     ///Maps items in the Pipe to a new item.
@@ -240,7 +243,7 @@ module Pipe =
         use agent = collectAgent()
         let (Pipe.Pipe previousPipeCall) = pipe
         previousPipeCall agent
-        agent.PostAndReply(Collect)
+        agent.Collect()
     
     ///Only evaluates Pipe once, lazily.
     let Cache (pipe: Pipe<'a>) =
@@ -248,11 +251,11 @@ module Pipe =
         let items = lazy (
             use agent = collectAgent()
             previousPipeCall (agent)
-            agent.PostAndReply(Message.Collect)
+            agent.Collect()
         )
         Pipe.Pipe(
             fun nextAgent ->
                 items.Force()
-                |> Seq.iter (Message >> nextAgent.Post)   
-                nextAgent.PostAndReply Done
+                |> Seq.iter nextAgent.Tell
+                nextAgent.Done()
         )
