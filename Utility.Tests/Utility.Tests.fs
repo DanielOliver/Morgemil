@@ -2,7 +2,7 @@
 
 open NUnit.Framework
 
-//[<Test>]
-//let ``LoadRecord Generic JSON Test``() =
-//  ()
+[<Test>]
+let ``LoadRecord Generic JSON Test``() =
+  ()
 

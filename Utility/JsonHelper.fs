@@ -2,8 +2,6 @@
 
 open FSharp.Data.Runtime
 open FSharp.Data
-open Morgemil.Models
-open FSharp.Data.HtmlNode
 
 let private culture = System.Globalization.CultureInfo.InvariantCulture
 
@@ -16,44 +14,47 @@ let AsBoolean jsonValue = JsonConversions.AsBoolean jsonValue
 let AsDateTime jsonValue = JsonConversions.AsDateTime culture jsonValue
 let AsGuid jsonValue = JsonConversions.AsGuid jsonValue
 
+[<RequireQualifiedAccess>]
+type JsonError =
+    | MissingProperty of string
+
 let Require (name,conversion) (jsonValue: JsonValue) =
     match name
         |> jsonValue.TryGetProperty
         |> Option.bind conversion with
     | Some x -> Ok x
-    | None -> Error name
+    | None -> Error (JsonError.MissingProperty name)
 
 let Optional (name,conversion) (jsonValue: JsonValue) =
     name
     |> jsonValue.TryGetProperty
     |> Option.bind conversion
 
-
 type JsonBuilder<'t>(value: JsonValue) =
     member this.Bind(m: _ option, f): _ option = 
         f m
 
-    member this.Bind<'u>(m: Result<'u,string>, f): Result<'t,string> = 
+    member this.Bind<'u>(m: Result<'u,JsonError>, f): Result<'t,JsonError> = 
         match m with
         | Ok x -> x |> f
         | Error err -> Error err
 
-    member this.Bind(m: string, f): Result<'t,string> = 
+    member this.Bind(m: string, f): Result<'t,JsonError> = 
         match m
             |> value.TryGetProperty with
         | Some x -> x |> f
-        | None -> Error (sprintf "Missing property \"%s\"." m)
+        | None -> Error (JsonError.MissingProperty m)
 
     member this.Bind(m: string option, f) = 
         m |> Option.bind value.TryGetProperty |> f
 
-    member this.Bind<'u>(m: (string * (JsonValue -> _)), f): Result<'t,string> = 
+    member this.Bind<'u>(m: (string * (JsonValue -> 'u option)), f): Result<'t,JsonError> = 
         let result = Require m value
         match result with
         | Ok x -> f x
         | Error err -> Error err
 
-    member this.Bind<'u>(m: JsonValue -> Result<'u,string>, f): Result<'t,string> = 
+    member this.Bind<'u>(m: JsonValue -> Result<'u,JsonError>, f): Result<'t,JsonError> = 
         let result = m value
         match result with
         | Ok x -> f x
