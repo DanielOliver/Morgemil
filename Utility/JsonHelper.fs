@@ -10,6 +10,8 @@ let private culture = System.Globalization.CultureInfo.InvariantCulture
 type JsonError =
     | MissingProperty of PropertyName: string * Record: JsonValue
     | InconsistentArray of WrongValues: JsonValue []
+    | UnexpectedType of PropertyName: string * JsonValue
+    | PropertyErrors of JsonError[]
 
 let AsString jsonValue = JsonConversions.AsString false culture jsonValue
 let AsInteger jsonValue = JsonConversions.AsInteger culture jsonValue
@@ -28,27 +30,53 @@ let AsEnum<'t when 't : (new: unit -> 't) and 't : struct and 't :> System.Value
             | true, x -> Some x
             | false, _ -> None)
 let AsArray jsonValue = match jsonValue with | JsonValue.Array arr -> Some arr | _ -> None
-let ArrayAsType (conversion: JsonValue -> _ option) (array: JsonValue[]) =
-    let items = array |> Array.map(fun value ->
-        match conversion value with
-        | Some x -> value, Some x
-        | None -> value, None)
-    let errors = items |> Array.choose(fun (value, opt) -> match opt with | Some _ -> None | None -> Some(value))
-    match errors.Length with
-    | 0 -> Ok (items |> Array.map(fun (value, opt) -> opt.Value))
-    | _ -> Error (JsonError.InconsistentArray errors)
+let ArrayAsType (conversion: JsonValue -> _ option) (value: JsonValue) =
+    match value with 
+    | JsonValue.Array array ->
+        let items = array |> Array.map(fun value ->
+            match conversion value with
+            | Some x -> value, Some x
+            | None -> value, None)
+        let errors = items |> Array.choose(fun (value, opt) -> match opt with | Some _ -> None | None -> Some(value))
+        match errors.Length with
+        | 0 -> Ok (items |> Array.map(fun (value, opt) -> opt.Value))
+        | _ -> Error (JsonError.InconsistentArray errors)
+    | _ -> Error (JsonError.UnexpectedType("", value))
 
-let Require (name,conversion) (jsonValue: JsonValue) =
+let PropertiesAsType (conversion: string * JsonValue -> Result<_,_>) (value: JsonValue) =
+    let items = value.Properties() |> Array.map(fun (name, value) ->
+        match conversion (name, value) with
+        | Ok success -> Ok success
+        | Error err -> Error err)
+    let errors = items |> Array.choose(fun t -> match t with | Ok _ -> None | Error err -> Some(t))
+    match errors.Length with
+    | 0 -> Ok (items |> Array.choose(function | Ok x -> Some x | Error _ -> None))
+    | _ -> Error (JsonError.PropertyErrors (items |> Array.choose(function | Ok _ -> None | Error err -> Some err)))
+
+let Require (name,conversion: JsonValue -> _ option) (jsonValue: JsonValue) =
     match name
-        |> jsonValue.TryGetProperty
-        |> Option.bind conversion with
-    | Some x -> Ok x
+        |> jsonValue.TryGetProperty with
+    | Some x -> 
+        match conversion x with
+        | Some final -> Ok final
+        | None -> Error (JsonError.UnexpectedType (name, jsonValue))
     | None -> Error (JsonError.MissingProperty (name, jsonValue))
 
-let Optional (name,conversion) (jsonValue: JsonValue) =
+let RequireResult (name,conversion: JsonValue -> Result<_,_>) (jsonValue: JsonValue) =
+    match name
+        |> jsonValue.TryGetProperty with
+    | Some x -> conversion x
+    | None -> Error (JsonError.MissingProperty (name, jsonValue))
+
+let Optional (name,conversion: JsonValue -> _ option) (jsonValue: JsonValue) =
     name
     |> jsonValue.TryGetProperty
     |> Option.bind conversion
+
+let OptionalResult (name,conversion: JsonValue -> Result<_,_>) (jsonValue: JsonValue) =
+    name
+    |> jsonValue.TryGetProperty
+    |> Option.bind (conversion >> function | Ok x -> Some x | _ -> None)
 
 type JsonBuilder<'t>(value: JsonValue) =
     member this.Bind(m: _ option, f): _ option = 
@@ -63,13 +91,19 @@ type JsonBuilder<'t>(value: JsonValue) =
         match m
             |> value.TryGetProperty with
         | Some x -> x |> f
-        | None -> Error (JsonError.MissingProperty (m, JsonValue))
+        | None -> Error (JsonError.MissingProperty (m, value))
 
     member this.Bind(m: string option, f) = 
         m |> Option.bind value.TryGetProperty |> f
 
     member this.Bind<'u>(m: (string * (JsonValue -> 'u option)), f): Result<'t,JsonError> = 
         let result = Require m value
+        match result with
+        | Ok x -> f x
+        | Error err -> Error err
+
+    member this.Bind<'u>(m: (string * (JsonValue -> Result<'u,JsonError>)), f): Result<'t,JsonError> = 
+        let result = RequireResult m value
         match result with
         | Ok x -> f x
         | Error err -> Error err
@@ -93,24 +127,4 @@ type Doom = {
 
 // make an instance of the workflow 
 let json value = new JsonBuilder<_>(value)
-
-let inputValue = JsonValue.String("one")
-let outPutResult = 
-    json inputValue {
-        let! one = ("one", AsString)
-        let! nextajskdfj = Optional("one", AsString)
-        let! boom = Optional("one", AsInteger)
-        
-        //let! three = Optional "one" AsString
-        let! nextOne = 
-            json inputValue {
-                let asfd = 5
-                let! nine = ""
-                return { Doom.ID = 5 }
-            }
-        printfn "%A" one
-        let final = { Doom.ID = 5 }
-        return final
-    }
-
 

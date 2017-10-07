@@ -60,17 +60,17 @@ type DataLoader(baseGamePath: string) =
     let tiles = tilesData |> JsonLoad.LoadTiles
     let items = itemsData |> JsonLoad.LoadItems
     let raceModifiers = racemodifiersData |> JsonLoad.LoadRaceModifiers
-    let floorGenerationParameters = JsonLoad.LoadFloorGenerationParameters(floorgenerationData, tiles)
-    let raceModifierLinks = JsonLoad.LoadRaceModifierLinks( racemodifierlinksData, races, raceModifiers)
+    //let floorGenerationParameters = JsonLoad.LoadFloorGenerationParameters(floorgenerationData, tiles)
+    //let raceModifierLinks = JsonLoad.LoadRaceModifierLinks( racemodifierlinksData, races, raceModifiers)
 
-    let result = 
-      { ScenarioData.Races = races
-        Tiles =  tiles
-        Items = items
-        RaceModifiers = raceModifiers
-        FloorGenerationParameters = floorGenerationParameters
-        RaceModifierLinks = raceModifierLinks
-        Scenario = scenario
-      }
-    this.ValidateScenarioData result
-    result
+    //let result = 
+    //  { ScenarioData.Races = races
+    //    Tiles =  tiles
+    //    Items = items
+    //    RaceModifiers = raceModifiers
+    //    FloorGenerationParameters = floorGenerationParameters
+    //    RaceModifierLinks = raceModifierLinks
+    //    Scenario = scenario
+    //  }
+    //this.ValidateScenarioData result
+    //result

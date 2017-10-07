@@ -5,78 +5,120 @@ open FSharp.Data
 open FSharp.Data.JsonExtensions
 open Morgemil.Models
 open Microsoft.Xna.Framework
+open Morgemil.Utility.JsonHelper
 
-
-let CastEnum<'t>(value:JsonValue) =
-  System.Enum.Parse(typeof<'t>, value.AsString()) :?> 't
-
-let LoadIntegerArray(value: JsonValue) =
-  value.AsArray() |> Array.map(fun t -> t.AsInteger())
-
-let LoadVector2i(values: JsonValue) =
-  Morgemil.Math.Vector2i.create(values?x.AsInteger(), values?y.AsInteger())
+let LoadVector2i(value: JsonValue) =
+    json value {
+        let! x = "x",AsInteger
+        let! y = "y",AsInteger
+        return Morgemil.Math.Vector2i.create(x, y)
+    }
     
-let LoadRectangle(values: JsonValue) =
-  Morgemil.Math.Rectangle.create( LoadVector2i(values?position), LoadVector2i(values?position))
-    
-let LoadChar(values: JsonValue) =
-  let text = values.AsString()
-  if text.StartsWith("0x") then char(System.Convert.ToInt32(text, 16))
-  else text.[0]
+let LoadRectangle(value: JsonValue) =
+    json value {
+        let! position = OptionalResult("position",LoadVector2i)
+        let! size = "size",LoadVector2i
+        return 
+            match position with
+            | Some x -> Morgemil.Math.Rectangle.create(x,size)
+            | None -> Morgemil.Math.Rectangle.create(size)
+    }
+
+let AsChar (value: JsonValue) =
+    value 
+    |> AsString 
+    |> Option.map(fun text ->
+        if text.StartsWith("0x") then char(System.Convert.ToInt32(text, 16))
+        else text.[0]
+    )
   
-let LoadColor(values: JsonValue) =
-  if values.Properties.Length = 0 then
-    let text = values.InnerText().Trim()
-    let convert v = System.Convert.ToInt32(text.[v..(v+1)], 16)
-    let r = convert 2
-    let g = convert 4
-    let b = convert 6
-    let a = if text.Length = 10 then convert 8
-            else 255
-    Some (Color(r, g, b, a))
-  else
-    Some (Color( values?r.AsInteger(), values?g.AsInteger(), values?b.AsInteger(), values?a.AsInteger()))
+let AsColor(value: JsonValue) =
+    match value with
+    | JsonValue.String text -> 
+        let text = text.Trim()
+        let convert v = System.Convert.ToInt32(text.[v..(v+1)], 16)
+        let r = convert 2
+        let g = convert 4
+        let b = convert 6
+        let a = if text.Length = 10 then convert 8
+                else 255
+        Some (Color(r, g, b, a))
+    | JsonValue.Record _ -> 
+        json value {  
+            let! r = "r",AsInteger
+            let! g = "g",AsInteger
+            let! b = "b",AsInteger
+            let! a = Optional("a",AsInteger) 
+            return Color(r , g,b,defaultArg a 255)
+        } |> function
+                | Ok x -> Some x
+                | Error _ -> None
+    | _ -> None
 
-let LoadTileRepresentation(values: JsonValue) =
-  { TileRepresentation.AnsiCharacter = LoadChar(values?char)
-    ForegroundColor = (values.TryGetProperty "foreground") |> Option.bind(LoadColor)
-    BackGroundColor = (values.TryGetProperty "background") |> Option.bind(LoadColor)
-  }
+let AsTileRepresentation value =
+    json value {
+        let! representation = "char",AsChar
+        let! foreground = Optional("foreground",AsColor)
+        let! background = Optional("background",AsColor)
+        return {   
+            TileRepresentation.AnsiCharacter = representation
+            BackGroundColor = background
+            ForegroundColor = foreground
+        }
+    }
 
-let LoadTags(values: JsonValue): Map<TagType, Tag> = 
-  values.Properties
-  |> Seq.map(fun (name, json) -> 
+let AsTag (name, value) =
     match TagType.TryParse(name, true) with
     | true, tagType ->
-      match tagType with
-      | TagType.PlayerOption -> tagType, Tag.PlayerOption
-      | _ -> failwithf "Unknown tag (%s) of (%A)" name tagType
-    | _ -> failwithf "Unknown tag (%s)" name)
-  |> Map.ofSeq
+        match tagType with
+        | TagType.PlayerOption -> Ok (tagType, Tag.PlayerOption)
+        | _ -> Error (JsonError.UnexpectedType(name, value))
+    | _ -> Error (JsonError.UnexpectedType(name, value))
 
-let LoadFloorGenerationParameters(values: JsonValue, tiles: Tile []) = 
-  values.AsArray()
-  |> Seq.map(fun item ->
-    { FloorGenerationParameter.ID = item?id.AsInteger()
-      Tiles = LoadIntegerArray(item?tiles) |> Array.map(fun t -> tiles.[t])
-      SizeRange = LoadRectangle(item?sizerange)
-      Tags = LoadTags(item?tags)
-      Strategy = item?strategy |> CastEnum<FloorGenerationStrategy>
+let AsTagsMap(values: JsonValue): Result<Map<TagType, Tag>,JsonError> = 
+    values
+    |> PropertiesAsType AsTag
+    |> (fun t -> match t with
+        | Ok x -> x |> Map.ofArray |> Ok
+        | Error err -> Error err)
+
+let LoadFloorGenerationParameters(value: JsonValue) = 
+    value
+    |> ArrayAsType(fun value -> 
+        json value {
+            let! id = "id",AsInteger
+            let! tileIds = "tiles",(ArrayAsType AsInteger)
+            let! sizeRange = "sizerange",LoadRectangle
+            let! strategy = "strategy",AsEnum<FloorGenerationStrategy>
+            let! tagsMap = "tags",AsTagsMap
+            return {
+                FloorGenerationParameter.ID = id
+                Tiles = tileIds
+                SizeRange = sizeRange
+                Strategy = strategy
+                Tags = tagsMap
+            }
+        }
+    )
+
+let LoadScenario (basePath: string) (value: JsonValue) =
+    json value {
+        let! version = "version",AsString
+        let! date = "date",AsDateTime
+        let! name = "name",AsString
+        let! description = "description",AsString
+        return {
+            Scenario.BasePath = basePath
+            Version = version
+            Name = name
+            Date = date
+            Description = description
+        }
     }
-  )
-  |> Seq.sortBy(fun t -> t.ID)
-  |> Seq.toArray
 
-let LoadScenario(values: JsonValue, basePath: string) =
-  { Scenario.BasePath = basePath
-    Version = values?version.AsString()
-    Date = values?date.AsDateTime()
-    Name = values?name.AsString()
-    Description = values?description.AsString()
-  }
-
-let LoadRaceModifierLinks(values: JsonValue, races: Race[], raceModifiers: RaceModifier[]) =
-  values.AsArray()
+let LoadRaceModifierLinks(value: JsonValue) =
+  value
+  |> ArrayAsType( )
   |> Seq.mapi(fun index item ->
     { RaceModifierLink.ID = index
       RaceModifier = item.TryGetProperty("racemodifierid") |> Option.map(JsonExtensions.AsInteger >> (fun t -> raceModifiers.[t]))
@@ -112,6 +154,35 @@ let LoadRaceModifiers(values: JsonValue) =
   ) 
   |> Seq.sortBy(fun t -> t.ID)
   |> Seq.toArray
+
+let LoadTiles(values: JsonValue) =
+  values.AsArray()
+  |> Seq.map(fun item ->
+    json item {
+        let! id = "id",AsInteger
+        let! tileType = "tiletype",AsEnum<TileType>
+        let! name = "name",AsString
+        let! description = "description",AsString
+        let! blocksMovement = "blocksmovement",AsBoolean
+        let! blocksSight = "blockssight",AsBoolean
+        let! tileRepresentation = "representation",AsTileRepresentation
+        let! tagsMap = "tags",AsTagsMap
+
+        return {
+            Tile.ID = id
+            TileType = tileType
+            Name = name
+            Description = description
+            BlocksMovement = blocksMovement
+            BlocksSight = blocksSight
+            Tags = tagsMap
+            Representation = tileRepresentation
+        }
+    }
+  )
+  |> Seq.toArray
+    
+
 
 let LoadTiles(values: JsonValue) =
   values.AsArray()
