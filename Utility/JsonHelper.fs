@@ -13,6 +13,14 @@ let AsFloat jsonValue = JsonConversions.AsFloat Array.empty false culture jsonVa
 let AsBoolean jsonValue = JsonConversions.AsBoolean jsonValue
 let AsDateTime jsonValue = JsonConversions.AsDateTime culture jsonValue
 let AsGuid jsonValue = JsonConversions.AsGuid jsonValue
+let AsEnum<'t when 't : (new: unit -> 't) and 't : struct and 't :> System.ValueType > jsonValue = 
+    jsonValue 
+    |> AsString 
+    |> Option.bind(
+        System.Enum.TryParse<'t> 
+        >> function
+            | true, x -> Some x
+            | false, _ -> None)
 
 [<RequireQualifiedAccess>]
 type JsonError =
