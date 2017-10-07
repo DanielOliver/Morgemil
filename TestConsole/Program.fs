@@ -6,10 +6,13 @@ let main argv =
   for scenario in scenarios do
     printfn ""
     printfn "%A" scenario
-
-    //let scenarioData = loader.LoadScenario scenario
-    //printfn ""
-    //printfn "%A" scenarioData
+    printfn ""
+    match scenario with
+    | Ok x -> 
+        let scenarioData = loader.LoadScenario x
+        printfn "%A" scenarioData
+    | Error err -> 
+        printfn "%A" err
 
   System.Console.ReadLine() |> ignore
   0 // return an integer exit code

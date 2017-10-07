@@ -2,9 +2,7 @@
 
 
 open FSharp.Data
-open FSharp.Data.JsonExtensions
 open Morgemil.Models
-open Microsoft.Xna.Framework
 open Morgemil.Utility.JsonHelper
 
 let JsonAsVector2i(value: JsonValue) =
@@ -45,7 +43,7 @@ let JsonAsColor(value: JsonValue) =
             let b = convert 6
             let a = if text.Length = 10 then convert 8
                     else 255
-            Ok (Color(r, g, b, a))
+            Ok (Microsoft.Xna.Framework.Color(r, g, b, a))
         | _ -> error
     | JsonValue.Record _ -> 
         json value {  
@@ -53,7 +51,7 @@ let JsonAsColor(value: JsonValue) =
             let! g = "g",JsonAsInteger
             let! b = "b",JsonAsInteger
             let! a = Optional("a",JsonAsInteger)
-            return Color(r , g,b,defaultArg a 255)
+            return Microsoft.Xna.Framework.Color(r , g,b,defaultArg a 255)
         }
     | _ -> error
 
@@ -232,7 +230,7 @@ let JsonAsSubItem (itemType: ItemType) (value: JsonValue) =
 let JsonAsItems (value: JsonValue) =
     value
     |> JsonAsArray(fun item ->
-        json value {
+        json item {
             let! itemID = "id",JsonAsInteger
             let! noun = "noun",JsonAsString
             let! isUnique = "isunique",JsonAsBoolean

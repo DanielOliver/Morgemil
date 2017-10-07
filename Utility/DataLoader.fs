@@ -1,7 +1,6 @@
 ﻿namespace Morgemil.Utility
 
 open FSharp.Data
-open FSharp.Data.JsonExtensions
 open Morgemil.Models
 
 type DataLoader(baseGamePath: string) =
@@ -64,15 +63,4 @@ type DataLoader(baseGamePath: string) =
     let raceModifierLinks = racemodifierlinksData |> JsonLoad.JsonAsRaceModifierLinks
 
     (races, tiles, items, raceModifiers,floorGenerationParameters, raceModifierLinks)
-
-    //let result = 
-    //  { ScenarioData.Races = races
-    //    Tiles =  tiles
-    //    Items = items
-    //    RaceModifiers = raceModifiers
-    //    FloorGenerationParameters = floorGenerationParameters
-    //    RaceModifierLinks = raceModifierLinks
-    //    Scenario = scenario
-    //  }
-    //this.ValidateScenarioData result
-    //result
+    

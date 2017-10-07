@@ -1,6 +1,5 @@
 ﻿module Morgemil.Utility.JsonHelper
 
-open FSharp.Data.Runtime
 open FSharp.Data
 
 let private culture = System.Globalization.CultureInfo.InvariantCulture
@@ -26,14 +25,14 @@ let OptionToResult name jsonValue value =
     match value with
     | Some x -> Ok x
     | None -> Error (JsonError.UnexpectedType(name, jsonValue))
-let JsonAsString jsonValue = JsonConversions.AsString false culture jsonValue |> OptionToResult "string" jsonValue
-let JsonAsInteger jsonValue = JsonConversions.AsInteger culture jsonValue  |> OptionToResult "int" jsonValue
-let JsonAsInteger64 jsonValue = JsonConversions.AsInteger64 culture jsonValue  |> OptionToResult "int64" jsonValue
-let JsonAsDecimal jsonValue = JsonConversions.AsDecimal culture jsonValue  |> OptionToResult "decimal" jsonValue
-let JsonAsFloat jsonValue = JsonConversions.AsFloat Array.empty false culture jsonValue  |> OptionToResult "float" jsonValue
-let JsonAsBoolean jsonValue = JsonConversions.AsBoolean jsonValue  |> OptionToResult "bool" jsonValue
-let JsonAsDateTime jsonValue = JsonConversions.AsDateTime culture jsonValue  |> OptionToResult "datetime" jsonValue
-let JsonAsGuid jsonValue = JsonConversions.AsGuid jsonValue  |> OptionToResult "guid" jsonValue
+let JsonAsString jsonValue = FSharp.Data.Runtime.JsonConversions.AsString false culture jsonValue |> OptionToResult "string" jsonValue
+let JsonAsInteger jsonValue = FSharp.Data.Runtime.JsonConversions.AsInteger culture jsonValue  |> OptionToResult "int" jsonValue
+let JsonAsInteger64 jsonValue = FSharp.Data.Runtime.JsonConversions.AsInteger64 culture jsonValue  |> OptionToResult "int64" jsonValue
+let JsonAsDecimal jsonValue = FSharp.Data.Runtime.JsonConversions.AsDecimal culture jsonValue  |> OptionToResult "decimal" jsonValue
+let JsonAsFloat jsonValue = FSharp.Data.Runtime.JsonConversions.AsFloat Array.empty false culture jsonValue  |> OptionToResult "float" jsonValue
+let JsonAsBoolean jsonValue = FSharp.Data.Runtime.JsonConversions.AsBoolean jsonValue  |> OptionToResult "bool" jsonValue
+let JsonAsDateTime jsonValue = FSharp.Data.Runtime.JsonConversions.AsDateTime culture jsonValue  |> OptionToResult "datetime" jsonValue
+let JsonAsGuid jsonValue = FSharp.Data.Runtime.JsonConversions.AsGuid jsonValue  |> OptionToResult "guid" jsonValue
 let JsonAsEnum<'t when 't : (new: unit -> 't) and 't : struct and 't :> System.ValueType > jsonValue = 
     jsonValue 
     |> JsonAsString
