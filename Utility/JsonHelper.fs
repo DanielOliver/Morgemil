@@ -8,7 +8,7 @@ let private culture = System.Globalization.CultureInfo.InvariantCulture
 
 [<RequireQualifiedAccess>]
 type JsonError =
-    | MissingProperty of PropertyName: string
+    | MissingProperty of PropertyName: string * Record: JsonValue
     | InconsistentArray of WrongValues: JsonValue []
 
 let AsString jsonValue = JsonConversions.AsString false culture jsonValue
@@ -43,7 +43,7 @@ let Require (name,conversion) (jsonValue: JsonValue) =
         |> jsonValue.TryGetProperty
         |> Option.bind conversion with
     | Some x -> Ok x
-    | None -> Error (JsonError.MissingProperty name)
+    | None -> Error (JsonError.MissingProperty (name, jsonValue))
 
 let Optional (name,conversion) (jsonValue: JsonValue) =
     name
@@ -63,7 +63,7 @@ type JsonBuilder<'t>(value: JsonValue) =
         match m
             |> value.TryGetProperty with
         | Some x -> x |> f
-        | None -> Error (JsonError.MissingProperty m)
+        | None -> Error (JsonError.MissingProperty (m, JsonValue))
 
     member this.Bind(m: string option, f) = 
         m |> Option.bind value.TryGetProperty |> f
