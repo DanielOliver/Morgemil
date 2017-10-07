@@ -19,19 +19,19 @@ open Morgemil.Utility.JsonHelper
 //            "IsNine", JsonValue.Number 9m
 //            |])
 //    let result = json baseValue {
-//        let! nine = ("IsNine", AsInteger)
-//        let! isFalse = ("IsFalse", AsBoolean)
+//        let! nine = ("IsNine", JsonAsInteger)
+//        let! isFalse = ("IsFalse", JsonAsBoolean)
 //        Assert.IsFalse isFalse
 //        let! record1 = "record1"
 //        let! (isTrue, isDog) = json record1 {
-//            let! isTrue = ("IsTrue", AsBoolean)
-//            let! isDog = ("IsDog", AsString)
+//            let! isTrue = ("IsTrue", JsonAsBoolean)
+//            let! isDog = ("IsDog", JsonAsString)
 //            Assert.AreEqual("Dog", isDog)
 //            return (isTrue, isDog)
 //        }
 //        Assert.AreEqual("Dog", isDog)
         
-//        let! isAbsent = Optional("CantFindThis", AsString)
+//        let! isAbsent = Optional("CantFindThis", JsonAsString)
 //        return (nine)
 //    }
 //    match result with

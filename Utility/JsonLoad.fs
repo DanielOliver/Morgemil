@@ -2,160 +2,249 @@
 
 
 open FSharp.Data
-open FSharp.Data.JsonExtensions
 open Morgemil.Models
-open Microsoft.Xna.Framework
+open Morgemil.Utility.JsonHelper
 
-
-let CastEnum<'t>(value:JsonValue) =
-  System.Enum.Parse(typeof<'t>, value.AsString()) :?> 't
-
-let LoadIntegerArray(value: JsonValue) =
-  value.AsArray() |> Array.map(fun t -> t.AsInteger())
-
-let LoadVector2i(values: JsonValue) =
-  Morgemil.Math.Vector2i.create(values?x.AsInteger(), values?y.AsInteger())
+let JsonAsVector2i(value: JsonValue) =
+    json value {
+        let! x = "x",JsonAsInteger
+        let! y = "y",JsonAsInteger
+        return Morgemil.Math.Vector2i.create(x, y)
+    }
     
-let LoadRectangle(values: JsonValue) =
-  Morgemil.Math.Rectangle.create( LoadVector2i(values?position), LoadVector2i(values?position))
-    
-let LoadChar(values: JsonValue) =
-  let text = values.AsString()
-  if text.StartsWith("0x") then char(System.Convert.ToInt32(text, 16))
-  else text.[0]
+let JsonAsRectangle(value: JsonValue) =
+    json value {
+        let! position = Optional("position",JsonAsVector2i)
+        let! size = "size",JsonAsVector2i
+        return 
+            match position with
+            | Some x -> Morgemil.Math.Rectangle.create(x,size)
+            | None -> Morgemil.Math.Rectangle.create(size)
+    }
+
+let JsonAsChar (value: JsonValue) =
+    value 
+    |> JsonAsString 
+    |> Result.map(fun text ->
+        if text.StartsWith("0x") then char(System.Convert.ToInt32(text, 16))
+        else text.[0]
+    )
   
-let LoadColor(values: JsonValue) =
-  if values.Properties.Length = 0 then
-    let text = values.InnerText().Trim()
-    let convert v = System.Convert.ToInt32(text.[v..(v+1)], 16)
-    let r = convert 2
-    let g = convert 4
-    let b = convert 6
-    let a = if text.Length = 10 then convert 8
-            else 255
-    Some (Color(r, g, b, a))
-  else
-    Some (Color( values?r.AsInteger(), values?g.AsInteger(), values?b.AsInteger(), values?a.AsInteger()))
+let JsonAsColor(value: JsonValue) =
+    let error = Error (JsonError.UnexpectedType("color", value))
+    match value with
+    | JsonValue.String text -> 
+        let text = text.Trim()
+        match text.Length with
+        | 8 | 10 ->
+            let convert v = System.Convert.ToInt32(text.[v..(v+1)], 16)
+            let r = convert 2
+            let g = convert 4
+            let b = convert 6
+            let a = if text.Length = 10 then convert 8
+                    else 255
+            Ok (Microsoft.Xna.Framework.Color(r, g, b, a))
+        | _ -> error
+    | JsonValue.Record _ -> 
+        json value {  
+            let! r = "r",JsonAsInteger
+            let! g = "g",JsonAsInteger
+            let! b = "b",JsonAsInteger
+            let! a = Optional("a",JsonAsInteger)
+            return Microsoft.Xna.Framework.Color(r , g,b,defaultArg a 255)
+        }
+    | _ -> error
 
-let LoadTileRepresentation(values: JsonValue) =
-  { TileRepresentation.AnsiCharacter = LoadChar(values?char)
-    ForegroundColor = (values.TryGetProperty "foreground") |> Option.bind(LoadColor)
-    BackGroundColor = (values.TryGetProperty "background") |> Option.bind(LoadColor)
-  }
+let JsonAsTileRepresentation value =
+    json value {
+        let! representation = "char",JsonAsChar
+        let! foreground = Optional("foreground",JsonAsColor)
+        let! background = Optional("background",JsonAsColor)
+        return {   
+            TileRepresentation.AnsiCharacter = representation
+            BackGroundColor = background
+            ForegroundColor = foreground
+        }
+    }
 
-let LoadTags(values: JsonValue): Map<TagType, Tag> = 
-  values.Properties
-  |> Seq.map(fun (name, json) -> 
+let JsonAsTag name value =
     match TagType.TryParse(name, true) with
     | true, tagType ->
-      match tagType with
-      | TagType.PlayerOption -> tagType, Tag.PlayerOption
-      | _ -> failwithf "Unknown tag (%s) of (%A)" name tagType
-    | _ -> failwithf "Unknown tag (%s)" name)
-  |> Map.ofSeq
+        match tagType with
+        | TagType.PlayerOption -> Ok (tagType, Tag.PlayerOption)
+        | _ -> Error (JsonError.UnexpectedType(name, value))
+    | _ -> Error (JsonError.UnexpectedType(name, value))
 
-let LoadFloorGenerationParameters(values: JsonValue, tiles: Tile []) = 
-  values.AsArray()
-  |> Seq.map(fun item ->
-    { FloorGenerationParameter.ID = item?id.AsInteger()
-      Tiles = LoadIntegerArray(item?tiles) |> Array.map(fun t -> tiles.[t])
-      SizeRange = LoadRectangle(item?sizerange)
-      Tags = LoadTags(item?tags)
-      Strategy = item?strategy |> CastEnum<FloorGenerationStrategy>
+let JsonAsTagsMap(values: JsonValue): Result<Map<TagType, Tag>,JsonError> = 
+    values
+    |> JsonAsProperties(fun (name, value) -> JsonAsTag name value)
+    |> Result.map (Map.ofArray)
+
+let JsonAsFloorGenerationParameters(value: JsonValue) = 
+    value
+    |> JsonAsArray(fun value -> 
+        json value {
+            let! id = "id",JsonAsInteger
+            let! tileIds = "tiles",(JsonAsArray JsonAsInteger)
+            let! sizeRange = "sizerange",JsonAsRectangle
+            let! strategy = "strategy",JsonAsEnum<FloorGenerationStrategy>
+            let! tagsMap = "tags",JsonAsTagsMap
+            return {
+                FloorGenerationParameter.ID = id
+                Tiles = tileIds
+                SizeRange = sizeRange
+                Strategy = strategy
+                Tags = tagsMap
+            }
+        }
+    )
+
+let JsonAsScenario (basePath: string) (value: JsonValue) =
+    json value {
+        let! version = "version",JsonAsString
+        let! date = "date",JsonAsDateTime
+        let! name = "name",JsonAsString
+        let! description = "description",JsonAsString
+        return {
+            Scenario.BasePath = basePath
+            Version = version
+            Name = name
+            Date = date
+            Description = description
+        }
+    }
+
+let JsonAsRaceModifierLinks(value: JsonValue) =
+    value
+    |> JsonAsArrayI(fun index value ->
+        json value {
+            let! raceModifierID = Optional("racemodifierid",JsonAsInteger)
+            let! raceID = "raceid",JsonAsInteger
+            let! ratio = "ratio",JsonAsInteger
+            return {
+                RaceModifierLink.ID = index
+                RaceModifierID = raceModifierID
+                RaceID = raceID
+                Ratio = ratio
+            }
+        }
+    )
+      
+let JsonAsRaces(value: JsonValue) =
+    value
+    |> JsonAsArray(fun value ->
+        json value {
+            let! raceID = "id",JsonAsInteger
+            let! noun = "noun",JsonAsString
+            let! adjective = "adjective",JsonAsString
+            let! description = "description",JsonAsString
+            let! tags = "tags",JsonAsTagsMap
+            return {
+                Race.ID = raceID
+                Noun = noun
+                Adjective = adjective
+                Description = description
+                Tags = tags
+            }
+        }
+    )
+    
+let JsonAsRaceModifiers(value: JsonValue) = 
+    value
+    |> JsonAsArray(fun value ->
+        json value {
+            let! raceModifierID = "id",JsonAsInteger
+            let! noun = "noun",JsonAsString
+            let! adjective = "adjective",JsonAsString
+            let! description = "description",JsonAsString
+            let! tags = "tags",JsonAsTagsMap
+            return {
+                RaceModifier.ID = raceModifierID
+                Noun = noun
+                Adjective = adjective
+                Description = description
+                Tags = tags
+            }
+        }
+    )
+
+let JsonAsTiles(value: JsonValue) =
+  value
+  |>JsonAsArray(fun item ->
+    json item {
+        let! id = "id",JsonAsInteger
+        let! tileType = "tiletype",JsonAsEnum<TileType>
+        let! name = "name",JsonAsString
+        let! description = "description",JsonAsString
+        let! blocksMovement = Optional("blocksmovement",JsonAsBoolean)
+        let! blocksSight = Optional("blockssight",JsonAsBoolean)
+        let! tileRepresentation = "representation",JsonAsTileRepresentation
+        let! tagsMap = "tags",JsonAsTagsMap
+        return {
+            Tile.ID = id
+            TileType = tileType
+            Name = name
+            Description = description
+            BlocksMovement = defaultArg blocksMovement false
+            BlocksSight = defaultArg blocksSight false
+            Tags = tagsMap
+            Representation = tileRepresentation
+        }
     }
   )
-  |> Seq.sortBy(fun t -> t.ID)
-  |> Seq.toArray
 
-let LoadScenario(values: JsonValue, basePath: string) =
-  { Scenario.BasePath = basePath
-    Version = values?version.AsString()
-    Date = values?date.AsDateTime()
-    Name = values?name.AsString()
-    Description = values?description.AsString()
-  }
-
-let LoadRaceModifierLinks(values: JsonValue, races: Race[], raceModifiers: RaceModifier[]) =
-  values.AsArray()
-  |> Seq.mapi(fun index item ->
-    { RaceModifierLink.ID = index
-      RaceModifier = item.TryGetProperty("racemodifierid") |> Option.map(JsonExtensions.AsInteger >> (fun t -> raceModifiers.[t]))
-      Race = races.[item?raceid.AsInteger()]
-      Ratio = item?ratio.AsInteger()
-    }
-  )
-  |> Seq.sortBy(fun t -> t.ID)
-  |> Seq.toArray
   
-let LoadRaces(values: JsonValue) =
-  values.AsArray()
-  |> Seq.map(fun item ->
-    { Race.ID = item?id.AsInteger()
-      Noun = item?noun.AsString()        
-      Adjective = item?adjective.AsString()
-      Description = item?description.AsString()
-      Tags = LoadTags(item?tags)
-    }
-  )
-  |> Seq.sortBy(fun t -> t.ID) 
-  |> Seq.toArray
-    
-let LoadRaceModifiers(values: JsonValue) = 
-  values.AsArray()
-  |> Seq.map(fun item -> 
-    { RaceModifier.ID = item?id.AsInteger()
-      Noun = item?noun.AsString()
-      Adjective = item?adjective.AsString()
-      Description = item?description.AsString()
-      Tags = LoadTags(item?tags)
-    }
-  ) 
-  |> Seq.sortBy(fun t -> t.ID)
-  |> Seq.toArray
+let JsonAsSubItem (itemType: ItemType) (value: JsonValue) = 
+    match itemType with
+    | ItemType.Weapon -> 
+        json value {
+            let! baseRange = "baserange",JsonAsInteger
+            let! rangeType = "rangetype",JsonAsEnum<WeaponRangeType>
+            let! handCount = "handcount",JsonAsInteger
+            let! weight = "weight",JsonAsDecimal
+            return {
+                Weapon.BaseRange = baseRange
+                RangeType = rangeType
+                HandCount = handCount
+                Weight = weight
+            } |> SubItem.Weapon
+        }
+    | ItemType.Wearable -> 
+        json value {
+            let! wearableType = "wearabletype",JsonAsEnum<WearableType>
+            let! weight = "weight",JsonAsDecimal
+            return {
+                Wearable.Weight = weight
+                WearableType = wearableType
+            } |> SubItem.Wearable
+        }
+    | ItemType.Consumable -> 
+        json value {
+            let! uses = "uses",JsonAsInteger
+            return {
+                Consumable.Uses = uses
+            } |> SubItem.Consumable
+        }
+    | _ -> Error (JsonError.UnexpectedType("subitem", value))
 
-let LoadTiles(values: JsonValue) =
-  values.AsArray()
-  |> Seq.map(fun item ->
-    { Tile.ID = item?id.AsInteger()
-      TileType = item?tiletype |> CastEnum<TileType>
-      Name = item?name.AsString()
-      Description = item?description.AsString()
-      BlocksMovement = item?blocksmovement.AsBoolean()
-      BlocksSight = item?blockssight.AsBoolean()
-      Tags = LoadTags(item?tags)
-      Representation = LoadTileRepresentation(item?representation)
-    }
-  ) 
-  |> Seq.sortBy(fun t -> t.ID)
-  |> Seq.toArray
+let JsonAsItems (value: JsonValue) =
+    value
+    |> JsonAsArray(fun item ->
+        json item {
+            let! itemID = "id",JsonAsInteger
+            let! noun = "noun",JsonAsString
+            let! isUnique = "isunique",JsonAsBoolean
+            let! itemType = "itemtype",JsonAsEnum<ItemType>
+            let! subItem = "subitem",(JsonAsSubItem itemType)
+            let! tags = "tags",JsonAsTagsMap
+            return {
+                Item.ID = itemID
+                Noun = noun
+                IsUnique = isUnique
+                ItemType = itemType
+                SubItem = subItem
+                Tags = tags
+            }
+        }
+    )
     
-let LoadSubItem(values: JsonValue, itemType: ItemType) = 
-  match itemType with
-  | ItemType.Weapon ->
-    { Weapon.BaseRange = values?baserange.AsInteger()
-      RangeType = values?rangetype |> CastEnum<WeaponRangeType>
-      HandCount = values?handcount.AsInteger()
-      Weight = values?weight.AsDecimal()
-    } |> SubItem.Weapon
-  | ItemType.Wearable ->
-    { Wearable.Weight = values?weight.AsDecimal()
-      WearableType = values?wearabletype |> CastEnum<WearableType>
-    } |> SubItem.Wearable
-  | _ -> failwithf "Undefined Sub Item Type %A" itemType
-    
-
-let LoadItems(values: JsonValue) =
-  values.AsArray()
-  |> Seq.map(fun item ->
-    let itemType = item?itemtype |> CastEnum<ItemType>
-
-    { Item.ID = item?id.AsInteger()
-      Noun = item?noun.AsString()
-      IsUnique = item?isunique.AsBoolean()
-      ItemType = itemType
-      Tags = LoadTags(item?tags)
-      SubItem = LoadSubItem(item?subitem, itemType)
-    }
-  )
-  |> Seq.sortBy(fun t -> t.ID)
-  |> Seq.toArray

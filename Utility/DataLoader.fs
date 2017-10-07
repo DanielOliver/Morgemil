@@ -1,7 +1,6 @@
 ﻿namespace Morgemil.Utility
 
 open FSharp.Data
-open FSharp.Data.JsonExtensions
 open Morgemil.Models
 
 type DataLoader(baseGamePath: string) =
@@ -39,7 +38,7 @@ type DataLoader(baseGamePath: string) =
     |> Seq.map(fun gameFileInfo -> 
       let fileContents = System.IO.File.ReadAllText gameFileInfo.FullName
       let json = JsonValue.Parse(fileContents)
-      JsonLoad.LoadScenario(json, gameFileInfo.DirectoryName)
+      JsonLoad.JsonAsScenario gameFileInfo.DirectoryName json
       )
     |> Seq.toList
     
@@ -56,21 +55,12 @@ type DataLoader(baseGamePath: string) =
     let racemodifierlinksData = readText "/racemodifierlinks.json"
     
 
-    let races = racesData |> JsonLoad.LoadRaces
-    let tiles = tilesData |> JsonLoad.LoadTiles
-    let items = itemsData |> JsonLoad.LoadItems
-    let raceModifiers = racemodifiersData |> JsonLoad.LoadRaceModifiers
-    let floorGenerationParameters = JsonLoad.LoadFloorGenerationParameters(floorgenerationData, tiles)
-    let raceModifierLinks = JsonLoad.LoadRaceModifierLinks( racemodifierlinksData, races, raceModifiers)
+    let races = racesData |> JsonLoad.JsonAsRaces
+    let tiles = tilesData |> JsonLoad.JsonAsTiles
+    let items = itemsData |> JsonLoad.JsonAsItems
+    let raceModifiers = racemodifiersData |> JsonLoad.JsonAsRaceModifiers
+    let floorGenerationParameters = floorgenerationData |> JsonLoad.JsonAsFloorGenerationParameters
+    let raceModifierLinks = racemodifierlinksData |> JsonLoad.JsonAsRaceModifierLinks
 
-    let result = 
-      { ScenarioData.Races = races
-        Tiles =  tiles
-        Items = items
-        RaceModifiers = raceModifiers
-        FloorGenerationParameters = floorGenerationParameters
-        RaceModifierLinks = raceModifierLinks
-        Scenario = scenario
-      }
-    this.ValidateScenarioData result
-    result
+    (races, tiles, items, raceModifiers,floorGenerationParameters, raceModifierLinks)
+    
