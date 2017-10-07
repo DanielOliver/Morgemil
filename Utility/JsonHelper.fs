@@ -2,8 +2,14 @@
 
 open FSharp.Data.Runtime
 open FSharp.Data
+open FSharp.Data.HtmlAttribute
 
 let private culture = System.Globalization.CultureInfo.InvariantCulture
+
+[<RequireQualifiedAccess>]
+type JsonError =
+    | MissingProperty of PropertyName: string
+    | InconsistentArray of WrongValues: JsonValue []
 
 let AsString jsonValue = JsonConversions.AsString false culture jsonValue
 let AsInteger jsonValue = JsonConversions.AsInteger culture jsonValue
@@ -21,10 +27,16 @@ let AsEnum<'t when 't : (new: unit -> 't) and 't : struct and 't :> System.Value
         >> function
             | true, x -> Some x
             | false, _ -> None)
-
-[<RequireQualifiedAccess>]
-type JsonError =
-    | MissingProperty of string
+let AsArray jsonValue = match jsonValue with | JsonValue.Array arr -> Some arr | _ -> None
+let ArrayAsType (conversion: JsonValue -> _ option) (array: JsonValue[]) =
+    let items = array |> Array.map(fun value ->
+        match conversion value with
+        | Some x -> value, Some x
+        | None -> value, None)
+    let errors = items |> Array.choose(fun (value, opt) -> match opt with | Some _ -> None | None -> Some(value))
+    match errors.Length with
+    | 0 -> Ok (items |> Array.map(fun (value, opt) -> opt.Value))
+    | _ -> Error (JsonError.InconsistentArray errors)
 
 let Require (name,conversion) (jsonValue: JsonValue) =
     match name
