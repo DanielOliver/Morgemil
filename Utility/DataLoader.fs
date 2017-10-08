@@ -2,65 +2,95 @@
 
 open FSharp.Data
 open Morgemil.Models
+open JsonLoad
+
+
+
+module Data = 
+    let ConvertTextToJsonValue text fileName =
+        let failure = sprintf "Failed to parse JSON from file \"%s\"" fileName
+        match JsonValue.TryParse text with
+        | Some jsonValue -> 
+            jsonValue
+            |> Ok
+        | None -> Error failure
+
+    let ReadFileToText fileName = 
+        try
+            Result.Ok (System.IO.File.ReadAllText fileName)
+        with
+        _ as _ex -> 
+            Result.Error(sprintf "Failed to read from file \"%s\"" fileName)
+
+
+    [<RequireQualifiedAccess>]
+    type DataFile = 
+        | Races of JsonHelper.JsonResult<Race[]>
+        | Items of JsonHelper.JsonResult<Item[]>
+        | RaceModifiers of JsonHelper.JsonResult<RaceModifier[]>
+        | RaceModifierLinks of JsonHelper.JsonResult<RaceModifierLink[]>
+        | FloorGenerations of JsonHelper.JsonResult<FloorGenerationParameter[]>
+        | Tiles of JsonHelper.JsonResult<Tile[]>
+
+    let RaceFile = "races.json"
+    let RaceModifierFile = "racemodifiers.json"
+    let TileFile = "tiles.json"
+    let ItemFile = "items.json"
+    let FloorGenerationFile = "floorgeneration.json"
+    let RaceModifierLinkFile = "racemodifierlinks.json"
+
+    let FilesToLoad =
+        [|  RaceFile, JsonAsRaces >> DataFile.Races
+            RaceModifierFile, JsonAsRaceModifiers >> DataFile.RaceModifiers
+            TileFile, JsonAsTiles >> DataFile.Tiles
+            ItemFile, JsonAsItems >> DataFile.Items
+            FloorGenerationFile, JsonAsFloorGenerationParameters >> DataFile.FloorGenerations
+            RaceModifierLinkFile, JsonAsRaceModifierLinks >> DataFile.RaceModifierLinks
+        |]
+
+
 
 type DataLoader(baseGamePath: string) =
-  let _basePath = System.IO.DirectoryInfo(baseGamePath).FullName
+    let _basePath = System.IO.DirectoryInfo(baseGamePath).FullName
 
-  member this.ValidateScenarioData(scenarioData: ScenarioData) =
+    member this.LoadScenarios() =
+        let files = System.IO.DirectoryInfo(_basePath).GetDirectories() |> Array.collect(fun t -> t.GetFiles("game.json"))
+        if files.Length = 0 then
+          Result<Scenario,string>.Error(sprintf "No scenarios to load from \"%s\"" _basePath) |> List.singleton
+        else
+            files
+            |> Pipe.From
+            |> Pipe.Map(fun gameFileInfo ->
+                let directoryName = gameFileInfo.DirectoryName
+                let fileName = gameFileInfo.FullName
+
+                Data.ReadFileToText fileName
+                |> Result.map(fun text -> directoryName, fileName, text)
+            )
+            |> Pipe.Map(
+                Result.bind(fun (directoryName, fileName, text) ->
+                    let failure = sprintf "Failed to parse JSON from file \"%s\"" fileName
+
+                    Data.ConvertTextToJsonValue text fileName
+                    |> Result.bind (JsonAsScenario directoryName
+                                    >> Result.mapError(fun _ -> failure))
+                )
+            )
+            |> Pipe.Collect
     
-    for index in [0..scenarioData.FloorGenerationParameters.Length-1] do
-      if scenarioData.FloorGenerationParameters.[index].ID <> index then
-        failwithf "Scenario FloorGenerationParameters not indexed correctly"
+    member this.LoadScenario(scenario: Scenario) =
+        Data.FilesToLoad
+        |> Pipe.From
+        |> Pipe.Map(fun (fileName, jsonValueToDataFile) ->
+            let fullFileName = System.IO.Path.Combine(scenario.BasePath, fileName)
+            Data.ReadFileToText fullFileName
+            |> Result.map(fun text -> text, fullFileName, jsonValueToDataFile)
+        )
+        |> Pipe.Map(
+                Result.bind(fun (text, fileName, jsonValueToDataFile) ->
+                Data.ConvertTextToJsonValue text fileName 
+                |> Result.map jsonValueToDataFile)
+            )
+        |> Pipe.Collect
 
-    for index in [0..scenarioData.Items.Length-1] do
-      if scenarioData.Items.[index].ID <> index then
-        failwithf "Scenario Items not indexed correctly"
         
-    for index in [0..scenarioData.RaceModifiers.Length-1] do
-      if scenarioData.RaceModifiers.[index].ID <> index then
-        failwithf "Scenario RaceModifiers not indexed correctly"
-        
-    for index in [0..scenarioData.Races.Length-1] do
-      let item = scenarioData.Races.[index]
-      if item.ID <> index then
-        failwithf "Scenario Races not indexed correctly"
-        
-    for index in [0..scenarioData.Tiles.Length-1] do
-      if scenarioData.Tiles.[index].ID <> index then
-        failwithf "Scenario Tiles not indexed correctly"
-
-
-  member this.LoadScenarios() =
-    let files = System.IO.DirectoryInfo(_basePath).GetDirectories() |> Array.collect(fun t -> t.GetFiles("game.json"))
-    if files.Length = 0 then
-      failwithf "No scenarios to load from %s" _basePath
-    files
-    |> Seq.map(fun gameFileInfo -> 
-      let fileContents = System.IO.File.ReadAllText gameFileInfo.FullName
-      let json = JsonValue.Parse(fileContents)
-      JsonLoad.JsonAsScenario gameFileInfo.DirectoryName json
-      )
-    |> Seq.toList
-    
-  member this.LoadScenario(scenario: Scenario) =
-    let readText fileName = 
-      try (scenario.BasePath + fileName) |> System.IO.File.ReadAllText |> JsonValue.Parse
-      with | ex -> failwithf "Failed to load JSON from (%s) with error (%A)" fileName ex
-
-    let racesData = readText "/races.json"
-    let racemodifiersData = readText "/racemodifiers.json"
-    let tilesData = readText "/tiles.json"
-    let itemsData = readText "/items.json"
-    let floorgenerationData = readText "/floorgeneration.json"
-    let racemodifierlinksData = readText "/racemodifierlinks.json"
-    
-
-    let races = racesData |> JsonLoad.JsonAsRaces
-    let tiles = tilesData |> JsonLoad.JsonAsTiles
-    let items = itemsData |> JsonLoad.JsonAsItems
-    let raceModifiers = racemodifiersData |> JsonLoad.JsonAsRaceModifiers
-    let floorGenerationParameters = floorgenerationData |> JsonLoad.JsonAsFloorGenerationParameters
-    let raceModifierLinks = racemodifierlinksData |> JsonLoad.JsonAsRaceModifierLinks
-
-    (races, tiles, items, raceModifiers,floorGenerationParameters, raceModifierLinks)
-    

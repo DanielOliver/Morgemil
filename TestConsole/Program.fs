@@ -10,7 +10,9 @@ let main argv =
     match scenario with
     | Ok x -> 
         let scenarioData = loader.LoadScenario x
-        printfn "%A" scenarioData
+        for data in scenarioData do
+            printfn "%A" data
+            printfn ""
     | Error err -> 
         printfn "%A" err
 

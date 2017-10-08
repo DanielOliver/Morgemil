@@ -19,6 +19,16 @@ type JsonError =
     | UnexpectedType of ExpectedType: string * JsonValue
     | PropertyErrors of WrongValues: JsonError[]
     
+    member private this.GetError() = 
+        match this with
+        | MissingProperty (propertyName, record) -> sprintf "Property \"%s\" is missing from \"%s\"." propertyName (record.ToString())
+        | InconsistentArray wrongValues -> sprintf "Array is inconsistent from these element errors: %s" (System.String.Join(";", wrongValues |> Seq.map(fun t -> t.ToString()) |> Seq.toArray))
+        | UnexpectedType (expectedType, value) -> sprintf "Value \"%s\" was expected to be of type \"%s\"." (value.ToString()) expectedType
+        | PropertyErrors wrongValues -> sprintf "Properties are inconsistent from these element errors: %s" (System.String.Join(";", wrongValues |> Seq.map(fun t -> t.ToString()) |> Seq.toArray))
+
+    override this.ToString() =
+        this.GetError()
+    
 type JsonResult<'a> = Result<'a,JsonError>
 
 let OptionToResult name jsonValue value = 
