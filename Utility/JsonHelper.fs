@@ -4,14 +4,6 @@ open FSharp.Data
 
 let private culture = System.Globalization.CultureInfo.InvariantCulture
 
-
-let IsError = function | Ok _ -> false | Error _ -> true
-let IsOk = function | Ok _ -> true | Error _ -> false
-
-let ToError = function | Ok _ -> None | Error err -> Some err
-let ToOk = function | Ok ok -> Some ok | Error err -> None
-
-
 [<RequireQualifiedAccess>]
 type JsonError =
     | MissingProperty of PropertyName: string * Record: JsonValue
@@ -56,9 +48,9 @@ let JsonAsArrayI (conversion: int -> JsonValue -> JsonResult<_>) (value: JsonVal
     | JsonValue.Array array ->
         let items = array |> Array.mapi(conversion)
         
-        let errors = items |> Array.choose(ToError)
+        let errors = items |> Array.choose(ResultExtensions.TryGetError)
         match errors.Length with
-        | 0 -> Ok (items |> Array.choose(ToOk))
+        | 0 -> Ok (items |> Array.choose(ResultExtensions.TryGetValue))
         | _ -> Error (JsonError.InconsistentArray errors)
     | _ -> Error (JsonError.UnexpectedType("array", value))
 let JsonAsArray (conversion: JsonValue -> JsonResult<_>) (value: JsonValue) =
@@ -68,9 +60,9 @@ let JsonAsProperties (conversion: string * JsonValue -> JsonResult<_>) (value: J
     | JsonValue.Record record ->
         let items = record |> Array.map(conversion)
         
-        let errors = items |> Array.choose(ToError)
+        let errors = items |> Array.choose(ResultExtensions.TryGetError)
         match errors.Length with
-        | 0 -> Ok (items |> Array.choose(ToOk))
+        | 0 -> Ok (items |> Array.choose(ResultExtensions.TryGetValue))
         | _ -> Error (JsonError.PropertyErrors errors)
     | _ -> Error (JsonError.UnexpectedType("record", value))
 

@@ -6,8 +6,8 @@ open JsonLoad
 
 
 
-module Data = 
-    let ConvertTextToJsonValue text fileName =
+module Data =
+    let ConvertTextToJsonValue fileName text =
         let failure = sprintf "Failed to parse JSON from file \"%s\"" fileName
         match JsonValue.TryParse text with
         | Some jsonValue -> 
@@ -21,34 +21,27 @@ module Data =
         with
         _ as _ex -> 
             Result.Error(sprintf "Failed to read from file \"%s\"" fileName)
-
-
-    [<RequireQualifiedAccess>]
-    type DataFile = 
-        | Races of JsonHelper.JsonResult<Race[]>
-        | Items of JsonHelper.JsonResult<Item[]>
-        | RaceModifiers of JsonHelper.JsonResult<RaceModifier[]>
-        | RaceModifierLinks of JsonHelper.JsonResult<RaceModifierLink[]>
-        | FloorGenerations of JsonHelper.JsonResult<FloorGenerationParameter[]>
-        | Tiles of JsonHelper.JsonResult<Tile[]>
-
+            
     let RaceFile = "races.json"
     let RaceModifierFile = "racemodifiers.json"
     let TileFile = "tiles.json"
     let ItemFile = "items.json"
     let FloorGenerationFile = "floorgeneration.json"
     let RaceModifierLinkFile = "racemodifierlinks.json"
-
-    let FilesToLoad =
-        [|  RaceFile, JsonAsRaces >> DataFile.Races
-            RaceModifierFile, JsonAsRaceModifiers >> DataFile.RaceModifiers
-            TileFile, JsonAsTiles >> DataFile.Tiles
-            ItemFile, JsonAsItems >> DataFile.Items
-            FloorGenerationFile, JsonAsFloorGenerationParameters >> DataFile.FloorGenerations
-            RaceModifierLinkFile, JsonAsRaceModifierLinks >> DataFile.RaceModifierLinks
-        |]
+    
+open Data
+open SuccessBuilder
+open JsonHelper
 
 
+type RawScenarioData =
+    {   Races: Race[]
+        Items: Item[]
+        RaceModifiers: RaceModifier[]
+        RaceModifierLinks: RaceModifierLink[]
+        FloorGenerationsParameters: FloorGenerationParameter[]
+        Tiles: Tile[]
+    }
 
 type DataLoader(baseGamePath: string) =
     let _basePath = System.IO.DirectoryInfo(baseGamePath).FullName
@@ -71,7 +64,7 @@ type DataLoader(baseGamePath: string) =
                 Result.bind(fun (directoryName, fileName, text) ->
                     let failure = sprintf "Failed to parse JSON from file \"%s\"" fileName
 
-                    Data.ConvertTextToJsonValue text fileName
+                    Data.ConvertTextToJsonValue fileName text
                     |> Result.bind (JsonAsScenario directoryName
                                     >> Result.mapError(fun _ -> failure))
                 )
@@ -79,18 +72,32 @@ type DataLoader(baseGamePath: string) =
             |> Pipe.Collect
     
     member this.LoadScenario(scenario: Scenario) =
-        Data.FilesToLoad
-        |> Pipe.From
-        |> Pipe.Map(fun (fileName, jsonValueToDataFile) ->
-            let fullFileName = System.IO.Path.Combine(scenario.BasePath, fileName)
-            Data.ReadFileToText fullFileName
-            |> Result.map(fun text -> text, fullFileName, jsonValueToDataFile)
-        )
-        |> Pipe.Map(
-                Result.bind(fun (text, fileName, jsonValueToDataFile) ->
-                Data.ConvertTextToJsonValue text fileName 
-                |> Result.map jsonValueToDataFile)
-            )
-        |> Pipe.Collect
+        let loadData fileName (jsonAsData: JsonValue -> JsonResult<_>) =
+            System.IO.Path.Combine(scenario.BasePath, fileName)
+            |> Data.ReadFileToText
+            |> Result.bind (Data.ConvertTextToJsonValue fileName)
+            |> Result.bind (jsonAsData >> Result.mapError(fun t -> t.ToString()))
+        
+        success {
+            let! races = loadData Data.RaceFile JsonAsRaces
+            let! tiles = loadData Data.TileFile JsonAsTiles
+            let! raceModifiers = loadData Data.RaceModifierFile JsonAsRaceModifiers
+            let! raceModifierLinks = loadData Data.RaceModifierLinkFile JsonAsRaceModifierLinks
+            let! floorGenerationsParameters = loadData Data.FloorGenerationFile JsonAsFloorGenerationParameters
+            let! items = loadData Data.ItemFile JsonAsItems
+            
+            return {
+                RawScenarioData.Items = items
+                Tiles = tiles
+                RaceModifiers = raceModifiers
+                RaceModifierLinks = raceModifierLinks
+                FloorGenerationsParameters = floorGenerationsParameters
+                Races = races
+            }
+        }
+
+
+
+
 
         

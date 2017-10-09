@@ -9,10 +9,9 @@ let main argv =
     printfn ""
     match scenario with
     | Ok x -> 
-        let scenarioData = loader.LoadScenario x
-        for data in scenarioData do
-            printfn "%A" data
-            printfn ""
+        let scenarioData = loader.LoadScenario x        
+        printfn "%A" scenarioData
+        printfn ""
     | Error err -> 
         printfn "%A" err
 
