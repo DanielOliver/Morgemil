@@ -40,3 +40,10 @@ type ResultExtensions =
         match x with
         | Result.Error err -> Some err
         | _ -> None
+
+    [<Extension>]
+    static member bind(x, binder) =
+        x |> function
+            | Ok success -> success |> binder
+            | Error err -> Error err
+ 
