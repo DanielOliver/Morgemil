@@ -1,17 +1,24 @@
-﻿[<EntryPoint>]
+﻿open Morgemil.Utility.JsonHelper
+open Morgemil.Models
+
+[<EntryPoint>]
 let main argv = 
   let loader = Morgemil.Utility.DataLoader @"C:\Users\Daniel\Development\Morgemil\data"
   let scenarios = loader.LoadScenarios()
   
   for scenario in scenarios do
     printfn ""
-    printfn "%A" scenario
-    printfn ""
     match scenario with
     | Ok x -> 
-        let scenarioData = loader.LoadScenario x        
-        printfn "%A" scenarioData
+        printfn "%A" x
         printfn ""
+        match loader.LoadScenario x with
+        | Ok scenarioData ->
+            printfn "%A" scenarioData
+            printfn ""
+        | Error err ->
+            printfn "%A" err
+            printfn ""
     | Error err -> 
         printfn "%A" err
 
