@@ -1,26 +1,24 @@
-﻿open Morgemil.Utility.JsonHelper
-open Morgemil.Models
-
+﻿
 [<EntryPoint>]
 let main argv = 
-  let loader = Morgemil.Utility.DataLoader @"C:\Users\Daniel\Development\Morgemil\data"
-  let scenarios = loader.LoadScenarios()
+    let loader = Morgemil.Utility.DataLoader @"C:\Users\Daniel\Development\Morgemil\data"
+    let scenarios = loader.LoadScenarios()
   
-  for scenario in scenarios do
-    printfn ""
-    match scenario with
-    | Ok x -> 
-        printfn "%A" x
+    for scenario in scenarios do
         printfn ""
-        match loader.LoadScenario x with
-        | Ok scenarioData ->
-            printfn "%A" scenarioData
+        match scenario with
+        | Ok x -> 
+            printfn "%A" x
             printfn ""
-        | Error err ->
+            match loader.LoadScenario x with
+            | Ok scenarioData ->
+                printfn "%A" scenarioData
+                printfn ""
+            | Error err ->
+                printfn "%A" err
+                printfn ""
+        | Error err -> 
             printfn "%A" err
-            printfn ""
-    | Error err -> 
-        printfn "%A" err
 
-  System.Console.ReadLine() |> ignore
-  0 // return an integer exit code
+    System.Console.ReadLine() |> ignore
+    0 // return an integer exit code
