@@ -1,8 +1,8 @@
-﻿
+﻿open Morgemil.Utility
+
 [<EntryPoint>]
 let main argv = 
-    let loader = Morgemil.Utility.DataLoader @"C:\Users\Daniel\Development\Morgemil\data"
-    let scenarios = loader.LoadScenarios()
+    let scenarios = DataLoader.LoadScenarios @"C:\Users\Daniel\Development\Morgemil\data"
   
     for scenario in scenarios do
         printfn ""
@@ -10,7 +10,7 @@ let main argv =
         | Ok x -> 
             printfn "%A" x
             printfn ""
-            match loader.LoadScenario x with
+            match DataLoader.LoadScenario x with
             | Ok scenarioData ->
                 printfn "%A" scenarioData
                 printfn ""

@@ -43,10 +43,10 @@ type RawScenarioData =
         Tiles: Tile[]
     }
 
-type DataLoader(baseGamePath: string) =
-    let _basePath = System.IO.DirectoryInfo(baseGamePath).FullName
+module DataLoader =
 
-    member this.LoadScenarios() =
+    let LoadScenarios(baseGamePath: string) =
+        let _basePath = System.IO.DirectoryInfo(baseGamePath).FullName
         let files = System.IO.DirectoryInfo(_basePath).GetDirectories() |> Array.collect(fun t -> t.GetFiles("game.json"))
         if files.Length = 0 then
           Result<Scenario,string>.Error(sprintf "No scenarios to load from \"%s\"" _basePath) |> List.singleton
@@ -71,7 +71,7 @@ type DataLoader(baseGamePath: string) =
             )
             |> Pipe.Collect
     
-    member this.LoadScenario(scenario: Scenario) =
+    let LoadScenario(scenario: Scenario) =
         let loadData fileName (jsonAsData: JsonValue -> JsonResult<_>) =
             System.IO.Path.Combine(scenario.BasePath, fileName)
             |> Data.ReadFileToText
