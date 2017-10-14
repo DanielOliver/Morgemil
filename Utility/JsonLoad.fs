@@ -98,6 +98,7 @@ let JsonAsFloorGenerationParameters(value: JsonValue) =
             }
         }
     )
+    |> Result.map(Array.sortBy(fun t -> t.ID))
 
 let JsonAsScenario (basePath: string) (value: JsonValue) =
     json value {
@@ -129,6 +130,7 @@ let JsonAsRaceModifierLinks(value: JsonValue) =
             }
         }
     )
+    |> Result.map(Array.sortBy(fun t -> t.ID))
       
 let JsonAsRaces(value: JsonValue) =
     value
@@ -148,6 +150,7 @@ let JsonAsRaces(value: JsonValue) =
             }
         }
     )
+    |> Result.map(Array.sortBy(fun t -> t.ID))
     
 let JsonAsRaceModifiers(value: JsonValue) = 
     value
@@ -167,31 +170,33 @@ let JsonAsRaceModifiers(value: JsonValue) =
             }
         }
     )
+    |> Result.map(Array.sortBy(fun t -> t.ID))
 
 let JsonAsTiles(value: JsonValue) =
-  value
-  |>JsonAsArray(fun item ->
-    json item {
-        let! id = "id",JsonAsInteger
-        let! tileType = "tiletype",JsonAsEnum<TileType>
-        let! name = "name",JsonAsString
-        let! description = "description",JsonAsString
-        let! blocksMovement = Optional("blocksmovement",JsonAsBoolean)
-        let! blocksSight = Optional("blockssight",JsonAsBoolean)
-        let! tileRepresentation = "representation",JsonAsTileRepresentation
-        let! tagsMap = "tags",JsonAsTagsMap
-        return {
-            Tile.ID = id
-            TileType = tileType
-            Name = name
-            Description = description
-            BlocksMovement = defaultArg blocksMovement false
-            BlocksSight = defaultArg blocksSight false
-            Tags = tagsMap
-            Representation = tileRepresentation
-        }
+    value
+    |>JsonAsArray(fun item ->
+        json item {
+            let! id = "id",JsonAsInteger
+            let! tileType = "tiletype",JsonAsEnum<TileType>
+            let! name = "name",JsonAsString
+            let! description = "description",JsonAsString
+            let! blocksMovement = Optional("blocksmovement",JsonAsBoolean)
+            let! blocksSight = Optional("blockssight",JsonAsBoolean)
+            let! tileRepresentation = "representation",JsonAsTileRepresentation
+            let! tagsMap = "tags",JsonAsTagsMap
+            return {
+                Tile.ID = id
+                TileType = tileType
+                Name = name
+                Description = description
+                BlocksMovement = defaultArg blocksMovement false
+                BlocksSight = defaultArg blocksSight false
+                Tags = tagsMap
+                Representation = tileRepresentation
+            }
     }
-  )
+    )
+    |> Result.map(Array.sortBy(fun t -> t.ID))
 
   
 let JsonAsSubItem (itemType: ItemType) (value: JsonValue) = 
@@ -247,4 +252,5 @@ let JsonAsItems (value: JsonValue) =
             }
         }
     )
+    |> Result.map(Array.sortBy(fun t -> t.ID))
     

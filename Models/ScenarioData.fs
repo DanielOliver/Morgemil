@@ -1,12 +1,11 @@
 ﻿namespace Morgemil.Models
 
-///Each array should sorted by the ID.
 type ScenarioData =
-  { Races: Race []
-    Tiles: Tile []
-    Items: Item []
-    RaceModifiers: RaceModifier []
-    RaceModifierLinks: RaceModifierLink []
-    FloorGenerationParameters: FloorGenerationParameter []
+  { Races: Map<int,Race>
+    Tiles: Map<int,Tile>
+    Items: Map<int,Item>
+    RaceModifiers: Map<int,RaceModifier>
+    RaceModifierLinks: Map<int,RaceModifierLink>
+    FloorGenerationParameters: Map<int,FloorGenerationParameter>
     Scenario: Scenario
   }

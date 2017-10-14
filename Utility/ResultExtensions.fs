@@ -47,3 +47,9 @@ type ResultExtensions =
             | Ok success -> success |> binder
             | Error err -> Error err
  
+    [<Extension>]
+    static member tryFindError(x: Result<unit, _> seq) =
+        x 
+        |> Seq.tryFind(ResultExtensions.IsError)
+        |> Option.map(ResultExtensions.GetError)
+        |> function | Some err -> Error err | None -> Ok()

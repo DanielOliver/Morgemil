@@ -41,9 +41,64 @@ type RawScenarioData =
         RaceModifierLinks: RaceModifierLink[]
         FloorGenerationsParameters: FloorGenerationParameter[]
         Tiles: Tile[]
+        Scenario: Scenario
     }
 
 module DataLoader =
+
+    let AsResult errorMsg truth = if truth then Ok() else Error errorMsg
+
+    let private IsIdentityColumnUnique(getID: _ -> int) items =
+        (items |> Seq.length) = (items |> Seq.distinctBy getID |> Seq.length)
+        
+    let private ValidateRaceModifierLinks (links: RaceModifierLink[]) (races: Map<int,Race>) (modifiers: Map<int,RaceModifier>) =
+        links 
+        |>  Array.forall(fun item ->
+            races.ContainsKey item.RaceID
+            && (match item.RaceModifierID with | Some id -> modifiers.ContainsKey id | None -> true)
+        )
+        |> function | true -> Ok() | false -> Error "RaceModifierLinks contain invalid Links."
+
+    let private ValidateFloorGenerationTiles (floorGenerationParameters: FloorGenerationParameter[]) (tiles: Map<int, Tile>) =
+        floorGenerationParameters
+        |> Array.forall(fun item ->
+            item.Tiles
+            |> Array.forall(tiles.ContainsKey)
+        )
+        |> function | true -> Ok() | false -> Error "FloorGenerationParameters contain invalid TileIDs."
+
+    let ValidateRawScenarioData(scenario: RawScenarioData) =
+        let isIDUnique name getID = IsIdentityColumnUnique getID >> AsResult(sprintf "%s do not have Unique Identity Column." name)
+
+        success {
+            do! scenario.Races |> isIDUnique "Races" (fun t -> t.ID)
+            do! scenario.Items |> isIDUnique "Items" (fun t -> t.ID)
+            do! scenario.Tiles |> isIDUnique "Tiles" (fun t -> t.ID)
+            do! scenario.FloorGenerationsParameters |> isIDUnique "FloorGenerationsParameters" (fun t -> t.ID)
+            do! scenario.RaceModifiers |> isIDUnique "RaceModifiers" (fun t -> t.ID)
+            do! scenario.RaceModifierLinks |> isIDUnique "RaceModifierLinks" (fun t -> t.ID)
+            
+            let itemMap = scenario.Items |> Seq.map(fun t -> t.ID, t) |> Map.ofSeq
+            let raceMap = scenario.Races |> Seq.map(fun t -> t.ID, t) |> Map.ofSeq
+            let tileMap = scenario.Tiles |> Seq.map(fun t -> t.ID, t) |> Map.ofSeq
+            let floorGenerationsParameterMap = scenario.FloorGenerationsParameters |> Seq.map(fun t -> t.ID, t) |> Map.ofSeq
+            let raceModifierMap = scenario.RaceModifiers |> Seq.map(fun t -> t.ID, t) |> Map.ofSeq
+            let raceModifierLinkMap = scenario.RaceModifierLinks |> Seq.map(fun t -> t.ID, t) |> Map.ofSeq
+
+            do! ValidateRaceModifierLinks scenario.RaceModifierLinks raceMap raceModifierMap
+            do! ValidateFloorGenerationTiles scenario.FloorGenerationsParameters tileMap
+            
+            return {
+                ScenarioData.Scenario = scenario.Scenario
+                ScenarioData.FloorGenerationParameters = floorGenerationsParameterMap
+                ScenarioData.Items = itemMap
+                ScenarioData.Tiles = tileMap
+                ScenarioData.RaceModifierLinks = raceModifierLinkMap
+                ScenarioData.RaceModifiers = raceModifierMap
+                ScenarioData.Races = raceMap
+            }
+        }
+
 
     let LoadScenarios(baseGamePath: string) =
         let _basePath = System.IO.DirectoryInfo(baseGamePath).FullName
@@ -93,6 +148,7 @@ module DataLoader =
                 RaceModifierLinks = raceModifierLinks
                 FloorGenerationsParameters = floorGenerationsParameters
                 Races = races
+                Scenario = scenario
             }
         }
 

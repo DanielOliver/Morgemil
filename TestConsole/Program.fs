@@ -1,4 +1,5 @@
 ﻿open Morgemil.Utility
+open Morgemil.Utility.SuccessBuilder
 
 [<EntryPoint>]
 let main argv = 
@@ -6,19 +7,15 @@ let main argv =
   
     for scenario in scenarios do
         printfn ""
-        match scenario with
-        | Ok x -> 
-            printfn "%A" x
-            printfn ""
-            match DataLoader.LoadScenario x with
-            | Ok scenarioData ->
-                printfn "%A" scenarioData
-                printfn ""
-            | Error err ->
-                printfn "%A" err
-                printfn ""
-        | Error err -> 
-            printfn "%A" err
+
+        success {
+            let! scenario = scenario
+            let! rawScenarioData = DataLoader.LoadScenario scenario |> Result.mapError(fun err -> sprintf "Scenario has error: %s" err)
+            let! validScenarioData = DataLoader.ValidateRawScenarioData rawScenarioData
+            return validScenarioData
+        }
+        |> printfn "%A"
+        
 
     System.Console.ReadLine() |> ignore
     0 // return an integer exit code

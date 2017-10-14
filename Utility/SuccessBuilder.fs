@@ -8,6 +8,9 @@ type SuccessBuilder() =
         
     member this.Return(x) = 
         Ok x
+        
+    member this.Zero() = 
+        Ok()
 
 // make an instance of the workflow 
 let success = new SuccessBuilder()
