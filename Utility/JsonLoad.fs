@@ -32,6 +32,7 @@ let JsonAsChar (value: JsonValue) =
   
 let JsonAsColor(value: JsonValue) =
     let error = Error (JsonError.UnexpectedType("color", value))
+    let maxAlpha = 255
     match value with
     | JsonValue.String text -> 
         let text = text.Trim()
@@ -42,8 +43,8 @@ let JsonAsColor(value: JsonValue) =
             let g = convert 4
             let b = convert 6
             let a = if text.Length = 10 then convert 8
-                    else 255
-            Ok (Microsoft.Xna.Framework.Color(r, g, b, a))
+                    else maxAlpha
+            Ok (Morgemil.Math.Color.From(r, g, b, a))
         | _ -> error
     | JsonValue.Record _ -> 
         json value {  
@@ -51,7 +52,8 @@ let JsonAsColor(value: JsonValue) =
             let! g = "g",JsonAsInteger
             let! b = "b",JsonAsInteger
             let! a = Optional("a",JsonAsInteger)
-            return Microsoft.Xna.Framework.Color(r , g,b,defaultArg a 255)
+            let alpha = defaultArg a maxAlpha
+            return Morgemil.Math.Color.From(r, g, b, alpha)
         }
     | _ -> error
 

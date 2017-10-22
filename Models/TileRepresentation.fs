@@ -1,6 +1,6 @@
 ﻿namespace Morgemil.Models
 
-open Microsoft.Xna.Framework
+open Morgemil.Math
 
 type TileRepresentation =
   { AnsiCharacter: char
