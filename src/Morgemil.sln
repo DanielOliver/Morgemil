@@ -18,6 +18,8 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Morgemil.Utility.Tests", "M
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Morgemil.Console", "Morgemil.Console\Morgemil.Console.fsproj", "{F6BA7EC2-7EAA-4C70-ABF1-04961743CF4C}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Morgemil.Data", "Morgemil.Data\Morgemil.Data.fsproj", "{F45CC8FB-139D-45A3-A614-4E15940F31C7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -124,6 +126,18 @@ Global
 		{F6BA7EC2-7EAA-4C70-ABF1-04961743CF4C}.Release|x64.Build.0 = Release|Any CPU
 		{F6BA7EC2-7EAA-4C70-ABF1-04961743CF4C}.Release|x86.ActiveCfg = Release|Any CPU
 		{F6BA7EC2-7EAA-4C70-ABF1-04961743CF4C}.Release|x86.Build.0 = Release|Any CPU
+		{F45CC8FB-139D-45A3-A614-4E15940F31C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F45CC8FB-139D-45A3-A614-4E15940F31C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F45CC8FB-139D-45A3-A614-4E15940F31C7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F45CC8FB-139D-45A3-A614-4E15940F31C7}.Debug|x64.Build.0 = Debug|Any CPU
+		{F45CC8FB-139D-45A3-A614-4E15940F31C7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F45CC8FB-139D-45A3-A614-4E15940F31C7}.Debug|x86.Build.0 = Debug|Any CPU
+		{F45CC8FB-139D-45A3-A614-4E15940F31C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F45CC8FB-139D-45A3-A614-4E15940F31C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F45CC8FB-139D-45A3-A614-4E15940F31C7}.Release|x64.ActiveCfg = Release|Any CPU
+		{F45CC8FB-139D-45A3-A614-4E15940F31C7}.Release|x64.Build.0 = Release|Any CPU
+		{F45CC8FB-139D-45A3-A614-4E15940F31C7}.Release|x86.ActiveCfg = Release|Any CPU
+		{F45CC8FB-139D-45A3-A614-4E15940F31C7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

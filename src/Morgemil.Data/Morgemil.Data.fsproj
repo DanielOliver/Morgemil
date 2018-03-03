@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Morgemil.Math\Morgemil.Math.fsproj" />
+    <ProjectReference Include="..\Morgemil.Models\Morgemil.Models.fsproj" />
+  </ItemGroup>
+
+</Project>
