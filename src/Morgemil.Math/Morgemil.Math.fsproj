@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <NoWarn>NU1605</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Axis.fs" />
+    <Compile Include="Color.fs" />
+    <Compile Include="Vector2f.fs" />
+    <Compile Include="Vector2i.fs" />
+    <Compile Include="Vector2.fs" />
+    <Compile Include="Rectangle.fs" />
+    <Compile Include="Matrix2f.fs" />
+    <Compile Include="RNG.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="4.3.4" />
+  </ItemGroup>
+
+</Project>
