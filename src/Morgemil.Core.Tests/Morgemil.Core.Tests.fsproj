@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="UnitTest1.fs" />
+    <Compile Include="Relational.Tests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
@@ -16,6 +16,10 @@
     <PackageReference Include="xunit" Version="2.3.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
     <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Morgemil.Core\Morgemil.Core.fsproj" />
   </ItemGroup>
 
   <ItemGroup>
