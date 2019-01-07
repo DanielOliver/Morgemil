@@ -60,7 +60,11 @@ type MultiIndex<'tRow, 'tKey when 'tKey: equality and 'tRow :> IRow>(getKey: 'tR
         member this.Remove row =
             let key = getKey row
             match _dictionary.TryGetValue key with
-            | true, value ->  _dictionary.[key] <- value |> List.filter(fun t -> t.Key <> row.Key)
+            | true, value ->
+                if value.Length = 1 then
+                    _dictionary.Remove key |> ignore
+                else
+                    _dictionary.[key] <- value |> List.filter(fun t -> t.Key <> row.Key)
             | _ -> ()
         member this.AddRow row =
             let key = getKey row            
@@ -73,10 +77,10 @@ type MultiIndex<'tRow, 'tKey when 'tKey: equality and 'tRow :> IRow>(getKey: 'tR
             if oldKey = newKey then
                 _dictionary.[newKey] <- row :: (_dictionary.[newKey] |> List.filter(fun t -> t.Key <> row.Key))
             else 
-            _dictionary.[oldKey] <- (_dictionary.[oldKey] |> List.filter(fun t -> t.Key <> row.Key))
-            match _dictionary.TryGetValue newKey with
-            | true, value -> _dictionary.[newKey] <- row :: (value |> List.filter(fun t -> t.Key <> row.Key))
-            | _ -> _dictionary.[newKey] <- [ row ]
+                _dictionary.[oldKey] <- (_dictionary.[oldKey] |> List.filter(fun t -> t.Key <> row.Key))
+                match _dictionary.TryGetValue newKey with
+                | true, value -> _dictionary.[newKey] <- row :: (value |> List.filter(fun t -> t.Key <> row.Key))
+                | _ -> _dictionary.[newKey] <- [ row ]
 
     interface IMultiIndex<'tRow, 'tKey> with
         member this.TryGetRows(key: 'tKey): 'tRow list = 
