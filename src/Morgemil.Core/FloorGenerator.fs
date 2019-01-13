@@ -5,6 +5,7 @@ open Morgemil.Models
 
 type Results = {
     EntranceCoordinate: Vector2i
+    Parameters: FloorGenerationParameter
 }
 
 let Create (parameters: FloorGenerationParameter) (rng: RNG.DefaultRNG) =
@@ -26,6 +27,7 @@ let Create (parameters: FloorGenerationParameter) (rng: RNG.DefaultRNG) =
 
     let results: Results = {
         EntranceCoordinate = entraceCoordinate
+        Parameters = parameters
     }
 
     tileMap, results
