@@ -5,7 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="TileMap.fs" />
     <Compile Include="Relational.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Morgemil.Math\Morgemil.Math.fsproj" />
+    <ProjectReference Include="..\Morgemil.Models\Morgemil.Models.fsproj" />
   </ItemGroup>
 
   <ItemGroup>

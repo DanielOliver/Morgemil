@@ -13,11 +13,13 @@ let ``Test Rectangle Properties``() =
   Assert.Equal(5, rect1.Top)
   Assert.Equal(4, rect1.Right)
   Assert.Equal(8, rect1.Bottom)
+  Assert.Equal(40, rect1.Area)
 
 [<Fact>]
 let ``Test Rectangle Contains``() =
   Assert.True(rect1.Contains(Vector2i.create(-4, 6)))
   Assert.False(rect1.Contains(Vector2i.create(5, 8)))
+  Assert.False(rect1.Contains(rect1.MinCoord - Vector2i.Identity))
   
 [<Fact>]
 let ``Test Rectangle IsOnEdge``() =

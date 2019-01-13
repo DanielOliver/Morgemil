@@ -36,7 +36,7 @@ type Rectangle =
     
   member this.Contains(pt : Vector2i) = 
     let diff_pt = pt - this.Position
-    diff_pt.X < this.Size.X && diff_pt.Y < this.Size.Y
+    diff_pt.X < this.Size.X && diff_pt.Y < this.Size.Y && diff_pt.X >= 0 && diff_pt.Y >= 0
     
   member this.IsOnEdge(pt : Vector2i) = 
     (not this.IsEmpty) && (pt.X = this.Left || pt.X = this.Right || pt.Y = this.Top || pt.Y = this.Bottom)
