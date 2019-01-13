@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Compile Include="TileMap.fs" />
+    <Compile Include="FloorGenerator.fs" />
     <Compile Include="Relational.fs" />
   </ItemGroup>
 
