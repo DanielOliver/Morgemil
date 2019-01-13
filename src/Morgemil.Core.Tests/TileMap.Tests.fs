@@ -42,3 +42,12 @@ let TileMapTests() =
     tileMap.[Vector2i.Zero - Vector2i.Identity] <- tile2
     Assert.Equal(true, tileMap.[Vector2i.Zero - Vector2i.Identity].BlocksMovement)
 
+    let (coord1, firstTile) = tileMap.Tiles |> Seq.head
+    Assert.Equal(Vector2i.Zero, coord1)
+    Assert.Equal(tile2, firstTile)
+        
+    let (coord2, secondTile) = tileMap.Tiles |> Seq.skip(1) |> Seq.head
+    Assert.Equal(Vector2i.create(1, 0), coord2)
+    Assert.Equal(defaultTile, secondTile)
+
+    Assert.Equal(mapSize.Area, tileMap.Tiles |> Seq.length)

@@ -16,3 +16,8 @@ type TileMap(mapSize: Rectangle, defaultTile: Tile) =
             else defaultTile
         and set (key: Vector2i) (tile: Tile) =
             if mapSize.Contains key then chunk.[ this.GetCoordinateOffset key ] <- tile
+
+    member this.Tiles = 
+        chunk
+        |> Seq.zip mapSize.Coordinates
+
