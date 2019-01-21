@@ -1,4 +1,4 @@
-﻿namespace Morgemil.Models
+namespace Morgemil.Models
 
 [<RequireQualifiedAccess>]
 type TagType =
@@ -6,9 +6,9 @@ type TagType =
 
 [<RequireQualifiedAccess>]
 type Tag =
-  | PlayerOption
+  | PlayerOption of IsPlayer: bool
 
   member this.TagType =
     match this with
-    | PlayerOption -> TagType.PlayerOption
+    | PlayerOption _ -> TagType.PlayerOption
 

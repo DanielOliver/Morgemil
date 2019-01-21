@@ -1,4 +1,4 @@
-﻿namespace Morgemil.Models
+namespace Morgemil.Models
 
 type Race = 
   { ID : int

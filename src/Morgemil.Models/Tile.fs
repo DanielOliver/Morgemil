@@ -1,4 +1,16 @@
-﻿namespace Morgemil.Models
+namespace Morgemil.Models
+
+[<RequireQualifiedAccess>]
+type TileTagType =
+  | Empty
+
+[<RequireQualifiedAccess>]
+type TileTag =
+  | Empty
+
+  member this.TagType =
+    match this with
+    | Empty _ -> TileTagType.Empty
 
 [<RequireQualifiedAccess>]
 type TileType = 
@@ -21,4 +33,4 @@ type Tile =
     ///What this tile looks like.
     Representation: TileRepresentation
     ///A list of Tags that this Tile possesses, along with the Value(s)
-    Tags : Map<TagType, Tag> }
+    Tags : Map<TileTagType, TileTag> }
