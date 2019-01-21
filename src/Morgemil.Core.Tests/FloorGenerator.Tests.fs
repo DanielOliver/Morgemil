@@ -47,9 +47,9 @@ let FloorGeneratorTests() =
     let (tileMap, results) = FloorGenerator.Create floorParameters rng
 
     Assert.Equal(Vector2i.create(16, 14) |> Rectangle.create, tileMap.MapSize)
-    Assert.Equal(defaultTile, tileMap.[ Vector2i.Zero ])
-    Assert.Equal(tile2, tileMap.[ Vector2i.Zero + Vector2i.create(1) ])
-    Assert.Equal(defaultTile, tileMap.[ tileMap.MapSize.MaxCoord ])
-    Assert.Equal(tile2, tileMap.[ tileMap.MapSize.MaxCoord - Vector2i.create(1) ])
-    Assert.Equal(defaultTile, tileMap.[ tileMap.MapSize.MinCoord ])
+    Assert.Equal(defaultTile, tileMap.Tile Vector2i.Zero )
+    Assert.Equal(tile2, tileMap.Tile (Vector2i.Zero + Vector2i.create(1)) )
+    Assert.Equal(defaultTile, tileMap.Tile tileMap.MapSize.MaxCoord )
+    Assert.Equal(tile2, tileMap.Tile ( tileMap.MapSize.MaxCoord - Vector2i.create(1) ))
+    Assert.Equal(defaultTile, tileMap.Tile tileMap.MapSize.MinCoord )
     Assert.Equal(Vector2i.create(1), results.EntranceCoordinate)

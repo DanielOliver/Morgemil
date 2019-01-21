@@ -12,6 +12,7 @@
     <Compile Include="RaceModifier.fs" />
     <Compile Include="RaceModifierLink.fs" />
     <Compile Include="Tile.fs" />
+    <Compile Include="TileFeature.fs" />
     <Compile Include="Weapon.fs" />
     <Compile Include="Wearable.fs" />
     <Compile Include="Consumable.fs" />

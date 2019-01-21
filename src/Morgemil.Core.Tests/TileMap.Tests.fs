@@ -34,20 +34,22 @@ let TileMapTests() =
     let tileMap = TileMap(mapSize, defaultTile)
     
     Assert.Equal(mapSize, tileMap.MapSize)
-    tileMap.[Vector2i.Zero] <- tile2
+    tileMap.Tile Vector2i.Zero <- tile2
 
-    Assert.Equal(false, tileMap.[Vector2i.Zero].BlocksMovement)
-    Assert.Equal(true, tileMap.[Vector2i.Zero - Vector2i.Identity].BlocksMovement)
+    Assert.Equal(false, (tileMap.Tile Vector2i.Zero).BlocksMovement)
+    Assert.Equal(true, (tileMap.Tile (Vector2i.Zero - Vector2i.Identity)).BlocksMovement)
 
-    tileMap.[Vector2i.Zero - Vector2i.Identity] <- tile2
-    Assert.Equal(true, tileMap.[Vector2i.Zero - Vector2i.Identity].BlocksMovement)
-
-    let (coord1, firstTile) = tileMap.Tiles |> Seq.head
+    tileMap.Tile (Vector2i.Zero - Vector2i.Identity) <- tile2
+    Assert.Equal(true, (tileMap.Tile (Vector2i.Zero - Vector2i.Identity)).BlocksMovement)
+    
+    let (coord1, firstTile, tileFeature) = tileMap.Tiles |> Seq.head
     Assert.Equal(Vector2i.Zero, coord1)
     Assert.Equal(tile2, firstTile)
+    Assert.Equal(None, tileFeature)
         
-    let (coord2, secondTile) = tileMap.Tiles |> Seq.skip(1) |> Seq.head
+    let (coord2, secondTile, tileFeature) = tileMap.Tiles |> Seq.skip(1) |> Seq.head
     Assert.Equal(Vector2i.create(1, 0), coord2)
     Assert.Equal(defaultTile, secondTile)
+    Assert.Equal(None, tileFeature)
 
     Assert.Equal(mapSize.Area, tileMap.Tiles |> Seq.length)
