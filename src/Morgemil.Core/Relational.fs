@@ -220,12 +220,26 @@ module Table =
         table :> IReadonlyTable<'T>
 
 module TableQuery =
+    let SeqLeftJoin (left: seq<'T>) (getForeignKeyLeft: 'T -> int64)  (right: IReadonlyTable<'U>): seq<'T * 'U option> =
+        left
+        |> Seq.map (fun leftRow -> 
+            let rightRow = leftRow |> getForeignKeyLeft |> right.TryGetRow
+            leftRow, rightRow
+        )
 
     let LeftJoin (left: IReadonlyTable<'T>) (getForeignKeyLeft: 'T -> int64)  (right: IReadonlyTable<'U>): seq<'T * 'U option> =
         left.Items
         |> Seq.map (fun leftRow -> 
             let rightRow = leftRow |> getForeignKeyLeft |> right.TryGetRow
             leftRow, rightRow
+        )
+        
+    let SeqInnerJoin (left: seq<'T>) (getForeignKeyLeft: 'T -> int64)  (right: IReadonlyTable<'U>): seq<'T * 'U> =
+        SeqLeftJoin left getForeignKeyLeft right
+        |> Seq.choose (fun (leftRow, rightRowOption) ->
+            match rightRowOption with
+            | Some rightRow -> Some(leftRow, rightRow)
+            | None -> None
         )
 
     let InnerJoin (left: IReadonlyTable<'T>) (getForeignKeyLeft: 'T -> int64)  (right: IReadonlyTable<'U>): seq<'T * 'U> =

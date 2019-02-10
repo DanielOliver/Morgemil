@@ -116,6 +116,15 @@ type ExampleRowNext =
     interface IRow with
         member this.Key = this.ExampleKeyID
 
+        
+type ExampleRowNext234 =
+    {   Name: string
+        ExampleKeyID: int64
+        ForeignKeyID: int64
+    }
+    interface IRow with
+        member this.Key = this.ExampleKeyID
+
 [<Fact>]
 let ``Check Joins on readonlyArrays``() =
 
@@ -150,6 +159,12 @@ let ``Check Joins on readonlyArrays``() =
         ForeignKeyID = 0L
     }
 
+    let exampleItem234 = {
+        ExampleRowNext234.Name = "two"
+        ExampleKeyID = 235L
+        ForeignKeyID = 0L
+    }
+
     let tableOne = Table.CreateReadonlyTable [
         exampleItem1
         exampleItem2
@@ -159,6 +174,9 @@ let ``Check Joins on readonlyArrays``() =
         row1
         row2
         row3
+    ]
+    let tableThree = Table.CreateReadonlyTable [
+        exampleItem234
     ]
 
     let joinedRows = TableQuery.LeftJoin tableTwo (fun t -> t.ForeignKeyID) tableOne |> Seq.toArray
