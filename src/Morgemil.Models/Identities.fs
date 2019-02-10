@@ -21,4 +21,11 @@ type [<Struct>] ItemID =
 type [<Struct>] FloorGenerationParameterID =
     | FloorGenerationParameterID of int64
 
+[<Measure>]
+type TileDistance
 
+[<Measure>]
+type Weight
+
+[<Measure>]
+type HandSlot

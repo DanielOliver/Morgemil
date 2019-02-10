@@ -1,4 +1,4 @@
-﻿namespace Morgemil.Models
+namespace Morgemil.Models
 
 type WearableType =
   | Head = 0
@@ -14,7 +14,7 @@ type WearableType =
 
 type Wearable =
   { ///The weight of this item. Used in stamina
-    Weight: decimal
+    Weight: decimal<Weight>
     ///Where this wearable resides
     WearableType: WearableType
   }
