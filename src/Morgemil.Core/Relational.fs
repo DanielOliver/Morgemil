@@ -177,12 +177,7 @@ type Table<'tRow when 'tRow :> IRow>() =
 type ReadonlyTable<'tRow when 'tRow :> IRow>(rows: seq<'tRow>) =
     let _rows: 'tRow[] = rows |> Seq.toArray
     let _primaryKeys: int64[] = rows |> Seq.map(fun t -> t.Key) |> Seq.toArray
-
-    let findRow key =
-        let index = System.Array.BinarySearch(_primaryKeys, key)
-        if index < 0 then failwithf "Can't find key %i" key
-        _rows.[index]
-
+    
     do
         System.Array.Sort(_primaryKeys, _rows)
     
@@ -224,6 +219,26 @@ module Table =
         let table = new ReadonlyTable<'T>(rows)
         table :> IReadonlyTable<'T>
 
+module TableQuery =
+
+    let LeftJoin (left: IReadonlyTable<'T>) (getForeignKeyLeft: 'T -> int64)  (right: IReadonlyTable<'U>): seq<'T * 'U option> =
+        left.Items
+        |> Seq.map (fun leftRow -> 
+            let rightRow = leftRow |> getForeignKeyLeft |> right.TryGetRow
+            leftRow, rightRow
+        )
+
+    let InnerJoin (left: IReadonlyTable<'T>) (getForeignKeyLeft: 'T -> int64)  (right: IReadonlyTable<'U>): seq<'T * 'U> =
+        LeftJoin left getForeignKeyLeft right
+        |> Seq.choose (fun (leftRow, rightRowOption) ->
+            match rightRowOption with
+            | Some rightRow -> Some(leftRow, rightRow)
+            | None -> None
+        )
+
 module MultiIndex =
     let GetRowsByKey (index: IMultiIndex<_,'T>) (key: 'T) =
-        (index :> IMultiIndex<_,_>).TryGetRows key
+        index.TryGetRows key
+
+    let Item (index: IMultiIndex<_,'T>) (key: 'T) =
+        index.[key]

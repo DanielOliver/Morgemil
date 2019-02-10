@@ -108,3 +108,66 @@ let ``Can Add items to Index``() =
 
 
 
+type ExampleRowNext =
+    {   Name: string
+        ExampleKeyID: int64
+        ForeignKeyID: int64
+    }
+    interface IRow with
+        member this.Key = this.ExampleKeyID
+
+[<Fact>]
+let ``Check Joins on readonlyArrays``() =
+
+    let exampleItem1 = {
+        ExampleRow.Attribute1 = 0
+        ExampleKey = ExampleKey(500L)
+        Name = "Test1"
+    }    
+    let exampleItem2 = {
+        ExampleRow.Attribute1 = 23
+        ExampleKey = ExampleKey(501L)
+        Name = "Test1"
+    }
+    let exampleItem3 = {
+        exampleItem2 with
+            Name = "onetwo"
+    }
+
+    let row1 = {
+        ExampleRowNext.Name = "one"
+        ExampleKeyID = 234L
+        ForeignKeyID = 500L
+    }
+    let row2 = {
+        ExampleRowNext.Name = "two"
+        ExampleKeyID = 235L
+        ForeignKeyID = 501L
+    }
+    let row3 = {
+        ExampleRowNext.Name = "two"
+        ExampleKeyID = 235L
+        ForeignKeyID = 0L
+    }
+
+    let tableOne = Table.CreateReadonlyTable [
+        exampleItem1
+        exampleItem2
+        exampleItem3
+    ]
+    let tableTwo = Table.CreateReadonlyTable [
+        row1
+        row2
+        row3
+    ]
+
+    let joinedRows = TableQuery.LeftJoin tableTwo (fun t -> t.ForeignKeyID) tableOne |> Seq.toArray
+    Assert.Equal(3, joinedRows.Length)
+
+    let (row, exampleItem) = joinedRows.[2]
+    Assert.True(exampleItem.IsNone)
+    Assert.Equal(row3, row)
+    
+    let (row, exampleItem) = joinedRows.[1]
+    Assert.Equal(exampleItem2, exampleItem.Value)
+    Assert.Equal(row2, row)
