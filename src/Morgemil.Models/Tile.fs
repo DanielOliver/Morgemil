@@ -19,7 +19,7 @@ type TileType =
   | Ground = 2
 
 type Tile = 
-  { ID : int
+  { ID : TileID
     ///The general specification of this tile
     TileType: TileType
     /// A short name. eg: "Lush Grass"

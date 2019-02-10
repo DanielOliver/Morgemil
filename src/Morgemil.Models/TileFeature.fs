@@ -1,7 +1,8 @@
 namespace Morgemil.Models
 
+
 type TileFeature =
-    {   ID: int
+    {   ID: TileFeatureID
         /// A short name. eg: "Stairs Down"
         Name : string
         ///A long description. eg: "Take these stairs down to the next level."

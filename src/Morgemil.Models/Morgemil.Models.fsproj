@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Identities.fs" />
     <Compile Include="TileRepresentation.fs" />
     <Compile Include="Tags.fs" />
     <Compile Include="Tag.fs" />

@@ -1,7 +1,7 @@
 namespace Morgemil.Models 
 
 type RaceModifier =
-  { ID: int
+  { ID: RaceModifierID
     ///Proper noun
     Noun: string
     ///Proper adjective

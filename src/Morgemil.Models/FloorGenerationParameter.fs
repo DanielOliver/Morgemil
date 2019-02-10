@@ -1,11 +1,11 @@
-﻿namespace Morgemil.Models
+namespace Morgemil.Models
 
 [<RequireQualifiedAccess>]
 type FloorGenerationStrategy = 
   | OpenFloor = 0
 
 type FloorGenerationParameter =
-  { ID: int
+  { ID: FloorGenerationParameterID
     /// Default Tile
     DefaultTile: Tile
     ///Tiles used

@@ -1,4 +1,4 @@
-﻿module Morgemil.Core.Tests.FloorGenerator
+module Morgemil.Core.Tests.FloorGenerator
 
 
 open Xunit
@@ -7,7 +7,7 @@ open Morgemil.Models
 open Morgemil.Math
 
 let defaultTile: Tile = {
-        ID = 1
+        ID = TileID 3L
         Name = "Dungeon Wall"
         TileType = TileType.Solid
         Description = "Dungeon floors are rock, paved cobblestone, and very slipper when bloody."
@@ -26,7 +26,7 @@ let tile2 = {
         Name = "Dungeon Floor"
         BlocksMovement = false
         BlocksSight = false
-        ID = 4
+        ID = TileID 4L
 }
 
 let floorParameters: FloorGenerationParameter = {
@@ -38,7 +38,7 @@ let floorParameters: FloorGenerationParameter = {
     SizeRange = Rectangle.create(10, 10, 15, 15)
     Tags = Map.empty
     DefaultTile = defaultTile
-    ID = 5
+    ID = FloorGenerationParameterID 5L
 }
 
 [<Fact>]

@@ -1,11 +1,11 @@
-﻿namespace Morgemil.Models
+namespace Morgemil.Models
 
 type ScenarioData =
-  { Races: Map<int,Race>
-    Tiles: Map<int,Tile>
-    Items: Map<int,Item>
-    RaceModifiers: Map<int,RaceModifier>
-    RaceModifierLinks: Map<int,RaceModifierLink>
-    FloorGenerationParameters: Map<int,FloorGenerationParameter>
+  { Races: Map<RaceID,Race>
+    Tiles: Map<TileID,Tile>
+    Items: Map<ItemID,Item>
+    RaceModifiers: Map<RaceModifierID,RaceModifier>
+    RaceModifierLinks: Map<RaceModifierLinkID,RaceModifierLink>
+    FloorGenerationParameters: Map<FloorGenerationParameterID,FloorGenerationParameter>
     Scenario: Scenario
   }

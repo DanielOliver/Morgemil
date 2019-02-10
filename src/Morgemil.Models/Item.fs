@@ -1,4 +1,4 @@
-﻿namespace Morgemil.Models
+namespace Morgemil.Models
 
 [<RequireQualifiedAccess>]
 type ItemType = 
@@ -19,7 +19,7 @@ type SubItem =
     | Consumable _ -> ItemType.Consumable
     
 type Item =
-  { ID: int
+  { ID: ItemID
     ///The union of items
     SubItem: SubItem
     ///The general classification
@@ -29,6 +29,6 @@ type Item =
     ///If true, then never appears more than once in a game.
     IsUnique: bool
     ///A list of Tags that this Item possesses, along with the Value(s)
-    Tags : Map<TagType, Tag>    
+    Tags : Map<TagType, Tag>
   }
 

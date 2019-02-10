@@ -1,4 +1,4 @@
-﻿module Morgemil.Core.Tests.TileMap
+module Morgemil.Core.Tests.TileMap
 
 open Xunit
 open Morgemil.Core
@@ -6,7 +6,7 @@ open Morgemil.Models
 open Morgemil.Math
 
 let defaultTile: Tile = {
-        ID = 1
+        ID = TileID 1L
         Name = "Dungeon Wall"
         TileType = TileType.Solid
         Description = "Dungeon floors are rock, paved cobblestone, and very slipper when bloody."
@@ -25,7 +25,7 @@ let tile2 = {
         Name = "Dungeon Floor"
         BlocksMovement = false
         BlocksSight = false
-        ID = 4
+        ID = TileID 4L
 }
 
 [<Fact>]
