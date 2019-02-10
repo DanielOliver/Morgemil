@@ -27,13 +27,14 @@ type IPrimaryIndex<'tRow, 'tKey when 'tRow :> IRow> =
 type IReadonlyTable<'tRow when 'tRow :> IRow> =
     abstract member TryGetRow: int64 -> 'tRow option    
     abstract member Items: 'tRow seq
-    abstract member Item: int64 -> 'tRow with get, set
+    abstract member Item: int64 -> 'tRow with get
 
 type ITable<'tRow when 'tRow :> IRow> =
     inherit IReadonlyTable<'tRow>
     abstract member AddRow: 'tRow -> unit
     abstract member UpdateRow: 'tRow -> 'tRow -> unit
     abstract member Remove: 'tRow -> unit
+    abstract member Item: int64 -> 'tRow with get, set
     abstract member RemoveByKey: int64 -> unit
     abstract member GenerateKey: unit -> int64
 
@@ -122,7 +123,7 @@ type PrimaryIndex<'tRow when 'tRow :> IRow>() =
                 match _dictionary.TryGetValue key with
                 | true, value -> value
                 | _ -> failwithf "Couldn't find key %A" key
-            and set key row = _dictionary.[ key ] <- row            
+            and set key row = _dictionary.[ key ] <- row           
         member this.UpdateRow oldRow row =
             let oldKey = oldRow.Key
             let newKey = row.Key
@@ -141,6 +142,12 @@ type Table<'tRow when 'tRow :> IRow>() =
     member this.AddIndex index = _indices <- index :: _indices
     member this.PrimaryIndex = _primaryKeyIndexCast
     
+    interface IReadonlyTable<'tRow> with
+        member this.Item
+            with get key = _primaryKey.[ key ]
+        member this.Items = _primaryKey.Items
+        member this.TryGetRow key = _primaryKey.TryGetRow key
+
     interface ITable<'tRow> with
         member this.GenerateKey() =
             let key = _nextKey
@@ -149,7 +156,6 @@ type Table<'tRow when 'tRow :> IRow>() =
         member this.Item
             with get key = _primaryKey.[ key ]
             and set key row = (this :> ITable<'tRow>).AddRow row
-        member this.Items = _primaryKey.Items
         member this.Remove row = _indices |> List.iter(fun t -> t.Remove row)
         member this.RemoveByKey key =
             match _primaryKey.TryGetRow key with 
@@ -162,12 +168,35 @@ type Table<'tRow when 'tRow :> IRow>() =
             | None -> 
                 _setNextKey (row :> IRow).Key
                 _indices |> List.iter(fun t -> t.AddRow row)
-        member this.TryGetRow key = _primaryKey.TryGetRow key
         member this.UpdateRow oldRow row =         
             match _primaryKey.TryGetRow (row :> IRow).Key with
             | Some(oldRow) -> 
                 _indices |> List.iter(fun t -> t.UpdateRow oldRow row)
             | None -> ()
+
+type ReadonlyTable<'tRow when 'tRow :> IRow>(rows: seq<'tRow>) =
+    let _rows: 'tRow[] = rows |> Seq.toArray
+    let _primaryKeys: int64[] = rows |> Seq.map(fun t -> t.Key) |> Seq.toArray
+
+    let findRow key =
+        let index = System.Array.BinarySearch(_primaryKeys, key)
+        if index < 0 then failwithf "Can't find key %i" key
+        _rows.[index]
+
+    do
+        System.Array.Sort(_primaryKeys, _rows)
+    
+    interface IReadonlyTable<'tRow> with
+        member this.Item
+            with get key =
+                let index = System.Array.BinarySearch(_primaryKeys, key)
+                if index < 0 then failwithf "Can't find key %i" key
+                _rows.[index]
+        member this.Items = _rows |> Seq.cache
+        member this.TryGetRow key =
+            let index = System.Array.BinarySearch(_primaryKeys, key)
+            if index < 0 then None
+            else _rows.[index] |> Some
 
 module Table =
     let Items (table: 'T when 'T :> IReadonlyTable<'U>) =
@@ -192,8 +221,7 @@ module Table =
         table.GenerateKey()
 
     let CreateReadonlyTable (rows: seq<'T> when 'T :> IRow): IReadonlyTable<'T> =
-        let table = new Table<'T>()
-        rows |> Seq.iter(AddRow table)
+        let table = new ReadonlyTable<'T>(rows)
         table :> IReadonlyTable<'T>
 
 module MultiIndex =
