@@ -1,30 +1,41 @@
-﻿namespace Morgemil.Core
+namespace Morgemil.Core
 
 type IRow =
     abstract member Key : int64
-    
+
 type IIndex<'tRow when 'tRow :> IRow> =
     abstract member AddRow: 'tRow -> unit
     abstract member UpdateRow: 'tRow -> 'tRow -> unit
     abstract member Remove: 'tRow -> unit
-    
+
 type IUniqueIndex<'tRow, 'tKey when 'tRow :> IRow> =
+    abstract member RemoveByKey: 'tKey -> unit
     abstract member Item: 'tKey -> 'tRow with get, set
     abstract member TryGetRow: 'tKey -> 'tRow option
-    abstract member RemoveByKey: 'tKey -> unit
         
 type IMultiIndex<'tRow, 'tKey when 'tRow :> IRow> =
     abstract member Item: 'tKey -> 'tRow list with get
     abstract member TryGetRows: 'tKey -> 'tRow list
 
-type IPrimaryIndex<'tRow when 'tRow :> IRow> =
+type IPrimaryIndex<'tRow, 'tKey when 'tRow :> IRow> =
     inherit IIndex<'tRow>
-    inherit IUniqueIndex<'tRow, int64>
+    abstract member RemoveByKey: 'tKey -> unit
     abstract member Items: 'tRow seq
+    abstract member Item: 'tKey -> 'tRow with get, set
+    abstract member TryGetRow: 'tKey -> 'tRow option
+    
+type IReadonlyTable<'tRow when 'tRow :> IRow> =
+    abstract member TryGetRow: int64 -> 'tRow option    
+    abstract member Items: 'tRow seq
+    abstract member Item: int64 -> 'tRow with get, set
 
 type ITable<'tRow when 'tRow :> IRow> =
-    inherit IPrimaryIndex<'tRow>
-    
+    inherit IReadonlyTable<'tRow>
+    abstract member AddRow: 'tRow -> unit
+    abstract member UpdateRow: 'tRow -> 'tRow -> unit
+    abstract member Remove: 'tRow -> unit
+    abstract member RemoveByKey: int64 -> unit
+    abstract member GenerateKey: unit -> int64
 
 type UniqueIndex<'tRow, 'tKey when 'tKey: equality and 'tRow :> IRow>(getKey: 'tRow -> 'tKey) =
     let _dictionary = new System.Collections.Generic.Dictionary<'tKey, 'tRow>()
@@ -97,7 +108,7 @@ type MultiIndex<'tRow, 'tKey when 'tKey: equality and 'tRow :> IRow>(getKey: 'tR
 type PrimaryIndex<'tRow when 'tRow :> IRow>() =
     let _dictionary = new System.Collections.Generic.Dictionary<int64, 'tRow>()
             
-    interface IPrimaryIndex<'tRow> with
+    interface IPrimaryIndex<'tRow, int64> with
         member this.Items = _dictionary.Values |> Seq.map id
         member this.Remove row = _dictionary.Remove row.Key |> ignore
         member this.RemoveByKey key = _dictionary.Remove key |> ignore
@@ -120,7 +131,7 @@ type PrimaryIndex<'tRow when 'tRow :> IRow>() =
             _dictionary.[ newKey ] <- row
 
 type Table<'tRow when 'tRow :> IRow>() =
-    let _primaryKey = new PrimaryIndex<'tRow>() :> IPrimaryIndex<'tRow>
+    let _primaryKey = new PrimaryIndex<'tRow>() :> IPrimaryIndex<'tRow, int64>
     let _primaryKeyIndexCast = _primaryKey :> IIndex<'tRow>
     let mutable _indices = [ _primaryKeyIndexCast ]
     let mutable _nextKey = 0L
@@ -129,12 +140,12 @@ type Table<'tRow when 'tRow :> IRow>() =
 
     member this.AddIndex index = _indices <- index :: _indices
     member this.PrimaryIndex = _primaryKeyIndexCast
-    member this.GenerateKey() =
-        let key = _nextKey
-        _nextKey <- _nextKey + 1L
-        key
     
     interface ITable<'tRow> with
+        member this.GenerateKey() =
+            let key = _nextKey
+            _nextKey <- _nextKey + 1L
+            key
         member this.Item
             with get key = _primaryKey.[ key ]
             and set key row = (this :> ITable<'tRow>).AddRow row
@@ -159,26 +170,31 @@ type Table<'tRow when 'tRow :> IRow>() =
             | None -> ()
 
 module Table =
-    let Items (table: 'T when 'T :> Table<'U>) =
-        (table :> ITable<'U>).Items
+    let Items (table: 'T when 'T :> IReadonlyTable<'U>) =
+        table.Items
 
-    let AddRow (table: 'T when 'T :> Table<'U>) (row: 'U) =
-        (table :> ITable<'U>).AddRow(row)
+    let AddRow (table: 'T when 'T :> ITable<'U>) (row: 'U) =
+        table.AddRow(row)
 
-    let GetRowByKey (table: 'T when 'T :> Table<_>) key =
-        (table :> ITable<_>).Item key
+    let GetRowByKey (table: 'T when 'T :> IReadonlyTable<_>) key =
+        table.Item key
 
-    let TryGetRowByKey (table: 'T when 'T :> Table<_>) key =
-        (table :> ITable<_>).TryGetRow key
+    let TryGetRowByKey (table: 'T when 'T :> IReadonlyTable<_>) key =
+        table.TryGetRow key
 
-    let RemoveRow (table: 'T when 'T :> Table<'U>) (row: 'U) =
-        (table :> ITable<'U>).Remove(row)
+    let RemoveRow (table: 'T when 'T :> ITable<'U>) (row: 'U) =
+        table.Remove(row)
 
-    let RemoveRowByKey (table: 'T when 'T :> Table<_>) key =
-        (table :> ITable<'U>).RemoveByKey key
+    let RemoveRowByKey (table: 'T when 'T :> ITable<_>) key =
+        table.RemoveByKey key
 
-    let GenerateKey (table: 'T when 'T :> Table<_>) =
+    let GenerateKey (table: 'T when 'T :> ITable<_>) =
         table.GenerateKey()
+
+    let CreateReadonlyTable (rows: seq<'T> when 'T :> IRow): IReadonlyTable<'T> =
+        let table = new Table<'T>()
+        rows |> Seq.iter(AddRow table)
+        table :> IReadonlyTable<'T>
 
 module MultiIndex =
     let GetRowsByKey (index: IMultiIndex<_,'T>) (key: 'T) =

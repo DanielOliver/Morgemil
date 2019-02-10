@@ -101,3 +101,10 @@ let ``Can Add items to Index``() =
         
     Assert.Equal(0, exampleTable |> Table.Items |> Seq.length)
 
+    let readOnlyTable = Table.CreateReadonlyTable [ exampleItem1; exampleItem2 ]
+    Assert.Equal(2, readOnlyTable.Items |> Seq.length)
+    Assert.Equal(exampleItem1, Table.GetRowByKey readOnlyTable 500L)
+    Assert.Equal(exampleItem2, Table.GetRowByKey readOnlyTable 501L)
+
+
+
