@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="FloorGenerator.Tests.fs" />
     <Compile Include="TileMap.Tests.fs" />
+    <Compile Include="FloorGenerator.Tests.fs" />
     <Compile Include="Relational.Tests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

@@ -6,11 +6,27 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="Cheepicus_12x12.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="Cheepicus12.font">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Compile Include="Program.fs" />
   </ItemGroup>
 
+  <ItemGroup />
+
+  <ItemGroup />
+
   <ItemGroup>
     <PackageReference Include="SadConsole.Standard" Version="7.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Morgemil.Core\Morgemil.Core.fsproj" />
+    <ProjectReference Include="..\Morgemil.Math\Morgemil.Math.fsproj" />
+    <ProjectReference Include="..\Morgemil.Models\Morgemil.Models.fsproj" />
   </ItemGroup>
 
 </Project>
