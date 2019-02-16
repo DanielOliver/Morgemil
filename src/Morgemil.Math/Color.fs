@@ -1,4 +1,4 @@
-﻿namespace Morgemil.Math
+namespace Morgemil.Math
 
 open System
 
@@ -22,6 +22,20 @@ type Color =
             B = Convert.ToByte b
             G = Convert.ToByte g
             R = Convert.ToByte r
+        }
+        
+    static member From(scalar: int, a: int) =
+        {   A = Convert.ToByte a
+            B = Convert.ToByte scalar
+            G = Convert.ToByte scalar
+            R = Convert.ToByte scalar
+        }
+
+    static member From(scalar: int) =
+        {   A = Byte.MaxValue
+            B = Convert.ToByte scalar
+            G = Convert.ToByte scalar
+            R = Convert.ToByte scalar
         }
 
 

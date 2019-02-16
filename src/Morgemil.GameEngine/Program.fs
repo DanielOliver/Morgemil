@@ -35,6 +35,42 @@ let floorTile: Tile = {
         }
     }
 
+let stairTileFeature: TileFeature = {
+        ID = TileFeatureID 2L
+        Name = "Stairs down"
+        Description = "Stairs down"
+        BlocksMovement = false
+        BlocksSight = false
+        Representation = {
+            AnsiCharacter = char(242)
+            ForegroundColor = Some <| Color.From(30, 30, 255)
+            BackGroundColor = Some <| Color.From(0, 240, 0, 50)
+        }
+        Tags = Map.empty
+        PossibleTiles = [
+            defaultTile
+            floorTile
+        ]
+    }
+
+let startingPointFeature: TileFeature = {
+        ID = TileFeatureID 1L
+        Name = "Starting point"
+        Description = "Starting point"
+        BlocksMovement = false
+        BlocksSight = false
+        Representation = {
+            AnsiCharacter = '@'
+            ForegroundColor = Some <| Color.From(0)
+            BackGroundColor = None
+        }
+        Tags = Map.empty
+        PossibleTiles = [
+            defaultTile
+            floorTile
+        ]
+    }
+
 let floorParameters: FloorGenerationParameter = {
     Strategy = FloorGenerationStrategy.OpenFloor
     Tiles = [|
@@ -56,11 +92,41 @@ type MapGeneratorConsole() =
     let (tileMap, results) = FloorGenerator.Create floorParameters rng
     let createColor (color: Morgemil.Math.Color) = Microsoft.Xna.Framework.Color(color.R, color.G, color.B, color.A)
 
+    let blendColors (color1: Microsoft.Xna.Framework.Color) (color2: Microsoft.Xna.Framework.Color) =
+        if color1.A = System.Byte.MaxValue || color2.A = System.Byte.MinValue then
+            color1
+        elif color1.A = System.Byte.MinValue then
+            color2
+        else
+            let ratio = ((float32)color2.A) / ((float32)color1.A + (float32)color2.A)
+            let returnColor = Microsoft.Xna.Framework.Color.Lerp(color1, color2, ratio)
+            Microsoft.Xna.Framework.Color(returnColor, 255)
+
     do
+        tileMap.TileFeature(Vector2i.create 10) <- (Some stairTileFeature)
+        tileMap.TileFeature(Vector2i.create 3) <- (Some startingPointFeature)
+
         for (position, tile, tileFeature) in tileMap.Tiles do
-            let backgroundColor = tile.Representation.BackGroundColor |> Option.map createColor |> Option.defaultValue Microsoft.Xna.Framework.Color.Black
-            let foregroundColor = tile.Representation.ForegroundColor |> Option.map createColor |> Option.defaultValue Microsoft.Xna.Framework.Color.White
-            base.Print(position.X, position.Y, tile.Representation.AnsiCharacter.ToString(), foregroundColor, backgroundColor)
+            match tileFeature with
+            | Some(feature) ->
+                let (showFeatureChar, foregroundColor) =
+                    if System.Char.IsWhiteSpace feature.Representation.AnsiCharacter then
+                        false, (tile.Representation.ForegroundColor |> Option.map createColor |> Option.defaultValue Microsoft.Xna.Framework.Color.Black)
+                    else
+                        let foreground = feature.Representation.ForegroundColor |> Option.map createColor |> Option.defaultValue Microsoft.Xna.Framework.Color.TransparentBlack
+                        (foreground.A <> (byte 0)), (foreground)
+
+                let backgroundColor =
+                    blendColors
+                        (feature.Representation.BackGroundColor |> Option.map createColor |> Option.defaultValue Microsoft.Xna.Framework.Color.TransparentBlack)
+                        (tile.Representation.BackGroundColor |> Option.map createColor |> Option.defaultValue Microsoft.Xna.Framework.Color.TransparentBlack)
+
+                let tileCharacter = if showFeatureChar then feature.Representation.AnsiCharacter.ToString() else tile.Representation.AnsiCharacter.ToString()
+                base.Print(position.X, position.Y, tileCharacter, foregroundColor, backgroundColor)
+            | None ->
+                let backgroundColor = tile.Representation.BackGroundColor |> Option.map createColor |> Option.defaultValue Microsoft.Xna.Framework.Color.Black
+                let foregroundColor = tile.Representation.ForegroundColor |> Option.map createColor |> Option.defaultValue Microsoft.Xna.Framework.Color.White
+                base.Print(position.X, position.Y, tile.Representation.AnsiCharacter.ToString(), foregroundColor, backgroundColor)
 
     member this.Zero = ()
 
