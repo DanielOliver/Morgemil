@@ -14,9 +14,9 @@ let defaultTile: Tile = {
         BlocksSight = true
         Tags = Map.empty
         Representation = {
-            AnsiCharacter = '#'
-            ForegroundColor = Some <| Color.From(150, 150, 150)
-            BackGroundColor = Some <| Color.From(50, 50, 50)
+            AnsiCharacter = char(177)
+            ForegroundColor = Some <| Color.From(100, 100, 100)
+            BackGroundColor = Some <| Color.From(30, 30, 30)
         }
     }
 
