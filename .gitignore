@@ -212,3 +212,8 @@ src/.idea/**/dynamic.xml
 src/.idea/**/uiDesigner.xml
 src/.idea/**/dbnavigator.xml
 *.iml
+
+
+# Test Results
+coverage.xml*
+src/coveragereport
