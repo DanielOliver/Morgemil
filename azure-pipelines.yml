@@ -3,6 +3,7 @@ trigger:
 
 variables:
   buildConfiguration: 'Release'
+  codecovToken: ''
 
 pool:
   vmImage: 'Ubuntu-16.04'
@@ -24,7 +25,7 @@ steps:
     arguments: '--configuration $(buildConfiguration) /p:AltCoverForce=true /p:AltCover=true'
     publishTestResults: true
 
-- script: 'dotnet reportgenerator -reports:"../../**/coverage.xml" -targetdir:"$(Agent.TempDirectory)/coveragereport" -reporttypes:"HTML;Cobertura" -assemblyfilters:"+Morgemil.*;-Morgemil.*.Tests"'
+- script: 'dotnet reportgenerator -reports:"../../**/coverage.xml" -targetdir:"$(Agent.TempDirectory)/coveragereport" -reporttypes:"HtmlInline_AzurePipelines;Cobertura" -assemblyfilters:"+Morgemil.*;-Morgemil.*.Tests"'
   displayName: 'dotnet reportgenerator'
   workingDirectory: src/Morgemil.Data.Tests
 
@@ -34,6 +35,9 @@ steps:
     summaryFileLocation: $(Agent.TempDirectory)/coveragereport/Cobertura.xml
     reportDirectory: $(Agent.TempDirectory)/coveragereport
     failIfCoverageEmpty: true
+
+- script: bash <(curl -s https://codecov.io/bash) -t $(codecovToken)
+  displayName: CodeCov upload
     
 # - task: DotNetCoreCLI@2
 #   displayName: 'dotnet publish game engine $(buildConfiguration)'
