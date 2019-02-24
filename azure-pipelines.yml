@@ -21,15 +21,20 @@ steps:
   inputs:
     command: test
     projects: '**/*Tests/*.fsproj'
-    arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
+    arguments: '--configuration $(buildConfiguration) --logger "trx;LogFileName=testresults.trx"'
 
-- task: DotNetCoreCLI@2
-  displayName: 'dotnet publish game engine $(buildConfiguration)'
+- task: PublishTestResults@2
   inputs:
-    command: publish
-    projects: src/Morgemil.GameEngine/Morgemil.GameEngine.fsproj
-    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
-    zipAfterPublish: True
+    testRunner: VSTest
+    testResultsFiles: '**/*.trx'
 
-- task: PublishBuildArtifacts@1
-  displayName: 'publish artifacts'
+# - task: DotNetCoreCLI@2
+#   displayName: 'dotnet publish game engine $(buildConfiguration)'
+#   inputs:
+#     command: publish
+#     projects: src/Morgemil.GameEngine/Morgemil.GameEngine.fsproj
+#     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+#     zipAfterPublish: True
+
+# - task: PublishBuildArtifacts@1
+#   displayName: 'publish artifacts'
