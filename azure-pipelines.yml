@@ -21,13 +21,9 @@ steps:
   inputs:
     command: test
     projects: '**/*Tests/*.fsproj'
-    arguments: '--configuration $(buildConfiguration) --logger "trx;LogFileName=testresults.trx"'
-
-- task: PublishTestResults@2
-  inputs:
-    testRunner: VSTest
-    testResultsFiles: '**/*.trx'
-
+    arguments: '--configuration $(buildConfiguration)'
+    publishTestResults: true
+    
 # - task: DotNetCoreCLI@2
 #   displayName: 'dotnet publish game engine $(buildConfiguration)'
 #   inputs:
