@@ -24,7 +24,7 @@ steps:
     arguments: '--configuration $(buildConfiguration) /p:AltCoverForce=true /p:AltCover=true /p:AltCoverPathFilter="Morgemil"'
     publishTestResults: true
 
-- script: 'dotnet reportgenerator -reports:"../../**/coverage.xml" -targetdir:"../coveragereport" -reporttypes:"HTML;Cobertura"'
+- script: 'dotnet reportgenerator -reports:"../../**/coverage.xml" -targetdir:"$(Agent.TempDirectory)/coveragereport" -reporttypes:"HTML;Cobertura"'
   displayName: 'dotnet reportgenerator'
   workingDirectory: src/Morgemil.Data.Tests
 
@@ -32,8 +32,8 @@ steps:
 - task: PublishCodeCoverageResults@1
   inputs:
     codeCoverageTool: cobertura
-    summaryFileLocation: src/coveragereport/Cobertura.xml
-    reportDirectory: src/coveragereport
+    summaryFileLocation: $(Agent.TempDirectory)/coveragereport/Cobertura.xml
+    reportDirectory: $(Agent.TempDirectory)/coveragereport
     failIfCoverageEmpty: true
     
 # - task: DotNetCoreCLI@2
