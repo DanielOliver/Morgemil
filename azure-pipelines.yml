@@ -24,6 +24,7 @@ steps:
     projects: src/Morgemil.GameEngine/Morgemil.GameEngine.fsproj
     arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/gameengine'
     zipAfterPublish: True
+    publishWebProjects: false
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet publish console $(buildConfiguration)'
@@ -32,11 +33,12 @@ steps:
     projects: src/Morgemil.Console/Morgemil.Console.fsproj
     arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/console'
     zipAfterPublish: True
+    publishWebProjects: false
 
 - task: PublishBuildArtifacts@1
   inputs:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)/gameengine' 
-    artifactName: 'gameengine'
+    artifactName: 'gameengine'    
    
 - task: PublishBuildArtifacts@1
   inputs:
