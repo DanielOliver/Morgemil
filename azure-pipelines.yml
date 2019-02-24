@@ -21,13 +21,12 @@ steps:
   inputs:
     command: test
     projects: '**/*Tests/*.fsproj'
-    arguments: '--configuration $(buildConfiguration) /p:AltCoverForce=true /p:AltCover=true /p:AltCoverPathFilter="Morgemil"'
+    arguments: '--configuration $(buildConfiguration) /p:AltCoverForce=true /p:AltCover=true'
     publishTestResults: true
 
 - script: 'dotnet reportgenerator -reports:"../../**/coverage.xml" -targetdir:"$(Agent.TempDirectory)/coveragereport" -reporttypes:"HTML;Cobertura"'
   displayName: 'dotnet reportgenerator'
   workingDirectory: src/Morgemil.Data.Tests
-
 
 - task: PublishCodeCoverageResults@1
   inputs:
