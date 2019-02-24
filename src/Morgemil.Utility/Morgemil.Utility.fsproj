@@ -8,4 +8,8 @@
     <PackageReference Update="FSharp.Core" Version="4.3.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Include="ResultBuilder.fs" />
+  </ItemGroup>
+
 </Project>

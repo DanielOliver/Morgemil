@@ -16,7 +16,7 @@ let ``optionToResult Tests`` () =
     
     let x2 = optionToResult "message" (Some 5)
     let expected2 = Result<int, string>.Ok 5 
-    Assert.Equal(expected1, x1)
+    Assert.Equal(expected2, x2)
 
 [<Fact>]
 let ``resultWithDefault Tests`` () =
@@ -26,7 +26,7 @@ let ``resultWithDefault Tests`` () =
     
     let x2 = resultWithDefault 200 (Result.Error "something")
     let expected2 = 200
-    Assert.Equal(expected1, x1)
+    Assert.Equal(expected2, x2)
 
 [<Fact>]
 let ``expectedProperty Tests`` () =
@@ -77,6 +77,16 @@ let ``tryParseCharProperty Tests`` () =
     
     let x6 = tryParseCharProperty "one" (JsonValue.Parse "{ \"two\": [] }")
     Assert.True(isError x6)
+    
+
+[<Fact>]
+let ``tryParseStringProperty Tests`` () =
+    let x1 = tryParseStringProperty "one" (JsonValue.Parse "{ \"one\": \"hello\" }")
+    let expected1 = Result<string, string>.Ok "hello"
+    Assert.Equal(expected1, x1)
+    
+    let x2 = tryParseStringProperty "one" (JsonValue.Parse "{ }")
+    Assert.True(isError x2)
 
 [<Fact>]
 let ``tryParseLongPropertyWith Tests`` () =

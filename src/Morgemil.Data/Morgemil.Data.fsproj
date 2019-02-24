@@ -8,6 +8,7 @@
     <ProjectReference Include="..\Morgemil.Core\Morgemil.Core.fsproj" />
     <ProjectReference Include="..\Morgemil.Math\Morgemil.Math.fsproj" />
     <ProjectReference Include="..\Morgemil.Models\Morgemil.Models.fsproj" />
+    <ProjectReference Include="..\Morgemil.Utility\Morgemil.Utility.fsproj" />
   </ItemGroup>
 
   <ItemGroup>

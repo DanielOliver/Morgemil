@@ -6,18 +6,33 @@ let optionToResult (errorMessage: string) (value: _ option): Result<_, string> =
     | Some x -> Result.Ok x
     | None -> Result.Error errorMessage
     
+let resultToOption (value: Result<_, string>): _ option  =
+    match value with
+    | Ok x -> Some x 
+    | Error _ -> None
+    
 let resultWithDefault (defaultValue: _) (value: Result<_,string>): _ =
     match value with
     | Ok(x) -> x
-    | _ -> defaultValue    
+    | _ -> defaultValue
 
 let expectedProperty (propertyName: string) (value: _ option): Result<_, string> =
-    optionToResult (sprintf "Expected property %s" propertyName) value    
+    optionToResult (sprintf "Expected property %s" propertyName) value
+    
+let tryParseRecord(propertyName: string) (binder: JsonValue -> Result<_, string>) (value: JsonValue): Result<_, string> =
+    propertyName
+    |> value.TryGetProperty
+    |> expectedProperty propertyName
+    |> Result.bind binder
 
 let tryParseLongProperty(propertyName: string) (value: JsonValue): Result<int64, string> =
     propertyName
     |> value.TryGetProperty
-    |> Option.map(fun t -> t.AsInteger64())
+    |> Option.bind(fun t ->
+        match t with
+        | JsonValue.Number _ -> t.AsInteger64() |> Some
+        | JsonValue.String x when x |> Seq.forall System.Char.IsDigit -> t.AsInteger64() |> Some
+        | _ -> None )
     |> expectedProperty propertyName
 
 let tryParseIntProperty(propertyName: string) (value: JsonValue): Result<int, string> =
@@ -44,6 +59,16 @@ let tryParseCharProperty(propertyName: string) (value: JsonValue): Result<char, 
         | _ ->
             Result.Error (sprintf "Expected property %s to be a number or string" propertyName)
     | None -> Result.Error (sprintf "Expected property %s" propertyName)
+
+
+let tryParseStringProperty(propertyName: string) (value: JsonValue): Result<string, string> =
+    propertyName
+    |> value.TryGetProperty
+    |> Option.bind(fun t ->
+        match t with
+        | JsonValue.String x -> x  |> Some
+        | _ -> None )
+    |> expectedProperty propertyName
 
 let tryParseLongPropertyWith(propertyName: string) (asID: int64 -> _) (value: JsonValue): Result<_, string> =
     value
