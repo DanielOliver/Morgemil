@@ -71,6 +71,12 @@ let ``tryParseCharProperty Tests`` () =
     let x4 = tryParseCharProperty "one" (JsonValue.Parse "{ \"one\": 32 }")
     let expected4 = Result<char, string>.Ok ' '
     Assert.Equal(expected4, x4)
+    
+    let x5 = tryParseCharProperty "one" (JsonValue.Parse "{ \"one\": [] }")
+    Assert.True(isError x5)
+    
+    let x6 = tryParseCharProperty "one" (JsonValue.Parse "{ \"two\": [] }")
+    Assert.True(isError x6)
 
 [<Fact>]
 let ``tryParseLongPropertyWith Tests`` () =
