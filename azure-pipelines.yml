@@ -16,6 +16,32 @@ steps:
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
   workingDirectory: src
+    
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet publish game engine $(buildConfiguration)'
+  inputs:
+    command: publish
+    projects: src/Morgemil.GameEngine/Morgemil.GameEngine.fsproj
+    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/gameengine'
+    zipAfterPublish: True
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet publish console $(buildConfiguration)'
+  inputs:
+    command: publish
+    projects: src/Morgemil.Console/Morgemil.Console.fsproj
+    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/console'
+    zipAfterPublish: True
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)/gameengine' 
+    artifactName: 'gameengine'
+   
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)/console' 
+    artifactName: 'console'
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet test $(buildConfiguration)'
@@ -38,14 +64,3 @@ steps:
 
 - script: bash <(curl -s https://codecov.io/bash) -t $(codecovToken)
   displayName: CodeCov upload
-    
-# - task: DotNetCoreCLI@2
-#   displayName: 'dotnet publish game engine $(buildConfiguration)'
-#   inputs:
-#     command: publish
-#     projects: src/Morgemil.GameEngine/Morgemil.GameEngine.fsproj
-#     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
-#     zipAfterPublish: True
-
-# - task: PublishBuildArtifacts@1
-#   displayName: 'publish artifacts'
