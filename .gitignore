@@ -188,3 +188,27 @@ GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
 .vs/
+
+
+# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and WebStorm
+# Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
+
+# User-specific stuff
+src/.idea/**/workspace.xml
+src/.idea/**/tasks.xml
+src/.idea/**/usage.statistics.xml
+src/.idea/**/dictionaries
+src/.idea/**/shelf
+
+# Generated files
+src/.idea/**/contentModel.xml
+
+# Sensitive or high-churn files
+src/.idea/**/dataSources/
+src/.idea/**/dataSources.ids
+src/.idea/**/dataSources.local.xml
+src/.idea/**/sqlDataSources.xml
+src/.idea/**/dynamic.xml
+src/.idea/**/uiDesigner.xml
+src/.idea/**/dbnavigator.xml
+*.iml
