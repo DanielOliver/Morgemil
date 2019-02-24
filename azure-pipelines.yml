@@ -24,7 +24,7 @@ steps:
     arguments: '--configuration $(buildConfiguration) /p:AltCoverForce=true /p:AltCover=true'
     publishTestResults: true
 
-- script: 'dotnet reportgenerator -reports:"../../**/coverage.xml" -targetdir:"$(Agent.TempDirectory)/coveragereport" -reporttypes:"HTML;Cobertura"'
+- script: 'dotnet reportgenerator -reports:"../../**/coverage.xml" -targetdir:"$(Agent.TempDirectory)/coveragereport" -reporttypes:"HTML;Cobertura" -assemblyfilters:"+Morgemil.*;-Morgemil.*.Tests"'
   displayName: 'dotnet reportgenerator'
   workingDirectory: src/Morgemil.Data.Tests
 
