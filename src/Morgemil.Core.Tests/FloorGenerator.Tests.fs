@@ -13,7 +13,6 @@ let defaultTile: Tile = {
         Description = "Dungeon floors are rock, paved cobblestone, and very slipper when bloody."
         BlocksMovement = true
         BlocksSight = true
-        Tags = Map.empty
         Representation = {
             AnsiCharacter = '#'
             ForegroundColor = Some <| Color.From(200, 200, 200)
@@ -36,7 +35,6 @@ let floorParameters: FloorGenerationParameter = {
         tile2
     |]
     SizeRange = Rectangle.create(10, 10, 15, 15)
-    Tags = Map.empty
     DefaultTile = defaultTile
     ID = FloorGenerationParameterID 5L
 }

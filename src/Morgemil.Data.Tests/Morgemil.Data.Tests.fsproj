@@ -7,14 +7,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Helper.Tests.fs" />
-        <Compile Include="Parser.Tests.fs" />
+        <Compile Include="Translation.Tests.fs" />
         <Compile Include="Program.fs" />
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="altcover" Version="5.0.665" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
+        <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
         <PackageReference Include="xunit" Version="2.4.0" />
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
     </ItemGroup>

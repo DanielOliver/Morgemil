@@ -1,22 +1,10 @@
 namespace Morgemil.Models
 
 [<RequireQualifiedAccess>]
-type TileTagType =
-  | Empty
-
-[<RequireQualifiedAccess>]
-type TileTag =
-  | Empty
-
-  member this.TagType =
-    match this with
-    | Empty _ -> TileTagType.Empty
-
-[<RequireQualifiedAccess>]
 type TileType = 
-  | Void = 0
-  | Solid = 1
-  | Ground = 2
+  | Void 
+  | Solid
+  | Ground
 
 type Tile = 
   { ID : TileID
@@ -31,6 +19,4 @@ type Tile =
     ///If true, this tile ALWAYS blocks ALL Line-Of-Sight of ANYTHING.
     BlocksSight : bool
     ///What this tile looks like.
-    Representation: TileRepresentation
-    ///A list of Tags that this Tile possesses, along with the Value(s)
-    Tags : Map<TileTagType, TileTag> }
+    Representation: TileRepresentation}

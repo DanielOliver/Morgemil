@@ -9,6 +9,13 @@ type Color =
         G: byte
         R: byte
     }
+    
+    static member From() =
+        {   A = Byte.MinValue
+            B = Byte.MinValue
+            G = Byte.MinValue
+            R = Byte.MinValue
+        }
 
     static member From(r: int, g: int, b: int, a: int) =
         {   A = Convert.ToByte a

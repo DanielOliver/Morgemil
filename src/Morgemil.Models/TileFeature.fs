@@ -13,7 +13,5 @@ type TileFeature =
         BlocksSight : bool
         ///What this tile Feature looks like.
         Representation: TileRepresentation
-        ///A list of Tags that this Tile Feature possesses, along with the Value(s)
-        Tags : Map<TagType, Tag>
         ///The tiles that this feature is valid to exist on.
         PossibleTiles: Tile list }

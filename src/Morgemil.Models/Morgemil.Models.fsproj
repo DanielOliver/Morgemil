@@ -7,8 +7,6 @@
   <ItemGroup>
     <Compile Include="Identities.fs" />
     <Compile Include="TileRepresentation.fs" />
-    <Compile Include="Tags.fs" />
-    <Compile Include="Tag.fs" />
     <Compile Include="Race.fs" />
     <Compile Include="RaceModifier.fs" />
     <Compile Include="RaceModifierLink.fs" />

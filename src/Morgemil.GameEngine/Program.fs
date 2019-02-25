@@ -12,7 +12,6 @@ let defaultTile: Tile = {
         Description = "Dungeon Walls are rock, solid, and carved from time."
         BlocksMovement = true
         BlocksSight = true
-        Tags = Map.empty
         Representation = {
             AnsiCharacter = char(177)
             ForegroundColor = Some <| Color.From(100, 100, 100)
@@ -27,7 +26,6 @@ let floorTile: Tile = {
         Description = "Dungeon floors are rock, paved cobblestone, and very slipper when bloody."
         BlocksMovement = false
         BlocksSight = false
-        Tags = Map.empty
         Representation = {
             AnsiCharacter = ' '
             ForegroundColor = Some <| Color.From(50, 50, 50)
@@ -46,7 +44,6 @@ let stairTileFeature: TileFeature = {
             ForegroundColor = Some <| Color.From(30, 30, 255)
             BackGroundColor = Some <| Color.From(0, 240, 0, 50)
         }
-        Tags = Map.empty
         PossibleTiles = [
             defaultTile
             floorTile
@@ -64,7 +61,6 @@ let startingPointFeature: TileFeature = {
             ForegroundColor = Some <| Color.From(0)
             BackGroundColor = None
         }
-        Tags = Map.empty
         PossibleTiles = [
             defaultTile
             floorTile
@@ -78,7 +74,6 @@ let floorParameters: FloorGenerationParameter = {
         floorTile
     |]
     SizeRange = Rectangle.create(10, 10, 15, 15)
-    Tags = Map.empty
     DefaultTile = defaultTile
     ID = FloorGenerationParameterID 5L
 }

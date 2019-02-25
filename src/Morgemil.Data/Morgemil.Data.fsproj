@@ -12,9 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Helper.fs" />
-    <Compile Include="Identities.Parser.fs" />
-    <Compile Include="Parser.fs" />
+    <Compile Include="DTO.fs" />
+    <Compile Include="Translation.fs" />
   </ItemGroup>
 
   <ItemGroup>

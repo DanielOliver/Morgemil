@@ -2,8 +2,8 @@ namespace Morgemil.Models
 
 [<RequireQualifiedAccess>]
 type WeaponRangeType =
-  | Melee = 0
-  | Ranged = 1
+  | Melee
+  | Ranged
 
 type Weapon =
   { ///Type of this weapon

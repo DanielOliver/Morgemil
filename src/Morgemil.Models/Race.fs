@@ -7,6 +7,4 @@ type Race =
     ///Proper adjective
     Adjective : string
     ///User-visible description
-    Description : string
-    ///A list of Tags that this Race possesses, along with the Value(s)
-    Tags : Map<TagType, Tag> }
+    Description : string }
