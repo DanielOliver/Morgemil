@@ -123,7 +123,6 @@ type Consumable =
   { Uses: int 
   }
 
-
 [<RequireQualifiedAccess>]
 type ItemType = 
   | Weapon = 0
@@ -160,4 +159,3 @@ type FloorGenerationParameter =
     Strategy: FloorGenerationStrategy
   }
   
-    
