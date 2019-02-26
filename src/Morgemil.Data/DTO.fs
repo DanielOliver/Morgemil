@@ -154,7 +154,7 @@ type FloorGenerationParameter =
     ///Tiles used
     Tiles: int64 list
     ///Size generation
-    SizeRange: Morgemil.Math.Rectangle
+    SizeRange: Rectangle
     ///Generation Strategy
     Strategy: FloorGenerationStrategy
   }

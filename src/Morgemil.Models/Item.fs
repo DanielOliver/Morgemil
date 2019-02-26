@@ -2,9 +2,9 @@ namespace Morgemil.Models
 
 [<RequireQualifiedAccess>]
 type ItemType = 
-  | Weapon = 0
-  | Wearable = 1
-  | Consumable = 2
+  | Weapon
+  | Wearable
+  | Consumable
 
 [<RequireQualifiedAccess>]
 type SubItem =

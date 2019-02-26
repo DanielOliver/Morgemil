@@ -3,9 +3,6 @@ namespace Morgemil.Core
 type IRow =
     abstract member Key : int64
 
-type IKey =
-    abstract member Value: int64
-
 type IIndex<'tRow when 'tRow :> IRow> =
     abstract member AddRow: 'tRow -> unit
     abstract member UpdateRow: 'tRow -> 'tRow -> unit
@@ -28,10 +25,8 @@ type IPrimaryIndex<'tRow, 'tKey when 'tRow :> IRow> =
     abstract member TryGetRow: 'tKey -> 'tRow option
     
 type IReadonlyTable<'tRow, 'tKey when 'tRow :> IRow> =
-    //abstract member TryGetRow: int64 -> 'tRow option
     abstract member TryGetRow: 'tKey -> 'tRow option
     abstract member Items: 'tRow seq
-    //abstract member Item: int64 -> 'tRow with get
     abstract member Item: 'tKey -> 'tRow with get
 
 type ITable<'tRow, 'tKey when 'tRow :> IRow> =
@@ -39,11 +34,8 @@ type ITable<'tRow, 'tKey when 'tRow :> IRow> =
     abstract member AddRow: 'tRow -> unit
     abstract member UpdateRow: 'tRow -> 'tRow -> unit
     abstract member Remove: 'tRow -> unit
-    //abstract member Item: int64 -> 'tRow with get, set
     abstract member Item: 'tKey -> 'tRow with get, set
-    //abstract member RemoveByKey: int64 -> unit
     abstract member RemoveByKey: 'tKey -> unit
-    //abstract member GenerateKey: unit -> int64
     abstract member GenerateKey: unit -> 'tKey
 
 type UniqueIndex<'tRow, 'tKey when 'tKey: equality and 'tRow :> IRow>(getKey: 'tRow -> 'tKey) =

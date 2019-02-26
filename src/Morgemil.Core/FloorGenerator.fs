@@ -23,7 +23,6 @@ let Create (parameters: FloorGenerationParameter) (rng: RNG.DefaultRNG) =
             |> Seq.iter(fun (vec2: Vector2i) -> tileMap.Tile(vec2) <- tile1 )
             entraceCoordinate <- subFloorSize.MinCoord
         | None -> ()
-    | _ -> ()
 
     let results: Results = {
         EntranceCoordinate = entraceCoordinate
