@@ -159,3 +159,21 @@ type FloorGenerationParameter =
     Strategy: FloorGenerationStrategy
   }
   
+  
+  
+type RawDtoLists =
+    {    Tiles: Result<Tile[], string>       
+    }
+    
+    member this.Errors: string list =
+        let getErrors (result: Result<_, string>): string list = match result with | Ok _ -> [] | Error err -> [ err ]
+        [|    this.Tiles |> getErrors
+        |] |> List.concat
+        
+    member this.Successful: bool =
+        let isOk = function | Ok _ -> true | _ -> false
+        [    this.Tiles |> isOk
+        ] |> List.forall id
+        
+  
+  

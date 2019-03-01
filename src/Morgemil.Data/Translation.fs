@@ -1,7 +1,7 @@
 module Morgemil.Data.Translation
 
 open System
-open Morgemil.Data
+open Morgemil.Data.DTO
 open Morgemil.Models
 open Morgemil.Math
 
@@ -54,3 +54,22 @@ let TileRepresentationFromDto (tileRepresentation: DTO.TileRepresentation): Tile
         ForegroundColor = tileRepresentation.ForegroundColor |> ColorOptionFromDto
         BackGroundColor = tileRepresentation.BackGroundColor |> ColorOptionFromDto
     }
+    
+let TileFromDto (tile: DTO.Tile): Result<Tile, string> =
+    match tile.TileType with
+    | DTO.TileType.Void -> TileType.Void |> Ok
+    | DTO.TileType.Ground -> TileType.Ground |> Ok
+    | DTO.TileType.Solid -> TileType.Solid |> Ok
+    | _ as x -> sprintf "Unrecognized TileType: %A for TileID: %i" tile.TileType tile.ID |> Error
+    |> Result.map(fun tileType ->
+        {
+            ID = TileID tile.ID
+            Name = tile.Name
+            Description = tile.Description
+            Representation = TileRepresentationFromDto tile.Representation
+            BlocksSight = tile.BlocksSight
+            BlocksMovement = tile.BlocksMovement
+            TileType = tileType
+        }
+    )
+    
