@@ -25,8 +25,4 @@
     <ProjectReference Include="..\Morgemil.Math\Morgemil.Math.fsproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="4.3.4" />
-  </ItemGroup>
-
 </Project>

@@ -21,33 +21,3 @@ let ``ColorFromDto Tests`` () =
     let expected1 = Color.From(249, 252, 253, 255) |> Translation.ColorToDto
     let serial1 = Newtonsoft.Json.JsonConvert.SerializeObject expected1
     Assert.Equal(s1, serial1)
-
-[<Fact>]
-let ``onetwo`` () =
-    let tileOne = {
-        Tile.ID = 25L
-        TileType = TileType.Void
-        Name = "Tile2"
-        Description = "something more"
-        BlocksMovement = true
-        BlocksSight = false
-        Representation = {
-            TileRepresentation.AnsiCharacter = 'M'
-            BackGroundColor = {
-                A = 255uy
-                B = 255uy
-                G = 255uy
-                R = 255uy
-            }
-            ForegroundColor = {
-                A = 0uy
-                B = 255uy
-                G = 255uy
-                R = 255uy
-            }
-        }
-    }
-    let serialized = Newtonsoft.Json.JsonConvert.SerializeObject tileOne
-    //Assert.Equal("", serialized)
-    Assert.True(true)
-   

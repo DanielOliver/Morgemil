@@ -15,7 +15,7 @@ let ReadJsonFile<'T> (fileName: string): Result<'T[], string> =
         | ex -> "Error reading file" |> Error
 
 let ReadGameFiles (basePath: string): RawDtoLists =
-    let combinePaths fileName = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(basePath), fileName)
+    let combinePaths fileName = System.IO.Path.Combine(System.IO.Path.GetFullPath(basePath), fileName)
     {
         Tiles = ReadJsonFile <| combinePaths "tiles.json"
     }

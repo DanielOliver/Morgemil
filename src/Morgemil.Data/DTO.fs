@@ -162,7 +162,7 @@ type FloorGenerationParameter =
   
   
 type RawDtoLists =
-    {    Tiles: Result<Tile[], string>       
+    {    Tiles: Result<Tile[], string>  
     }
     
     member this.Errors: string list =
