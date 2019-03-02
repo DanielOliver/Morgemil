@@ -15,6 +15,7 @@
     <Compile Include="DTO.fs" />
     <Compile Include="JsonReader.fs" />
     <Compile Include="Translation.fs" />
+    <Compile Include="Validator.fs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,4 +1,5 @@
 module Morgemil.Data.DTO
+open Morgemil.Core
 
 type Color = 
     {   A: byte
@@ -68,6 +69,9 @@ type Tile =
     BlocksSight : bool
     ///What this tile looks like.
     Representation: TileRepresentation }
+  
+  interface IRow with
+      member this.Key = this.ID
 
 type TileFeature =
     {   ID: int64
@@ -160,20 +164,39 @@ type FloorGenerationParameter =
   }
   
   
+        
   
-type RawDtoLists =
-    {    Tiles: Result<Tile[], string>  
+type DtoValidResult<'T> =
+    {   Item: 'T
+        Errors: string list
+        Success: bool
+    }
+
+  
+type RawDtoPhase0 =
+    {    Tiles: DtoValidResult<Tile[]>
     }
     
     member this.Errors: string list =
-        let getErrors (result: Result<_, string>): string list = match result with | Ok _ -> [] | Error err -> [ err ]
-        [|    this.Tiles |> getErrors
+        [|    this.Tiles.Errors
         |] |> List.concat
         
     member this.Successful: bool =
         let isOk = function | Ok _ -> true | _ -> false
-        [    this.Tiles |> isOk
+        [    this.Tiles.Success
         ] |> List.forall id
+  
+type RawDtoPhase1 =
+    {    Tiles: DtoValidResult<DtoValidResult<Tile>[]>
+    }
+    
+    member this.Errors: string list =
+        [|    this.Tiles.Errors
+        |] |> List.concat
         
+    member this.Success: bool =
+        let isOk = function | Ok _ -> true | _ -> false
+        [    this.Tiles.Success
+        ] |> List.forall id
   
   

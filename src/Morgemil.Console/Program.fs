@@ -26,11 +26,15 @@ let main argv =
         try
             results.GetResults ValidateRawGameData
             |> List.map(fun path -> path, JsonReader.ReadGameFiles path)
-            |> List.iter(fun (path, rawGameData) ->
-                printfn "Path: %s" (System.IO.Path.GetFullPath path)
-                printfn "Tiles: %s" (rawGameData.Tiles |> function | Ok x -> sprintf "%i tiles" x.Length | Error err -> "Errors")
-                printfn "Summary: %s" (if rawGameData.Successful then "Valid" else String.Empty)
-                rawGameData.Errors |> List.iter (printfn "Error: %s")
+            |> List.map(fun (path, rawGameDataPhase0) -> path, Validator.ValidateDtos rawGameDataPhase0)
+            |> List.iter(fun (path, rawGameDataPhase1) ->
+//                printfn "Path: %s" (System.IO.Path.GetFullPath path)
+//                printfn "Tiles: %s" (rawGameData.Tiles |> function | Ok x -> sprintf "%i tiles" x.Length | Error err -> "Errors")
+//                printfn "Summary: %s" (if rawGameData.Successful then "Valid" else String.Empty)
+//                rawGameData.Errors |> List.iter (printfn "Error: %s")
+                  
+                  Newtonsoft.Json.JsonConvert.SerializeObject(rawGameDataPhase1, Newtonsoft.Json.Formatting.Indented)
+                  |> System.Console.Write
                 )
     
         with e ->

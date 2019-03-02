@@ -21,5 +21,28 @@
         "R": 255
       }
     }
+  },
+  {
+    "ID": 1,
+    "TileType": 1,
+    "Name": "Dungeon Wall",
+    "Description": "Dungeon Walls are rock, solid, and carved from time.",
+    "BlocksMovement": true,
+    "BlocksSight": true,
+    "Representation": {
+      "AnsiCharacter": "▒",
+      "ForegroundColor": {
+        "A": 255,
+        "B": 100,
+        "G": 100,
+        "R": 100
+      },
+      "BackGroundColor": {
+        "A": 255,
+        "B": 30,
+        "G": 30,
+        "R": 30
+      }
+    }
   }
 ]
