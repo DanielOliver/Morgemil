@@ -33,3 +33,7 @@ let ``Try Translate Game``() =
     Assert.NotEmpty(rawDtoPhase2.Races)
     Assert.NotEmpty(rawDtoPhase2.Tiles)
     Assert.NotEmpty(rawDtoPhase2.RaceModifiers)
+    Assert.NotEmpty(rawDtoPhase2.Items)
+    Assert.NotEmpty(rawDtoPhase2.FloorGenerationParameters)
+    Assert.NotEmpty(rawDtoPhase2.MonsterGenerationParameters)
+    Assert.NotEmpty(rawDtoPhase2.TileFeatures)
