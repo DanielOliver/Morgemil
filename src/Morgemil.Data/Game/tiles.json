@@ -10,15 +10,15 @@
       "AnsiCharacter": " ",
       "ForegroundColor": {
         "A": 0,
-        "B": 255,
+        "R": 255,
         "G": 255,
-        "R": 255
+        "B": 255
       },
       "BackGroundColor": {
         "A": 255,
-        "B": 255,
+        "R": 255,
         "G": 255,
-        "R": 255
+        "B": 255
       }
     }
   },
@@ -33,15 +33,15 @@
       "AnsiCharacter": "▒",
       "ForegroundColor": {
         "A": 255,
-        "B": 100,
+        "R": 100,
         "G": 100,
-        "R": 100
+        "B": 100
       },
       "BackGroundColor": {
         "A": 255,
-        "B": 30,
+        "R": 30,
         "G": 30,
-        "R": 30
+        "B": 30
       }
     }
   }

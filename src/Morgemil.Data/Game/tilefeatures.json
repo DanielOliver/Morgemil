@@ -1,0 +1,27 @@
+[
+  {
+    "ID": 0,
+    "Name": "Stairs down",
+    "Description": "Stairs down",
+    "BlocksMovement": false,
+    "BlocksSight": false,
+    "Representation": {
+      "AnsiCharacter": "≧",
+      "ForegroundColor": {
+        "A": 255,
+        "R": 30,
+        "G": 30,
+        "B": 255
+      },
+      "BackGroundColor": {
+        "A": 50,
+        "R": 0,
+        "G": 240,
+        "B": 0
+      }
+    },
+    "PossibleTiles": [
+      0
+    ]
+  }
+]

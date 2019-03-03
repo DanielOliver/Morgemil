@@ -86,7 +86,11 @@ type TileFeature =
         ///What this tile Feature looks like.
         Representation: TileRepresentation
         ///The tiles that this feature is valid to exist on.
-        PossibleTiles: int64 list }
+        PossibleTiles: int64 list
+    }
+  
+    interface IRow with
+        member this.Key = this.ID
 
 [<RequireQualifiedAccess>]
 type WeaponRangeType =
@@ -175,6 +179,7 @@ type DtoValidResult<'T> =
   
 type RawDtoPhase0 =
     {    Tiles: DtoValidResult<Tile[]>
+         TileFeatures: DtoValidResult<TileFeature[]>
     }
     
     member this.Errors: string list =
@@ -188,15 +193,18 @@ type RawDtoPhase0 =
   
 type RawDtoPhase1 =
     {    Tiles: DtoValidResult<DtoValidResult<Tile>[]>
+         TileFeatures: DtoValidResult<DtoValidResult<TileFeature>[]>
     }
     
     member this.Errors: string list =
         [|    this.Tiles.Errors
+              this.TileFeatures.Errors
         |] |> List.concat
         
     member this.Success: bool =
         let isOk = function | Ok _ -> true | _ -> false
         [    this.Tiles.Success
+             this.TileFeatures.Success
         ] |> List.forall id
   
   

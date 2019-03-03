@@ -4,11 +4,11 @@ open Morgemil.Data
 
 [<CliPrefix(CliPrefix.DoubleDash)>]
 type CLIArguments =
-    | ValidateRawGameData of workingDirectory: string
+    | ValidateGameData of workingDirectory: string
     interface IArgParserTemplate with
         member s.Usage =
             match s with
-            | ValidateRawGameData _ -> "specify a working directory."
+            | ValidateGameData _ -> "specify a working directory."
 
 [<EntryPoint>]
 let main argv =
@@ -24,17 +24,13 @@ let main argv =
         
     else
         try
-            results.GetResults ValidateRawGameData
+            results.GetResults ValidateGameData
             |> List.map(fun path -> path, JsonReader.ReadGameFiles path)
             |> List.map(fun (path, rawGameDataPhase0) -> path, Validator.ValidateDtos rawGameDataPhase0)
-            |> List.iter(fun (path, rawGameDataPhase1) ->
-//                printfn "Path: %s" (System.IO.Path.GetFullPath path)
-//                printfn "Tiles: %s" (rawGameData.Tiles |> function | Ok x -> sprintf "%i tiles" x.Length | Error err -> "Errors")
-//                printfn "Summary: %s" (if rawGameData.Successful then "Valid" else String.Empty)
-//                rawGameData.Errors |> List.iter (printfn "Error: %s")
-                  
+            |> List.iter(fun (path, rawGameDataPhase1) ->                  
                   Newtonsoft.Json.JsonConvert.SerializeObject(rawGameDataPhase1, Newtonsoft.Json.Formatting.Indented)
                   |> System.Console.Write
+                  System.Console.WriteLine()
                 )
     
         with e ->

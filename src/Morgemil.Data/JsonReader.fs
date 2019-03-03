@@ -38,5 +38,6 @@ let ReadJsonFile<'T> (fileName: string): DtoValidResult<'T[]> =
 let ReadGameFiles (basePath: string): RawDtoPhase0 =
     let combinePaths fileName = System.IO.Path.Combine(System.IO.Path.GetFullPath(basePath), fileName)
     {
-        RawDtoPhase0.Tiles = ReadJsonFile <| combinePaths "tiles.json" 
+        RawDtoPhase0.Tiles = ReadJsonFile <| combinePaths "tiles.json"
+        TileFeatures = ReadJsonFile <| combinePaths "tilefeatures.json"
     }
