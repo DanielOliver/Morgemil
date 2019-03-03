@@ -261,6 +261,6 @@ type RawDtoPhase2 =
 //         TileFeatures: Morgemil.Models.TileFeature []
          Races: Morgemil.Models.Race []
          RaceModifiers: Morgemil.Models.RaceModifier []
-//         MonsterGenerationParameters: Morgemil.Models.MonsterGenerationParameter []
-//         Items: Morgemil.Models.Item []
+         MonsterGenerationParameters: Morgemil.Models.MonsterGenerationParameter []
+         Items: Morgemil.Models.Item []
     }
