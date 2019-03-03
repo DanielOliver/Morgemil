@@ -43,14 +43,14 @@ let ColorOptionFromDto (color: DTO.Color): Color option =
 
 let TileRepresentationToDto (tileRepresentation: TileRepresentation): DTO.TileRepresentation =
     {
-        AnsiCharacter = tileRepresentation.AnsiCharacter
+        AnsiCharacter = (int)(Char.GetNumericValue tileRepresentation.AnsiCharacter)
         ForegroundColor = tileRepresentation.ForegroundColor |> Option.map ColorToDto |> Option.defaultValue (ZeroColorDto())
         BackGroundColor = tileRepresentation.BackGroundColor |> Option.map ColorToDto |> Option.defaultValue (ZeroColorDto())
     }
     
 let TileRepresentationFromDto (tileRepresentation: DTO.TileRepresentation): TileRepresentation =
     {
-        AnsiCharacter = tileRepresentation.AnsiCharacter
+        AnsiCharacter = (char)tileRepresentation.AnsiCharacter
         ForegroundColor = tileRepresentation.ForegroundColor |> ColorOptionFromDto
         BackGroundColor = tileRepresentation.BackGroundColor |> ColorOptionFromDto
     }

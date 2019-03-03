@@ -19,7 +19,7 @@ type Rectangle =
   }    
     
 type TileRepresentation =
-  {    AnsiCharacter: char
+  {    AnsiCharacter: int
        ForegroundColor: Color
        BackGroundColor: Color
   }

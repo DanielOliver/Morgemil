@@ -1,6 +1,7 @@
 ﻿open System
 open Argu
 open Morgemil.Data
+open Morgemil.Data
 
 [<CliPrefix(CliPrefix.DoubleDash)>]
 type CLIArguments =

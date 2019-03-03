@@ -7,7 +7,7 @@
     "BlocksMovement": false,
     "BlocksSight": false,
     "Representation": {
-      "AnsiCharacter": " ",
+      "AnsiCharacter": 32,
       "ForegroundColor": {
         "A": 0,
         "R": 255,
@@ -30,7 +30,7 @@
     "BlocksMovement": true,
     "BlocksSight": true,
     "Representation": {
-      "AnsiCharacter": "▒",
+      "AnsiCharacter": 177,
       "ForegroundColor": {
         "A": 255,
         "R": 100,
