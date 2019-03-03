@@ -5,7 +5,7 @@ open Morgemil.Data
 open Xunit
 
 [<Fact>]
-let ``Try Validate Game``() =
+let ``Try Validate Game With Validation``() =
     let basePath = "./Game/"
     let rawDtoPhase0 = JsonReader.ReadGameFiles basePath
     Assert.Empty(rawDtoPhase0.Errors)
