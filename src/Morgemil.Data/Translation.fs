@@ -84,7 +84,19 @@ let TileFromDto (tile: DTO.Tile): Tile =
         BlocksSight = tile.BlocksSight
         BlocksMovement = tile.BlocksMovement
         TileType = tileType
-    }
+    }    
+    
+///DTO to TileFeature
+let TileFeatureFromDto (getTilebyID: TileID -> Tile) (tileFeature: DTO.TileFeature): TileFeature =
+    {
+        ID = TileFeatureID tileFeature.ID
+        Name = tileFeature.Name
+        Description = tileFeature.Description
+        Representation = TileRepresentationFromDto tileFeature.Representation
+        BlocksSight = tileFeature.BlocksSight
+        BlocksMovement = tileFeature.BlocksMovement
+        PossibleTiles = tileFeature.PossibleTiles |> List.map(TileID >> getTilebyID)
+    }    
     
 ///DTO to Race
 let RaceFromDto (getRaceModifierByID: RaceModifierID -> RaceModifier) (race: DTO.Race) : Race =
@@ -178,10 +190,20 @@ let FloorGenerationParameterFromDto (getTilebyID: TileID -> Tile) (floorGenerati
 ///DTO to Phase2
 let TranslateFromDtosToPhase2 (dtos: RawDtoPhase0): RawDtoPhase2 =
     let tiles = dtos.Tiles.Item |> Seq.map (TileFromDto) |> Table.CreateReadonlyTable (fun (t: TileID) -> t.Key)
+    
     let raceModifiers = dtos.RaceModifiers.Item |> Seq.map (RaceModifierFromDto) |> Table.CreateReadonlyTable (fun (t: RaceModifierID) -> t.Key)
+    
     let races = dtos.Races.Item |> Seq.map (RaceFromDto (fun t -> raceModifiers.Item(t))) |> Table.CreateReadonlyTable (fun (t: RaceID) -> t.Key)
+    
     let items = dtos.Items.Item |> Seq.map (ItemFromDto) |> Table.CreateReadonlyTable (fun (t: ItemID) -> t.Key)
+    
     let monsterGenerationParameters = dtos.MonsterGenerationParameters.Item |> Seq.map (MonsterGenerationParameterFromDto) |> Table.CreateReadonlyTable (fun (t: MonsterGenerationParameterID) -> t.Key)
+    
+    let tileFeatures = dtos.TileFeatures.Item |> Seq.map (TileFeatureFromDto (fun t -> tiles.Item(t))) |> Table.CreateReadonlyTable (fun (t: TileFeatureID) -> t.Key)
+    
+    let monsterGenerationParameters = dtos.MonsterGenerationParameters.Item |> Seq.map (MonsterGenerationParameterFromDto) |> Table.CreateReadonlyTable (fun (t: MonsterGenerationParameterID) -> t.Key)
+    
+    let floorGenerationParameters = dtos.FloorGenerationParameters.Item |> Seq.map (FloorGenerationParameterFromDto (fun t -> tiles.Item(t))) |> Table.CreateReadonlyTable (fun (t: FloorGenerationParameterID) -> t.Key)
     
     {
         RawDtoPhase2.Tiles = tiles.Items |> Seq.toArray
@@ -189,21 +211,33 @@ let TranslateFromDtosToPhase2 (dtos: RawDtoPhase0): RawDtoPhase2 =
         Races = races.Items |> Seq.toArray
         Items = items.Items |> Seq.toArray
         MonsterGenerationParameters = monsterGenerationParameters.Items |> Seq.toArray
+        TileFeatures = tileFeatures.Items |> Seq.toArray
+        FloorGenerationParameters = floorGenerationParameters.Items |> Seq.toArray
     }
 
 ///DTO to Scenario
 let TranslateFromDtosToScenario (dtos: RawDtoPhase0): ScenarioData =
     let tiles = dtos.Tiles.Item |> Seq.map (TileFromDto) |> Table.CreateReadonlyTable (fun (t: TileID) -> t.Key)
+
     let raceModifiers = dtos.RaceModifiers.Item |> Seq.map (RaceModifierFromDto) |> Table.CreateReadonlyTable (fun (t: RaceModifierID) -> t.Key)
+
     let races = dtos.Races.Item |> Seq.map (RaceFromDto (fun t -> raceModifiers.Item(t))) |> Table.CreateReadonlyTable (fun (t: RaceID) -> t.Key)
+
     let items = dtos.Items.Item |> Seq.map (ItemFromDto) |> Table.CreateReadonlyTable (fun (t: ItemID) -> t.Key)
+
     let monsterGenerationParameters = dtos.MonsterGenerationParameters.Item |> Seq.map (MonsterGenerationParameterFromDto) |> Table.CreateReadonlyTable (fun (t: MonsterGenerationParameterID) -> t.Key)
     
+    let tileFeatures = dtos.TileFeatures.Item |> Seq.map (TileFeatureFromDto (fun t -> tiles.Item(t))) |> Table.CreateReadonlyTable (fun (t: TileFeatureID) -> t.Key)
+
+    let floorGenerationParameters = dtos.FloorGenerationParameters.Item |> Seq.map (FloorGenerationParameterFromDto (fun t -> tiles.Item(t))) |> Table.CreateReadonlyTable (fun (t: FloorGenerationParameterID) -> t.Key)
+
     {
         ScenarioData.Tiles = tiles
         RaceModifiers = raceModifiers
         Races = races
         Items = items
         MonsterGenerationParameters = monsterGenerationParameters
+        TileFeatures = tileFeatures
+        FloorGenerationParameters = floorGenerationParameters
     }
     

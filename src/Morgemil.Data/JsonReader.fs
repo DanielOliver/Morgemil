@@ -44,4 +44,5 @@ let ReadGameFiles (basePath: string): RawDtoPhase0 =
         RaceModifiers = ReadJsonFile <| combinePaths "racemodifiers.json"
         MonsterGenerationParameters = ReadJsonFile <| combinePaths "monstergenerationparameters.json"
         Items = ReadJsonFile <| combinePaths "items.json"
+        FloorGenerationParameters = ReadJsonFile <| combinePaths "floorgeneration.json"
     }

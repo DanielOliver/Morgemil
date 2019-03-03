@@ -156,6 +156,19 @@ let private ValidateDtoItems (item: DtoValidResult<Item[]>) : DtoValidResult<Dto
         ]
     )
 
+/// Validate FLoor Generation Parameters
+let private ValidateDtoFloorGenerationParameters (item: DtoValidResult<FloorGenerationParameter[]>) (tileTable: IReadonlyTable<Tile, int64>) : DtoValidResult<DtoValidResult<FloorGenerationParameter>[]> * IReadonlyTable<FloorGenerationParameter, int64> =
+    item
+    |> ValidateGameDataWithTable (fun acc element ->
+        [
+            ExpectedUnique element (fun x -> x.ID) "FloorGenerationParameterID" acc
+            DefinedEnum element.Strategy
+            tileTable |> AllExistsInTable element.Tiles "Tiles"
+            tileTable |> ExistsInTable element.DefaultTile "DefaultTile"
+        ]
+    )
+    
+
 /// Tie together all validation routines
 let ValidateDtos (phase0: RawDtoPhase0): RawDtoPhase1 =
     let (tileResults, tileTable) = ValidateDtoTiles phase0.Tiles
@@ -170,6 +183,8 @@ let ValidateDtos (phase0: RawDtoPhase0): RawDtoPhase1 =
     
     let (itemResults, itemTable) = ValidateDtoItems phase0.Items
     
+    let (floorGenerationParameterResults, floorGenerationParametersLinkTable) = ValidateDtoFloorGenerationParameters phase0.FloorGenerationParameters tileTable
+    
     {
         RawDtoPhase1.Tiles = tileResults
         TileFeatures = tileFeatureResults
@@ -177,5 +192,6 @@ let ValidateDtos (phase0: RawDtoPhase0): RawDtoPhase1 =
         RaceModifiers = raceModifierResults
         MonsterGenerationParameters = monsterGenerationParameterResults
         Items = itemResults
+        FloorGenerationParameters = floorGenerationParameterResults
     }
     

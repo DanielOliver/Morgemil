@@ -188,7 +188,8 @@ type FloorGenerationParameter =
     Strategy: FloorGenerationStrategy
   }
   
-  
+  interface IRow with
+      member this.Key = this.ID
         
   
 type DtoValidResult<'T> =
@@ -205,6 +206,7 @@ type RawDtoPhase0 =
          RaceModifiers: DtoValidResult<RaceModifier[]>
          MonsterGenerationParameters: DtoValidResult<MonsterGenerationParameter[]>
          Items: DtoValidResult<Item[]>
+         FloorGenerationParameters: DtoValidResult<FloorGenerationParameter[]>
     }
     
     member this.Errors: string list =
@@ -214,6 +216,7 @@ type RawDtoPhase0 =
               this.RaceModifiers.Errors
               this.MonsterGenerationParameters.Errors
               this.Items.Errors
+              this.FloorGenerationParameters.Errors
         |] |> List.concat
         
     member this.Success: bool =
@@ -224,6 +227,7 @@ type RawDtoPhase0 =
              this.RaceModifiers.Success    
              this.MonsterGenerationParameters.Success
              this.Items.Success
+             this.FloorGenerationParameters.Success
         ] |> List.forall id
         
   
@@ -234,6 +238,7 @@ type RawDtoPhase1 =
          RaceModifiers: DtoValidResult<DtoValidResult<RaceModifier>[]>
          MonsterGenerationParameters: DtoValidResult<DtoValidResult<MonsterGenerationParameter>[]>
          Items: DtoValidResult<DtoValidResult<Item>[]>
+         FloorGenerationParameters: DtoValidResult<DtoValidResult<FloorGenerationParameter>[]>
     }
     
     member this.Errors: string list =
@@ -243,6 +248,7 @@ type RawDtoPhase1 =
               this.RaceModifiers.Errors
               this.MonsterGenerationParameters.Errors
               this.Items.Errors
+              this.FloorGenerationParameters.Errors
         |] |> List.concat
         
     member this.Success: bool =
@@ -253,14 +259,16 @@ type RawDtoPhase1 =
              this.RaceModifiers.Success
              this.MonsterGenerationParameters.Success
              this.Items.Success
+             this.FloorGenerationParameters.Success
         ] |> List.forall id
   
   
 type RawDtoPhase2 =
     {    Tiles: Morgemil.Models.Tile []
-//         TileFeatures: Morgemil.Models.TileFeature []
+         TileFeatures: Morgemil.Models.TileFeature []
          Races: Morgemil.Models.Race []
          RaceModifiers: Morgemil.Models.RaceModifier []
          MonsterGenerationParameters: Morgemil.Models.MonsterGenerationParameter []
          Items: Morgemil.Models.Item []
+         FloorGenerationParameters: Morgemil.Models.FloorGenerationParameter []
     }
