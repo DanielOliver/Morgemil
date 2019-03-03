@@ -1,17 +1,17 @@
-﻿open System
-open Argu
-open Morgemil.Data
+﻿open Argu
 open Morgemil.Data
 
 [<CliPrefix(CliPrefix.DoubleDash)>]
 type CLIArguments =
     | GameDataRead of workingDirectory : string
     | GameDataValidate of workingDirectory : string
+    | GameDataFinal of workingDirectory : string
     interface IArgParserTemplate with
         member s.Usage =
             match s with
             | GameDataRead _ -> "specify a working directory to read game data for"
             | GameDataValidate _ -> "specify a working directory to validate game data for"
+            | GameDataFinal _ -> "specify a working directory to create final game data from"
 
 [<EntryPoint>]
 let main argv =
@@ -44,6 +44,15 @@ let main argv =
                   System.Console.WriteLine()
                 )
 
+            results.GetResults GameDataFinal
+            |> List.map (fun path -> path, JsonReader.ReadGameFiles path)
+            |> List.map (fun (path, rawGameDataPhase0) -> path, Translation.TranslateFromDtosToPhase2 rawGameDataPhase0)
+            |> List.iter (fun (path, rawGameDataPhase2) ->
+                  Newtonsoft.Json.JsonConvert.SerializeObject(rawGameDataPhase2, Newtonsoft.Json.Formatting.Indented)
+                  |> System.Console.Write
+                  System.Console.WriteLine()
+                )
+            
         with e ->
             printfn "%s" e.Message
 

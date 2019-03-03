@@ -90,7 +90,19 @@ let RaceModifierFromDto (raceModifier: DTO.RaceModifier) : RaceModifier =
         Description = raceModifier.Description
     }    
 
-let TranslateFromDtos (dtos: RawDtoPhase0): ScenarioData =
+
+let TranslateFromDtosToPhase2 (dtos: RawDtoPhase0): RawDtoPhase2 =
+    let tiles = dtos.Tiles.Item |> Seq.map (TileFromDto) |> Table.CreateReadonlyTable (fun (t: TileID) -> t.Key)
+    let raceModifiers = dtos.RaceModifiers.Item |> Seq.map (RaceModifierFromDto) |> Table.CreateReadonlyTable (fun (t: RaceModifierID) -> t.Key)
+    let races = dtos.Races.Item |> Seq.map (RaceFromDto (fun t -> raceModifiers.Item(t))) |> Table.CreateReadonlyTable (fun (t: RaceID) -> t.Key)
+    
+    {
+        RawDtoPhase2.Tiles = tiles.Items |> Seq.toArray
+        RaceModifiers = raceModifiers.Items |> Seq.toArray
+        Races = races.Items |> Seq.toArray
+    }
+
+let TranslateFromDtosToScenario (dtos: RawDtoPhase0): ScenarioData =
     let tiles = dtos.Tiles.Item |> Seq.map (TileFromDto) |> Table.CreateReadonlyTable (fun (t: TileID) -> t.Key)
     let raceModifiers = dtos.RaceModifiers.Item |> Seq.map (RaceModifierFromDto) |> Table.CreateReadonlyTable (fun (t: RaceModifierID) -> t.Key)
     let races = dtos.Races.Item |> Seq.map (RaceFromDto (fun t -> raceModifiers.Item(t))) |> Table.CreateReadonlyTable (fun (t: RaceID) -> t.Key)

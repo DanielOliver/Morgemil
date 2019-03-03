@@ -21,3 +21,15 @@ let ``ColorFromDto Tests`` () =
     let expected1 = Color.From(249, 252, 253, 255) |> Translation.ColorToDto
     let serial1 = Newtonsoft.Json.JsonConvert.SerializeObject expected1
     Assert.Equal(s1, serial1)
+
+
+[<Fact>]
+let ``Try Translate Game``() =
+    let basePath = "./Game/"
+    let rawDtoPhase0 = JsonReader.ReadGameFiles basePath
+    Assert.Empty(rawDtoPhase0.Errors)
+    Assert.True(rawDtoPhase0.Success)
+    let rawDtoPhase2 =  Translation.TranslateFromDtosToPhase2 rawDtoPhase0
+    Assert.NotEmpty(rawDtoPhase2.Races)
+    Assert.NotEmpty(rawDtoPhase2.Tiles)
+    Assert.NotEmpty(rawDtoPhase2.RaceModifiers)

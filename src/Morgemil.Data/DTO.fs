@@ -256,3 +256,11 @@ type RawDtoPhase1 =
         ] |> List.forall id
   
   
+type RawDtoPhase2 =
+    {    Tiles: Morgemil.Models.Tile []
+//         TileFeatures: Morgemil.Models.TileFeature []
+         Races: Morgemil.Models.Race []
+         RaceModifiers: Morgemil.Models.RaceModifier []
+//         MonsterGenerationParameters: Morgemil.Models.MonsterGenerationParameter []
+//         Items: Morgemil.Models.Item []
+    }
