@@ -208,7 +208,7 @@ type RawDtoPhase0 =
               this.Items.Errors
         |] |> List.concat
         
-    member this.Successful: bool =
+    member this.Success: bool =
         let isOk = function | Ok _ -> true | _ -> false
         [    this.Tiles.Success
              this.TileFeatures.Success

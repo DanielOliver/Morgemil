@@ -9,4 +9,5 @@ let ``Try Read Game``() =
     let basePath = "./Game/"
     let rawDtoList = JsonReader.ReadGameFiles basePath
     Assert.Empty(rawDtoList.Errors)
+    Assert.True(rawDtoList.Success)
     
