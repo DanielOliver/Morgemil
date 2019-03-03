@@ -1,0 +1,12 @@
+[
+	{	"ID": "0",
+		"Noun": "Human",
+		"Adjective": "Human",
+		"Description": "The kings of the overworld. How shall you fare in the darkness?"
+	},
+	{	"ID": "1",
+		"Noun": "Wight",
+		"Adjective": "Wightish",
+		"Description": "That shape in the darkness?  He was your friend, care to test your friendship now?"
+	}
+]

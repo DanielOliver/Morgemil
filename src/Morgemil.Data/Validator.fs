@@ -26,24 +26,30 @@ let private AllExistsInTable (ids: int64 list) (propertyName: string) (table: IR
        | x -> sprintf "%s with IDs [ %s ] doesn't exist" propertyName x |> Some
     
     
+let private ValidateItems<'T> (getItemErrors: List<DtoValidResult<'T> > -> 'T -> string option list) (items: 'T []) =
+    items
+    |> Array.fold (fun (acc: List<DtoValidResult<'T>>) (element: 'T) ->
+        let errors =
+            getItemErrors acc element |> List.choose id
+        {
+            DtoValidResult.Item = element
+            Errors = errors
+            Success = errors |> List.isEmpty
+        } :: acc) []
+    |> List.rev
+    |> List.toArray
+    
 
 let private ValidateDtoTiles (item: DtoValidResult<Tile[]>): DtoValidResult<DtoValidResult<Tile>[]> * IReadonlyTable<Tile, int64> =
     let table: IReadonlyTable<Tile, int64> = item.Item |> Table.CreateReadonlyTable id    
     let validatedItems =
         item.Item
-        |> Array.fold (fun (acc: List<DtoValidResult<Tile>>) (element: Tile) ->
-            let errors =
-                [
-                    ExpectedUnique element (fun x -> x.ID) "TileID" acc
-                    DefinedEnum element.TileType
-                ] |> List.choose id
-            {
-                DtoValidResult.Item = element
-                Errors = errors
-                Success = errors |> List.isEmpty
-            } :: acc) []
-        |> List.rev
-        |> List.toArray
+        |> ValidateItems (fun acc element ->
+            [
+                ExpectedUnique element (fun x -> x.ID) "TileID" acc
+                DefinedEnum element.TileType
+            ]
+        )        
     {
         Item = validatedItems
         Success = validatedItems |> Seq.forall(fun x -> x.Success)
@@ -55,32 +61,44 @@ let private ValidateDtoTileFeatures (item: DtoValidResult<TileFeature[]>) (tileT
     let table: IReadonlyTable<TileFeature, int64> = item.Item |> Table.CreateReadonlyTable id    
     let validatedItems =
         item.Item
-        |> Array.fold (fun (acc) (element: TileFeature) ->
-            let errors =
-                [
-                    ExpectedUnique element (fun x -> x.ID) "TileFeatureID" acc
-                    tileTable |> AllExistsInTable element.PossibleTiles "Tiles"
-                ] |> List.choose id
-            {
-                DtoValidResult.Item = element
-                Errors = errors
-                Success = errors |> List.isEmpty
-            } :: acc) []
-        |> List.rev
-        |> List.toArray
+        |> ValidateItems (fun acc element ->
+            [
+                ExpectedUnique element (fun x -> x.ID) "TileFeatureID" acc
+                tileTable |> AllExistsInTable element.PossibleTiles "Tiles"
+            ]
+        )
     {
         Item = validatedItems
         Success = validatedItems |> Seq.forall(fun x -> x.Success)
         Errors = []
-    }, table    
+    }, table
+    
+let private ValidateDtoRaces (item: DtoValidResult<Race[]>) : DtoValidResult<DtoValidResult<Race>[]> * IReadonlyTable<Race, int64> =
+    let table: IReadonlyTable<Race, int64> = item.Item |> Table.CreateReadonlyTable id    
+    let validatedItems =
+        item.Item
+        |> ValidateItems (fun acc element ->
+            [
+                ExpectedUnique element (fun x -> x.ID) "RaceID" acc
+            ]
+        )
+    {
+        Item = validatedItems
+        Success = validatedItems |> Seq.forall(fun x -> x.Success)
+        Errors = []
+    }, table  
 
 let ValidateDtos (phase0: RawDtoPhase0): RawDtoPhase1 =
     let (tileResults, tileTable) = ValidateDtoTiles phase0.Tiles
     
     let (tileFeatureResults, tileFeatureTable) = ValidateDtoTileFeatures phase0.TileFeatures tileTable
     
+    
+    let (raceResults, raceTable) = ValidateDtoRaces phase0.Races
+    
     {
         RawDtoPhase1.Tiles = tileResults
         TileFeatures = tileFeatureResults
+        Races = raceResults
     }
     

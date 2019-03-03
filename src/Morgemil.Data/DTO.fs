@@ -32,6 +32,9 @@ type Race =
     Adjective : string
     ///User-visible description
     Description : string }
+  
+  interface IRow with
+      member this.Key = this.ID
 
 type RaceModifier =
   { ID: int64
@@ -41,6 +44,9 @@ type RaceModifier =
     Adjective: string
     ///User-visible description
     Description: string }
+  
+  interface IRow with
+      member this.Key = this.ID
 
 type RaceModifierLink =
   { ID: int64
@@ -48,6 +54,9 @@ type RaceModifierLink =
     RaceModifierID: int64
     Ratio: int
   }
+  
+  interface IRow with
+      member this.Key = this.ID
 
 [<RequireQualifiedAccess>]
 type TileType = 
@@ -180,31 +189,40 @@ type DtoValidResult<'T> =
 type RawDtoPhase0 =
     {    Tiles: DtoValidResult<Tile[]>
          TileFeatures: DtoValidResult<TileFeature[]>
-    }
-    
-    member this.Errors: string list =
-        [|    this.Tiles.Errors
-        |] |> List.concat
-        
-    member this.Successful: bool =
-        let isOk = function | Ok _ -> true | _ -> false
-        [    this.Tiles.Success
-        ] |> List.forall id
-  
-type RawDtoPhase1 =
-    {    Tiles: DtoValidResult<DtoValidResult<Tile>[]>
-         TileFeatures: DtoValidResult<DtoValidResult<TileFeature>[]>
+         Races: DtoValidResult<Race[]>
     }
     
     member this.Errors: string list =
         [|    this.Tiles.Errors
               this.TileFeatures.Errors
+              this.Races.Errors
+        |] |> List.concat
+        
+    member this.Successful: bool =
+        let isOk = function | Ok _ -> true | _ -> false
+        [    this.Tiles.Success
+             this.TileFeatures.Success
+             this.Races.Success
+        ] |> List.forall id
+        
+  
+type RawDtoPhase1 =
+    {    Tiles: DtoValidResult<DtoValidResult<Tile>[]>
+         TileFeatures: DtoValidResult<DtoValidResult<TileFeature>[]>
+         Races: DtoValidResult<DtoValidResult<Race>[]>
+    }
+    
+    member this.Errors: string list =
+        [|    this.Tiles.Errors
+              this.TileFeatures.Errors
+              this.Races.Errors
         |] |> List.concat
         
     member this.Success: bool =
         let isOk = function | Ok _ -> true | _ -> false
         [    this.Tiles.Success
              this.TileFeatures.Success
+             this.Races.Success
         ] |> List.forall id
   
   
