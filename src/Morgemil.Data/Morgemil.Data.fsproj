@@ -31,7 +31,7 @@
     <Content Include="Game\racemodifiers.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Game\racemodifierlinks.json">
+    <Content Include="Game\monstergenerationparameters.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Game\items.json">

@@ -53,11 +53,15 @@ type RaceModifier =
       member this.Key = this.ID
 
 type RaceModifierLink =
-  { ID: int64
-    GroupID: int64
-    RaceID: int64
-    RaceModifierID: Nullable<int64>
-    Ratio: int
+  { RaceID : int64
+    RaceModifierID : Nullable<int64>
+    ///The ratio doesn't have to add up to 100.  Every ratio could be thought of "10 to 1" or something like that.
+    Ratio : int
+  }
+
+type MonsterGenerationParameter =
+  { ID : int64
+    GenerationRatios: RaceModifierLink list
   }
   
   interface IRow with
@@ -199,7 +203,7 @@ type RawDtoPhase0 =
          TileFeatures: DtoValidResult<TileFeature[]>
          Races: DtoValidResult<Race[]>
          RaceModifiers: DtoValidResult<RaceModifier[]>
-         RaceModifierLinks: DtoValidResult<RaceModifierLink[]>
+         MonsterGenerationParameters: DtoValidResult<MonsterGenerationParameter[]>
          Items: DtoValidResult<Item[]>
     }
     
@@ -208,7 +212,7 @@ type RawDtoPhase0 =
               this.TileFeatures.Errors
               this.Races.Errors
               this.RaceModifiers.Errors
-              this.RaceModifierLinks.Errors
+              this.MonsterGenerationParameters.Errors
               this.Items.Errors
         |] |> List.concat
         
@@ -218,7 +222,7 @@ type RawDtoPhase0 =
              this.TileFeatures.Success
              this.Races.Success
              this.RaceModifiers.Success    
-             this.RaceModifierLinks.Success
+             this.MonsterGenerationParameters.Success
              this.Items.Success
         ] |> List.forall id
         
@@ -228,7 +232,7 @@ type RawDtoPhase1 =
          TileFeatures: DtoValidResult<DtoValidResult<TileFeature>[]>
          Races: DtoValidResult<DtoValidResult<Race>[]>
          RaceModifiers: DtoValidResult<DtoValidResult<RaceModifier>[]>
-         RaceModifierLinks: DtoValidResult<DtoValidResult<RaceModifierLink>[]>
+         MonsterGenerationParameters: DtoValidResult<DtoValidResult<MonsterGenerationParameter>[]>
          Items: DtoValidResult<DtoValidResult<Item>[]>
     }
     
@@ -237,7 +241,7 @@ type RawDtoPhase1 =
               this.TileFeatures.Errors
               this.Races.Errors
               this.RaceModifiers.Errors
-              this.RaceModifierLinks.Errors
+              this.MonsterGenerationParameters.Errors
               this.Items.Errors
         |] |> List.concat
         
@@ -247,7 +251,7 @@ type RawDtoPhase1 =
              this.TileFeatures.Success
              this.Races.Success
              this.RaceModifiers.Success
-             this.RaceModifierLinks.Success
+             this.MonsterGenerationParameters.Success
              this.Items.Success
         ] |> List.forall id
   
