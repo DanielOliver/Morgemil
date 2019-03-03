@@ -1,6 +1,6 @@
 module Morgemil.Data.DTO
 open System
-open Morgemil.Core
+open Morgemil.Models.Relational
 
 type Color = 
     {   A: byte

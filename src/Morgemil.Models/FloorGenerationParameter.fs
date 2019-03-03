@@ -1,18 +1,21 @@
 namespace Morgemil.Models
 
 [<RequireQualifiedAccess>]
-type FloorGenerationStrategy = 
+type FloorGenerationStrategy =
   | OpenFloor
 
 type FloorGenerationParameter =
-  { ID: FloorGenerationParameterID
+  { ID : FloorGenerationParameterID
     /// Default Tile
-    DefaultTile: Tile
+    DefaultTile : Tile
     ///Tiles used
-    Tiles: Tile []
+    Tiles : Tile []
     ///Size generation
-    SizeRange: Morgemil.Math.Rectangle
+    SizeRange : Morgemil.Math.Rectangle
     ///Generation Strategy
-    Strategy: FloorGenerationStrategy
+    Strategy : FloorGenerationStrategy
   }
 
+
+  interface Relational.IRow with
+        member this.Key = this.ID.Key

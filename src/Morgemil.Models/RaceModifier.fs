@@ -1,11 +1,14 @@
-namespace Morgemil.Models 
+namespace Morgemil.Models
 
 type RaceModifier =
-  { ID: RaceModifierID
+  { ID : RaceModifierID
     ///Proper noun
-    Noun: string
+    Noun : string
     ///Proper adjective
-    Adjective: string
+    Adjective : string
     ///User-visible description
-    Description: string }
+    Description : string }
+
+    interface Relational.IRow with
+      member this.Key = this.ID.Key
 

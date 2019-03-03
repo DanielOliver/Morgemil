@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Relational.fs" />
     <Compile Include="Identities.fs" />
     <Compile Include="TileRepresentation.fs" />
     <Compile Include="RaceModifier.fs" />
@@ -18,7 +19,6 @@
     <Compile Include="Scenario.fs" />
     <Compile Include="MonsterGenerationParameter.fs" />
     <Compile Include="FloorGenerationParameter.fs" />
-    <Compile Include="ScenarioData.fs" />
   </ItemGroup>
 
   <ItemGroup>

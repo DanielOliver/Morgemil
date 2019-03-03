@@ -11,4 +11,7 @@ type MonsterGenerationParameter =
   { ID : MonsterGenerationParameterID
     GenerationRatios: RaceModifierLink list
   }
+  
+  interface Relational.IRow with
+      member this.Key = this.ID.Key
 

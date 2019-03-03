@@ -20,3 +20,7 @@ type Tile =
     BlocksSight : bool
     ///What this tile looks like.
     Representation: TileRepresentation}
+
+  
+  interface Relational.IRow with
+      member this.Key = this.ID.Key

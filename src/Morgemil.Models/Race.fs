@@ -11,3 +11,6 @@ type Race =
     ///Valid modifiers for this race
     PossibleRaceModifiers: RaceModifier list
   }
+  
+  interface Relational.IRow with
+      member this.Key = this.ID.Key

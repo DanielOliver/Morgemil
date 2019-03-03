@@ -15,3 +15,7 @@ type TileFeature =
         Representation: TileRepresentation
         ///The tiles that this feature is valid to exist on.
         PossibleTiles: Tile list }
+
+  
+    interface Relational.IRow with
+        member this.Key = this.ID.Key

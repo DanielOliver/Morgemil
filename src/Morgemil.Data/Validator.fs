@@ -1,7 +1,7 @@
 module Morgemil.Data.Validator
 open Morgemil.Core
 open Morgemil.Data.DTO
-    
+open Morgemil.Models.Relational
     
 /// Expects the value to be an unique occurence 
 let private ExpectedUnique<'T> (currentItem: 'T) (property: 'T -> _) (propertyName: string) (items: 'T DtoValidResult list) : string option =

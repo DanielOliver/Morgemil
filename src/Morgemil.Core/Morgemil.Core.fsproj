@@ -8,6 +8,7 @@
     <Compile Include="TileMap.fs" />
     <Compile Include="FloorGenerator.fs" />
     <Compile Include="Relational.fs" />
+    <Compile Include="ScenarioData.fs" />
   </ItemGroup>
 
   <ItemGroup>

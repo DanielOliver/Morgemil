@@ -2,6 +2,7 @@ module Morgemil.Core.Tests.Relational
 
 open Xunit
 open Morgemil.Core
+open Morgemil.Models.Relational
 
 [<Struct>]
 type ExampleKey = 
