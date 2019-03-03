@@ -16,6 +16,14 @@ let private ExistsInTable (id: int64) (propertyName: string) (table: IReadonlyTa
     match table.TryGetRow id with
     | Some _ -> None
     | None -> sprintf "%s with ID %i doesn't exist" propertyName id |> Some
+    
+let private ExistsInTableIfValue (id: System.Nullable<int64>) (propertyName: string) (table: IReadonlyTable<_, int64>) : string option =
+    match id.HasValue with
+    | false -> None
+    | true ->
+        match table.TryGetRow id.Value with
+        | Some _ -> None
+        | None -> sprintf "%s with ID %i doesn't exist" propertyName id.Value |> Some
 
 let private AllExistsInTable (ids: int64 list) (propertyName: string) (table: IReadonlyTable<_, int64>) : string option =
     ids
@@ -39,9 +47,12 @@ let private ValidateItems<'T> (getItemErrors: List<DtoValidResult<'T> > -> 'T ->
     |> List.rev
     |> List.toArray
     
+    
+    
+    
 
 let private ValidateDtoTiles (item: DtoValidResult<Tile[]>): DtoValidResult<DtoValidResult<Tile>[]> * IReadonlyTable<Tile, int64> =
-    let table: IReadonlyTable<Tile, int64> = item.Item |> Table.CreateReadonlyTable id    
+    let table = item.Item |> Table.CreateReadonlyTable id    
     let validatedItems =
         item.Item
         |> ValidateItems (fun acc element ->
@@ -58,7 +69,7 @@ let private ValidateDtoTiles (item: DtoValidResult<Tile[]>): DtoValidResult<DtoV
 
 
 let private ValidateDtoTileFeatures (item: DtoValidResult<TileFeature[]>) (tileTable: IReadonlyTable<Tile, int64>): DtoValidResult<DtoValidResult<TileFeature>[]> * IReadonlyTable<TileFeature, int64> =
-    let table: IReadonlyTable<TileFeature, int64> = item.Item |> Table.CreateReadonlyTable id    
+    let table = item.Item |> Table.CreateReadonlyTable id    
     let validatedItems =
         item.Item
         |> ValidateItems (fun acc element ->
@@ -74,12 +85,45 @@ let private ValidateDtoTileFeatures (item: DtoValidResult<TileFeature[]>) (tileT
     }, table
     
 let private ValidateDtoRaces (item: DtoValidResult<Race[]>) : DtoValidResult<DtoValidResult<Race>[]> * IReadonlyTable<Race, int64> =
-    let table: IReadonlyTable<Race, int64> = item.Item |> Table.CreateReadonlyTable id    
+    let table  = item.Item |> Table.CreateReadonlyTable id    
     let validatedItems =
         item.Item
         |> ValidateItems (fun acc element ->
             [
                 ExpectedUnique element (fun x -> x.ID) "RaceID" acc
+            ]
+        )
+    {
+        Item = validatedItems
+        Success = validatedItems |> Seq.forall(fun x -> x.Success)
+        Errors = []
+    }, table
+    
+let private ValidateDtoRaceModifiers (item: DtoValidResult<RaceModifier[]>) : DtoValidResult<DtoValidResult<RaceModifier>[]> * IReadonlyTable<RaceModifier, int64> =
+    let table = item.Item |> Table.CreateReadonlyTable id    
+    let validatedItems =
+        item.Item
+        |> ValidateItems (fun acc element ->
+            [
+                ExpectedUnique element (fun x -> x.ID) "RaceModifierID" acc
+            ]
+        )
+    {
+        Item = validatedItems
+        Success = validatedItems |> Seq.forall(fun x -> x.Success)
+        Errors = []
+    }, table
+    
+    
+let private ValidateDtoRaceModifierLinks (item: DtoValidResult<RaceModifierLink[]>) (raceTable: IReadonlyTable<Race, int64>) (raceModifierTable: IReadonlyTable<RaceModifier, int64>) : DtoValidResult<DtoValidResult<RaceModifierLink>[]> * IReadonlyTable<RaceModifierLink, int64> =
+    let table = item.Item |> Table.CreateReadonlyTable id
+    let validatedItems =
+        item.Item
+        |> ValidateItems (fun acc element ->
+            [
+                ExpectedUnique element (fun x -> x.ID) "RaceModifierLinkID" acc
+                raceTable |> ExistsInTable element.RaceID "Race"
+                raceModifierTable |> ExistsInTableIfValue element.RaceModifierID "RaceModifier"
             ]
         )
     {
@@ -96,9 +140,16 @@ let ValidateDtos (phase0: RawDtoPhase0): RawDtoPhase1 =
     
     let (raceResults, raceTable) = ValidateDtoRaces phase0.Races
     
+    
+    let (raceModifierResults, raceModifierTable) = ValidateDtoRaceModifiers phase0.RaceModifiers
+    
+    let (raceModifierLinkResults, raceModifierLinkTable) = ValidateDtoRaceModifierLinks phase0.RaceModifierLinks raceTable raceModifierTable
+    
     {
         RawDtoPhase1.Tiles = tileResults
         TileFeatures = tileFeatureResults
         Races = raceResults
+        RaceModifiers = raceModifierResults
+        RaceModifierLinks = raceModifierLinkResults
     }
     

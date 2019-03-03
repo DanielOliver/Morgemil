@@ -1,4 +1,5 @@
 module Morgemil.Data.DTO
+open System
 open Morgemil.Core
 
 type Color = 
@@ -51,7 +52,7 @@ type RaceModifier =
 type RaceModifierLink =
   { ID: int64
     RaceID: int64
-    RaceModifierID: int64
+    RaceModifierID: Nullable<int64>
     Ratio: int
   }
   
@@ -190,12 +191,16 @@ type RawDtoPhase0 =
     {    Tiles: DtoValidResult<Tile[]>
          TileFeatures: DtoValidResult<TileFeature[]>
          Races: DtoValidResult<Race[]>
+         RaceModifiers: DtoValidResult<RaceModifier[]>
+         RaceModifierLinks: DtoValidResult<RaceModifierLink[]>
     }
     
     member this.Errors: string list =
         [|    this.Tiles.Errors
               this.TileFeatures.Errors
               this.Races.Errors
+              this.RaceModifiers.Errors
+              this.RaceModifierLinks.Errors
         |] |> List.concat
         
     member this.Successful: bool =
@@ -203,6 +208,8 @@ type RawDtoPhase0 =
         [    this.Tiles.Success
              this.TileFeatures.Success
              this.Races.Success
+             this.RaceModifiers.Success    
+             this.RaceModifierLinks.Success         
         ] |> List.forall id
         
   
@@ -210,12 +217,16 @@ type RawDtoPhase1 =
     {    Tiles: DtoValidResult<DtoValidResult<Tile>[]>
          TileFeatures: DtoValidResult<DtoValidResult<TileFeature>[]>
          Races: DtoValidResult<DtoValidResult<Race>[]>
+         RaceModifiers: DtoValidResult<DtoValidResult<RaceModifier>[]>
+         RaceModifierLinks: DtoValidResult<DtoValidResult<RaceModifierLink>[]>
     }
     
     member this.Errors: string list =
         [|    this.Tiles.Errors
               this.TileFeatures.Errors
               this.Races.Errors
+              this.RaceModifiers.Errors
+              this.RaceModifierLinks.Errors
         |] |> List.concat
         
     member this.Success: bool =
@@ -223,6 +234,8 @@ type RawDtoPhase1 =
         [    this.Tiles.Success
              this.TileFeatures.Success
              this.Races.Success
+             this.RaceModifiers.Success
+             this.RaceModifierLinks.Success
         ] |> List.forall id
   
   

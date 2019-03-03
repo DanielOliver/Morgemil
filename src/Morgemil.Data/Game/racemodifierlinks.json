@@ -1,0 +1,20 @@
+[
+	{	"id": 0,
+		"raceid": "0",
+		"ratio": "10"
+	},
+	{	"id": 1,
+		"raceid": "0",
+		"racemodifierid": "0",
+		"ratio": "2"
+	},
+	{	"id": 2,
+		"raceid": "0",
+		"racemodifierid": "1",
+		"ratio": "2"
+	},
+	{	"id": 3,
+		"raceid": "1",
+		"ratio": "1"
+	}
+]
