@@ -27,6 +27,24 @@ let tile2 = {
         ID = TileID 4L
 }
 
+
+let stairTileFeature: TileFeature = {
+        ID = TileFeatureID 2L
+        Name = "Stairs down"
+        Description = "Stairs down"
+        BlocksMovement = false
+        BlocksSight = false
+        Representation = {
+            AnsiCharacter = char(242)
+            ForegroundColor = Some <| Color.From(30, 30, 255)
+            BackGroundColor = Some <| Color.From(0, 240, 0, 50)
+        }
+        PossibleTiles = [
+            defaultTile
+            tile2
+        ]
+    }
+
 [<Fact>]
 let TileMapTests() =
     let mapSize = Rectangle.create(Vector2i.create(10))
@@ -45,6 +63,11 @@ let TileMapTests() =
     Assert.Equal(Vector2i.Zero, coord1)
     Assert.Equal(tile2, firstTile)
     Assert.Equal(None, tileFeature)
+    
+    tileMap.Item (Vector2i.Zero - Vector2i.Identity) <- (tile2, tileFeature)
+    let (tile1, feature1) = tileMap.Item (Vector2i.Zero - Vector2i.Identity)
+    Assert.Equal(defaultTile, tile1)
+    Assert.True(feature1.IsNone)    
         
     let (coord2, secondTile, tileFeature) = tileMap.Tiles |> Seq.skip(1) |> Seq.head
     Assert.Equal(Vector2i.create(1, 0), coord2)
