@@ -73,120 +73,90 @@ let private ValidateItems<'T> (getItemErrors: List<DtoValidResult<'T> > -> 'T ->
     |> Seq.rev
     |> Seq.toArray
     
-    
-    
-    
 
-let private ValidateDtoTiles (item: DtoValidResult<Tile[]>): DtoValidResult<DtoValidResult<Tile>[]> * IReadonlyTable<Tile, int64> =
-    let table = item.Item |> Table.CreateReadonlyTable id    
+///Validates game data with a set of conditions, and then returns the results and a readonly table
+let private ValidateGameDataWithTable<'T when 'T :> IRow> (getItemErrors: List<DtoValidResult<'T> > -> 'T -> string option list) (item: DtoValidResult<'T[]>): DtoValidResult<DtoValidResult<'T>[]> * IReadonlyTable<'T, int64> =
+    let table = item.Item |> Table.CreateReadonlyTable id   
     let validatedItems =
         item.Item
-        |> ValidateItems (fun acc element ->
-            [
-                ExpectedUnique element (fun x -> x.ID) "TileID" acc
-                DefinedEnum element.TileType
-            ]
-        )        
+        |> ValidateItems getItemErrors
     {
         Item = validatedItems
         Success = validatedItems |> Seq.forall(fun x -> x.Success)
         Errors = []
     }, table
+    
+/// Validate Tiles
+let private ValidateDtoTiles (item: DtoValidResult<Tile[]>): DtoValidResult<DtoValidResult<Tile>[]> * IReadonlyTable<Tile, int64> = 
+    item
+    |> ValidateGameDataWithTable (fun acc element ->
+        [
+            ExpectedUnique element (fun x -> x.ID) "TileID" acc
+            DefinedEnum element.TileType
+        ]
+    )
 
-
+/// Validate Tile Features
 let private ValidateDtoTileFeatures (item: DtoValidResult<TileFeature[]>) (tileTable: IReadonlyTable<Tile, int64>): DtoValidResult<DtoValidResult<TileFeature>[]> * IReadonlyTable<TileFeature, int64> =
-    let table = item.Item |> Table.CreateReadonlyTable id    
-    let validatedItems =
-        item.Item
-        |> ValidateItems (fun acc element ->
-            [
-                ExpectedUnique element (fun x -> x.ID) "TileFeatureID" acc
-                tileTable |> AllExistsInTable element.PossibleTiles "Tiles"
-            ]
-        )
-    {
-        Item = validatedItems
-        Success = validatedItems |> Seq.forall(fun x -> x.Success)
-        Errors = []
-    }, table
+    item
+    |> ValidateGameDataWithTable (fun acc element ->
+        [
+            ExpectedUnique element (fun x -> x.ID) "TileFeatureID" acc
+            tileTable |> AllExistsInTable element.PossibleTiles "Tiles"
+        ]
+    )
     
+/// Validate Races
 let private ValidateDtoRaces (item: DtoValidResult<Race[]>) (raceModifierTable: IReadonlyTable<RaceModifier, int64>): DtoValidResult<DtoValidResult<Race>[]> * IReadonlyTable<Race, int64> =
-    let table  = item.Item |> Table.CreateReadonlyTable id    
-    let validatedItems =
-        item.Item
-        |> ValidateItems (fun acc element ->
-            [
-                ExpectedUnique element (fun x -> x.ID) "RaceID" acc
-                raceModifierTable |> AllExistsInTable element.PossibleRaceModifiers "RaceModifiers"
-            ]
-        )
-    {
-        Item = validatedItems
-        Success = validatedItems |> Seq.forall(fun x -> x.Success)
-        Errors = []
-    }, table
+    item
+    |> ValidateGameDataWithTable (fun acc element ->
+        [
+            ExpectedUnique element (fun x -> x.ID) "RaceID" acc
+            raceModifierTable |> AllExistsInTable element.PossibleRaceModifiers "RaceModifiers"
+        ]
+    )
     
+/// Validate Race Modifiers
 let private ValidateDtoRaceModifiers (item: DtoValidResult<RaceModifier[]>) : DtoValidResult<DtoValidResult<RaceModifier>[]> * IReadonlyTable<RaceModifier, int64> =
-    let table = item.Item |> Table.CreateReadonlyTable id    
-    let validatedItems =
-        item.Item
-        |> ValidateItems (fun acc element ->
-            [
-                ExpectedUnique element (fun x -> x.ID) "RaceModifierID" acc
-            ]
-        )
-    {
-        Item = validatedItems
-        Success = validatedItems |> Seq.forall(fun x -> x.Success)
-        Errors = []
-    }, table
+    item
+    |> ValidateGameDataWithTable (fun acc element ->
+        [
+            ExpectedUnique element (fun x -> x.ID) "RaceModifierID" acc
+        ]
+    )
     
-    
+/// Validate Monster Generation Parameters
 let private ValidateDtoMonsterGenerationParameters (item: DtoValidResult<MonsterGenerationParameter[]>) (raceTable: IReadonlyTable<Race, int64>) (raceModifierTable: IReadonlyTable<RaceModifier, int64>) : DtoValidResult<DtoValidResult<MonsterGenerationParameter>[]> * IReadonlyTable<MonsterGenerationParameter, int64> =
-    let table = item.Item |> Table.CreateReadonlyTable id
-    let validatedItems =
-        item.Item
-        |> ValidateItems (fun acc element ->            
-            [
-                raceTable |> AllExistsInTable (element.GenerationRatios |> List.map(fun t -> t.RaceID)) "Race"
-                raceModifierTable |> AllExistsInTableIfValue (element.GenerationRatios |> List.map(fun t -> t.RaceModifierID)) "RaceModifier"
-                ExpectedUnique element (fun x -> x.ID) "RaceModifierLinkID" acc
-                AllSatisfyCondition (element.GenerationRatios |> List.map(fun t -> t.Ratio)) "Ratios should be positive values" (fun t -> t >= 1)
-                AllSatisfyCondition (element.GenerationRatios |> List.map(fun t -> t.Ratio)) "Ratios should be positive values" (fun t -> t >= 1)
-            ]
-        )
-    {
-        Item = validatedItems
-        Success = validatedItems |> Seq.forall(fun x -> x.Success)
-        Errors = []
-    }, table
+    item
+    |> ValidateGameDataWithTable (fun acc element ->
+        [
+            raceTable |> AllExistsInTable (element.GenerationRatios |> List.map(fun t -> t.RaceID)) "Race"
+            raceModifierTable |> AllExistsInTableIfValue (element.GenerationRatios |> List.map(fun t -> t.RaceModifierID)) "RaceModifier"
+            ExpectedUnique element (fun x -> x.ID) "RaceModifierLinkID" acc
+            AllSatisfyCondition (element.GenerationRatios |> List.map(fun t -> t.Ratio)) "Ratios should be positive values" (fun t -> t >= 1)
+            AllSatisfyCondition (element.GenerationRatios |> List.map(fun t -> t.Ratio)) "Ratios should be positive values" (fun t -> t >= 1)
+        ]
+    )
     
+/// Validate Items
 let private ValidateDtoItems (item: DtoValidResult<Item[]>) : DtoValidResult<DtoValidResult<Item>[]> * IReadonlyTable<Item, int64> =
-    let table = item.Item |> Table.CreateReadonlyTable id
-    let validatedItems =
-        item.Item
-        |> ValidateItems (fun acc element ->
-            let itemTypeError =
-                match element.ItemType, element.Weapon, element.Wearable, element.Consumable with
-                | ItemType.Weapon, x, _, _ when not x.IsEmpty -> None
-                | ItemType.Wearable, _, x, _ when not x.IsEmpty -> None
-                | ItemType.Consumable, _, _, x when not x.IsEmpty -> None
-                | _ -> sprintf "Expected ItemType %A to have associated info" element.ItemType |> Some
-            
-            [
-                ExpectedUnique element (fun x -> x.ID) "ItemID" acc
-                DefinedEnum element.ItemType
-                itemTypeError
-            ]
-        )
-    {
-        Item = validatedItems
-        Success = validatedItems |> Seq.forall(fun x -> x.Success)
-        Errors = []
-    }, table  
+    item
+    |> ValidateGameDataWithTable (fun acc element ->
+        let itemTypeError =
+            match element.ItemType, element.Weapon, element.Wearable, element.Consumable with
+            | ItemType.Weapon, x, _, _ when not x.IsEmpty -> None
+            | ItemType.Wearable, _, x, _ when not x.IsEmpty -> None
+            | ItemType.Consumable, _, _, x when not x.IsEmpty -> None
+            | _ -> sprintf "Expected ItemType %A to have associated info" element.ItemType |> Some
+        
+        [
+            ExpectedUnique element (fun x -> x.ID) "ItemID" acc
+            DefinedEnum element.ItemType
+            itemTypeError
+        ]
+    )
 
-
-
+/// Tie together all validation routines
 let ValidateDtos (phase0: RawDtoPhase0): RawDtoPhase1 =
     let (tileResults, tileTable) = ValidateDtoTiles phase0.Tiles
     
