@@ -160,6 +160,9 @@ type Item =
     ///If true, then never appears more than once in a game.
     IsUnique: bool
   }
+  
+  interface IRow with
+      member this.Key = this.ID
 
 [<RequireQualifiedAccess>]
 type FloorGenerationStrategy = 
@@ -193,6 +196,7 @@ type RawDtoPhase0 =
          Races: DtoValidResult<Race[]>
          RaceModifiers: DtoValidResult<RaceModifier[]>
          RaceModifierLinks: DtoValidResult<RaceModifierLink[]>
+         Items: DtoValidResult<Item[]>
     }
     
     member this.Errors: string list =
@@ -201,6 +205,7 @@ type RawDtoPhase0 =
               this.Races.Errors
               this.RaceModifiers.Errors
               this.RaceModifierLinks.Errors
+              this.Items.Errors
         |] |> List.concat
         
     member this.Successful: bool =
@@ -209,7 +214,8 @@ type RawDtoPhase0 =
              this.TileFeatures.Success
              this.Races.Success
              this.RaceModifiers.Success    
-             this.RaceModifierLinks.Success         
+             this.RaceModifierLinks.Success
+             this.Items.Success
         ] |> List.forall id
         
   
@@ -219,6 +225,7 @@ type RawDtoPhase1 =
          Races: DtoValidResult<DtoValidResult<Race>[]>
          RaceModifiers: DtoValidResult<DtoValidResult<RaceModifier>[]>
          RaceModifierLinks: DtoValidResult<DtoValidResult<RaceModifierLink>[]>
+         Items: DtoValidResult<DtoValidResult<Item>[]>
     }
     
     member this.Errors: string list =
@@ -227,6 +234,7 @@ type RawDtoPhase1 =
               this.Races.Errors
               this.RaceModifiers.Errors
               this.RaceModifierLinks.Errors
+              this.Items.Errors
         |] |> List.concat
         
     member this.Success: bool =
@@ -236,6 +244,7 @@ type RawDtoPhase1 =
              this.Races.Success
              this.RaceModifiers.Success
              this.RaceModifierLinks.Success
+             this.Items.Success
         ] |> List.forall id
   
   

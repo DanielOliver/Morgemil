@@ -130,7 +130,33 @@ let private ValidateDtoRaceModifierLinks (item: DtoValidResult<RaceModifierLink[
         Item = validatedItems
         Success = validatedItems |> Seq.forall(fun x -> x.Success)
         Errors = []
+    }, table
+    
+let private ValidateDtoItems (item: DtoValidResult<Item[]>) : DtoValidResult<DtoValidResult<Item>[]> * IReadonlyTable<Item, int64> =
+    let table = item.Item |> Table.CreateReadonlyTable id
+    let validatedItems =
+        item.Item
+        |> ValidateItems (fun acc element ->
+            let itemTypeError =
+                match element.ItemType, element.Weapon, element.Wearable, element.Consumable with
+                | ItemType.Weapon, x, _, _ when not x.IsEmpty -> None
+                | ItemType.Wearable, _, x, _ when not x.IsEmpty -> None
+                | ItemType.Consumable, _, _, x when not x.IsEmpty -> None
+                | _ -> sprintf "Expected ItemType %A to have associated info" element.ItemType |> Some
+            
+            [
+                ExpectedUnique element (fun x -> x.ID) "ItemID" acc
+                DefinedEnum element.ItemType
+                itemTypeError
+            ]
+        )
+    {
+        Item = validatedItems
+        Success = validatedItems |> Seq.forall(fun x -> x.Success)
+        Errors = []
     }, table  
+
+
 
 let ValidateDtos (phase0: RawDtoPhase0): RawDtoPhase1 =
     let (tileResults, tileTable) = ValidateDtoTiles phase0.Tiles
@@ -145,11 +171,14 @@ let ValidateDtos (phase0: RawDtoPhase0): RawDtoPhase1 =
     
     let (raceModifierLinkResults, raceModifierLinkTable) = ValidateDtoRaceModifierLinks phase0.RaceModifierLinks raceTable raceModifierTable
     
+    let (itemResults, itemTable) = ValidateDtoItems phase0.Items
+    
     {
         RawDtoPhase1.Tiles = tileResults
         TileFeatures = tileFeatureResults
         Races = raceResults
         RaceModifiers = raceModifierResults
         RaceModifierLinks = raceModifierLinkResults
+        Items = itemResults
     }
     
