@@ -192,7 +192,7 @@ let ValidateDtos (phase0: RawDtoPhase0): RawDtoPhase1 =
     
     let (tileFeatureResults, tileFeatureTable) = ValidateDtoTileFeatures phase0.TileFeatures tileTable    
     
-    let (raceModifierResults, raceModifierTable) = ValidateDtoRaceModifiers phase0.RaceModifiers    
+    let (raceModifierResults, raceModifierTable) = ValidateDtoRaceModifiers phase0.RaceModifiers
     
     let (raceResults, raceTable) = ValidateDtoRaces phase0.Races raceModifierTable
     
