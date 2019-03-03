@@ -1,10 +1,13 @@
 namespace Morgemil.Models
 
-type Race = 
+type Race =
   { ID : RaceID
     ///Proper noun
     Noun : string
     ///Proper adjective
     Adjective : string
     ///User-visible description
-    Description : string }
+    Description : string
+    ///Valid modifiers for this race
+    PossibleRaceModifiers: RaceModifier list
+  }

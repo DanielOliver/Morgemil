@@ -32,7 +32,10 @@ type Race =
     ///Proper adjective
     Adjective : string
     ///User-visible description
-    Description : string }
+    Description : string
+    ///Valid race modifiers
+    PossibleRaceModifiers : int64 list
+  }
   
   interface IRow with
       member this.Key = this.ID
@@ -51,6 +54,7 @@ type RaceModifier =
 
 type RaceModifierLink =
   { ID: int64
+    GroupID: int64
     RaceID: int64
     RaceModifierID: Nullable<int64>
     Ratio: int
