@@ -8,30 +8,30 @@ let ReadJsonFile<'T> (fileName: string): DtoValidResult<'T[]> =
     if not <| File.Exists(fileName) then
         {
             DtoValidResult.Errors = [ (sprintf "File \"%s\" doesn't exist " fileName) ]
-            Item = [||]
+            Object = [||]
             Success = false
         }
     else
         try
             let fileContents = File.ReadAllText fileName
-            
+
             let jsonContents = Newtonsoft.Json.JsonConvert.DeserializeObject<'T[]>(fileContents)
             {
                 DtoValidResult.Errors = List.empty
-                Item = jsonContents
+                Object = jsonContents
                 Success = true
             }
         with
         | :? JsonException as ex ->
             {
                 DtoValidResult.Errors = [ (sprintf "File \"%s\" doesn't contains valid Json" fileName) ]
-                Item = [||]
+                Object = [||]
                 Success = false
             }
         | :? IOException as ex ->
             {
                 DtoValidResult.Errors = [ (sprintf "File \"%s\" was unable to be read" fileName) ]
-                Item = [||]
+                Object = [||]
                 Success = false
             }
 
