@@ -40,9 +40,11 @@ let stairTileFeature: TileFeature = {
             BackGroundColor = Some <| Color.From(0, 240, 0, 50)
         }
         PossibleTiles = [
-            defaultTile
-            tile2
+            defaultTile.ID
+            tile2.ID
         ]
+        EntryPoint = false
+        ExitPoint = true
     }
 
 [<Fact>]

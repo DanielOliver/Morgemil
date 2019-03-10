@@ -39,10 +39,47 @@ let floorParameters: FloorGenerationParameter = {
     ID = FloorGenerationParameterID 5L
 }
 
+let stairTileFeature: TileFeature = {
+        ID = TileFeatureID 2L
+        Name = "Stairs down"
+        Description = "Stairs down"
+        BlocksMovement = false
+        BlocksSight = false
+        Representation = {
+            AnsiCharacter = char(242)
+            ForegroundColor = Some <| Color.From(30, 30, 255)
+            BackGroundColor = Some <| Color.From(0, 240, 0, 50)
+        }
+        PossibleTiles = [
+            tile2.ID
+        ]
+        ExitPoint = true
+        EntryPoint = false
+    }
+
+let startingPointFeature: TileFeature = {
+        ID = TileFeatureID 1L
+        Name = "Starting point"
+        Description = "Starting point"
+        BlocksMovement = false
+        BlocksSight = false
+        Representation = {
+            AnsiCharacter = '@'
+            ForegroundColor = Some <| Color.From(0)
+            BackGroundColor = None
+        }
+        PossibleTiles = [
+            tile2.ID
+        ]
+        ExitPoint = false
+        EntryPoint = true
+    }
+
 [<Fact>]
 let FloorGeneratorTests() =
     let rng = RNG.SeedRNG(50)
-    let (tileMap, results) = FloorGenerator.Create floorParameters rng
+    let tileFeatureTable = Morgemil.Core.TileFeatureTable([ stairTileFeature; startingPointFeature ])
+    let (tileMap, results) = FloorGenerator.Create floorParameters tileFeatureTable rng
 
     Assert.Equal(Vector2i.create(16, 14) |> Rectangle.create, tileMap.MapSize)
     Assert.Equal(defaultTile, tileMap.Tile Vector2i.Zero )

@@ -45,9 +45,11 @@ let stairTileFeature: TileFeature = {
             BackGroundColor = Some <| Color.From(0, 240, 0, 50)
         }
         PossibleTiles = [
-            defaultTile
-            floorTile
+            defaultTile.ID
+            floorTile.ID
         ]
+        ExitPoint = true
+        EntryPoint = false
     }
 
 let startingPointFeature: TileFeature = {
@@ -57,14 +59,16 @@ let startingPointFeature: TileFeature = {
         BlocksMovement = false
         BlocksSight = false
         Representation = {
-            AnsiCharacter = '@'
+            AnsiCharacter = char(243)
             ForegroundColor = Some <| Color.From(0)
             BackGroundColor = None
         }
         PossibleTiles = [
-            defaultTile
-            floorTile
+            defaultTile.ID
+            floorTile.ID
         ]
+        ExitPoint = false
+        EntryPoint = true
     }
 
 let floorParameters: FloorGenerationParameter = {
@@ -84,7 +88,8 @@ type MapGeneratorConsole() =
     inherit SadConsole.Console(40, 40)
 
     let rng = RNG.SeedRNG(50)
-    let (tileMap, results) = FloorGenerator.Create floorParameters rng
+    let tileFeatureTable = Morgemil.Core.TileFeatureTable([ stairTileFeature; startingPointFeature ])
+    let (tileMap, results) = FloorGenerator.Create floorParameters tileFeatureTable rng
     let createColor (color: Morgemil.Math.Color) = Microsoft.Xna.Framework.Color(color.R, color.G, color.B, color.A)
 
     let blendColors (color1: Microsoft.Xna.Framework.Color) (color2: Microsoft.Xna.Framework.Color) =
@@ -98,8 +103,6 @@ type MapGeneratorConsole() =
             Microsoft.Xna.Framework.Color(returnColor, 255)
 
     do
-        tileMap.TileFeature(Vector2i.create 10) <- (Some stairTileFeature)
-        tileMap.TileFeature(Vector2i.create 3) <- (Some startingPointFeature)
 
         for (position, tile, tileFeature) in tileMap.Tiles do
             match tileFeature with

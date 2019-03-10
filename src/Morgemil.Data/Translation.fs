@@ -87,7 +87,7 @@ let TileFromDto (tile: DTO.Tile): Tile =
     }
 
 ///DTO to TileFeature
-let TileFeatureFromDto (getTilebyID: TileID -> Tile) (tileFeature: DTO.TileFeature): TileFeature =
+let TileFeatureFromDto (tileFeature: DTO.TileFeature): TileFeature =
     {
         ID = TileFeatureID tileFeature.ID
         Name = tileFeature.Name
@@ -95,7 +95,7 @@ let TileFeatureFromDto (getTilebyID: TileID -> Tile) (tileFeature: DTO.TileFeatu
         Representation = TileRepresentationFromDto tileFeature.Representation
         BlocksSight = tileFeature.BlocksSight
         BlocksMovement = tileFeature.BlocksMovement
-        PossibleTiles = tileFeature.PossibleTiles |> List.map(TileID >> getTilebyID)
+        PossibleTiles = tileFeature.PossibleTiles |> List.map(TileID)
         ExitPoint = tileFeature.ExitPoint
         EntryPoint = tileFeature.EntryPoint
     }
@@ -201,7 +201,7 @@ let TranslateFromDtosToPhase2 (dtos: RawDtoPhase0): RawDtoPhase2 =
 
     let monsterGenerationParameters = dtos.MonsterGenerationParameters.Object |> Seq.map (MonsterGenerationParameterFromDto) |> Table.CreateReadonlyTable (fun (t: MonsterGenerationParameterID) -> t.Key)
 
-    let tileFeatures = dtos.TileFeatures.Object |> Seq.map (TileFeatureFromDto (fun t -> tiles.Item(t))) |> Table.CreateReadonlyTable (fun (t: TileFeatureID) -> t.Key)
+    let tileFeatures = dtos.TileFeatures.Object |> Seq.map (TileFeatureFromDto) |> Table.CreateReadonlyTable (fun (t: TileFeatureID) -> t.Key)
 
     let monsterGenerationParameters = dtos.MonsterGenerationParameters.Object |> Seq.map (MonsterGenerationParameterFromDto) |> Table.CreateReadonlyTable (fun (t: MonsterGenerationParameterID) -> t.Key)
 
@@ -229,7 +229,7 @@ let TranslateFromDtosToScenario (dtos: RawDtoPhase0): ScenarioData =
 
     let monsterGenerationParameters = dtos.MonsterGenerationParameters.Object |> Seq.map (MonsterGenerationParameterFromDto) |> Table.CreateReadonlyTable (fun (t: MonsterGenerationParameterID) -> t.Key)
 
-    let tileFeatures = dtos.TileFeatures.Object |> Seq.map (TileFeatureFromDto (fun t -> tiles.Item(t))) |> Table.CreateReadonlyTable (fun (t: TileFeatureID) -> t.Key)
+    let tileFeatures = dtos.TileFeatures.Object |> Seq.map (TileFeatureFromDto) |> Table.CreateReadonlyTable (fun (t: TileFeatureID) -> t.Key)
 
     let floorGenerationParameters = dtos.FloorGenerationParameters.Object |> Seq.map (FloorGenerationParameterFromDto (fun t -> tiles.Item(t))) |> Table.CreateReadonlyTable (fun (t: FloorGenerationParameterID) -> t.Key)
 
