@@ -92,6 +92,19 @@ type MapGeneratorConsole() =
     let (tileMap, results) = FloorGenerator.Create floorParameters tileFeatureTable rng
     let createColor (color: Morgemil.Math.Color) = Microsoft.Xna.Framework.Color(color.R, color.G, color.B, color.A)
 
+    let characterTable = CharacterTable()
+    let character1 = {
+        Character.ID = Table.GenerateKey characterTable
+        Race = {
+            Race.ID = RaceID 1L
+            Noun = "race1"
+            Adjective = "race1"
+            Description = "race1"
+        }
+        RaceModifier = None
+        Position = Vector2i.create(5)
+    }
+
     let blendColors (color1: Microsoft.Xna.Framework.Color) (color2: Microsoft.Xna.Framework.Color) =
         if color1.A = System.Byte.MaxValue || color2.A = System.Byte.MinValue then
             color1
@@ -103,6 +116,7 @@ type MapGeneratorConsole() =
             Microsoft.Xna.Framework.Color(returnColor, 255)
 
     do
+        Table.AddRow characterTable character1
 
         for (position, tile, tileFeature) in tileMap.Tiles do
             match tileFeature with
@@ -125,6 +139,16 @@ type MapGeneratorConsole() =
                 let backgroundColor = tile.Representation.BackGroundColor |> Option.map createColor |> Option.defaultValue Microsoft.Xna.Framework.Color.Black
                 let foregroundColor = tile.Representation.ForegroundColor |> Option.map createColor |> Option.defaultValue Microsoft.Xna.Framework.Color.White
                 base.Print(position.X, position.Y, tile.Representation.AnsiCharacter.ToString(), foregroundColor, backgroundColor)
+
+        for (position, character) in characterTable.ByPositions do
+            let color1 = Color.From(0)
+            let representation = {
+                TileRepresentation.AnsiCharacter = '@'
+                BackGroundColor = None
+                ForegroundColor = Some color1
+            }
+            let foregroundColor = representation.ForegroundColor |> Option.map createColor |> Option.defaultValue Microsoft.Xna.Framework.Color.TransparentBlack
+            base.Print(position.X, position.Y, representation.AnsiCharacter.ToString(), foregroundColor)
 
     member this.Zero = ()
 

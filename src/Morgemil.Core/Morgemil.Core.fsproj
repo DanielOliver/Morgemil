@@ -7,6 +7,7 @@
   <ItemGroup>
     <Compile Include="Relational.fs" />
     <Compile Include="TileFeatureTable.fs" />
+    <Compile Include="CharacterTable.fs" />
     <Compile Include="TileMap.fs" />
     <Compile Include="FloorGenerator.fs" />
   </ItemGroup>

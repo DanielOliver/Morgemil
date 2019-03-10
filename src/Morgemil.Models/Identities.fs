@@ -28,6 +28,14 @@ type [<Struct>] TileID =
         let (TileID rowID) = this
         rowID
 
+
+type [<Struct>] CharacterID =
+    | CharacterID of int64
+
+    member this.Key =
+        let (CharacterID characterID) = this
+        characterID
+
 type [<Struct>] ItemID =
     | ItemID of int64
 
