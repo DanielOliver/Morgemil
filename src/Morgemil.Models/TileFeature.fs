@@ -17,6 +17,8 @@ type TileFeature =
         PossibleTiles: Tile list 
         ///True if this tile is an exit point.  Usually stairs down to the next level.
         ExitPoint: bool
+        ///True if this tile is an entry point.  Usually stairs up to the previous level.
+        EntryPoint: bool
     }
 
   

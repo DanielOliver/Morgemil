@@ -97,6 +97,7 @@ let TileFeatureFromDto (getTilebyID: TileID -> Tile) (tileFeature: DTO.TileFeatu
         BlocksMovement = tileFeature.BlocksMovement
         PossibleTiles = tileFeature.PossibleTiles |> List.map(TileID >> getTilebyID)
         ExitPoint = tileFeature.ExitPoint
+        EntryPoint = tileFeature.EntryPoint
     }
 
 ///DTO to Race

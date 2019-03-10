@@ -23,7 +23,8 @@
     "PossibleTiles": [
       0
     ],
-    "ExitPoint": false
+    "ExitPoint": true,
+    "EntryPoint": false
   },
   {
     "ID": 1,
@@ -49,6 +50,7 @@
     "PossibleTiles": [
       0
     ],
-    "ExitPoint": true
+    "ExitPoint": false,
+    "EntryPoint": true
   }
 ]
