@@ -1,17 +1,19 @@
-﻿open Argu
+open Argu
 open Morgemil.Data
 
 [<CliPrefix(CliPrefix.DoubleDash)>]
 type CLIArguments =
-    | GameDataRead of workingDirectory : string
-    | GameDataValidate of workingDirectory : string
-    | GameDataFinal of workingDirectory : string
+    | [<AltCommandLine("-d")>][<Unique>] WorkingDirectory of workingDirectory : string
+    | [<Unique>] GameDataRead
+    | [<Unique>] GameDataValidate
+    | [<Unique>] GameDataFinal
     interface IArgParserTemplate with
         member s.Usage =
             match s with
-            | GameDataRead _ -> "specify a working directory to read game data for"
-            | GameDataValidate _ -> "specify a working directory to validate game data for"
-            | GameDataFinal _ -> "specify a working directory to create final game data from"
+            | GameDataRead _ -> "read game data from a directory"
+            | GameDataValidate _ -> "validate game data while still in raw format"
+            | GameDataFinal _ -> "create final game data to be output"
+            | WorkingDirectory _ -> "specify a working directory"
 
 [<EntryPoint>]
 let main argv =
@@ -27,32 +29,27 @@ let main argv =
 
     else
         try
-            results.GetResults GameDataValidate
-            |> List.map (fun path -> path, JsonReader.ReadGameFiles path)
-            |> List.map (fun (path, rawGameDataPhase0) -> path, Validator.ValidateDtos rawGameDataPhase0)
-            |> List.iter (fun (path, rawGameDataPhase1) ->
-                  Newtonsoft.Json.JsonConvert.SerializeObject(rawGameDataPhase1, Newtonsoft.Json.Formatting.Indented)
-                  |> System.Console.Write
-                  System.Console.WriteLine()
-                )
+            match results.TryGetResult WorkingDirectory with
+            | Some path ->
+                let rawGameDataPhase0 = Lazy<DTO.RawDtoPhase0>(fun () -> JsonReader.ReadGameFiles path)
+                
+                if results.Contains GameDataValidate then
+                    let rawGameDataPhase1 = Validator.ValidateDtos rawGameDataPhase0.Value
+                    Newtonsoft.Json.JsonConvert.SerializeObject(rawGameDataPhase1, Newtonsoft.Json.Formatting.Indented)
+                    |> System.Console.Write
+                    
+                if results.Contains GameDataRead then
+                    let rawGameDataPhase0 = Validator.ValidateDtos rawGameDataPhase0.Value
+                    Newtonsoft.Json.JsonConvert.SerializeObject(rawGameDataPhase0, Newtonsoft.Json.Formatting.Indented)
+                    |> System.Console.Write
 
-            results.GetResults GameDataRead
-            |> List.map (fun path -> path, JsonReader.ReadGameFiles path)
-            |> List.iter (fun (path, rawGameDataPhase0) ->
-                  Newtonsoft.Json.JsonConvert.SerializeObject(rawGameDataPhase0, Newtonsoft.Json.Formatting.Indented)
-                  |> System.Console.Write
-                  System.Console.WriteLine()
-                )
-
-            results.GetResults GameDataFinal
-            |> List.map (fun path -> path, JsonReader.ReadGameFiles path)
-            |> List.map (fun (path, rawGameDataPhase0) -> path, Translation.TranslateFromDtosToPhase2 rawGameDataPhase0)
-            |> List.iter (fun (path, rawGameDataPhase2) ->
-                  Newtonsoft.Json.JsonConvert.SerializeObject(rawGameDataPhase2, Newtonsoft.Json.Formatting.Indented)
-                  |> System.Console.Write
-                  System.Console.WriteLine()
-                )
-            
+                if results.Contains GameDataFinal then
+                    let rawGameDataPhase2 = Translation.TranslateFromDtosToPhase2 rawGameDataPhase0.Value
+                    Newtonsoft.Json.JsonConvert.SerializeObject(rawGameDataPhase2, Newtonsoft.Json.Formatting.Indented)
+                    |> System.Console.Write
+                    
+                System.Console.WriteLine()
+            | None -> ()
         with e ->
             printfn "%s" e.Message
 
