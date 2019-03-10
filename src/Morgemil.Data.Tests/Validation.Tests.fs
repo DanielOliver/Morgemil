@@ -19,5 +19,4 @@ let ``Try Validate Game With Validation``() =
     Assert.Equal("Human", firstRace.Noun)
     Assert.Equal("Human", firstRace.Adjective)
     Assert.Equal("The kings of the overworld. How shall you fare in the darkness?", firstRace.Description)
-    Assert.Equal<System.Collections.Generic.IEnumerable<int64>>([0L; 1L], firstRace.PossibleRaceModifiers)
 
