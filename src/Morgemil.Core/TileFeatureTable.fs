@@ -7,7 +7,6 @@ type TileFeatureTable(tileFeatures: TileFeature seq) =
 
     member this.GetFeaturesForTile(tileID: TileID): TileFeature seq =
         tileFeatures
-        |> Seq.where( fun t -> t.PossibleTiles |> List.contains tileID)
-        
+        |> Seq.where( fun t -> t.PossibleTiles |> List.map(fun t -> t.ID) |> List.contains tileID)
 
-        
+

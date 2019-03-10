@@ -51,7 +51,7 @@ let stairTileFeature: TileFeature = {
             BackGroundColor = Some <| Color.From(0, 240, 0, 50)
         }
         PossibleTiles = [
-            tile2.ID
+            tile2
         ]
         ExitPoint = true
         EntryPoint = false
@@ -69,7 +69,7 @@ let startingPointFeature: TileFeature = {
             BackGroundColor = None
         }
         PossibleTiles = [
-            tile2.ID
+            tile2
         ]
         ExitPoint = false
         EntryPoint = true

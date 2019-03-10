@@ -87,7 +87,7 @@ let TileFromDto (tile: DTO.Tile): Tile =
     }
 
 ///DTO to TileFeature
-let TileFeatureFromDto (tileFeature: DTO.TileFeature): TileFeature =
+let TileFeatureFromDto (getTilebyID: TileID -> Tile) (tileFeature: DTO.TileFeature): TileFeature =
     {
         ID = TileFeatureID tileFeature.ID
         Name = tileFeature.Name
@@ -95,28 +95,28 @@ let TileFeatureFromDto (tileFeature: DTO.TileFeature): TileFeature =
         Representation = TileRepresentationFromDto tileFeature.Representation
         BlocksSight = tileFeature.BlocksSight
         BlocksMovement = tileFeature.BlocksMovement
-        PossibleTiles = tileFeature.PossibleTiles |> List.map(TileID)
+        PossibleTiles = tileFeature.PossibleTiles |> List.map(TileID >> getTilebyID)
         ExitPoint = tileFeature.ExitPoint
         EntryPoint = tileFeature.EntryPoint
     }
 
 ///DTO to Race
-let RaceFromDto (getRaceModifierByID: RaceModifierID -> RaceModifier) (race: DTO.Race) : Race =
+let RaceFromDto (race: DTO.Race) : Race =
     {
         Race.ID = RaceID race.ID
         Noun = race.Noun
         Adjective = race.Adjective
         Description = race.Description
-        PossibleRaceModifiers = race.PossibleRaceModifiers |> List.map (RaceModifierID >> getRaceModifierByID)
     }
 
 ///DTO to RaceModifier
-let RaceModifierFromDto (raceModifier: DTO.RaceModifier) : RaceModifier =
+let RaceModifierFromDto (getRaceByID: RaceID -> Race) (raceModifier: DTO.RaceModifier) : RaceModifier =
     {
         RaceModifier.ID = RaceModifierID raceModifier.ID
         Noun = raceModifier.Noun
         Adjective = raceModifier.Adjective
         Description = raceModifier.Description
+        PossibleRaces = raceModifier.PossibleRaces |> List.map (RaceID >> getRaceByID)
     }
 
 ///DTO to Item
@@ -193,15 +193,15 @@ let FloorGenerationParameterFromDto (getTilebyID: TileID -> Tile) (floorGenerati
 let TranslateFromDtosToPhase2 (dtos: RawDtoPhase0): RawDtoPhase2 =
     let tiles = dtos.Tiles.Object |> Seq.map (TileFromDto) |> Table.CreateReadonlyTable (fun (t: TileID) -> t.Key)
 
-    let raceModifiers = dtos.RaceModifiers.Object |> Seq.map (RaceModifierFromDto) |> Table.CreateReadonlyTable (fun (t: RaceModifierID) -> t.Key)
+    let races = dtos.Races.Object |> Seq.map (RaceFromDto) |> Table.CreateReadonlyTable (fun (t: RaceID) -> t.Key)
 
-    let races = dtos.Races.Object |> Seq.map (RaceFromDto (fun t -> raceModifiers.Item(t))) |> Table.CreateReadonlyTable (fun (t: RaceID) -> t.Key)
+    let raceModifiers = dtos.RaceModifiers.Object |> Seq.map (RaceModifierFromDto (fun t -> races.Item(t))) |> Table.CreateReadonlyTable (fun (t: RaceModifierID) -> t.Key)
 
     let items = dtos.Items.Object |> Seq.map (ItemFromDto) |> Table.CreateReadonlyTable (fun (t: ItemID) -> t.Key)
 
     let monsterGenerationParameters = dtos.MonsterGenerationParameters.Object |> Seq.map (MonsterGenerationParameterFromDto) |> Table.CreateReadonlyTable (fun (t: MonsterGenerationParameterID) -> t.Key)
 
-    let tileFeatures = dtos.TileFeatures.Object |> Seq.map (TileFeatureFromDto) |> Table.CreateReadonlyTable (fun (t: TileFeatureID) -> t.Key)
+    let tileFeatures = dtos.TileFeatures.Object |> Seq.map (TileFeatureFromDto (fun t -> tiles.Item(t))) |> Table.CreateReadonlyTable (fun (t: TileFeatureID) -> t.Key)
 
     let monsterGenerationParameters = dtos.MonsterGenerationParameters.Object |> Seq.map (MonsterGenerationParameterFromDto) |> Table.CreateReadonlyTable (fun (t: MonsterGenerationParameterID) -> t.Key)
 
@@ -221,15 +221,15 @@ let TranslateFromDtosToPhase2 (dtos: RawDtoPhase0): RawDtoPhase2 =
 let TranslateFromDtosToScenario (dtos: RawDtoPhase0): ScenarioData =
     let tiles = dtos.Tiles.Object |> Seq.map (TileFromDto) |> Table.CreateReadonlyTable (fun (t: TileID) -> t.Key)
 
-    let raceModifiers = dtos.RaceModifiers.Object |> Seq.map (RaceModifierFromDto) |> Table.CreateReadonlyTable (fun (t: RaceModifierID) -> t.Key)
+    let races = dtos.Races.Object |> Seq.map (RaceFromDto) |> Table.CreateReadonlyTable (fun (t: RaceID) -> t.Key)
 
-    let races = dtos.Races.Object |> Seq.map (RaceFromDto (fun t -> raceModifiers.Item(t))) |> Table.CreateReadonlyTable (fun (t: RaceID) -> t.Key)
+    let raceModifiers = dtos.RaceModifiers.Object |> Seq.map (RaceModifierFromDto (fun t -> races.Item(t))) |> Table.CreateReadonlyTable (fun (t: RaceModifierID) -> t.Key)
 
     let items = dtos.Items.Object |> Seq.map (ItemFromDto) |> Table.CreateReadonlyTable (fun (t: ItemID) -> t.Key)
 
     let monsterGenerationParameters = dtos.MonsterGenerationParameters.Object |> Seq.map (MonsterGenerationParameterFromDto) |> Table.CreateReadonlyTable (fun (t: MonsterGenerationParameterID) -> t.Key)
 
-    let tileFeatures = dtos.TileFeatures.Object |> Seq.map (TileFeatureFromDto) |> Table.CreateReadonlyTable (fun (t: TileFeatureID) -> t.Key)
+    let tileFeatures = dtos.TileFeatures.Object |> Seq.map (TileFeatureFromDto (fun t -> tiles.Item(t))) |> Table.CreateReadonlyTable (fun (t: TileFeatureID) -> t.Key)
 
     let floorGenerationParameters = dtos.FloorGenerationParameters.Object |> Seq.map (FloorGenerationParameterFromDto (fun t -> tiles.Item(t))) |> Table.CreateReadonlyTable (fun (t: FloorGenerationParameterID) -> t.Key)
 

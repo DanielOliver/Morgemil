@@ -33,8 +33,6 @@ type Race =
     Adjective : string
     ///User-visible description
     Description : string
-    ///Valid race modifiers
-    PossibleRaceModifiers : int64 list
   }
 
   interface IRow with
@@ -47,7 +45,9 @@ type RaceModifier =
     ///Proper adjective
     Adjective: string
     ///User-visible description
-    Description: string }
+    Description: string
+    ///Valid races
+    PossibleRaces : int64 list }
 
   interface IRow with
       member this.Key = this.ID

@@ -1,15 +1,16 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
-
+  <ItemGroup>
+    <ProjectReference Include="..\Morgemil.Math\Morgemil.Math.fsproj" />
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="Relational.fs" />
     <Compile Include="Identities.fs" />
     <Compile Include="TileRepresentation.fs" />
-    <Compile Include="RaceModifier.fs" />
     <Compile Include="Race.fs" />
+    <Compile Include="RaceModifier.fs" />
     <Compile Include="Tile.fs" />
     <Compile Include="TileFeature.fs" />
     <Compile Include="Weapon.fs" />
@@ -21,9 +22,4 @@
     <Compile Include="FloorGenerationParameter.fs" />
     <Compile Include="ScenarioData.fs" />
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Morgemil.Math\Morgemil.Math.fsproj" />
-  </ItemGroup>
-
 </Project>

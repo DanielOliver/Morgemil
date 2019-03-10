@@ -8,8 +8,6 @@ type Race =
     Adjective : string
     ///User-visible description
     Description : string
-    ///Valid modifiers for this race
-    PossibleRaceModifiers: RaceModifier list
   }
   
   interface Relational.IRow with

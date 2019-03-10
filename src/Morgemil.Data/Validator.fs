@@ -107,21 +107,21 @@ let private ValidateDtoTileFeatures (item: DtoValidResult<TileFeature[]>) (tileT
     )
 
 /// Validate Races
-let private ValidateDtoRaces (item: DtoValidResult<Race[]>) (raceModifierTable: IReadonlyTable<RaceModifier, int64>): DtoValidResult<DtoValidResult<Race>[]> * IReadonlyTable<Race, int64> =
+let private ValidateDtoRaces (item: DtoValidResult<Race[]>): DtoValidResult<DtoValidResult<Race>[]> * IReadonlyTable<Race, int64> =
     item
     |> ValidateGameDataWithTable (fun acc element ->
         [
             ExpectedUnique element (fun x -> x.ID) "RaceID" acc
-            raceModifierTable |> AllExistsInTable element.PossibleRaceModifiers "RaceModifiers"
         ]
     )
 
 /// Validate Race Modifiers
-let private ValidateDtoRaceModifiers (item: DtoValidResult<RaceModifier[]>) : DtoValidResult<DtoValidResult<RaceModifier>[]> * IReadonlyTable<RaceModifier, int64> =
+let private ValidateDtoRaceModifiers (item: DtoValidResult<RaceModifier[]>) (raceTable: IReadonlyTable<Race, int64>) : DtoValidResult<DtoValidResult<RaceModifier>[]> * IReadonlyTable<RaceModifier, int64> =
     item
     |> ValidateGameDataWithTable (fun acc element ->
         [
             ExpectedUnique element (fun x -> x.ID) "RaceModifierID" acc
+            raceTable |> AllExistsInTable element.PossibleRaces "Races"
         ]
     )
 
@@ -175,9 +175,9 @@ let ValidateDtos (phase0: RawDtoPhase0): RawDtoPhase1 =
 
     let (tileFeatureResults, tileFeatureTable) = ValidateDtoTileFeatures phase0.TileFeatures tileTable
 
-    let (raceModifierResults, raceModifierTable) = ValidateDtoRaceModifiers phase0.RaceModifiers
+    let (raceResults, raceTable) = ValidateDtoRaces phase0.Races
 
-    let (raceResults, raceTable) = ValidateDtoRaces phase0.Races raceModifierTable
+    let (raceModifierResults, raceModifierTable) = ValidateDtoRaceModifiers phase0.RaceModifiers raceTable
 
     let (monsterGenerationParameterResults, monsterGenerationParametersLinkTable) = ValidateDtoMonsterGenerationParameters phase0.MonsterGenerationParameters raceTable raceModifierTable
 

@@ -40,8 +40,8 @@ let stairTileFeature: TileFeature = {
             BackGroundColor = Some <| Color.From(0, 240, 0, 50)
         }
         PossibleTiles = [
-            defaultTile.ID
-            tile2.ID
+            defaultTile
+            tile2
         ]
         EntryPoint = false
         ExitPoint = true
@@ -51,7 +51,7 @@ let stairTileFeature: TileFeature = {
 let TileMapTests() =
     let mapSize = Rectangle.create(Vector2i.create(10))
     let tileMap = TileMap(mapSize, defaultTile)
-    
+
     Assert.Equal(mapSize, tileMap.MapSize)
     tileMap.Tile Vector2i.Zero <- tile2
 
@@ -60,17 +60,17 @@ let TileMapTests() =
 
     tileMap.Tile (Vector2i.Zero - Vector2i.Identity) <- tile2
     Assert.Equal(true, (tileMap.Tile (Vector2i.Zero - Vector2i.Identity)).BlocksMovement)
-    
+
     let (coord1, firstTile, tileFeature) = tileMap.Tiles |> Seq.head
     Assert.Equal(Vector2i.Zero, coord1)
     Assert.Equal(tile2, firstTile)
     Assert.Equal(None, tileFeature)
-    
+
     tileMap.Item (Vector2i.Zero - Vector2i.Identity) <- (tile2, tileFeature)
     let (tile1, feature1) = tileMap.Item (Vector2i.Zero - Vector2i.Identity)
     Assert.Equal(defaultTile, tile1)
-    Assert.True(feature1.IsNone)    
-        
+    Assert.True(feature1.IsNone)
+
     let (coord2, secondTile, tileFeature) = tileMap.Tiles |> Seq.skip(1) |> Seq.head
     Assert.Equal(Vector2i.create(1, 0), coord2)
     Assert.Equal(defaultTile, secondTile)

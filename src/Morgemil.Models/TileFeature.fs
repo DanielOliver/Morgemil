@@ -14,13 +14,13 @@ type TileFeature =
         ///What this tile Feature looks like.
         Representation: TileRepresentation
         ///The tiles that this feature is valid to exist on.
-        PossibleTiles: TileID list 
+        PossibleTiles: Tile list
         ///True if this tile is an exit point.  Usually stairs down to the next level.
         ExitPoint: bool
         ///True if this tile is an entry point.  Usually stairs up to the previous level.
         EntryPoint: bool
     }
 
-  
+
     interface Relational.IRow with
         member this.Key = this.ID.Key

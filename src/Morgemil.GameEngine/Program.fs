@@ -45,8 +45,8 @@ let stairTileFeature: TileFeature = {
             BackGroundColor = Some <| Color.From(0, 240, 0, 50)
         }
         PossibleTiles = [
-            defaultTile.ID
-            floorTile.ID
+            defaultTile
+            floorTile
         ]
         ExitPoint = true
         EntryPoint = false
@@ -64,8 +64,8 @@ let startingPointFeature: TileFeature = {
             BackGroundColor = None
         }
         PossibleTiles = [
-            defaultTile.ID
-            floorTile.ID
+            defaultTile
+            floorTile
         ]
         ExitPoint = false
         EntryPoint = true
@@ -81,7 +81,7 @@ let floorParameters: FloorGenerationParameter = {
     DefaultTile = defaultTile
     ID = FloorGenerationParameterID 5L
 }
-    
+
 
 
 type MapGeneratorConsole() =
@@ -129,7 +129,7 @@ type MapGeneratorConsole() =
     member this.Zero = ()
 
 
-let Init() = 
+let Init() =
     //SadConsole.Game.Instance.Components.Add(new SadConsole.Game.FPSCounterComponent(SadConsole.Game.Instance))
     SadConsole.Game.Instance.Window.Title <- "Morgemil";
     SadConsole.Global.CurrentScreen <- (new MapGeneratorConsole())

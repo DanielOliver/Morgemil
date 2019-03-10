@@ -7,7 +7,10 @@ type RaceModifier =
     ///Proper adjective
     Adjective : string
     ///User-visible description
-    Description : string }
+    Description : string 
+    ///Valid races for this modifier
+    PossibleRaces: Race list
+  }
 
     interface Relational.IRow with
       member this.Key = this.ID.Key
