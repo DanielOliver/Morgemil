@@ -2,7 +2,7 @@
   {
     "ID": 0,
     "Name": "Stairs down",
-    "Description": "Stairs down",
+    "Description": "Stairs down to the next dungeon of horror",
     "BlocksMovement": false,
     "BlocksSight": false,
     "Representation": {
@@ -22,6 +22,33 @@
     },
     "PossibleTiles": [
       0
-    ]
+    ],
+    "ExitPoint": false
+  },
+  {
+    "ID": 1,
+    "Name": "Stairs Up",
+    "Description": "Stairs Up. Sure would be nice to go up and out and home.",
+    "BlocksMovement": false,
+    "BlocksSight": false,
+    "Representation": {
+      "AnsiCharacter": 243,
+      "ForegroundColor": {
+        "A": 255,
+        "R": 30,
+        "G": 30,
+        "B": 255
+      },
+      "BackGroundColor": {
+        "A": 50,
+        "R": 0,
+        "G": 240,
+        "B": 0
+      }
+    },
+    "PossibleTiles": [
+      0
+    ],
+    "ExitPoint": true
   }
 ]

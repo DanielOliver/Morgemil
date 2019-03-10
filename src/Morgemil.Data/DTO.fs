@@ -105,6 +105,8 @@ type TileFeature =
         Representation: TileRepresentation
         ///The tiles that this feature is valid to exist on.
         PossibleTiles: int64 list
+        ///True if this tile is an exit point.  Usually stairs down to the next level.
+        ExitPoint: bool
     }
 
     interface IRow with
