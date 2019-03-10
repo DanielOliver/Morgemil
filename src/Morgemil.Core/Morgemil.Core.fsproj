@@ -10,6 +10,7 @@
     <Compile Include="CharacterTable.fs" />
     <Compile Include="TileMap.fs" />
     <Compile Include="FloorGenerator.fs" />
+    <Compile Include="Loop.fs" />
   </ItemGroup>
 
   <ItemGroup>

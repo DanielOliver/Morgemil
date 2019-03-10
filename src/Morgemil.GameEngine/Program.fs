@@ -1,5 +1,6 @@
 // Learn more about F# at http://fsharp.org
 
+open Microsoft.Xna.Framework.Input
 open System
 open Morgemil.Core
 open Morgemil.Models
@@ -105,6 +106,8 @@ type MapGeneratorConsole() =
         Position = Vector2i.create(5)
     }
 
+    let gameLoop = Loop(characterTable, tileMap)
+
     let blendColors (color1: Microsoft.Xna.Framework.Color) (color2: Microsoft.Xna.Framework.Color) =
         if color1.A = System.Byte.MaxValue || color2.A = System.Byte.MinValue then
             color1
@@ -115,8 +118,25 @@ type MapGeneratorConsole() =
             let returnColor = Microsoft.Xna.Framework.Color.Lerp(color1, color2, ratio)
             Microsoft.Xna.Framework.Color(returnColor, 255)
 
+
     do
         Table.AddRow characterTable character1
+
+    override this.Update(timeElapsed: TimeSpan) =
+        let event =
+            if SadConsole.Global.KeyboardState.IsKeyReleased Keys.Left then
+                LoopEvent.MoveWest |> Some
+            else if SadConsole.Global.KeyboardState.IsKeyReleased Keys.Right then
+                LoopEvent.MoveEast |> Some
+            else if SadConsole.Global.KeyboardState.IsKeyReleased Keys.Down then
+                LoopEvent.MoveSouth |> Some
+            else if SadConsole.Global.KeyboardState.IsKeyReleased Keys.Up then
+                LoopEvent.MoveNorth |> Some
+            else
+                None
+        if event.IsSome then
+            gameLoop.Process event.Value
+
 
         for (position, tile, tileFeature) in tileMap.Tiles do
             match tileFeature with
@@ -150,13 +170,13 @@ type MapGeneratorConsole() =
             let foregroundColor = representation.ForegroundColor |> Option.map createColor |> Option.defaultValue Microsoft.Xna.Framework.Color.TransparentBlack
             base.Print(position.X, position.Y, representation.AnsiCharacter.ToString(), foregroundColor)
 
-    member this.Zero = ()
-
-
 let Init() =
+    let gameConsole = new MapGeneratorConsole()
+    gameConsole.UseKeyboard <- true
+    gameConsole.KeyboardHandler <- null
     //SadConsole.Game.Instance.Components.Add(new SadConsole.Game.FPSCounterComponent(SadConsole.Game.Instance))
     SadConsole.Game.Instance.Window.Title <- "Morgemil";
-    SadConsole.Global.CurrentScreen <- (new MapGeneratorConsole())
+    SadConsole.Global.CurrentScreen <- gameConsole
     //SadConsole.Global.CurrentScreen.Position <- Microsoft.Xna.Framework.Point(1,1)
     ()
 
