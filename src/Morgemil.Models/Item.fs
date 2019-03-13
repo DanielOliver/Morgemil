@@ -23,13 +23,15 @@ type Item =
         ID : ItemID
         ///The union of items
         SubItem : SubItem
-        ///The general classification
-        ItemType : ItemType
         ///Name of this item
         Noun : string
         ///If true, then never appears more than once in a game.
         IsUnique : bool
     }
+    
+    ///The general classification
+    member this.ItemType =
+        this.SubItem.ItemType
 
     interface Relational.IRow with
         member this.Key = this.ID.Key

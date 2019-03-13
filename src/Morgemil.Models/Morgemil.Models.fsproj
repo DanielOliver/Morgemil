@@ -22,5 +22,7 @@
     <Compile Include="MonsterGenerationParameter.fs" />
     <Compile Include="FloorGenerationParameter.fs" />
     <Compile Include="ScenarioData.fs" />
+    <Compile Include="ActionRequest.fs" />
+    <Compile Include="ActionEvent.fs" />
   </ItemGroup>
 </Project>
