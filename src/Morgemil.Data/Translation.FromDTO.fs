@@ -101,11 +101,6 @@ let ItemFromDto (item: DTO.Item) : Item =
     {
         Item.ID = ItemID item.ID
         Noun = item.Noun
-        ItemType =
-            match item.ItemType with
-            | DTO.ItemType.Weapon -> ItemType.Weapon
-            | DTO.ItemType.Wearable -> ItemType.Wearable
-            | DTO.ItemType.Consumable | _ -> ItemType.Consumable
         IsUnique = item.IsUnique
         SubItem =
             match item.ItemType with
