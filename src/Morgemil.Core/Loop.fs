@@ -1,28 +1,30 @@
 namespace Morgemil.Core
 
-open Morgemil.Math
-
-type LoopEvent =
-    | MoveWest
-    | MoveEast
-    | MoveNorth
-    | MoveSouth
+open Morgemil.Models
 
 type Loop(characters: CharacterTable, tileMap: TileMap) =
 
-    member this.Process(event: LoopEvent) =
-        let vec1 =
-            match event with
-            | MoveWest -> Vector2i.create(-1, 0)
-            | MoveNorth -> Vector2i.create(0, -1)
-            | MoveSouth -> Vector2i.create(0, 1)
-            | MoveEast -> Vector2i.create(1, 0)
+    member this.ProcessRequest(event: ActionRequest): ActionEvent seq =
+        match event with
+        | Move (direction) ->
 
-        let moveCharacter = Table.Items characters |> Seq.head
-        let blocksMovement = tileMap.Item(moveCharacter.Position + vec1) |> TileMap.blocksMovement
-        if not blocksMovement then
-            Table.AddRow characters {
-                moveCharacter with
-                    Position = moveCharacter.Position + vec1
+            let moveCharacter = Table.Items characters |> Seq.head
+            let oldPosition = moveCharacter.Position 
+            let newPosition = oldPosition + direction
+            let blocksMovement = tileMap.Item(newPosition) |> TileMap.blocksMovement
+            if not blocksMovement then
+                Table.AddRow characters {
+                    moveCharacter with
+                        Position = newPosition
+                }
+            {
+                CharacterID = moveCharacter.ID
+                OldPosition = oldPosition
+                NewPosition = newPosition
             }
+            |> ActionEvent.AfterMove
+            |> Seq.singleton
+            
+            
+               
 

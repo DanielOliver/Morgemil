@@ -125,17 +125,21 @@ type MapGeneratorConsole() =
     override this.Update(timeElapsed: TimeSpan) =
         let event =
             if SadConsole.Global.KeyboardState.IsKeyReleased Keys.Left then
-                LoopEvent.MoveWest |> Some
+                Vector2i.create(-1, 0) |> Some
             else if SadConsole.Global.KeyboardState.IsKeyReleased Keys.Right then
-                LoopEvent.MoveEast |> Some
+                Vector2i.create(1, 0) |> Some
             else if SadConsole.Global.KeyboardState.IsKeyReleased Keys.Down then
-                LoopEvent.MoveSouth |> Some
+                Vector2i.create(0, 1) |> Some
             else if SadConsole.Global.KeyboardState.IsKeyReleased Keys.Up then
-                LoopEvent.MoveNorth |> Some
+                Vector2i.create(0, -1) |> Some
             else
                 None
+            |> Option.map ActionRequest.Move
+            
         if event.IsSome then
-            gameLoop.Process event.Value
+            gameLoop.ProcessRequest event.Value
+            |> Seq.iter (printfn "%A")
+            
 
 
         for (position, tile, tileFeature) in tileMap.Tiles do
