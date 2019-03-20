@@ -10,22 +10,20 @@ let ``Can transition states``() =
         Assert.Equal(ActionRequest.Move( Morgemil.Math.Vector2i.Identity), request)
         Seq.empty
 
-    let stateMachine = GameStateMachine exampleLoop
-    let currentState = stateMachine.GetCurrentState()
-    Assert.Equal(GameState.WaitingForInput, currentState)
+    let stateMachine: IGameStateMachine = SimpleGameStateMachine exampleLoop :> IGameStateMachine
+    Assert.Equal(GameState.WaitingForInput, stateMachine.CurrentState)
+
+    let testState() = 
+        while stateMachine.CurrentState = GameState.Processing do
+            System.Threading.Thread.Sleep 500
+        Assert.Equal(GameState.Results Seq.empty, stateMachine.CurrentState)
 
     stateMachine.Input( ActionRequest.Move( Morgemil.Math.Vector2i.Identity) )
-
-    let mutable State1 = currentState
-    while stateMachine.GetCurrentState() = GameState.Processing do
-        State1 <- stateMachine.GetCurrentState()
-        System.Threading.Thread.Sleep 500
-    let currentState = stateMachine.GetCurrentState()
-    Assert.Equal(GameState.Results Seq.empty, currentState)
-
-
-    stateMachine.Acknowledge()
-    let currentState = stateMachine.GetCurrentState()
-
+    testState()
     
-    Assert.Equal(GameState.WaitingForInput, currentState)
+    stateMachine.Acknowledge()
+    Assert.Equal(GameState.WaitingForInput, stateMachine.CurrentState)
+
+    stateMachine.Input( ActionRequest.Move( Morgemil.Math.Vector2i.Identity) )
+    testState()
+

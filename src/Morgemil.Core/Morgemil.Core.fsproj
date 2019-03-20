@@ -11,7 +11,8 @@
     <Compile Include="TileMap.fs" />
     <Compile Include="FloorGenerator.fs" />
     <Compile Include="Loop.fs" />
-    <Compile Include="GameStateMachine.fs" />
+    <Compile Include="GameState.fs" />
+    <Compile Include="SimpleGameStateMachine.fs" />
   </ItemGroup>
 
   <ItemGroup>
