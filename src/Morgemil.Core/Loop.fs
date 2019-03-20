@@ -24,7 +24,3 @@ type Loop(characters: CharacterTable, tileMap: TileMap) =
             }
             |> ActionEvent.AfterMove
             |> Seq.singleton
-            
-            
-               
-
