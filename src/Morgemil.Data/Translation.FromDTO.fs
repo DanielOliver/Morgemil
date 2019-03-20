@@ -1,26 +1,11 @@
-module Morgemil.Data.Translation
+module Morgemil.Data.Translation.FromDTO
 
 open System
 open Morgemil.Core
 open Morgemil.Data.DTO
 open Morgemil.Models
 open Morgemil.Math
-
-let private ZeroColorDto(): DTO.Color =
-    {
-        A = Byte.MinValue
-        B = Byte.MinValue
-        G = Byte.MinValue
-        R = Byte.MinValue
-    }
-
-let ColorToDto (color: Color): DTO.Color =
-    {
-        A = color.A
-        B = color.B
-        G = color.G
-        R = color.R
-    }
+open Morgemil.Data
 
 ///DTO to Color
 let ColorFromDto (color: DTO.Color): Color =
@@ -51,14 +36,6 @@ let ColorOptionFromDto (color: DTO.Color): Color option =
             G = color.G
             R = color.R
         }
-
-///DTO to TileRepresentation
-let TileRepresentationToDto (tileRepresentation: TileRepresentation): DTO.TileRepresentation =
-    {
-        AnsiCharacter = (int)(Char.GetNumericValue tileRepresentation.AnsiCharacter)
-        ForegroundColor = tileRepresentation.ForegroundColor |> Option.map ColorToDto |> Option.defaultValue (ZeroColorDto())
-        BackGroundColor = tileRepresentation.BackGroundColor |> Option.map ColorToDto |> Option.defaultValue (ZeroColorDto())
-    }
 
 ///DTO to TileRepresentation
 let TileRepresentationFromDto (tileRepresentation: DTO.TileRepresentation): TileRepresentation =

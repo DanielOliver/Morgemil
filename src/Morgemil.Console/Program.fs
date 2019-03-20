@@ -1,5 +1,6 @@
 open Argu
 open Morgemil.Data
+open Morgemil.Data.Translation
 
 [<CliPrefix(CliPrefix.DoubleDash)>]
 type CLIArguments =
@@ -44,7 +45,7 @@ let main argv =
                     |> System.Console.Write
 
                 if results.Contains GameDataFinal then
-                    let rawGameDataPhase2 = Translation.TranslateFromDtosToPhase2 rawGameDataPhase0.Value
+                    let rawGameDataPhase2 = FromDTO.TranslateFromDtosToPhase2 rawGameDataPhase0.Value
                     Newtonsoft.Json.JsonConvert.SerializeObject(rawGameDataPhase2, Newtonsoft.Json.Formatting.Indented)
                     |> System.Console.Write
                     

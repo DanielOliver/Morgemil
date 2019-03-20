@@ -14,7 +14,8 @@
   <ItemGroup>
     <Compile Include="DTO.fs" />
     <Compile Include="JsonReader.fs" />
-    <Compile Include="Translation.fs" />
+    <Compile Include="Translation.FromDTO.fs" />
+    <Compile Include="Translation.ToDTO.fs" />
     <Compile Include="Validator.fs" />
   </ItemGroup>
 
@@ -41,6 +42,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+
+  <ItemGroup />
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
