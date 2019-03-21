@@ -146,7 +146,7 @@ type MapGeneratorConsole() =
             printfn "processing"
         | GameState.Results results ->
             results
-            |> Seq.iter (printfn "%A")
+            |> List.iter (printfn "%A")
             gameState.Acknowledge()
 
 

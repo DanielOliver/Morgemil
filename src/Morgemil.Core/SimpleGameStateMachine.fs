@@ -1,11 +1,12 @@
 namespace Morgemil.Core
 
 open Morgemil.Models
+open Morgemil.Models.Relational
 
-type SimpleGameStateMachine(gameLoop: ActionRequest -> ActionEvent seq) =
+type SimpleGameStateMachine(gameLoop: ActionRequest -> Character Step list) =
  
     let loopWorkAgent = MailboxProcessor<GameStateRequest>.Start(fun inbox ->
-        let processRequest (actionRequest: ActionRequest) (callback: ActionEvent seq -> unit) =
+        let processRequest (actionRequest: ActionRequest) (callback: Character Step list -> unit) =
             async {
                 let results = gameLoop actionRequest
                 callback results

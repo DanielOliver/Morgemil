@@ -100,11 +100,17 @@ type Table<'tRow, 'tKey when 'tRow :> IRow>(toKey: int64 -> 'tKey, fromKey: 'tKe
     let _primaryKeyIndexCast = _primaryKey :> IIndex<'tRow>
     let mutable _indices = [ _primaryKeyIndexCast ]
     let mutable _nextKey = 0L
+    let mutable _events: 'tRow TableEvent list = []
+
 
     let _setNextKey otherKey = _nextKey <- System.Math.Max(otherKey + 1L, _nextKey)
 
     member this.AddIndex index = _indices <- index :: _indices
     member this.PrimaryIndex = _primaryKeyIndexCast
+
+    interface ITableEventHistory<'tRow> with
+        member this.History = _events
+        member this.ClearHistory() = _events <- []
     
     interface IReadonlyTable<'tRow, 'tKey> with
         member this.Item
@@ -120,22 +126,27 @@ type Table<'tRow, 'tKey when 'tRow :> IRow>(toKey: int64 -> 'tKey, fromKey: 'tKe
         member this.Item
             with get key = _primaryKey.[ key |> fromKey ]
             and set key row = (this :> ITable<'tRow, 'tKey>).AddRow row
-        member this.Remove row = _indices |> List.iter(fun t -> t.Remove row)
+        member this.Remove row =
+            _indices |> List.iter(fun t -> t.Remove row)
+            _events <- (TableEvent.Removed row) :: _events
         member this.RemoveByKey key =
-            match key |> fromKey |> _primaryKey.TryGetRow with 
-            | Some(row) -> _indices |> List.iter(fun t -> t.Remove row)
+            match key |> fromKey |> _primaryKey.TryGetRow with
+            | Some(row) -> (this :> ITable<'tRow, 'tKey>).Remove row
             | None -> ()
         member this.AddRow (row: 'tRow) =            
             match _primaryKey.TryGetRow (row :> IRow).Key with
             | Some(oldRow) -> 
                 _indices |> List.iter(fun t -> t.UpdateRow oldRow row)
-            | None -> 
+                _events <- (TableEvent.Updated (oldRow, row)) :: _events
+            | None ->
                 _setNextKey (row :> IRow).Key
                 _indices |> List.iter(fun t -> t.AddRow row)
+                _events <- (TableEvent.Added row) :: _events
         member this.UpdateRow oldRow row =         
             match _primaryKey.TryGetRow (row :> IRow).Key with
-            | Some(oldRow) -> 
+            | Some(oldRow) ->
                 _indices |> List.iter(fun t -> t.UpdateRow oldRow row)
+                _events <- (TableEvent.Updated (oldRow, row)) :: _events
             | None -> ()
 
 type ReadonlyTable<'tRow, 'tKey when 'tRow :> IRow>(rows: seq<'tRow>, fromKey: ^tKey -> int64) =
@@ -183,6 +194,12 @@ module Table =
     let CreateReadonlyTable (fromKey: 'U -> int64) (rows: seq<'T> when 'T :> IRow): IReadonlyTable<'T, 'U> =
         let table = new ReadonlyTable<'T, 'U>(rows, fromKey)
         table :> IReadonlyTable<'T, 'U>
+
+    let History (table: 'T when 'T :> ITableEventHistory<'U>): 'U TableEvent list =
+       table.History
+       
+    let ClearHistory (table: 'T when 'T :> ITableEventHistory<'U>): unit =
+       table.ClearHistory()
 
 module TableQuery =
     let SeqLeftJoin (left: seq<'T>) (getForeignKeyLeft: 'T -> 'W)  (right: IReadonlyTable<'U, 'W>): seq<'T * 'U option> =

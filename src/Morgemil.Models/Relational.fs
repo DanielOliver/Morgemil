@@ -3,6 +3,23 @@ namespace Morgemil.Models.Relational
 type IRow =
     abstract member Key : int64
 
+[<RequireQualifiedAccess>]
+type TableEventType =
+    | Added
+    | Updated
+    | Removed
+
+type TableEvent<'tRow when 'tRow :> IRow> =
+    | Added of newValue: 'tRow
+    | Updated of oldValue: 'tRow * newValue: 'tRow
+    | Removed of oldValue: 'tRow
+
+    member this.TableEventType =
+        match this with
+        | Added _ -> TableEventType.Added
+        | Removed _ -> TableEventType.Removed
+        | Updated _ -> TableEventType.Updated
+
 type IIndex<'tRow when 'tRow :> IRow> =
     abstract member AddRow: 'tRow -> unit
     abstract member UpdateRow: 'tRow -> 'tRow -> unit
@@ -37,3 +54,7 @@ type ITable<'tRow, 'tKey when 'tRow :> IRow> =
     abstract member Item: 'tKey -> 'tRow with get, set
     abstract member RemoveByKey: 'tKey -> unit
     abstract member GenerateKey: unit -> 'tKey
+
+type ITableEventHistory<'tRow when 'tRow :> IRow> =
+    abstract member History: unit -> TableEvent<'tRow> list with get
+    abstract member ClearHistory: unit -> unit

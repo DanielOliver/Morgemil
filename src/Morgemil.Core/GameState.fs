@@ -1,18 +1,19 @@
 namespace Morgemil.Core
 
 open Morgemil.Models
+open Morgemil.Models.Relational
 
 [<RequireQualifiedAccess>]
 type GameState =
     | Processing
-    | Results of ActionEvent seq
+    | Results of Character Step list
     | WaitingForInput
 
 [<RequireQualifiedAccess>]
 type GameStateRequest =
     | Input of ActionRequest
     | QueryState of AsyncReplyChannel<GameState>
-    | SetResults of ActionEvent seq
+    | SetResults of Character Step list
     | Kill
     | Acknowledge
 

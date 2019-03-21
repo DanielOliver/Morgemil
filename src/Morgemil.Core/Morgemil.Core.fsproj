@@ -10,6 +10,7 @@
     <Compile Include="CharacterTable.fs" />
     <Compile Include="TileMap.fs" />
     <Compile Include="FloorGenerator.fs" />
+    <Compile Include="EventHistoryBuilder.fs" />
     <Compile Include="Loop.fs" />
     <Compile Include="GameState.fs" />
     <Compile Include="SimpleGameStateMachine.fs" />
