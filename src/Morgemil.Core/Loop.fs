@@ -14,16 +14,24 @@ type Loop(characters: CharacterTable, tileMap: TileMap) =
                 let oldPosition = moveCharacter.Position 
                 let newPosition = oldPosition + direction
                 let blocksMovement = tileMap.Item(newPosition) |> TileMap.blocksMovement
-                if not blocksMovement then
+                if blocksMovement then
+                    yield
+                        {
+                            CharacterID = moveCharacter.ID
+                            OldPosition = oldPosition
+                            RequestedPosition = newPosition
+                        }
+                        |> ActionEvent.RefusedMove
+                else 
                     Table.AddRow characters {
                         moveCharacter with
                             Position = newPosition
                     }
-                yield
-                    {
-                        CharacterID = moveCharacter.ID
-                        OldPosition = oldPosition
-                        NewPosition = newPosition
-                    }
-                    |> ActionEvent.AfterMove
+                    yield
+                        {
+                            CharacterID = moveCharacter.ID
+                            OldPosition = oldPosition
+                            NewPosition = newPosition
+                        }
+                        |> ActionEvent.AfterMove
         }

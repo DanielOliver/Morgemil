@@ -11,7 +11,16 @@ type EventAfterMove =
     }
 
 
+type EventRefusedMoved =
+    {
+        CharacterID: CharacterID
+        OldPosition: Vector2i
+        RequestedPosition: Vector2i
+    }
+
+
 [<RequireQualifiedAccess>]
 type ActionEvent =
     | AfterMove of EventAfterMove
+    | RefusedMove of EventRefusedMoved
 
