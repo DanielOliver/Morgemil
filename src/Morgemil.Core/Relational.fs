@@ -102,7 +102,6 @@ type Table<'tRow, 'tKey when 'tRow :> IRow>(toKey: int64 -> 'tKey, fromKey: 'tKe
     let mutable _nextKey = 0L
     let mutable _events: 'tRow TableEvent list = []
 
-
     let _setNextKey otherKey = _nextKey <- System.Math.Max(otherKey + 1L, _nextKey)
 
     member this.AddIndex index = _indices <- index :: _indices
@@ -200,6 +199,9 @@ module Table =
        
     let ClearHistory (table: 'T when 'T :> ITableEventHistory<'U>): unit =
        table.ClearHistory()
+       
+    let HasHistory (table: 'T when 'T :> ITableEventHistory<'U>): bool =
+       table.History |> List.isEmpty |> not
 
 module TableQuery =
     let SeqLeftJoin (left: seq<'T>) (getForeignKeyLeft: 'T -> 'W)  (right: IReadonlyTable<'U, 'W>): seq<'T * 'U option> =

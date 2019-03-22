@@ -34,4 +34,6 @@ type Loop(characters: CharacterTable, tileMap: TileMap) =
                             NewPosition = newPosition
                         }
                         |> ActionEvent.AfterMove
+            if Table.HasHistory characters then 
+                yield ActionEvent.Empty
         }
