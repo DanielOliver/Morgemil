@@ -51,3 +51,6 @@ module TileMap =
         
     let blocksSight (tile: Tile, tileFeature: TileFeature option) =
         tile.BlocksSight || (tileFeature.IsSome && tileFeature.Value.BlocksSight)
+
+    let isExitPoint (tile: Tile, tileFeature: TileFeature option) =
+        (tileFeature.IsSome && tileFeature.Value.ExitPoint)

@@ -126,17 +126,16 @@ type MapGeneratorConsole() =
     override this.Update(timeElapsed: TimeSpan) =
         let event =
             if SadConsole.Global.KeyboardState.IsKeyReleased Keys.Left then
-                Vector2i.create(-1, 0) |> Some
+                (character1.ID, Vector2i.create(-1, 0)) |> Some
             else if SadConsole.Global.KeyboardState.IsKeyReleased Keys.Right then
-                Vector2i.create(1, 0) |> Some
+                (character1.ID, Vector2i.create(1, 0)) |> Some
             else if SadConsole.Global.KeyboardState.IsKeyReleased Keys.Down then
-                Vector2i.create(0, 1) |> Some
+                (character1.ID, Vector2i.create(0, 1)) |> Some
             else if SadConsole.Global.KeyboardState.IsKeyReleased Keys.Up then
-                Vector2i.create(0, -1) |> Some
+                (character1.ID, Vector2i.create(0, -1)) |> Some
             else
                 None
             |> Option.map ActionRequest.Move
-
 
         match gameState.CurrentState with
         | GameState.WaitingForInput ->

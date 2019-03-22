@@ -7,3 +7,4 @@ type CharacterTable() =
 
     member this.ByPositions = this |> Table.Items |> Seq.map(fun t -> t.Position, t)
 
+    member this.ByID(characterID: CharacterID) = characterID |> Table.GetRowByKey this
