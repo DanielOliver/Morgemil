@@ -40,8 +40,30 @@ type Loop(characters: CharacterTable, tileMap: TileMap) =
                 | None -> ()
                 | Some moveCharacter ->
                     if tileMap.[moveCharacter.Position] |> TileMap.isExitPoint then
-                        //TODO: Leave Level
-                        ()
+                        let items = characters
+                                    |> Table.Items
+                                    |> Seq.toArray
+                        items
+                        |> Seq.map(fun t -> {
+                                t with
+                                    Position = tileMap.EntryPoints |> Seq.head
+                            })
+                        |> Seq.iter (Table.AddRow characters)
+
+                        yield
+                            {
+                                Characters =
+                                    characters
+                                    |> Table.Items
+                                    |> Seq.map(fun t -> {
+                                            t with
+                                                Position = tileMap.EntryPoints |> Seq.head
+                                        })
+                                    |> Array.ofSeq
+                                TileMapData = tileMap.TileMapData
+                            }
+                            |> ActionEvent.MapChange
+
 
             if Table.HasHistory characters then 
                 yield ActionEvent.Empty

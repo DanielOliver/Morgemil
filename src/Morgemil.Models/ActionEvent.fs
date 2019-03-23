@@ -17,8 +17,23 @@ type EventRefusedMoved =
         RequestedPosition: Vector2i
     }
 
+type TileMapData =
+    {
+        Tiles: TileID array
+        DefaultTile: TileID
+        TileFeatures: TileFeatureID option array
+        Size: Vector2i
+    }
+
+type EventMapChange =
+    {
+        Characters: Character array
+        TileMapData: TileMapData
+    }
+
 [<RequireQualifiedAccess>]
 type ActionEvent =
     | AfterMove of EventAfterMove
     | RefusedMove of EventRefusedMoved
+    | MapChange of EventMapChange
     | Empty

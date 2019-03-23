@@ -1,3 +1,7 @@
+open Morgemil.Models.Relational
+
+open Morgemil.Models.Relational
+
 // Learn more about F# at http://fsharp.org
 
 open Microsoft.Xna.Framework.Input
@@ -90,10 +94,29 @@ type MapGeneratorConsole() =
 
     let rng = RNG.SeedRNG(50)
     let tileFeatureTable = Morgemil.Core.TileFeatureTable([ stairTileFeature; startingPointFeature ])
+    let readonlyTileTable =
+        [
+            floorTile
+            defaultTile
+        ]
+        |> Morgemil.Core.Table.CreateReadonlyTable (fun (t: TileID) -> t.Key)
     let (tileMap, results) = FloorGenerator.Create floorParameters tileFeatureTable rng
     let createColor (color: Morgemil.Math.Color) = Microsoft.Xna.Framework.Color(color.R, color.G, color.B, color.A)
 
+    let createTileMapFromData(data: TileMapData) =
+        let result =
+            TileMap(
+                Rectangle.create data.Size,
+                data.DefaultTile |> readonlyTileTable.TryGetRow |> Option.get,
+                Array.zip
+                    (data.Tiles |> Array.map(Table.GetRowByKey readonlyTileTable))
+                    (data.TileFeatures |> Array.map(Option.map(Table.GetRowByKey tileFeatureTable))))
+
+        result
+
+    let mutable viewOnlyTileMap = createTileMapFromData tileMap.TileMapData
     let characterTable = CharacterTable()
+    let mutable viewCharacterTable = CharacterTable()
     let character1 = {
         Character.ID = Table.GenerateKey characterTable
         Race = {
@@ -122,6 +145,7 @@ type MapGeneratorConsole() =
 
     do
         Table.AddRow characterTable character1
+        Table.AddRow viewCharacterTable character1
 
     override this.Update(timeElapsed: TimeSpan) =
         let event =
@@ -137,6 +161,16 @@ type MapGeneratorConsole() =
                 None
             |> Option.map ActionRequest.Move
 
+        let event =
+            event
+            |> Option.orElseWith(fun () ->
+                if SadConsole.Global.KeyboardState.IsKeyReleased Keys.Space then
+                    character1.ID
+                    |> ActionRequest.GoToNextLevel
+                    |> Some
+                else None
+            )
+
         match gameState.CurrentState with
         | GameState.WaitingForInput ->
             if event.IsSome then
@@ -145,11 +179,29 @@ type MapGeneratorConsole() =
             printfn "processing"
         | GameState.Results results ->
             results
-            |> List.iter (printfn "%A")
+            |> List.iter (fun event ->
+                printfn "%A" event
+                match event.Event with
+                | ActionEvent.MapChange mapChange ->
+                    viewOnlyTileMap <- createTileMapFromData mapChange.TileMapData
+                    viewCharacterTable <- CharacterTable()
+                    mapChange.Characters
+                    |> Array.iter (Table.AddRow viewCharacterTable)
+                | _ ->
+                    event.Updates
+                    |> List.iter(fun tableEvent ->
+                        match tableEvent with
+                        | TableEvent.Added(row) -> Table.AddRow viewCharacterTable row
+                        | TableEvent.Updated(_, row) -> Table.AddRow viewCharacterTable row
+                        | TableEvent.Removed(row) -> Table.RemoveRow viewCharacterTable row
+                    )
+                )
+
+
             gameState.Acknowledge()
 
 
-        for (position, tile, tileFeature) in tileMap.Tiles do
+        for (position, tile, tileFeature) in viewOnlyTileMap.Tiles do
             match tileFeature with
             | Some(feature) ->
                 let (showFeatureChar, foregroundColor) =
@@ -171,7 +223,7 @@ type MapGeneratorConsole() =
                 let foregroundColor = tile.Representation.ForegroundColor |> Option.map createColor |> Option.defaultValue Microsoft.Xna.Framework.Color.White
                 base.Print(position.X, position.Y, tile.Representation.AnsiCharacter.ToString(), foregroundColor, backgroundColor)
 
-        for (position, character) in characterTable.ByPositions do
+        for (position, character) in viewCharacterTable.ByPositions do
             let color1 = Color.From(0)
             let representation = {
                 TileRepresentation.AnsiCharacter = '@'
