@@ -1,7 +1,6 @@
 namespace Morgemil.Core
 
 open Morgemil.Models
-open Morgemil.Models.Relational
 
 type SimpleGameStateMachine(gameLoop: ActionRequest -> Character Step list) =
  

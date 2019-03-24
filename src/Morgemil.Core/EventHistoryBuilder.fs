@@ -3,11 +3,6 @@ namespace Morgemil.Core
 open Morgemil.Models
 open Morgemil.Models.Relational
 
-type Step< 'tRow when 'tRow :> IRow> =
-    {   Event: ActionEvent
-        Updates: 'tRow TableEvent list
-    }
-
 type EventHistoryBuilder<'T, 'U when 'T :> ITableEventHistory<'U> and 'U :> IRow>(table: 'T) =
     member this.Bind(m, f) =
         f m
