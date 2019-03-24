@@ -194,8 +194,6 @@ type MapGeneratorConsole() =
                         | TableEvent.Removed(row) -> Table.RemoveRow viewCharacterTable row
                     )
                 )
-
-
             gameState.Acknowledge()
 
 

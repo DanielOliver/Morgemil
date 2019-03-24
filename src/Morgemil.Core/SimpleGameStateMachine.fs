@@ -49,7 +49,7 @@ type SimpleGameStateMachine(gameLoop: ActionRequest -> Character Step list) =
         )
 
     interface IGameStateMachine with
-        /// Sends a poison pill.
+        /// Stops
         member this.Stop() =
             GameStateRequest.Kill
             |> loopWorkAgent.Post
