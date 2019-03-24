@@ -107,10 +107,8 @@ type MapGeneratorConsole() =
         let result =
             TileMap(
                 Rectangle.create data.Size,
-                data.DefaultTile |> readonlyTileTable.TryGetRow |> Option.get,
-                Array.zip
-                    (data.Tiles |> Array.map(Table.GetRowByKey readonlyTileTable))
-                    (data.TileFeatures |> Array.map(Option.map(Table.GetRowByKey tileFeatureTable))))
+                data.DefaultTile,
+                Array.zip data.Tiles data.TileFeatures)
 
         result
 

@@ -19,9 +19,9 @@ type EventRefusedMoved =
 
 type TileMapData =
     {
-        Tiles: TileID array
-        DefaultTile: TileID
-        TileFeatures: TileFeatureID option array
+        Tiles: Tile array
+        DefaultTile: Tile
+        TileFeatures: TileFeature option array
         Size: Vector2i
     }
 

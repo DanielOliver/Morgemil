@@ -23,9 +23,9 @@ type TileMap(mapSize: Rectangle, defaultTile: Tile, ?chunkData: (Tile * TileFeat
     member this.TileMapData: TileMapData =
         {
             TileMapData.Size = mapSize.Size
-            TileFeatures = chunk |> Array.map(fun (_, t) -> t |> Option.map(fun t -> t.ID))
-            Tiles = chunk |> Array.map(fun (t, _) -> t.ID)
-            DefaultTile = defaultTile.ID
+            TileFeatures = chunk |> Array.map(fun (_, t) -> t) |> Array.copy
+            Tiles = chunk |> Array.map(fun (t, _) -> t) |> Array.copy
+            DefaultTile = defaultTile
         }
     member this.DefaultTile: Tile = defaultTile
     member this.MapSize: Rectangle = mapSize
