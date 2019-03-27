@@ -1,9 +1,9 @@
 [
 	{	"id": "0",
-		"DefaultTile": "0",
+		"DefaultTile": 1,
 		"tiles": [ 0, 1 ],
 		"sizerange": {
-			"position": { "x": 5, "y": 5 },
+			"position": { "x": 8, "y": 8 },
 			"size": { "x": 5, "y": 5 }
 		},
 		"strategy": "0"

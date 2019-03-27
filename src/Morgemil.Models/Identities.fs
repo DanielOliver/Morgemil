@@ -57,6 +57,13 @@ type [<Struct>] MonsterGenerationParameterID =
         let (MonsterGenerationParameterID rowID) = this
         rowID
 
+type [<Struct>] PlayerID =
+    | PlayerID of int64
+
+    member this.Key =
+        let (PlayerID rowID) = this
+        rowID
+
 [<Measure>]
 type TileDistance
 

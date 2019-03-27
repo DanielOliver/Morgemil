@@ -1,106 +1,26 @@
-open Morgemil.Models.Relational
-
-open Morgemil.Models.Relational
-
-// Learn more about F# at http://fsharp.org
-
-open Microsoft.Xna.Framework.Input
 open System
 open Morgemil.Core
+open Morgemil.Data
 open Morgemil.Models
 open Morgemil.Math
+open Morgemil.Models.Relational
+open Microsoft.Xna.Framework.Input
 
-let defaultTile: Tile = {
-        ID = TileID 3L
-        Name = "Dungeon Wall"
-        TileType = TileType.Solid
-        Description = "Dungeon Walls are rock, solid, and carved from time."
-        BlocksMovement = true
-        BlocksSight = true
-        Representation = {
-            AnsiCharacter = char(177)
-            ForegroundColor = Some <| Color.From(100, 100, 100)
-            BackGroundColor = Some <| Color.From(30, 30, 30)
-        }
-    }
-
-let floorTile: Tile = {
-        ID = TileID 4L
-        Name = "Dungeon Floor"
-        TileType = TileType.Ground
-        Description = "Dungeon floors are rock, paved cobblestone, and very slipper when bloody."
-        BlocksMovement = false
-        BlocksSight = false
-        Representation = {
-            AnsiCharacter = ' '
-            ForegroundColor = Some <| Color.From(50, 50, 50)
-            BackGroundColor = Some <| Color.From(255, 255, 255)
-        }
-    }
-
-let stairTileFeature: TileFeature = {
-        ID = TileFeatureID 2L
-        Name = "Stairs down"
-        Description = "Stairs down"
-        BlocksMovement = false
-        BlocksSight = false
-        Representation = {
-            AnsiCharacter = char(242)
-            ForegroundColor = Some <| Color.From(30, 30, 255)
-            BackGroundColor = Some <| Color.From(0, 240, 0, 50)
-        }
-        PossibleTiles = [
-            defaultTile
-            floorTile
-        ]
-        ExitPoint = true
-        EntryPoint = false
-    }
-
-let startingPointFeature: TileFeature = {
-        ID = TileFeatureID 1L
-        Name = "Starting point"
-        Description = "Starting point"
-        BlocksMovement = false
-        BlocksSight = false
-        Representation = {
-            AnsiCharacter = char(243)
-            ForegroundColor = Some <| Color.From(0)
-            BackGroundColor = None
-        }
-        PossibleTiles = [
-            defaultTile
-            floorTile
-        ]
-        ExitPoint = false
-        EntryPoint = true
-    }
-
-let floorParameters: FloorGenerationParameter = {
-    Strategy = FloorGenerationStrategy.OpenFloor
-    Tiles = [|
-        defaultTile
-        floorTile
-    |]
-    SizeRange = Rectangle.create(10, 10, 15, 15)
-    DefaultTile = defaultTile
-    ID = FloorGenerationParameterID 5L
-}
-
+let rawGameDataPhase0 = Lazy<DTO.RawDtoPhase0>(fun () -> JsonReader.ReadGameFiles "./Game")
+let rawGameDataPhase2 = Translation.FromDTO.TranslateFromDtosToPhase2 rawGameDataPhase0.Value
 
 
 type MapGeneratorConsole() =
     inherit SadConsole.Console(40, 40)
 
     let rng = RNG.SeedRNG(50)
-    let tileFeatureTable = Morgemil.Core.TileFeatureTable([ stairTileFeature; startingPointFeature ])
+    let tileFeatureTable =
+        rawGameDataPhase2.TileFeatures
+        |> Morgemil.Core.TileFeatureTable
     let readonlyTileTable =
-        [
-            floorTile
-            defaultTile
-        ]
+        rawGameDataPhase2.Tiles
         |> Morgemil.Core.Table.CreateReadonlyTable (fun (t: TileID) -> t.Key)
-    let (tileMap, results) = FloorGenerator.Create floorParameters tileFeatureTable rng
+    let (tileMap, results) = FloorGenerator.Create rawGameDataPhase2.FloorGenerationParameters.[0] tileFeatureTable rng
     let createColor (color: Morgemil.Math.Color) = Microsoft.Xna.Framework.Color(color.R, color.G, color.B, color.A)
 
     let createTileMapFromData(data: TileMapData) =
@@ -125,6 +45,7 @@ type MapGeneratorConsole() =
         }
         RaceModifier = None
         Position = Vector2i.create(5)
+        PlayerID = None
     }
 
     let gameLoop = Loop(characterTable, tileMap)
