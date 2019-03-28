@@ -95,12 +95,18 @@ type PrimaryIndex<'tRow when 'tRow :> IRow>() =
                 _dictionary.Remove oldKey |> ignore
             _dictionary.[ newKey ] <- row
 
-type Table<'tRow, 'tKey when 'tRow :> IRow>(toKey: int64 -> 'tKey, fromKey: 'tKey -> int64) =
+type Table<'tRow, 'tKey when 'tRow :> IRow>(toKey: int64 -> 'tKey, fromKey: 'tKey -> int64, ?recordHistory: bool) =
     let _primaryKey = new PrimaryIndex<'tRow>() :> IPrimaryIndex<'tRow, int64>
     let _primaryKeyIndexCast = _primaryKey :> IIndex<'tRow>
     let mutable _indices = [ _primaryKeyIndexCast ]
     let mutable _nextKey = 0L
     let mutable _events: 'tRow TableEvent list = []
+
+    let _recordEvent =
+        if defaultArg recordHistory false then
+            (fun t -> _events <- t :: _events)
+        else
+            ignore
 
     let _setNextKey otherKey = _nextKey <- System.Math.Max(otherKey + 1L, _nextKey)
 
@@ -127,7 +133,7 @@ type Table<'tRow, 'tKey when 'tRow :> IRow>(toKey: int64 -> 'tKey, fromKey: 'tKe
             and set key row = (this :> ITable<'tRow, 'tKey>).AddRow row
         member this.Remove row =
             _indices |> List.iter(fun t -> t.Remove row)
-            _events <- (TableEvent.Removed row) :: _events
+            _recordEvent (TableEvent.Removed row)
         member this.RemoveByKey key =
             match key |> fromKey |> _primaryKey.TryGetRow with
             | Some(row) -> (this :> ITable<'tRow, 'tKey>).Remove row
@@ -136,16 +142,16 @@ type Table<'tRow, 'tKey when 'tRow :> IRow>(toKey: int64 -> 'tKey, fromKey: 'tKe
             match _primaryKey.TryGetRow (row :> IRow).Key with
             | Some(oldRow) -> 
                 _indices |> List.iter(fun t -> t.UpdateRow oldRow row)
-                _events <- (TableEvent.Updated (oldRow, row)) :: _events
+                _recordEvent (TableEvent.Updated (oldRow, row))
             | None ->
                 _setNextKey (row :> IRow).Key
                 _indices |> List.iter(fun t -> t.AddRow row)
-                _events <- (TableEvent.Added row) :: _events
+                _recordEvent (TableEvent.Added row)
         member this.UpdateRow oldRow row =         
             match _primaryKey.TryGetRow (row :> IRow).Key with
             | Some(oldRow) ->
                 _indices |> List.iter(fun t -> t.UpdateRow oldRow row)
-                _events <- (TableEvent.Updated (oldRow, row)) :: _events
+                _recordEvent (TableEvent.Updated (oldRow, row))
             | None -> ()
 
 type ReadonlyTable<'tRow, 'tKey when 'tRow :> IRow>(rows: seq<'tRow>, fromKey: ^tKey -> int64) =

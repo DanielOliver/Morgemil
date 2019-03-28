@@ -23,7 +23,7 @@ type ExampleRow =
             key
 
 type ExampleTable() as this =
-    inherit Table<ExampleRow, ExampleKey>(ExampleKey, (fun (ExampleKey value) -> value))
+    inherit Table<ExampleRow, ExampleKey>(ExampleKey, (fun (ExampleKey value) -> value), true)
 
     let _multiIndexByName = new MultiIndex<ExampleRow, string>(fun x -> x.Name)
     do

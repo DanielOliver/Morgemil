@@ -33,7 +33,7 @@ type MapGeneratorConsole() =
         result
 
     let mutable viewOnlyTileMap = createTileMapFromData tileMap.TileMapData
-    let characterTable = CharacterTable()
+    let characterTable = CharacterTable(true)
     let mutable viewCharacterTable = CharacterTable()
     let character1 = {
         Character.ID = Table.GenerateKey characterTable
