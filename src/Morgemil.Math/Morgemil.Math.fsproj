@@ -12,6 +12,7 @@
     <Compile Include="Vector2i.fs" />
     <Compile Include="Vector2.fs" />
     <Compile Include="Rectangle.fs" />
+    <Compile Include="Circle.fs" />
     <Compile Include="Matrix2f.fs" />
     <Compile Include="RNG.fs" />
   </ItemGroup>
