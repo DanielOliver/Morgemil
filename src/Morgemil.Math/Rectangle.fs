@@ -100,3 +100,9 @@ type Rectangle =
     let min = vec1.Minimum vec2
     let max = vec1.Maximum vec2
     Rectangle.create(min, max - min + 1)
+
+  ///Returns a rectangle which encloses many points
+  static member EncloseAll (vec1 : Vector2i seq) =
+    vec1
+    |> Seq.map (fun t -> Rectangle.create(t, Vector2i.create(1)))
+    |> Seq.reduce (+)
