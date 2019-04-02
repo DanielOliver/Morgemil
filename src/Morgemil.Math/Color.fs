@@ -45,4 +45,13 @@ type Color =
             R = Convert.ToByte scalar
         }
 
+    static member Black = Color.From(0)
+    static member White = Color.From(255)
+    static member TransparentBlack = Color.From(0, 0)
+    static member Red = Color.From(255, 0, 0)
+    static member Green = Color.From(0, 255, 0)
+    static member Blue = Color.From(0, 0, 255)
+
+    member this.HasAlpha = 0uy < this.A
+
 
