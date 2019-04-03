@@ -37,12 +37,7 @@ type MapGeneratorConsole() =
     let mutable viewCharacterTable = CharacterTable()
     let character1 = {
         Character.ID = Table.GenerateKey characterTable
-        Race = {
-            Race.ID = RaceID 1L
-            Noun = "race1"
-            Adjective = "race1"
-            Description = "race1"
-        }
+        Race = rawGameDataPhase2.Races.[0]
         RaceModifier = None
         Position = Vector2i.create(5)
         PlayerID = None
@@ -141,7 +136,7 @@ type MapGeneratorConsole() =
                 base.Print(position.X, position.Y, tile.Representation.AnsiCharacter.ToString(), foregroundColor, backgroundColor)
 
         for (position, character) in viewCharacterTable.ByPositions do
-            let color1 = Color.From(0)
+            let color1 = Color.Black
             let representation = {
                 TileRepresentation.AnsiCharacter = '@'
                 BackGroundColor = None
