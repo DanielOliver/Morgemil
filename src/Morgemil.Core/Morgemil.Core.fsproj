@@ -14,6 +14,7 @@
     <Compile Include="EventHistoryBuilder.fs" />
     <Compile Include="Loop.fs" />
     <Compile Include="SimpleGameStateMachine.fs" />
+    <Compile Include="GameBuilder.fs" />
   </ItemGroup>
 
   <ItemGroup>
