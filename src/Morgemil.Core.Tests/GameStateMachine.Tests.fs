@@ -5,6 +5,7 @@ open Morgemil.Core
 open Morgemil.Models
 open Morgemil.Models.Relational
 
+
 [<Fact>]
 let ``Can transition states``() =
     let exampleLoop(request: ActionRequest): Character Step list =
@@ -12,19 +13,35 @@ let ``Can transition states``() =
         List.empty
 
     let stateMachine: IGameStateMachine = SimpleGameStateMachine exampleLoop :> IGameStateMachine
-    Assert.Equal(GameState.WaitingForInput, stateMachine.CurrentState)
+    Assert.Equal(GameStateType.WaitingForInput, stateMachine.CurrentState.GameStateType)
 
     let testState() = 
-        while stateMachine.CurrentState = GameState.Processing do
+        while stateMachine.CurrentState.GameStateType = GameStateType.Processing do
             System.Threading.Thread.Sleep 500
-        Assert.Equal(GameState.Results List.empty, stateMachine.CurrentState)
-
-    stateMachine.Input( ActionRequest.Move(CharacterID 0L, Morgemil.Math.Vector2i.Identity) )
+        Assert.Equal(GameStateType.Results, stateMachine.CurrentState.GameStateType)
+    
+        match stateMachine.CurrentState with
+        | GameState.Results (results, acknowledgeCallback) ->
+            acknowledgeCallback()
+        | _ -> ()
+    
+        while stateMachine.CurrentState.GameStateType <> GameStateType.WaitingForInput do
+            System.Threading.Thread.Sleep 500
+        Assert.Equal(GameStateType.WaitingForInput, stateMachine.CurrentState.GameStateType)    
+    
+    
+    
+    match stateMachine.CurrentState with
+    | GameState.WaitingForInput (inputCallback) ->
+        inputCallback ( ActionRequest.Move(CharacterID 0L, Morgemil.Math.Vector2i.Identity) )
+    | _ -> ()
     testState()
     
-    stateMachine.Acknowledge()
-    Assert.Equal(GameState.WaitingForInput, stateMachine.CurrentState)
-
-    stateMachine.Input( ActionRequest.Move(CharacterID 0L, Morgemil.Math.Vector2i.Identity) )
+    
+    match stateMachine.CurrentState with
+    | GameState.WaitingForInput (inputCallback) ->
+        inputCallback ( ActionRequest.Move(CharacterID 0L, Morgemil.Math.Vector2i.Identity) )
+    | _ -> ()
+    
     testState()
 

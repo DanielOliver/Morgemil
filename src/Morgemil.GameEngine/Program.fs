@@ -6,7 +6,7 @@ open Morgemil.Math
 open Morgemil.Models.Relational
 open Microsoft.Xna.Framework.Input
 
-let rawGameDataPhase0 = Lazy<DTO.RawDtoPhase0>(fun () -> JsonReader.ReadGameFiles "./Game")
+let rawGameDataPhase0 = Lazy<DTO.RawDtoPhase0>(fun () -> JsonReader.ReadGameFiles ( if System.IO.Directory.Exists "../Morgemil.Data/Game" then "../Morgemil.Data/Game" else "./Game"))
 let rawGameDataPhase2 = Translation.FromDTO.TranslateFromDtosToPhase2 rawGameDataPhase0.Value
 
 
@@ -86,12 +86,12 @@ type MapGeneratorConsole() =
             )
 
         match gameState.CurrentState with
-        | GameState.WaitingForInput ->
+        | GameState.WaitingForInput (inputCallback) ->
             if event.IsSome then
-                gameState.Input event.Value
+                inputCallback event.Value
         | GameState.Processing ->
             printfn "processing"
-        | GameState.Results results ->
+        | GameState.Results (results, acknowledgeCallback) ->
             results
             |> List.iter (fun event ->
                 printfn "%A" event
@@ -110,7 +110,7 @@ type MapGeneratorConsole() =
                         | TableEvent.Removed(row) -> Table.RemoveRow viewCharacterTable row
                     )
                 )
-            gameState.Acknowledge()
+            acknowledgeCallback()
 
 
         for (position, tile, tileFeature) in viewOnlyTileMap.Tiles do

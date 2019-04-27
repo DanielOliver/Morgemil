@@ -11,6 +11,8 @@ type SimpleGameStateMachine(gameLoop: ActionRequest -> Character Step list) =
                 callback results
             }
             |> Async.Start
+            
+        let inputFunc = (GameStateRequest.Input >> inbox.Post)
 
         let rec loop(previousState: GameState) =
             async {
@@ -19,14 +21,14 @@ type SimpleGameStateMachine(gameLoop: ActionRequest -> Character Step list) =
                 match message with
                 | GameStateRequest.Input request ->
                     match currentState with
-                    | GameState.WaitingForInput ->
+                    | GameState.WaitingForInput _ ->
                         processRequest request (GameStateRequest.SetResults >> inbox.Post)
                         currentState <- GameState.Processing
                     | GameState.Processing
                     | GameState.Results _ ->
                         ()
                 | GameStateRequest.SetResults results ->
-                    currentState <- GameState.Results results
+                    currentState <- GameState.Results (results, (fun () -> inbox.Post GameStateRequest.Acknowledge))
                 | GameStateRequest.QueryState replyChannel ->
                     replyChannel.Reply currentState
                 | GameStateRequest.Kill ->
@@ -34,9 +36,9 @@ type SimpleGameStateMachine(gameLoop: ActionRequest -> Character Step list) =
                 | GameStateRequest.Acknowledge ->
                     match currentState with
                     | GameState.Results _ ->
-                        currentState <- GameState.WaitingForInput
+                        currentState <- GameState.WaitingForInput inputFunc
                     | GameState.Processing
-                    | GameState.WaitingForInput ->
+                    | GameState.WaitingForInput _ ->
                         ()
                         
                 match message with
@@ -45,7 +47,7 @@ type SimpleGameStateMachine(gameLoop: ActionRequest -> Character Step list) =
                 | _ ->
                     do! loop(currentState)
             }
-        loop(GameState.WaitingForInput)
+        loop(GameState.WaitingForInput inputFunc)
         )
 
     interface IGameStateMachine with
@@ -59,14 +61,5 @@ type SimpleGameStateMachine(gameLoop: ActionRequest -> Character Step list) =
                 loopWorkAgent.PostAndReply((fun replyChannel ->
                     GameStateRequest.QueryState replyChannel
                     ), 5000)
-        /// Sends input
-        member this.Input(request: ActionRequest) =
-            request
-            |> GameStateRequest.Input
-            |> loopWorkAgent.Post
-        /// Acknowledge results
-        member this.Acknowledge() =
-            GameStateRequest.Acknowledge
-            |> loopWorkAgent.Post
 
 
