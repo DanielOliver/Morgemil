@@ -17,8 +17,8 @@ type GameStateType =
 [<RequireQualifiedAccess>]
 type GameState =
     | Processing
-    | Results of Character Step list * (unit -> unit)
-    | WaitingForInput of (ActionRequest -> unit)
+    | Results of Steps: Character Step list * AcknowledgeCallback: (unit -> unit)
+    | WaitingForInput of InputCallback: (ActionRequest -> unit)
 
     member this.GameStateType =
         match this with
@@ -28,9 +28,9 @@ type GameState =
 
 [<RequireQualifiedAccess>]
 type GameStateRequest =
-    | Input of ActionRequest
+    | Input of Input: ActionRequest
     | QueryState of AsyncReplyChannel<GameState>
-    | SetResults of Character Step list
+    | SetResults of Steps: Character Step list
     | Kill
     | Acknowledge
 
