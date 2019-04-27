@@ -8,7 +8,7 @@ open Morgemil.Models.Relational
 
 [<Fact>]
 let ``Can transition states``() =
-    let exampleLoop(request: ActionRequest): Character Step list =
+    let exampleLoop(request: ActionRequest): Step list =
         Assert.Equal(ActionRequest.Move(CharacterID 0L, Morgemil.Math.Vector2i.Identity), request)
         List.empty
 

@@ -3,9 +3,13 @@ namespace Morgemil.Core
 open Morgemil.Models
 open Morgemil.Models.Relational
 
-type Step< 'tRow when 'tRow :> IRow> =
+[<RequireQualifiedAccess>]
+type StepItem =
+    | Character of Character TableEvent
+    
+type Step =
     {   Event: ActionEvent
-        Updates: 'tRow TableEvent list
+        Updates: StepItem list
     }
 
 [<RequireQualifiedAccess>]
@@ -17,7 +21,7 @@ type GameStateType =
 [<RequireQualifiedAccess>]
 type GameState =
     | Processing
-    | Results of Steps: Character Step list * AcknowledgeCallback: (unit -> unit)
+    | Results of Steps: Step list * AcknowledgeCallback: (unit -> unit)
     | WaitingForInput of InputCallback: (ActionRequest -> unit)
 
     member this.GameStateType =
@@ -30,7 +34,7 @@ type GameState =
 type GameStateRequest =
     | Input of Input: ActionRequest
     | QueryState of AsyncReplyChannel<GameState>
-    | SetResults of Steps: Character Step list
+    | SetResults of Steps: Step list
     | Kill
     | Acknowledge
 

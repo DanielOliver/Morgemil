@@ -95,18 +95,13 @@ type PrimaryIndex<'tRow when 'tRow :> IRow>() =
                 _dictionary.Remove oldKey |> ignore
             _dictionary.[ newKey ] <- row
 
-type Table<'tRow, 'tKey when 'tRow :> IRow>(toKey: int64 -> 'tKey, fromKey: 'tKey -> int64, ?recordHistory: bool) =
+type Table<'tRow, 'tKey when 'tRow :> IRow>(toKey: int64 -> 'tKey, fromKey: 'tKey -> int64) =
     let _primaryKey = new PrimaryIndex<'tRow>() :> IPrimaryIndex<'tRow, int64>
     let _primaryKeyIndexCast = _primaryKey :> IIndex<'tRow>
     let mutable _indices = [ _primaryKeyIndexCast ]
     let mutable _nextKey = 0L
-    let mutable _events: 'tRow TableEvent list = []
 
-    let _recordEvent =
-        if defaultArg recordHistory false then
-            (fun t -> _events <- t :: _events)
-        else
-            ignore
+    let mutable _recordEvent = ignore
 
     let _setNextKey otherKey = _nextKey <- System.Math.Max(otherKey + 1L, _nextKey)
 
@@ -114,8 +109,9 @@ type Table<'tRow, 'tKey when 'tRow :> IRow>(toKey: int64 -> 'tKey, fromKey: 'tKe
     member this.PrimaryIndex = _primaryKeyIndexCast
 
     interface ITableEventHistory<'tRow> with
-        member this.History = _events
-        member this.ClearHistory() = _events <- []
+        member this.HistoryCallback
+            with get() = _recordEvent
+            and set x = _recordEvent <- x
     
     interface IReadonlyTable<'tRow, 'tKey> with
         member this.Item
@@ -199,15 +195,12 @@ module Table =
     let CreateReadonlyTable (fromKey: 'U -> int64) (rows: seq<'T> when 'T :> IRow): IReadonlyTable<'T, 'U> =
         let table = new ReadonlyTable<'T, 'U>(rows, fromKey)
         table :> IReadonlyTable<'T, 'U>
-
-    let History (table: 'T when 'T :> ITableEventHistory<'U>): 'U TableEvent list =
-       table.History
        
-    let ClearHistory (table: 'T when 'T :> ITableEventHistory<'U>): unit =
-       table.ClearHistory()
+    let GetHistoryCallback (table: 'T when 'T :> ITableEventHistory<'U>): (TableEvent<'U> -> unit) =
+       table.HistoryCallback
        
-    let HasHistory (table: 'T when 'T :> ITableEventHistory<'U>): bool =
-       table.History |> List.isEmpty |> not
+    let SetHistoryCallback (table: 'T when 'T :> ITableEventHistory<'U>) (callback: (TableEvent<'U> -> unit)): unit =
+       table.HistoryCallback <- callback
 
 module TableQuery =
     let SeqLeftJoin (left: seq<'T>) (getForeignKeyLeft: 'T -> 'W)  (right: IReadonlyTable<'U, 'W>): seq<'T * 'U option> =

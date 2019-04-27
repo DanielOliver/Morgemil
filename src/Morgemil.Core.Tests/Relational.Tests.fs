@@ -20,7 +20,7 @@ type ExampleRow =
             key
 
 type ExampleTable() as this =
-    inherit Table<ExampleRow, ExampleKey>(ExampleKey, (fun (ExampleKey value) -> value), true)
+    inherit Table<ExampleRow, ExampleKey>(ExampleKey, (fun (ExampleKey value) -> value))
 
     let _multiIndexByName = new MultiIndex<ExampleRow, string>(fun x -> x.Name)
     do
@@ -36,8 +36,7 @@ let ``Can Add items to Index``() =
     let exampleTable = new ExampleTable()
 
     Assert.Equal(ExampleKey 0L, Table.GenerateKey exampleTable)
-    Assert.Empty(Table.History exampleTable)
-
+    
     let exampleItem1 = {
         ExampleRow.Attribute1 = 0
         ExampleKey = ExampleKey(500L)
@@ -52,12 +51,6 @@ let ``Can Add items to Index``() =
     }
     Table.AddRow exampleTable exampleItem2
     
-    Assert.Equal(2, Table.History exampleTable |> Seq.length)
-    Assert.Equal<ExampleRow TableEvent list>([ TableEvent.Added exampleItem2; TableEvent.Added exampleItem1 ], Table.History exampleTable)
-
-    Table.ClearHistory exampleTable
-    Assert.Empty(Table.History exampleTable)
-    
     Assert.Equal(ExampleKey 502L, Table.GenerateKey exampleTable)
     Assert.Equal(2, exampleTable |> Table.Items |> Seq.length)
     Assert.Throws<System.Exception>(fun () -> Table.GetRowByKey exampleTable (ExampleKey 123L) |> ignore) |> ignore
@@ -69,7 +62,6 @@ let ``Can Add items to Index``() =
     Assert.Equal(1, exampleTable |> Table.Items |> Seq.length)
     Assert.Throws<System.Exception>(fun () -> Table.GetRowByKey exampleTable (ExampleKey 500L) |> ignore) |> ignore
     Assert.Equal(1, (MultiIndex.GetRowsByKey exampleTable.NameIndex "Test1") |> Seq.length)
-    Assert.Equal(TableEvent.Removed exampleItem1, Table.History exampleTable |> List.head)
 
     let exampleItem3 = {
         exampleItem2 with
@@ -79,7 +71,6 @@ let ``Can Add items to Index``() =
     Assert.Equal(exampleItem3, Table.GetRowByKey exampleTable (ExampleKey 501L))
     Assert.Empty(MultiIndex.GetRowsByKey exampleTable.NameIndex "Test1")
     Assert.Equal(1, (MultiIndex.GetRowsByKey exampleTable.NameIndex "onetwo") |> Seq.length)
-    Assert.Equal(TableEvent.Updated (exampleItem2, exampleItem3), Table.History exampleTable |> List.head)
 
     for index in [1L..50_000L] do
         {

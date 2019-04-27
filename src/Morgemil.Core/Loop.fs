@@ -4,9 +4,10 @@ open Morgemil.Models
 
 type Loop(characters: CharacterTable, tileMap: TileMap) =
 
-    member this.ProcessRequest(event: ActionRequest): Character Step list =
-        Table.ClearHistory characters
-        EventHistoryBuilder characters {
+    member this.ProcessRequest(event: ActionRequest): Step list =
+        use builder = new EventHistoryBuilder(characters)
+        
+        builder {
             match event with
             | ActionRequest.Move (characterID, direction) ->
                 match characterID |> Table.TryGetRowByKey characters with
@@ -64,7 +65,5 @@ type Loop(characters: CharacterTable, tileMap: TileMap) =
                             }
                             |> ActionEvent.MapChange
 
-
-            if Table.HasHistory characters then 
-                yield ActionEvent.Empty
+            yield ActionEvent.Empty
         }

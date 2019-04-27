@@ -33,7 +33,7 @@ type MapGeneratorConsole() =
         result
 
     let mutable viewOnlyTileMap = createTileMapFromData tileMap.TileMapData
-    let characterTable = CharacterTable(true)
+    let characterTable = CharacterTable()
     let mutable viewCharacterTable = CharacterTable()
     let character1 = {
         Character.ID = Table.GenerateKey characterTable
@@ -105,9 +105,11 @@ type MapGeneratorConsole() =
                     event.Updates
                     |> List.iter(fun tableEvent ->
                         match tableEvent with
-                        | TableEvent.Added(row) -> Table.AddRow viewCharacterTable row
-                        | TableEvent.Updated(_, row) -> Table.AddRow viewCharacterTable row
-                        | TableEvent.Removed(row) -> Table.RemoveRow viewCharacterTable row
+                        | StepItem.Character character ->
+                            match character with
+                            | TableEvent.Added(row) -> Table.AddRow viewCharacterTable row
+                            | TableEvent.Updated(_, row) -> Table.AddRow viewCharacterTable row
+                            | TableEvent.Removed(row) -> Table.RemoveRow viewCharacterTable row
                     )
                 )
             acknowledgeCallback()

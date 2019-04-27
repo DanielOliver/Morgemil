@@ -19,6 +19,13 @@ type TableEvent<'tRow when 'tRow :> IRow> =
         | Added _ -> TableEventType.Added
         | Removed _ -> TableEventType.Removed
         | Updated _ -> TableEventType.Updated
+        
+    member this.Map (mapper: _ -> _) =
+        match this with
+        | Added x -> x |> mapper |> Added
+        | Removed x -> x |> mapper |> Removed
+        | Updated (x, y) -> (x |> mapper,y |> mapper) |> Updated
+        
 
 type IIndex<'tRow when 'tRow :> IRow> =
     abstract member AddRow: 'tRow -> unit
@@ -56,5 +63,4 @@ type ITable<'tRow, 'tKey when 'tRow :> IRow> =
     abstract member GenerateKey: unit -> 'tKey
 
 type ITableEventHistory<'tRow when 'tRow :> IRow> =
-    abstract member History: unit -> TableEvent<'tRow> list with get
-    abstract member ClearHistory: unit -> unit
+    abstract member HistoryCallback: (TableEvent<'tRow> -> unit) with get, set
