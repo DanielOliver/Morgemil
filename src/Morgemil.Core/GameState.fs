@@ -6,7 +6,7 @@ open Morgemil.Models.Relational
 [<RequireQualifiedAccess>]
 type StepItem =
     | Character of Character TableEvent
-    
+
 type Step =
     {   Event: ActionEvent
         Updates: StepItem list
@@ -43,3 +43,5 @@ type IGameStateMachine =
     abstract member Stop: unit -> unit
     /// Gets the current state of the game loop
     abstract member CurrentState: GameState with get
+    /// Gets the raw scenario data
+    abstract member ScenarioData: ScenarioData with get

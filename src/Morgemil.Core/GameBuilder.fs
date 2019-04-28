@@ -5,10 +5,15 @@ open Morgemil.Models
 /// The steps and state of a game that's being built.
 [<RequireQualifiedAccess>]
 type GameBuilderState =
-    | WaitingForPlayers of CancelPlayerReadyStatusCallback: (unit -> unit) * PlayerList: PlayerID list * CurrentPlayerID: PlayerID
-    | WaitingForCurrentPlayer of AddCurrentPlayer: (Character -> unit) * PlayerList: PlayerID list
+    | WaitingForCurrentPlayer of AddCurrentPlayer: (RaceID -> unit)
     | GameBuilt of GameEngine: IGameStateMachine * CurrentPlayerID: PlayerID
     | LoadingGameProgress of State: string
+
+/// The steps and state of a game that's being built.
+[<RequireQualifiedAccess>]
+type GameBuilderStateRequest =
+    | QueryState of AsyncReplyChannel<GameBuilderState>
+    | AddPlayer of PlayerID: PlayerID
 
 /// The interface to interact with a game being built.
 type GameBuilder =

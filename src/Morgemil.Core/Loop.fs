@@ -2,18 +2,18 @@ namespace Morgemil.Core
 
 open Morgemil.Models
 
-type Loop(characters: CharacterTable, tileMap: TileMap) =
+type Loop(characters: CharacterTable, tileMap: TileMap, scenarioData: ScenarioData) =
 
     member this.ProcessRequest(event: ActionRequest): Step list =
         use builder = new EventHistoryBuilder(characters)
-        
+
         builder {
             match event with
             | ActionRequest.Move (characterID, direction) ->
                 match characterID |> Table.TryGetRowByKey characters with
                 | None -> ()
                 | Some moveCharacter ->
-                    let oldPosition = moveCharacter.Position 
+                    let oldPosition = moveCharacter.Position
                     let newPosition = oldPosition + direction
                     let blocksMovement = tileMap.Item(newPosition) |> TileMap.blocksMovement
                     if blocksMovement then
@@ -24,7 +24,7 @@ type Loop(characters: CharacterTable, tileMap: TileMap) =
                                 RequestedPosition = newPosition
                             }
                             |> ActionEvent.RefusedMove
-                    else 
+                    else
                         Table.AddRow characters {
                             moveCharacter with
                                 Position = newPosition

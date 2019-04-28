@@ -8,7 +8,7 @@ open Microsoft.Xna.Framework.Input
 
 let rawGameDataPhase0 = Lazy<DTO.RawDtoPhase0>(fun () -> JsonReader.ReadGameFiles ( if System.IO.Directory.Exists "../Morgemil.Data/Game" then "../Morgemil.Data/Game" else "./Game"))
 let rawGameDataPhase2 = Translation.FromDTO.TranslateFromDtosToPhase2 rawGameDataPhase0.Value
-
+let scenarioData = Translation.FromDTO.TranslateFromDtosToScenario rawGameDataPhase0.Value
 
 type MapGeneratorConsole() =
     inherit SadConsole.Console(40, 40)
@@ -17,9 +17,7 @@ type MapGeneratorConsole() =
     let tileFeatureTable =
         rawGameDataPhase2.TileFeatures
         |> Morgemil.Core.TileFeatureTable
-    let readonlyTileTable =
-        rawGameDataPhase2.Tiles
-        |> Morgemil.Core.Table.CreateReadonlyTable (fun (t: TileID) -> t.Key)
+    let readonlyTileTable = scenarioData.Tiles
     let (tileMap, results) = FloorGenerator.Create rawGameDataPhase2.FloorGenerationParameters.[0] tileFeatureTable rng
     let createColor (color: Morgemil.Math.Color) = Microsoft.Xna.Framework.Color(color.R, color.G, color.B, color.A)
 
@@ -43,8 +41,8 @@ type MapGeneratorConsole() =
         PlayerID = None
     }
 
-    let gameLoop = Loop(characterTable, tileMap)
-    let gameState = SimpleGameStateMachine(gameLoop.ProcessRequest) :> IGameStateMachine
+    let gameLoop = Loop(characterTable, tileMap, scenarioData)
+    let gameState = SimpleGameStateMachine(gameLoop.ProcessRequest, scenarioData) :> IGameStateMachine
 
     let blendColors (color1: Microsoft.Xna.Framework.Color) (color2: Microsoft.Xna.Framework.Color) =
         if color1.A = System.Byte.MaxValue || color2.A = System.Byte.MinValue then

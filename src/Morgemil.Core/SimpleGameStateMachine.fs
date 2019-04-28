@@ -2,8 +2,8 @@ namespace Morgemil.Core
 
 open Morgemil.Models
 
-type SimpleGameStateMachine(gameLoop: ActionRequest -> Step list) =
- 
+type SimpleGameStateMachine(gameLoop: ActionRequest -> Step list, scenarioData: ScenarioData) =
+
     let loopWorkAgent = MailboxProcessor<GameStateRequest>.Start(fun inbox ->
         let processRequest (actionRequest: ActionRequest) (callback: Step list -> unit) =
             async {
@@ -11,7 +11,7 @@ type SimpleGameStateMachine(gameLoop: ActionRequest -> Step list) =
                 callback results
             }
             |> Async.Start
-            
+
         let inputFunc = (GameStateRequest.Input >> inbox.Post)
 
         let rec loop(previousState: GameState) =
@@ -40,7 +40,7 @@ type SimpleGameStateMachine(gameLoop: ActionRequest -> Step list) =
                     | GameState.Processing
                     | GameState.WaitingForInput _ ->
                         ()
-                        
+
                 match message with
                 | GameStateRequest.Kill ->
                     ()
@@ -61,5 +61,6 @@ type SimpleGameStateMachine(gameLoop: ActionRequest -> Step list) =
                 loopWorkAgent.PostAndReply((fun replyChannel ->
                     GameStateRequest.QueryState replyChannel
                     ), 5000)
-
+        /// Get Scenario Data
+        member this.ScenarioData = scenarioData
 
