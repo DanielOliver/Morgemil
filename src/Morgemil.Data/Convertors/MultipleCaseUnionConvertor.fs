@@ -1,7 +1,9 @@
 namespace Morgemil.Data.Convertors
 
+open System
 open Microsoft.FSharp.Reflection
 open Newtonsoft.Json
+open Newtonsoft.Json.Linq
 
 type MultipleCaseUnionConverter () =
     inherit JsonConverter ()
@@ -27,5 +29,23 @@ type MultipleCaseUnionConverter () =
             writer.WriteEndObject()
 
     override this.ReadJson(reader, t, existingValue, serializer) =
-        //TODO
-        existingValue
+        let jsonObject = JObject.Load(reader);
+        let cases = FSharpType.GetUnionCases(t)
+        jsonObject.Properties()
+        |> Seq.filter(fun property ->
+                  property.HasValues
+                  && cases |> Seq.exists(fun t -> t.Name.Equals(property.Name, StringComparison.OrdinalIgnoreCase))
+                  )
+        |> Seq.choose(fun property ->
+            let array = jsonObject.[property.Name] :?> JArray
+            let case = cases |> Seq.find(fun t -> t.Name.Equals(property.Name, StringComparison.OrdinalIgnoreCase))
+            if array.HasValues then
+                let firstField = case.GetFields().[0]
+                let firstItem = array.[0] :?> JObject                
+                let castedItem = firstItem.ToObject(firstField.PropertyType, serializer)
+                FSharpValue.MakeUnion(case,[|castedItem|])
+                |> Some
+            else None
+            )
+        |> Seq.head
+        

@@ -28,3 +28,6 @@ let ``Try serialize and serialize odd case``() =
     let text1 = JsonConvert.SerializeObject(item1, settings)
     let expectedText = "{\"ID\":50,\"SubItem\":{\"Weapon\":[{\"RangeType\":\"Melee\",\"BaseRange\":5,\"HandCount\":2,\"Weight\":5.0}]},\"Noun\":\"one\",\"IsUnique\":false,\"ItemType\":\"Weapon\"}"
     Assert.Equal(expectedText, text1)
+    
+    let deserializedItem = JsonConvert.DeserializeObject<Item>(expectedText, settings)
+    Assert.Equal(item1, deserializedItem)
