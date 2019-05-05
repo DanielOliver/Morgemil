@@ -9,6 +9,7 @@
     <ItemGroup>
         <Compile Include="Translation.Tests.fs" />
         <Compile Include="JsonReader.Tests.fs" />
+        <Compile Include="JsonWriter.Tests.fs" />
         <Compile Include="Validation.Tests.fs" />
         <Compile Include="Program.fs" />
     </ItemGroup>
