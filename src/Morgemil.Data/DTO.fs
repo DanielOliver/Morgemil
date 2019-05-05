@@ -67,16 +67,10 @@ type MonsterGenerationParameter =
   interface IRow with
       member this.Key = this.ID
 
-[<RequireQualifiedAccess>]
-type TileType =
-  | Void = 0
-  | Solid = 1
-  | Ground = 2
-
 type Tile =
   { ID : int64
     ///The general specification of this tile
-    TileType: TileType
+    TileType: Morgemil.Models.TileType
     /// A short name. eg: "Lush Grass"
     Name : string
     ///A long description. eg: "Beware the burning sand. Scorpions and asps make their home here."
@@ -114,14 +108,9 @@ type TileFeature =
     interface IRow with
         member this.Key = this.ID
 
-[<RequireQualifiedAccess>]
-type WeaponRangeType =
-  | Melee = 0
-  | Ranged = 1
-
 type Weapon =
   { ///Type of this weapon
-    RangeType: WeaponRangeType
+    RangeType: Morgemil.Models.WeaponRangeType
     ///Base Range
     BaseRange: int
     ///The number of hands required to wield this weapon
@@ -130,34 +119,16 @@ type Weapon =
     Weight: decimal
   }
 
-type WearableType =
-  | Head = 0
-  | Chest = 1
-  | Hand = 2
-  | Legs = 3
-  | Feet = 4
-  | Waist = 5
-  | Fingers = 6
-  | Neck = 7
-  | Cloak = 8
-  | Shield = 9
-
 type Wearable =
   { ///The weight of this item. Used in stamina
     Weight: decimal
     ///Where this wearable resides
-    WearableType: WearableType
+    WearableType: Morgemil.Models.WearableType
   }
 
 type Consumable =
   { Uses: int
   }
-
-[<RequireQualifiedAccess>]
-type ItemType =
-  | Weapon = 0
-  | Wearable = 1
-  | Consumable = 2
 
 type Item =
   { ID: int64
@@ -166,7 +137,7 @@ type Item =
     Wearable: Wearable list
     Consumable: Consumable list
     ///The general classification
-    ItemType: ItemType
+    ItemType: Morgemil.Models.ItemType
     ///Name of this item
     Noun: string
     ///If true, then never appears more than once in a game.
@@ -175,10 +146,6 @@ type Item =
 
   interface IRow with
       member this.Key = this.ID
-
-[<RequireQualifiedAccess>]
-type FloorGenerationStrategy =
-  | OpenFloor = 0
 
 type FloorGenerationParameter =
   { ID: int64
@@ -189,7 +156,7 @@ type FloorGenerationParameter =
     ///Size generation
     SizeRange: Rectangle
     ///Generation Strategy
-    Strategy: FloorGenerationStrategy
+    Strategy: Morgemil.Models.FloorGenerationStrategy
   }
 
   interface IRow with
