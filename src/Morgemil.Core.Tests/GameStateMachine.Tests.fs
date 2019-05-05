@@ -9,7 +9,10 @@ open Morgemil.Models.Relational
 [<Fact>]
 let ``Can transition states``() =
     let exampleLoop(request: ActionRequest): Step list =
-        Assert.Equal(ActionRequest.Move(CharacterID 0L, Morgemil.Math.Vector2i.Identity), request)
+        Assert.Equal( ( ActionRequest.Move {
+            ActionRequestMove.CharacterID = CharacterID 0L
+            ActionRequestMove.Direction = Morgemil.Math.Vector2i.Identity
+        } ), request)
         List.empty
 
     let scenarioData = {
@@ -43,14 +46,20 @@ let ``Can transition states``() =
 
     match stateMachine.CurrentState with
     | GameState.WaitingForInput (inputCallback) ->
-        inputCallback ( ActionRequest.Move(CharacterID 0L, Morgemil.Math.Vector2i.Identity) )
+        inputCallback ( ActionRequest.Move {
+            ActionRequestMove.CharacterID = CharacterID 0L
+            ActionRequestMove.Direction = Morgemil.Math.Vector2i.Identity
+        } )
     | _ -> ()
     testState()
 
 
     match stateMachine.CurrentState with
     | GameState.WaitingForInput (inputCallback) ->
-        inputCallback ( ActionRequest.Move(CharacterID 0L, Morgemil.Math.Vector2i.Identity) )
+        inputCallback ( ActionRequest.Move {
+            ActionRequestMove.CharacterID = CharacterID 0L
+            ActionRequestMove.Direction = Morgemil.Math.Vector2i.Identity
+        } )
     | _ -> ()
 
     testState()

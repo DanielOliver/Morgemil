@@ -25,4 +25,7 @@
     <Compile Include="ActionRequest.fs" />
     <Compile Include="ActionEvent.fs" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+  </ItemGroup>
 </Project>

@@ -1,5 +1,7 @@
 namespace Morgemil.Models
 
+open Newtonsoft.Json
+
 [<RequireQualifiedAccess>]
 type FloorGenerationStrategy =
   | OpenFloor
@@ -18,4 +20,5 @@ type FloorGenerationParameter =
 
 
   interface Relational.IRow with
+        [<JsonIgnore()>]
         member this.Key = this.ID.Key

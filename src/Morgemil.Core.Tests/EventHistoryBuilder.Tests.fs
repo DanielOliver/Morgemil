@@ -43,32 +43,32 @@ let ``Can yield Results without updates``() =
     use eventBuilder = new EventHistoryBuilder(table1)
     let results =
         eventBuilder {
-            yield ActionEvent.Empty
+            yield ActionEvent.Empty 1
             yield eventBuilder {
-                yield ActionEvent.Empty
+                yield ActionEvent.Empty 2
                 Table.AddRow table1 exampleItem2
-                yield ActionEvent.Empty
+                yield ActionEvent.Empty 3
             }
             Table.AddRow table1 exampleItem1
-            yield ActionEvent.Empty
+            yield ActionEvent.Empty 4
         }
     Assert.Equal(4, results.Length)
     Assert.Equal< Step list>(
         [
             {
-                Step.Event = ActionEvent.Empty
+                Step.Event = ActionEvent.Empty 1
                 Step.Updates = []
             }
             {
-                Step.Event = ActionEvent.Empty
+                Step.Event = ActionEvent.Empty 2
                 Step.Updates = []
             }
             {
-                Step.Event = ActionEvent.Empty
+                Step.Event = ActionEvent.Empty 3
                 Step.Updates = [ exampleItem2 |> TableEvent.Added |> StepItem.Character ]
             }
             {
-                Step.Event = ActionEvent.Empty
+                Step.Event = ActionEvent.Empty 4
                 Step.Updates = [ exampleItem1 |> TableEvent.Added |> StepItem.Character ]
             }
         ] |> List.rev,

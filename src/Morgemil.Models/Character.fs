@@ -1,5 +1,7 @@
 namespace Morgemil.Models
+
 open Morgemil.Math
+open Newtonsoft.Json
 
 type Character =
     {
@@ -10,4 +12,5 @@ type Character =
         PlayerID: PlayerID option
     }
     interface Relational.IRow with
+        [<JsonIgnore()>]
         member this.Key = this.ID.Key

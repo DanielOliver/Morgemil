@@ -1,5 +1,6 @@
 namespace Morgemil.Models
 
+open Newtonsoft.Json
 
 type TileFeature =
     {   ID: TileFeatureID
@@ -23,4 +24,5 @@ type TileFeature =
 
 
     interface Relational.IRow with
+        [<JsonIgnore()>]
         member this.Key = this.ID.Key

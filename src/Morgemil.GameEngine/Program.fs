@@ -71,7 +71,13 @@ type MapGeneratorConsole() =
                 (character1.ID, Vector2i.create(0, -1)) |> Some
             else
                 None
-            |> Option.map ActionRequest.Move
+            |> Option.map (fun (characterID, direction) ->
+                {
+                    ActionRequestMove.CharacterID = characterID
+                    ActionRequestMove.Direction = direction
+                }
+                |> ActionRequest.Move
+                )
 
         let event =
             event

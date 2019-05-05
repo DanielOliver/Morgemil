@@ -1,5 +1,7 @@
 namespace Morgemil.Models
 
+open Newtonsoft.Json
+
 type RaceModifier =
   { ID : RaceModifierID
     ///Proper noun
@@ -13,5 +15,6 @@ type RaceModifier =
   }
 
     interface Relational.IRow with
+      [<JsonIgnore()>]
       member this.Key = this.ID.Key
 

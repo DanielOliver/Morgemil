@@ -36,4 +36,4 @@ type ActionEvent =
     | AfterMove of EventAfterMove
     | RefusedMove of EventRefusedMoved
     | MapChange of EventMapChange
-    | Empty
+    | Empty of int

@@ -9,12 +9,12 @@ type Loop(characters: CharacterTable, tileMap: TileMap, scenarioData: ScenarioDa
 
         builder {
             match event with
-            | ActionRequest.Move (characterID, direction) ->
-                match characterID |> Table.TryGetRowByKey characters with
+            | ActionRequest.Move actionRequestMove ->
+                match actionRequestMove.CharacterID |> Table.TryGetRowByKey characters with
                 | None -> ()
                 | Some moveCharacter ->
                     let oldPosition = moveCharacter.Position
-                    let newPosition = oldPosition + direction
+                    let newPosition = oldPosition + actionRequestMove.Direction
                     let blocksMovement = tileMap.Item(newPosition) |> TileMap.blocksMovement
                     if blocksMovement then
                         yield
@@ -65,5 +65,5 @@ type Loop(characters: CharacterTable, tileMap: TileMap, scenarioData: ScenarioDa
                             }
                             |> ActionEvent.MapChange
 
-            yield ActionEvent.Empty
+            yield ActionEvent.Empty 0
         }

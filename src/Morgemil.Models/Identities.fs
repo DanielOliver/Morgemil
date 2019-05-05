@@ -1,5 +1,10 @@
 namespace Morgemil.Models
 
+open System 
+
+type [<AttributeUsage(AttributeTargets.Property)>] RowKeySerializationAttribute() =
+    inherit Attribute()
+
 type [<Struct>] TileFeatureID =
     | TileFeatureID of int64
 

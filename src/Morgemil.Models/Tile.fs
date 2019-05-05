@@ -1,5 +1,7 @@
 namespace Morgemil.Models
 
+open Newtonsoft.Json
+
 [<RequireQualifiedAccess>]
 type TileType = 
   | Void 
@@ -23,4 +25,5 @@ type Tile =
 
   
   interface Relational.IRow with
+      [<JsonIgnore()>]
       member this.Key = this.ID.Key
