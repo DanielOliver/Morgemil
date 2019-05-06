@@ -3,12 +3,13 @@ namespace Morgemil.Models
 open Newtonsoft.Json
 
 [<RequireQualifiedAccess>]
-type TileType = 
-  | Void 
+type TileType =
+  | Void
   | Solid
   | Ground
 
-type Tile = 
+[<RecordSerialization>]
+type Tile =
   { ID : TileID
     ///The general specification of this tile
     TileType: TileType
@@ -23,7 +24,7 @@ type Tile =
     ///What this tile looks like.
     Representation: TileRepresentation}
 
-  
+
   interface Relational.IRow with
       [<JsonIgnore()>]
       member this.Key = this.ID.Key

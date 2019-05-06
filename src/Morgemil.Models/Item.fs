@@ -20,6 +20,7 @@ type SubItem =
     | Wearable _ -> ItemType.Wearable
     | Consumable _ -> ItemType.Consumable
 
+[<RecordSerialization>]
 type Item =
     {
         ID : ItemID
@@ -30,7 +31,7 @@ type Item =
         ///If true, then never appears more than once in a game.
         IsUnique : bool
     }
-    
+
     ///The general classification
     [<JsonIgnore()>]
     member this.ItemType =

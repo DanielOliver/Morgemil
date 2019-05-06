@@ -5,6 +5,7 @@ type WeaponRangeType =
   | Melee
   | Ranged
 
+[<RecordSerialization>]
 type Weapon =
   { ///Type of this weapon
     RangeType: WeaponRangeType

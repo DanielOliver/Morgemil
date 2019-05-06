@@ -2,6 +2,7 @@ namespace Morgemil.Models
 
 open Newtonsoft.Json
 
+[<RecordSerialization>]
 type TileFeature =
     {   ID: TileFeatureID
         /// A short name. eg: "Stairs Down"

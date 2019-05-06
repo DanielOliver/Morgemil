@@ -2,6 +2,7 @@ namespace Morgemil.Models
 
 open Newtonsoft.Json
 
+[<RecordSerialization>]
 type RaceModifier =
   { ID : RaceModifierID
     ///Proper noun
@@ -9,7 +10,7 @@ type RaceModifier =
     ///Proper adjective
     Adjective : string
     ///User-visible description
-    Description : string 
+    Description : string
     ///Valid races for this modifier
     PossibleRaces: Race list
   }

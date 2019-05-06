@@ -1,6 +1,7 @@
 ﻿namespace Morgemil.Models
 
-type Consumable = 
-  { Uses: int 
+[<RecordSerialization>]
+type Consumable =
+  { Uses: int
   }
 
