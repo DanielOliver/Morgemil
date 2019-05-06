@@ -23,6 +23,9 @@ let IsSingleCase(t: Type) =
     && FSharpType.GetUnionCases(t).Length = 1
     && FSharpType.GetUnionCases(t).[0].GetFields().Length = 1
 
+let GetSingleCaseType(t: Type) =
+    FSharpType.GetUnionCases(t).[0].GetFields().[0].PropertyType
+
 let IsEnumUnionCase(t: Type) =
     FSharpType.IsUnion(t)
     && FSharpType.GetUnionCases(t)
@@ -58,6 +61,9 @@ let InnerType (t: Type): (Type * bool * bool) =
 
 let IsInTypes (currentType: Type) (knownTypes: System.Collections.Generic.List<string>) =
     knownTypes.Contains(currentType.FullName)
+
+let IsRowKey (currentType: Type) =
+    typeof<Morgemil.Models.Relational.IRow>.IsAssignableFrom(currentType)
 
 let ShouldAddType (currentType: Type) (knownTypes: System.Collections.Generic.List<string>) =
     IsMorgemilType currentType && not (IsInTypes currentType knownTypes) && not (IsEnumUnion currentType)
@@ -104,10 +110,26 @@ let rec WriteDto (writer: StringWriter) (currentType: Type) (knownTypes: System.
                 if isOption then " option"
                 else if isList then " list"
                 else ""
-            let typeName = innerType.Name + if IsMorgemilType innerType && not (IsSingleCase innerType) && not (IsEnumUnion innerType) then "Dto" else ""
+            let typeName =
+                if IsMorgemilType innerType && not (IsSingleCase innerType) && not (IsEnumUnion innerType) then
+                    if IsRowKey innerType then
+                        innerType.Name + "ID"
+                    else
+                        innerType.Name + "Dto"
+                else innerType.Name
             writer.WriteLine(sprintf "%s: %s%s" field.Name typeName typeModifier)
     WriteIndentation writer
     writer.WriteLine("}")
+    if IsRowKey currentType then
+        WriteIndentation writer
+        writer.WriteLine("interface IRow with")
+        WriteIndentationLevel 2 writer
+        writer.WriteLine("[<JsonIgnore>]")
+        WriteIndentationLevel 2 writer
+        writer.WriteLine("member this.Key = this.ID.Key")
+    writer.WriteLine()
+
+
 
 let TypesFromAssembly (assembly: Assembly) =
     let writer = new StringWriter()
