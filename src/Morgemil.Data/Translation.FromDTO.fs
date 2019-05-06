@@ -134,7 +134,7 @@ let FloorGenerationParameterFromDto (getTilebyID: TileID -> Tile) (floorGenerati
     {
         FloorGenerationParameter.ID = FloorGenerationParameterID floorGenerationParameter.ID
         DefaultTile = floorGenerationParameter.DefaultTile |> TileID |> getTilebyID
-        Tiles = floorGenerationParameter.Tiles |> Seq.map (TileID >> getTilebyID) |> Seq.toArray
+        Tiles = floorGenerationParameter.Tiles |> Seq.map (TileID >> getTilebyID) |> Seq.toList
         SizeRange = floorGenerationParameter.SizeRange |> RectangleFromDto
         Strategy = floorGenerationParameter.Strategy
     }
