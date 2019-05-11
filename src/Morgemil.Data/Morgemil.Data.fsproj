@@ -23,6 +23,7 @@
     <Compile Include="Translation.FromDTO.fs" />
     <Compile Include="Translation.ToDTO.fs" />
     <Compile Include="Validator.fs" />
+    <Compile Include="DataLoader.fs" />
   </ItemGroup>
 
   <ItemGroup>

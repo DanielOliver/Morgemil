@@ -3,6 +3,7 @@ namespace Morgemil.Core
 open Morgemil.Models
 
 type Loop(characters: CharacterTable, tileMap: TileMap, scenarioData: ScenarioData) =
+    member this.ScenarioData = scenarioData    
 
     member this.ProcessRequest(event: ActionRequest): Step list =
         use builder = new EventHistoryBuilder(characters)

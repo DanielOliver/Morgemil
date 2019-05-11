@@ -12,6 +12,7 @@
     <Compile Include="Relational.Tests.fs" />
     <Compile Include="EventHistoryBuilder.Tests.fs" />
     <Compile Include="GameStateMachine.Tests.fs" />
+    <Compile Include="GameBuilderMachine.Tests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
