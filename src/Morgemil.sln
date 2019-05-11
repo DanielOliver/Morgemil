@@ -29,6 +29,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Morgemil.GameEngine", "Morg
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Morgemil.Data.Tests", "Morgemil.Data.Tests\Morgemil.Data.Tests.fsproj", "{385CEC52-9899-4B7A-BF19-38BCF314BBF5}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Morgemil.Generation", "Morgemil.Generation\Morgemil.Generation.fsproj", "{63FF8E14-5ED8-4326-B87A-2C81E7ADC876}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -171,6 +173,18 @@ Global
 		{385CEC52-9899-4B7A-BF19-38BCF314BBF5}.Release|x64.Build.0 = Release|Any CPU
 		{385CEC52-9899-4B7A-BF19-38BCF314BBF5}.Release|x86.ActiveCfg = Release|Any CPU
 		{385CEC52-9899-4B7A-BF19-38BCF314BBF5}.Release|x86.Build.0 = Release|Any CPU
+		{63FF8E14-5ED8-4326-B87A-2C81E7ADC876}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63FF8E14-5ED8-4326-B87A-2C81E7ADC876}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63FF8E14-5ED8-4326-B87A-2C81E7ADC876}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{63FF8E14-5ED8-4326-B87A-2C81E7ADC876}.Debug|x64.Build.0 = Debug|Any CPU
+		{63FF8E14-5ED8-4326-B87A-2C81E7ADC876}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{63FF8E14-5ED8-4326-B87A-2C81E7ADC876}.Debug|x86.Build.0 = Debug|Any CPU
+		{63FF8E14-5ED8-4326-B87A-2C81E7ADC876}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63FF8E14-5ED8-4326-B87A-2C81E7ADC876}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63FF8E14-5ED8-4326-B87A-2C81E7ADC876}.Release|x64.ActiveCfg = Release|Any CPU
+		{63FF8E14-5ED8-4326-B87A-2C81E7ADC876}.Release|x64.Build.0 = Release|Any CPU
+		{63FF8E14-5ED8-4326-B87A-2C81E7ADC876}.Release|x86.ActiveCfg = Release|Any CPU
+		{63FF8E14-5ED8-4326-B87A-2C81E7ADC876}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -2,6 +2,7 @@
 
 open Morgemil.Math
 
+[<RecordSerialization>]
 type TileRepresentation =
   { AnsiCharacter: char
     ForegroundColor: Color option

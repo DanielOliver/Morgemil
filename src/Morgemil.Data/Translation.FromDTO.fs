@@ -47,12 +47,6 @@ let TileRepresentationFromDto (tileRepresentation: DTO.TileRepresentation): Tile
 
 ///DTO to Tile
 let TileFromDto (tile: DTO.Tile): Tile =
-    let tileType  =
-        match tile.TileType with
-        | DTO.TileType.Void -> TileType.Void
-        | DTO.TileType.Ground -> TileType.Ground
-        | DTO.TileType.Solid -> TileType.Solid
-        | _ -> TileType.Ground
     {
         ID = TileID tile.ID
         Name = tile.Name
@@ -60,7 +54,7 @@ let TileFromDto (tile: DTO.Tile): Tile =
         Representation = TileRepresentationFromDto tile.Representation
         BlocksSight = tile.BlocksSight
         BlocksMovement = tile.BlocksMovement
-        TileType = tileType
+        TileType = tile.TileType
     }
 
 ///DTO to TileFeature
@@ -104,33 +98,19 @@ let ItemFromDto (item: DTO.Item) : Item =
         IsUnique = item.IsUnique
         SubItem =
             match item.ItemType with
-            | DTO.ItemType.Weapon ->
+            | ItemType.Weapon ->
                 {
                     Weapon.Weight = item.Weapon.Head.Weight * 1M<Weight>
                     Weapon.BaseRange = item.Weapon.Head.BaseRange * 1<TileDistance>
                     Weapon.HandCount = item.Weapon.Head.HandCount * 1<HandSlot>
-                    Weapon.RangeType =
-                        match item.Weapon.Head.RangeType with
-                        | DTO.WeaponRangeType.Melee -> WeaponRangeType.Melee
-                        | DTO.WeaponRangeType.Ranged | _ -> WeaponRangeType.Ranged
+                    Weapon.RangeType = item.Weapon.Head.RangeType
                 } |> SubItem.Weapon
-            | DTO.ItemType.Wearable ->
+            | ItemType.Wearable ->
                 {
                     Wearable.Weight = item.Wearable.Head.Weight * 1M<Weight>
-                    Wearable.WearableType =
-                        match item.Wearable.Head.WearableType with
-                        | DTO.WearableType.Head -> WearableType.Head
-                        | DTO.WearableType.Feet -> WearableType.Feet
-                        | DTO.WearableType.Hand -> WearableType.Hand
-                        | DTO.WearableType.Chest -> WearableType.Chest
-                        | DTO.WearableType.Legs -> WearableType.Legs
-                        | DTO.WearableType.Neck -> WearableType.Neck
-                        | DTO.WearableType.Cloak -> WearableType.Cloak
-                        | DTO.WearableType.Waist -> WearableType.Waist
-                        | DTO.WearableType.Shield -> WearableType.Shield
-                        | DTO.WearableType.Fingers | _ -> WearableType.Fingers
+                    Wearable.WearableType = item.Wearable.Head.WearableType
                 } |> SubItem.Wearable
-            | DTO.ItemType.Consumable | _ ->
+            | ItemType.Consumable | _ ->
                 {
                     Consumable.Uses = item.Consumable.Head.Uses
                 } |> SubItem.Consumable
@@ -154,11 +134,9 @@ let FloorGenerationParameterFromDto (getTilebyID: TileID -> Tile) (floorGenerati
     {
         FloorGenerationParameter.ID = FloorGenerationParameterID floorGenerationParameter.ID
         DefaultTile = floorGenerationParameter.DefaultTile |> TileID |> getTilebyID
-        Tiles = floorGenerationParameter.Tiles |> Seq.map (TileID >> getTilebyID) |> Seq.toArray
+        Tiles = floorGenerationParameter.Tiles |> Seq.map (TileID >> getTilebyID) |> Seq.toList
         SizeRange = floorGenerationParameter.SizeRange |> RectangleFromDto
-        Strategy =
-            match floorGenerationParameter.Strategy with
-            | DTO.FloorGenerationStrategy.OpenFloor | _ -> FloorGenerationStrategy.OpenFloor
+        Strategy = floorGenerationParameter.Strategy
     }
 
 ///DTO to Phase2

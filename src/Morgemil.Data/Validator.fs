@@ -92,7 +92,7 @@ let private ValidateDtoTiles (item: DtoValidResult<Tile[]>): DtoValidResult<DtoV
     |> ValidateGameDataWithTable (fun acc element ->
         [
             ExpectedUnique element (fun x -> x.ID) "TileID" acc
-            DefinedEnum element.TileType
+//            DefinedEnum element.TileType
         ]
     )
 
@@ -144,14 +144,14 @@ let private ValidateDtoItems (item: DtoValidResult<Item[]>) : DtoValidResult<Dto
     |> ValidateGameDataWithTable (fun acc element ->
         let itemTypeError =
             match element.ItemType, element.Weapon, element.Wearable, element.Consumable with
-            | ItemType.Weapon, x, _, _ when not x.IsEmpty -> None
-            | ItemType.Wearable, _, x, _ when not x.IsEmpty -> None
-            | ItemType.Consumable, _, _, x when not x.IsEmpty -> None
+            | Morgemil.Models.ItemType.Weapon, x, _, _ when not x.IsEmpty -> None
+            | Morgemil.Models.ItemType.Wearable, _, x, _ when not x.IsEmpty -> None
+            | Morgemil.Models.ItemType.Consumable, _, _, x when not x.IsEmpty -> None
             | _ -> sprintf "Expected ItemType %A to have associated info" element.ItemType |> Some
 
         [
             ExpectedUnique element (fun x -> x.ID) "ItemID" acc
-            DefinedEnum element.ItemType
+//            DefinedEnum element.ItemType
             itemTypeError
         ]
     )
@@ -162,7 +162,7 @@ let private ValidateDtoFloorGenerationParameters (item: DtoValidResult<FloorGene
     |> ValidateGameDataWithTable (fun acc element ->
         [
             ExpectedUnique element (fun x -> x.ID) "FloorGenerationParameterID" acc
-            DefinedEnum element.Strategy
+//            DefinedEnum element.Strategy
             tileTable |> AllExistsInTable element.Tiles "Tiles"
             tileTable |> ExistsInTable element.DefaultTile "DefaultTile"
         ]

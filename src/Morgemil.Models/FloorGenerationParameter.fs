@@ -6,12 +6,13 @@ open Newtonsoft.Json
 type FloorGenerationStrategy =
   | OpenFloor
 
+[<RecordSerialization>]
 type FloorGenerationParameter =
   { ID : FloorGenerationParameterID
     /// Default Tile
     DefaultTile : Tile
     ///Tiles used
-    Tiles : Tile []
+    Tiles : Tile list
     ///Size generation
     SizeRange : Morgemil.Math.Rectangle
     ///Generation Strategy

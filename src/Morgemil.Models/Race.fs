@@ -2,6 +2,7 @@ namespace Morgemil.Models
 
 open Newtonsoft.Json
 
+[<RecordSerialization>]
 type Race =
   { ID : RaceID
     ///Proper noun
@@ -11,7 +12,7 @@ type Race =
     ///User-visible description
     Description : string
   }
-  
+
   interface Relational.IRow with
     [<JsonIgnore()>]
     member this.Key = this.ID.Key

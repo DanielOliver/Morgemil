@@ -30,10 +30,10 @@ let tile2 = {
 
 let floorParameters: FloorGenerationParameter = {
     Strategy = FloorGenerationStrategy.OpenFloor
-    Tiles = [|
+    Tiles = [
         defaultTile
         tile2
-    |]
+    ]
     SizeRange = Rectangle.create(10, 10, 15, 15)
     DefaultTile = defaultTile
     ID = FloorGenerationParameterID 5L

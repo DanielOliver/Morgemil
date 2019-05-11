@@ -1,7 +1,7 @@
 [
   {
     "ID": 0,
-    "TileType": 2,
+    "TileType": "Ground",
     "Name": "Dungeon Floor",
     "Description": "Dungeon floors are rock, paved cobblestone, and very slipper when bloody.",
     "BlocksMovement": false,
@@ -24,7 +24,7 @@
   },
   {
     "ID": 1,
-    "TileType": 1,
+    "TileType": "Solid",
     "Name": "Dungeon Wall",
     "Description": "Dungeon Walls are rock, solid, and carved from time.",
     "BlocksMovement": true,

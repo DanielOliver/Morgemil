@@ -3,6 +3,7 @@ namespace Morgemil.Models
 open Morgemil.Math
 open Newtonsoft.Json
 
+[<RecordSerialization>]
 type Character =
     {
         ID: CharacterID

@@ -15,7 +15,8 @@ let ReadJsonFile<'T> (fileName: string): DtoValidResult<'T[]> =
         try
             let fileContents = File.ReadAllText fileName
 
-            let jsonContents = Newtonsoft.Json.JsonConvert.DeserializeObject<'T[]>(fileContents)
+            let enumUnionCaseConvertor = new Morgemil.Data.Convertors.EnumUnionConvertor()
+            let jsonContents = Newtonsoft.Json.JsonConvert.DeserializeObject<'T[]>(fileContents, enumUnionCaseConvertor)
             {
                 DtoValidResult.Errors = List.empty
                 Object = jsonContents

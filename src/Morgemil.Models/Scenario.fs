@@ -1,11 +1,11 @@
-﻿namespace Morgemil.Models 
+﻿namespace Morgemil.Models
 
-type Scenario = 
+[<RecordSerialization>]
+type Scenario =
   { BasePath: string
     Version: string
     Date: System.DateTime
     Name: string
     Description: string
-    
   }
 
