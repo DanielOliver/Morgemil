@@ -14,7 +14,7 @@ type TileFeature =
         BlocksSight : bool
         ///What this tile Feature looks like.
         Representation: TileRepresentation
-        ///The tiles that this feature is valid to exist on.
+        ///The tiles that this feature is valid to exist on.        
         PossibleTiles: Tile list
         ///True if this tile is an exit point.  Usually stairs down to the next level.
         ExitPoint: bool

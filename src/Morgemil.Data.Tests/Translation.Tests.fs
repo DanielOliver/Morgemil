@@ -1,4 +1,4 @@
-module Morgemil.Data.Tests.Translation.TestsTile
+module Morgemil.Data.Tests.Translation.TestsTileT
 
 open Morgemil.Data
 open Morgemil.Math

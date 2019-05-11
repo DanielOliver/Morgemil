@@ -17,6 +17,7 @@
     <Compile Include="Convertors\SingleCaseUnionConvertor.fs" />
     <Compile Include="Convertors\OptionConvertor.fs" />
     <Compile Include="Convertors\RowKeyConvertor.fs" />
+    <Compile Include="Convertors\RowKeyOptionConvertor.fs" />
     <Compile Include="DTO.fs" />
     <Compile Include="JsonReader.fs" />
     <Compile Include="Translation.FromDTO.fs" />

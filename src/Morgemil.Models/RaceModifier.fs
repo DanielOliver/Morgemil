@@ -3,13 +3,13 @@ namespace Morgemil.Models
 open Newtonsoft.Json
 
 type RaceModifier =
-  { ID : RaceModifierID
+  { ID: RaceModifierID
     ///Proper noun
-    Noun : string
+    Noun: string
     ///Proper adjective
-    Adjective : string
+    Adjective: string
     ///User-visible description
-    Description : string 
+    Description: string
     ///Valid races for this modifier
     PossibleRaces: Race list
   }
