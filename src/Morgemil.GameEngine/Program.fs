@@ -5,22 +5,21 @@ open Morgemil.Models
 open Morgemil.Math
 open Morgemil.Models.Relational
 open Microsoft.Xna.Framework.Input
+open Morgemil.Core
+open Morgemil.Core
 
 let rawGameDataPhase0 = Lazy<DTO.RawDtoPhase0>(fun () -> JsonReader.ReadGameFiles ( if System.IO.Directory.Exists "../Morgemil.Data/Game" then "../Morgemil.Data/Game" else "./Game"))
 let rawGameDataPhase2 = Translation.FromDTO.TranslateFromDtosToPhase2 rawGameDataPhase0.Value
 let scenarioData = Translation.FromDTO.TranslateFromDtosToScenario rawGameDataPhase0.Value
 
-type MapGeneratorConsole() =
+type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialGameData) =
     inherit SadConsole.Console(40, 40)
 
-    let rng = RNG.SeedRNG(50)
-    let tileFeatureTable =
-        rawGameDataPhase2.TileFeatures
-        |> Morgemil.Core.TileFeatureTable
-    let readonlyTileTable = scenarioData.Tiles
-    let (tileMap, results) = FloorGenerator.Create rawGameDataPhase2.FloorGenerationParameters.[0] tileFeatureTable rng
-    let createColor (color: Morgemil.Math.Color) = Microsoft.Xna.Framework.Color(color.R, color.G, color.B, color.A)
+    let mutable viewOnlyTileMap = initialGameData.TileMap
+    let mutable viewCharacterTable = CharacterTable()
+    let character1 = initialGameData.Characters.[0]
 
+    let createColor (color: Morgemil.Math.Color) = Microsoft.Xna.Framework.Color(color.R, color.G, color.B, color.A)
     let createTileMapFromData(data: TileMapData) =
         let result =
             TileMap(
@@ -29,21 +28,6 @@ type MapGeneratorConsole() =
                 Array.zip data.Tiles data.TileFeatures)
 
         result
-
-    let mutable viewOnlyTileMap = createTileMapFromData tileMap.TileMapData
-    let characterTable = CharacterTable()
-    let mutable viewCharacterTable = CharacterTable()
-    let character1 = {
-        Character.ID = Table.GenerateKey characterTable
-        Race = rawGameDataPhase2.Races.[0]
-        RaceModifier = None
-        Position = Vector2i.create(5)
-        PlayerID = None
-    }
-
-    let gameLoop = Loop(characterTable, tileMap, scenarioData)
-    let gameState = SimpleGameStateMachine(gameLoop.ProcessRequest, scenarioData) :> IGameStateMachine
-
     let blendColors (color1: Microsoft.Xna.Framework.Color) (color2: Microsoft.Xna.Framework.Color) =
         if color1.A = System.Byte.MaxValue || color2.A = System.Byte.MinValue then
             color1
@@ -56,8 +40,8 @@ type MapGeneratorConsole() =
 
 
     do
-        Table.AddRow characterTable character1
-        Table.AddRow viewCharacterTable character1
+        for character in initialGameData.Characters do
+            Table.AddRow viewCharacterTable character
 
     override this.Update(timeElapsed: TimeSpan) =
         let event =
@@ -151,23 +135,46 @@ type MapGeneratorConsole() =
             let foregroundColor = representation.ForegroundColor |> Option.map createColor |> Option.defaultValue Microsoft.Xna.Framework.Color.TransparentBlack
             base.Print(position.X, position.Y, representation.AnsiCharacter.ToString(), foregroundColor)
 
-let Init() =
-    let gameConsole = new MapGeneratorConsole()
-    gameConsole.UseKeyboard <- true
-    gameConsole.KeyboardHandler <- null
-    //SadConsole.Game.Instance.Components.Add(new SadConsole.Game.FPSCounterComponent(SadConsole.Game.Instance))
-    SadConsole.Game.Instance.Window.Title <- "Morgemil";
-    SadConsole.Global.CurrentScreen <- gameConsole
-    //SadConsole.Global.CurrentScreen.Position <- Microsoft.Xna.Framework.Point(1,1)
+
+
+let StartMainStateMachine() =
+    let mainGameState = new SimpleGameBuilderMachine(DataLoader.LoadScenarioData) :> IGameBuilder
+    while mainGameState.CurrentState.GameBuilderStateType <> GameBuilderStateType.GameBuilt do
+        match mainGameState.CurrentState with
+        | GameBuilderState.GameBuilt (gameState, initialGameData) ->
+            
+            let Init() =
+                let gameConsole = new MapGeneratorConsole(gameState, initialGameData)
+                gameConsole.UseKeyboard <- true
+                gameConsole.KeyboardHandler <- null
+                SadConsole.Game.Instance.Window.Title <- "Morgemil";
+                SadConsole.Global.CurrentScreen <- gameConsole
+                
+            SadConsole.Game.Create("Cheepicus12.font", 80, 40);
+            SadConsole.Game.OnInitialize <- new Action(Init)
+            SadConsole.Game.Instance.Run();
+            SadConsole.Game.Instance.Dispose();
+        | GameBuilderState.SelectScenario (scenarios, callback) ->
+            printfn "Scenarios: "
+            scenarios
+            |> Seq.iteri (fun index scenarioName ->
+                          printfn "%-5i | %s" index scenarioName
+                          )
+            printfn "Choose Scenario: "
+            Console.ReadLine()
+            |> callback
+        | GameBuilderState.LoadedScenarioData _ -> failwith "one"
+        | GameBuilderState.WaitingForCurrentPlayer addCurrentPlayer ->
+            addCurrentPlayer (RaceID 1L)
+        | GameBuilderState.LoadingGameProgress status ->
+            printfn "Status %s" status
+        
     ()
 
 [<EntryPoint>]
 let main argv =
     printfn "Starting Morgemil"
-    SadConsole.Game.Create("Cheepicus12.font", 80, 40);
-    SadConsole.Game.OnInitialize <- new Action(Init)
-    SadConsole.Game.Instance.Run();
-    SadConsole.Game.Instance.Dispose();
+    StartMainStateMachine()
     0 // return an integer exit code
 
 
