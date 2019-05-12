@@ -139,9 +139,11 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
 
 let StartMainStateMachine() =
     let mainGameState = new SimpleGameBuilderMachine(DataLoader.LoadScenarioData) :> IGameBuilder
-    while mainGameState.CurrentState.GameBuilderStateType <> GameBuilderStateType.GameBuilt do
+    let mutable gameHasRun = true
+    while gameHasRun do
         match mainGameState.CurrentState with
         | GameBuilderState.GameBuilt (gameState, initialGameData) ->
+            gameHasRun <- false
             
             let Init() =
                 let gameConsole = new MapGeneratorConsole(gameState, initialGameData)
