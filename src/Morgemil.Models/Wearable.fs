@@ -12,7 +12,6 @@ type WearableType =
   | Cloak
   | Shield
 
-[<RecordSerialization>]
 type Wearable =
   { ///The weight of this item. Used in stamina
     Weight: decimal<Weight>

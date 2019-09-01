@@ -6,9 +6,9 @@ open Newtonsoft.Json
 type FloorGenerationStrategy =
   | OpenFloor
 
-[<RecordSerialization>]
+[<Record>]
 type FloorGenerationParameter =
-  { ID : FloorGenerationParameterID
+  { [<RecordId>] ID : FloorGenerationParameterID
     /// Default Tile
     DefaultTile : Tile
     ///Tiles used

@@ -1,6 +1,6 @@
 ﻿namespace Morgemil.Models
 
-[<RecordSerialization>]
+[<Record>]
 type Scenario =
   { BasePath: string
     Version: string

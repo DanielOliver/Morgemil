@@ -135,7 +135,7 @@ let TypesFromAssembly (assembly: Assembly) =
     let writer = new StringWriter()
     let typeSet = new System.Collections.Generic.List<string>()
     assembly.ExportedTypes
-    |> Seq.filter (fun t -> t.GetCustomAttributes( typeof<Morgemil.Models.RecordSerializationAttribute>, true ).Length > 0)
+    |> Seq.filter (fun t -> t.GetCustomAttributes( typeof<Morgemil.Models.RecordAttribute>, true ).Length > 0)
     |> Seq.iter(fun t ->
         WriteDto writer t typeSet
         )

@@ -2,12 +2,12 @@ namespace Morgemil.Models
 
 open System
 
-type [<AttributeUsage(AttributeTargets.Property)>] RowKeySerializationAttribute() =
+
+type [<AttributeUsage(AttributeTargets.Class)>] RecordAttribute() =
     inherit Attribute()
 
-type [<AttributeUsage(AttributeTargets.Class)>] RecordSerializationAttribute() =
+type [<AttributeUsage(AttributeTargets.Property)>] RecordIdAttribute() =
     inherit Attribute()
-
 
 type [<Struct>] TileFeatureID =
     | TileFeatureID of int64

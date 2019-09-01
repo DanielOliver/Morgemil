@@ -3,10 +3,10 @@ namespace Morgemil.Models
 open Morgemil.Math
 open Newtonsoft.Json
 
-[<RecordSerialization>]
+[<Record>]
 type Character =
     {
-        ID: CharacterID
+        [<RecordId>] ID: CharacterID
         Race: Race
         RaceModifier: RaceModifier option
         Position: Vector2i

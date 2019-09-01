@@ -2,7 +2,7 @@ namespace Morgemil.Models
 
 open Newtonsoft.Json
 
-[<RecordSerialization>]
+[<Record>]
 type RaceModifierLink =
   { RaceID: RaceID
     RaceModifierID: RaceModifierID option
@@ -10,9 +10,9 @@ type RaceModifierLink =
     Ratio: int
   }
 
-[<RecordSerialization>]
+[<Record>]
 type MonsterGenerationParameter =
-  { ID: MonsterGenerationParameterID
+  { [<RecordId>]  ID: MonsterGenerationParameterID
     GenerationRatios: RaceModifierLink list
   }
 

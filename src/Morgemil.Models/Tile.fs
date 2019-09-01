@@ -8,9 +8,9 @@ type TileType =
   | Solid
   | Ground
 
-[<RecordSerialization>]
+[<Record>]
 type Tile =
-  { ID : TileID
+  { [<RecordId>] ID : TileID
     ///The general specification of this tile
     TileType: TileType
     /// A short name. eg: "Lush Grass"

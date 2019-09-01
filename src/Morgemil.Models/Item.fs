@@ -20,10 +20,10 @@ type SubItem =
     | Wearable _ -> ItemType.Wearable
     | Consumable _ -> ItemType.Consumable
 
-[<RecordSerialization>]
+[<Record>]
 type Item =
     {
-        ID : ItemID
+        [<RecordId>] ID : ItemID
         ///The union of items
         SubItem : SubItem
         ///Name of this item

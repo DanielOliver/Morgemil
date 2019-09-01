@@ -2,9 +2,9 @@ namespace Morgemil.Models
 
 open Newtonsoft.Json
 
-[<RecordSerialization>]
+[<Record>]
 type RaceModifier =
-  { ID: RaceModifierID
+  { [<RecordId>] ID: RaceModifierID
     ///Proper noun
     Noun: string
     ///Proper adjective

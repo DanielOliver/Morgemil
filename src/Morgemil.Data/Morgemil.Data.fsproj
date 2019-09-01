@@ -12,12 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Convertors\EnumUnionConvertor.fs" />
-    <Compile Include="Convertors\MultipleCaseUnionConvertor.fs" />
-    <Compile Include="Convertors\SingleCaseUnionConvertor.fs" />
-    <Compile Include="Convertors\OptionConvertor.fs" />
-    <Compile Include="Convertors\RowKeyConvertor.fs" />
-    <Compile Include="Convertors\RowKeyOptionConvertor.fs" />
+  <Compile Include="Convertors\EnumUnionConvertor.fs" />
     <Compile Include="DTO.fs" />
     <Compile Include="JsonReader.fs" />
     <Compile Include="Translation.FromDTO.fs" />
@@ -52,10 +47,6 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="ContractResolver\RowContractResolver.fs" />
   </ItemGroup>
 
 </Project>
