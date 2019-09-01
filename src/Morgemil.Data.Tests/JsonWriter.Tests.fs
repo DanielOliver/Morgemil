@@ -38,9 +38,9 @@ let ``Try serialize and serialize odd case``() =
 
 type TileFeature2 =
     {   ID: TileFeatureID
-        [<RowKeySerializationAttribute>]
+        [<RecordIdAttribute>]
         Tile23: Tile
-        [<RowKeySerializationAttribute>]
+        [<RecordIdAttribute>]
         Tile234: Tile option
     }
 
