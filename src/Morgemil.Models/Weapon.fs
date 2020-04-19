@@ -9,10 +9,10 @@ type Weapon =
   { ///Type of this weapon
     RangeType: WeaponRangeType
     ///Base Range
-    BaseRange: int<TileDistance>
+    [<MeasureBy("TileDistance")>] BaseRange: int<TileDistance>
     ///The number of hands required to wield this weapon
-    HandCount: int<HandSlot>
+    [<MeasureBy("HandSlot")>] HandCount: int<HandSlot>
     ///The weight of this item. Used in stamina
-    Weight: decimal<Weight>
+    [<MeasureBy("Weight")>] Weight: decimal<Weight>
   }
 

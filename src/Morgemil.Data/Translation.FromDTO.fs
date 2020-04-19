@@ -130,11 +130,11 @@ let MonsterGenerationParameterFromDto (monsterGenerationParameter: DTO.MonsterGe
     }
 
 ///DTO to FloorGenerationParameter
-let FloorGenerationParameterFromDto (getTilebyID: TileID -> Tile) (floorGenerationParameter: DTO.FloorGenerationParameter) : FloorGenerationParameter =
+let FloorGenerationParameterFromDto (getTileByID: TileID -> Tile) (floorGenerationParameter: DTO.FloorGenerationParameter) : FloorGenerationParameter =
     {
         FloorGenerationParameter.ID = FloorGenerationParameterID floorGenerationParameter.ID
-        DefaultTile = floorGenerationParameter.DefaultTile |> TileID |> getTilebyID
-        Tiles = floorGenerationParameter.Tiles |> Seq.map (TileID >> getTilebyID) |> Seq.toList
+        DefaultTile = floorGenerationParameter.DefaultTile |> TileID |> getTileByID
+        Tiles = floorGenerationParameter.Tiles |> Seq.map (TileID >> getTileByID) |> Seq.toList
         SizeRange = floorGenerationParameter.SizeRange |> RectangleFromDto
         Strategy = floorGenerationParameter.Strategy
     }
@@ -149,7 +149,7 @@ let TranslateFromDtosToPhase2 (dtos: RawDtoPhase0): RawDtoPhase2 =
 
     let items = dtos.Items.Object |> Seq.map (ItemFromDto) |> Table.CreateReadonlyTable (fun (t: ItemID) -> t.Key)
 
-    let monsterGenerationParameters = dtos.MonsterGenerationParameters.Object |> Seq.map (MonsterGenerationParameterFromDto) |> Table.CreateReadonlyTable (fun (t: MonsterGenerationParameterID) -> t.Key)
+//    let monsterGenerationParameters = dtos.MonsterGenerationParameters.Object |> Seq.map (MonsterGenerationParameterFromDto) |> Table.CreateReadonlyTable (fun (t: MonsterGenerationParameterID) -> t.Key)
 
     let tileFeatures = dtos.TileFeatures.Object |> Seq.map (TileFeatureFromDto (fun t -> tiles.Item(t))) |> Table.CreateReadonlyTable (fun (t: TileFeatureID) -> t.Key)
 

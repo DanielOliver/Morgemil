@@ -9,6 +9,10 @@ type [<AttributeUsage(AttributeTargets.Class)>] RecordAttribute() =
 type [<AttributeUsage(AttributeTargets.Property)>] RecordIdAttribute() =
     inherit Attribute()
 
+type [<AttributeUsage(AttributeTargets.Property)>] MeasureByAttribute(name: string) =
+    inherit Attribute()
+    member this.Name = name
+
 type [<Struct>] TileFeatureID =
     | TileFeatureID of int64
 

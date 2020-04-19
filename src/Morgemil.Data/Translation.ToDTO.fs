@@ -52,3 +52,13 @@ let TileRepresentationToDto (tileRepresentation: TileRepresentation): DTO.TileRe
         BackGroundColor = tileRepresentation.BackGroundColor |> Option.map ColorToDto |> Option.defaultValue (ZeroColorDto())
     }
 
+let TileToDto (tile: Tile): DTO.Tile =
+    {
+        Description = tile.Description
+        Name = tile.Name
+        BlocksMovement = tile.BlocksMovement
+        BlocksSight = tile.BlocksSight
+        ID = tile.ID.Key
+        Representation = tile.Representation |> TileRepresentationToDto
+        TileType = tile.TileType
+    }

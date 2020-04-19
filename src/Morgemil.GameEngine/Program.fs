@@ -102,6 +102,7 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
                 )
             acknowledgeCallback()
 
+        base.Clear()
 
         for (position, tile, tileFeature) in viewOnlyTileMap.Tiles do
             match tileFeature with
@@ -144,14 +145,14 @@ let StartMainStateMachine() =
         match mainGameState.CurrentState with
         | GameBuilderState.GameBuilt (gameState, initialGameData) ->
             gameHasRun <- false
-            
+
             let Init() =
                 let gameConsole = new MapGeneratorConsole(gameState, initialGameData)
                 gameConsole.UseKeyboard <- true
                 gameConsole.KeyboardHandler <- null
                 SadConsole.Game.Instance.Window.Title <- "Morgemil";
                 SadConsole.Global.CurrentScreen <- gameConsole
-                
+
             SadConsole.Game.Create("Cheepicus12.font", 80, 40);
             SadConsole.Game.OnInitialize <- new Action(Init)
             SadConsole.Game.Instance.Run();
@@ -170,7 +171,7 @@ let StartMainStateMachine() =
             addCurrentPlayer (RaceID 1L)
         | GameBuilderState.LoadingGameProgress status ->
             printfn "Status %s" status
-        
+
     ()
 
 [<EntryPoint>]

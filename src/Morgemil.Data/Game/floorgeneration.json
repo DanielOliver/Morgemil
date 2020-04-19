@@ -4,7 +4,7 @@
 		"tiles": [ 0, 1 ],
 		"sizerange": {
 			"position": { "x": 8, "y": 8 },
-			"size": { "x": 5, "y": 5 }
+			"size": { "x": 10, "y": 10 }
 		},
 		"strategy": "openfloor"
 	}

@@ -151,7 +151,6 @@ let private ValidateDtoItems (item: DtoValidResult<Item[]>) : DtoValidResult<Dto
 
         [
             ExpectedUnique element (fun x -> x.ID) "ItemID" acc
-//            DefinedEnum element.ItemType
             itemTypeError
         ]
     )
@@ -162,7 +161,6 @@ let private ValidateDtoFloorGenerationParameters (item: DtoValidResult<FloorGene
     |> ValidateGameDataWithTable (fun acc element ->
         [
             ExpectedUnique element (fun x -> x.ID) "FloorGenerationParameterID" acc
-//            DefinedEnum element.Strategy
             tileTable |> AllExistsInTable element.Tiles "Tiles"
             tileTable |> ExistsInTable element.DefaultTile "DefaultTile"
         ]
