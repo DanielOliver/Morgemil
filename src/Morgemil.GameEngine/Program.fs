@@ -4,9 +4,8 @@ open Morgemil.Data
 open Morgemil.Models
 open Morgemil.Math
 open Morgemil.Models.Relational
-open Microsoft.Xna.Framework.Input
-open Morgemil.Core
-open Morgemil.Core
+open SadConsole
+open SadConsole.Input
 
 let rawGameDataPhase0 = Lazy<DTO.RawDtoPhase0>(fun () -> JsonReader.ReadGameFiles ( if System.IO.Directory.Exists "../Morgemil.Data/Game" then "../Morgemil.Data/Game" else "./Game"))
 let rawGameDataPhase2 = Translation.FromDTO.TranslateFromDtosToPhase2 rawGameDataPhase0.Value
@@ -19,7 +18,7 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
     let mutable viewCharacterTable = CharacterTable()
     let character1 = initialGameData.Characters.[0]
 
-    let createColor (color: Morgemil.Math.Color) = Microsoft.Xna.Framework.Color(color.R, color.G, color.B, color.A)
+    let createColor (color: Morgemil.Math.Color) = SadRogue.Primitives.Color(color.R, color.G, color.B, color.A)
     let createTileMapFromData(data: TileMapData) =
         let result =
             TileMap(
@@ -28,15 +27,15 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
                 Array.zip data.Tiles data.TileFeatures)
 
         result
-    let blendColors (color1: Microsoft.Xna.Framework.Color) (color2: Microsoft.Xna.Framework.Color) =
+    let blendColors (color1: SadRogue.Primitives.Color) (color2: SadRogue.Primitives.Color) =
         if color1.A = System.Byte.MaxValue || color2.A = System.Byte.MinValue then
             color1
         elif color1.A = System.Byte.MinValue then
             color2
         else
             let ratio = ((float32)color2.A) / ((float32)color1.A + (float32)color2.A)
-            let returnColor = Microsoft.Xna.Framework.Color.Lerp(color1, color2, ratio)
-            Microsoft.Xna.Framework.Color(returnColor, 255)
+            let returnColor = SadRogue.Primitives.Color.Lerp(color1, color2, ratio)
+            SadRogue.Primitives.Color(returnColor, 255)
 
 
     do
@@ -45,13 +44,13 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
 
     override this.Update(timeElapsed: TimeSpan) =
         let event =
-            if SadConsole.Global.KeyboardState.IsKeyReleased Keys.Left then
+            if SadConsole.GameHost.Instance.Keyboard.IsKeyReleased Keys.Left then
                 (character1.ID, Vector2i.create(-1, 0)) |> Some
-            else if SadConsole.Global.KeyboardState.IsKeyReleased Keys.Right then
+            else if SadConsole.GameHost.Instance.Keyboard.IsKeyReleased Keys.Right  then
                 (character1.ID, Vector2i.create(1, 0)) |> Some
-            else if SadConsole.Global.KeyboardState.IsKeyReleased Keys.Down then
+            else if SadConsole.GameHost.Instance.Keyboard.IsKeyReleased Keys.Down then
                 (character1.ID, Vector2i.create(0, 1)) |> Some
-            else if SadConsole.Global.KeyboardState.IsKeyReleased Keys.Up then
+            else if SadConsole.GameHost.Instance.Keyboard.IsKeyReleased Keys.Up then
                 (character1.ID, Vector2i.create(0, -1)) |> Some
             else
                 None
@@ -66,7 +65,7 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
         let event =
             event
             |> Option.orElseWith(fun () ->
-                if SadConsole.Global.KeyboardState.IsKeyReleased Keys.Space then
+                if SadConsole.GameHost.Instance.Keyboard.IsKeyReleased Keys.Space then
                     character1.ID
                     |> ActionRequest.GoToNextLevel
                     |> Some
@@ -109,31 +108,33 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
             | Some(feature) ->
                 let (showFeatureChar, foregroundColor) =
                     if System.Char.IsWhiteSpace feature.Representation.AnsiCharacter then
-                        false, (tile.Representation.ForegroundColor |> Option.map createColor |> Option.defaultValue Microsoft.Xna.Framework.Color.Black)
+                        false, (tile.Representation.ForegroundColor |> Option.map createColor |> Option.defaultValue SadRogue.Primitives.Color.Black)
                     else
-                        let foreground = feature.Representation.ForegroundColor |> Option.map createColor |> Option.defaultValue Microsoft.Xna.Framework.Color.TransparentBlack
+                        let foreground = feature.Representation.ForegroundColor |> Option.map createColor |> Option.defaultValue SadRogue.Primitives.Color.TransparentBlack
                         (foreground.A <> (byte 0)), (foreground)
 
                 let backgroundColor =
                     blendColors
-                        (feature.Representation.BackGroundColor |> Option.map createColor |> Option.defaultValue Microsoft.Xna.Framework.Color.TransparentBlack)
-                        (tile.Representation.BackGroundColor |> Option.map createColor |> Option.defaultValue Microsoft.Xna.Framework.Color.TransparentBlack)
+                        (feature.Representation.BackGroundColor |> Option.map createColor |> Option.defaultValue SadRogue.Primitives.Color.TransparentBlack)
+                        (tile.Representation.BackGroundColor |> Option.map createColor |> Option.defaultValue SadRogue.Primitives.Color.TransparentBlack)
 
                 let tileCharacter = if showFeatureChar then feature.Representation.AnsiCharacter.ToString() else tile.Representation.AnsiCharacter.ToString()
-                base.Print(position.X, position.Y, tileCharacter, foregroundColor, backgroundColor)
+                base.Cursor.Position <- SadRogue.Primitives.Point(position.X, position.Y)
+                base.Cursor.Print(ColoredString(tileCharacter, foregroundColor, backgroundColor)) |> ignore
             | None ->
-                let backgroundColor = tile.Representation.BackGroundColor |> Option.map createColor |> Option.defaultValue Microsoft.Xna.Framework.Color.Black
-                let foregroundColor = tile.Representation.ForegroundColor |> Option.map createColor |> Option.defaultValue Microsoft.Xna.Framework.Color.White
-                base.Print(position.X, position.Y, tile.Representation.AnsiCharacter.ToString(), foregroundColor, backgroundColor)
+                let backgroundColor = tile.Representation.BackGroundColor |> Option.map createColor |> Option.defaultValue SadRogue.Primitives.Color.Black
+                let foregroundColor = tile.Representation.ForegroundColor |> Option.map createColor |> Option.defaultValue SadRogue.Primitives.Color.White
+                base.Cursor.Position <- SadRogue.Primitives.Point(position.X, position.Y)
+                base.Cursor.Print(ColoredString(tile.Representation.AnsiCharacter.ToString(), foregroundColor, backgroundColor)) |> ignore
 
         for (position, character) in viewCharacterTable.ByPositions do
-            let color1 = Color.Black
+            let color1 = Morgemil.Math.Color.Black
             let representation = {
                 TileRepresentation.AnsiCharacter = '@'
                 BackGroundColor = None
                 ForegroundColor = Some color1
             }
-            let foregroundColor = representation.ForegroundColor |> Option.map createColor |> Option.defaultValue Microsoft.Xna.Framework.Color.TransparentBlack
+            let foregroundColor = representation.ForegroundColor |> Option.map createColor |> Option.defaultValue SadRogue.Primitives.Color.TransparentBlack
             base.Print(position.X, position.Y, representation.AnsiCharacter.ToString(), foregroundColor)
 
 
@@ -149,12 +150,11 @@ let StartMainStateMachine() =
             let Init() =
                 let gameConsole = new MapGeneratorConsole(gameState, initialGameData)
                 gameConsole.UseKeyboard <- true
-                gameConsole.KeyboardHandler <- null
-                SadConsole.Game.Instance.Window.Title <- "Morgemil";
-                SadConsole.Global.CurrentScreen <- gameConsole
+                SadConsole.Settings.WindowTitle <- "Morgemil";
+                SadConsole.GameHost.Instance.Screen <- gameConsole
 
-            SadConsole.Game.Create("Cheepicus12.font", 80, 40);
-            SadConsole.Game.OnInitialize <- new Action(Init)
+            SadConsole.Game.Create(80, 40, "Cheepicus12.font");
+            SadConsole.Game.Instance.OnStart <- new Action(Init)
             SadConsole.Game.Instance.Run();
             SadConsole.Game.Instance.Dispose();
         | GameBuilderState.SelectScenario (scenarios, callback) ->
