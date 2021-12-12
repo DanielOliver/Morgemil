@@ -1,0 +1,35 @@
+name: Build
+on:
+  # Trigger the workflow on push or pull request,
+  # but only for the main branch
+  push:
+    branches:
+      - nightly
+  pull_request:
+    branches:
+      - nightly
+jobs:
+  build:
+    name: Build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    steps:
+      - name: Get the sources
+        uses: actions/checkout@v2
+
+      - name: Fetch all history for all tags and branches
+        run: git fetch --prune --unshallow
+
+      - name: Install .NET Core SDK 6.0.100
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.100'
+    
+      - name: Install Dotnet Tools
+        run: dotnet tool restore
+        
+      - name: Run Fake
+        run: dotnet fake build
