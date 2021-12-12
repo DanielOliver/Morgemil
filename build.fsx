@@ -39,7 +39,8 @@ Target.create "Test" (fun _ ->
     [ 
       "test"
       "src"
-      "--configuration Release"
+      "--configuration"
+      "Release"
       "/p:AltCoverForce=true"
       "/p:AltCover=true"
       "--logger"
