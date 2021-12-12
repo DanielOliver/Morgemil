@@ -81,7 +81,7 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
         | GameState.Results (results, acknowledgeCallback) ->
             results
             |> List.iter (fun event ->
-                printfn "%A" event
+                printfn "%A" event.Event
                 match event.Event with
                 | ActionEvent.MapChange mapChange ->
                     viewOnlyTileMap <- createTileMapFromData mapChange.TileMapData

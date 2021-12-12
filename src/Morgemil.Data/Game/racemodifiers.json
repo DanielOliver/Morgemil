@@ -1,7 +1,7 @@
 [
 	{	"id": "0",
 		"noun": "Skeleton",
-		"adjective": "Skeleton",
+		"adjective": "Skeletal",
 		"description": "Skeletons are a basic form of undead.  Stupid and resilient to many mortal afflictions, but rather brittle",
 		"possibleraces": [
 			0,

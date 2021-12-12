@@ -3,7 +3,7 @@
     "ID": 0,
     "TileType": "Ground",
     "Name": "Dungeon Floor",
-    "Description": "Dungeon floors are rock, paved cobblestone, and very slipper when bloody.",
+    "Description": "Dungeon floors are rock, paved cobblestone, and very slippery when bloody.",
     "BlocksMovement": false,
     "BlocksSight": false,
     "Representation": {

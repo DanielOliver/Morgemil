@@ -89,6 +89,4 @@ type Loop(initialCharacters: CharacterTable, initialTileMap: TileMap, scenarioDa
                                 TileMapData = tileMap.TileMapData
                             }
                             |> ActionEvent.MapChange
-
-            yield ActionEvent.Empty 0
         }

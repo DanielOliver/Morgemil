@@ -1,7 +1,7 @@
 [
   {
     "ID": 0,
-    "Name": "Stairs down",
+    "Name": "Stairs Down",
     "Description": "Stairs down to the next dungeon of horror",
     "BlocksMovement": false,
     "BlocksSight": false,
