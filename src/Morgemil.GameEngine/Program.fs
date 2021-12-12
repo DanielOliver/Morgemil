@@ -18,7 +18,7 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
     let mutable viewCharacterTable = CharacterTable()
     let character1 = initialGameData.Characters.[0]
 
-    let createColor (color: Morgemil.Math.Color) = SadRogue.Primitives.Color(color.R, color.G, color.B, color.A)
+    let createColor (color: Color) = SadRogue.Primitives.Color(color.R, color.G, color.B, color.A)
     let createTileMapFromData(data: TileMapData) =
         let result =
             TileMap(
@@ -27,10 +27,10 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
                 Array.zip data.Tiles data.TileFeatures)
 
         result
-    let blendColors (color1: SadRogue.Primitives.Color) (color2: SadRogue.Primitives.Color) =
-        if color1.A = System.Byte.MaxValue || color2.A = System.Byte.MinValue then
+    let blendColors (color1: SadRogue.Primitives.Color) (color2: SadRogue.Primitives.Color): SadRogue.Primitives.Color =
+        if color1.A = Byte.MaxValue || color2.A = Byte.MinValue then
             color1
-        elif color1.A = System.Byte.MinValue then
+        elif color1.A = Byte.MinValue then
             color2
         else
             let ratio = ((float32)color2.A) / ((float32)color1.A + (float32)color2.A)
@@ -107,7 +107,7 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
             match tileFeature with
             | Some(feature) ->
                 let (showFeatureChar, foregroundColor) =
-                    if System.Char.IsWhiteSpace feature.Representation.AnsiCharacter then
+                    if Char.IsWhiteSpace feature.Representation.AnsiCharacter then
                         false, (tile.Representation.ForegroundColor |> Option.map createColor |> Option.defaultValue SadRogue.Primitives.Color.Black)
                     else
                         let foreground = feature.Representation.ForegroundColor |> Option.map createColor |> Option.defaultValue SadRogue.Primitives.Color.TransparentBlack
@@ -128,7 +128,7 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
                 base.Cursor.Print(ColoredString(tile.Representation.AnsiCharacter.ToString(), foregroundColor, backgroundColor)) |> ignore
 
         for (position, character) in viewCharacterTable.ByPositions do
-            let color1 = Morgemil.Math.Color.Black
+            let color1 = Color.Black
             let representation = {
                 TileRepresentation.AnsiCharacter = '@'
                 BackGroundColor = None
