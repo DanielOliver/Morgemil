@@ -34,32 +34,17 @@ Target.create "Build" (fun _ ->
 )
 
 Target.create "Test" (fun _ ->
-  [ 
-    "test"
-    "src"
-    "--configuration"
-    "Release"
-    "/p:AltCoverForce=true"
-    "/p:AltCover=true"
-    "--logger"
-    "trx;LogFileName=testresults.trx"           
-  ]
-  |> CreateProcess.fromRawCommand "dotnet" 
-  |> CreateProcess.ensureExitCode
-  |> Proc.run
-  |> ignore
+  !! "src/**/*.*proj"
+  |> Seq.iter (fun proj ->
+    CreateProcess.fromRawCommandLine "dotnet" (sprintf "test %s /p:AltCoverForce=true /p:AltCover=true /p:AltCoverAssemblyExcludeFilter=xunit* /p:AltCoverReport=\"./coverage.xml\" --logger \"trx;LogFileName=testresults.trx\"" proj)
+    |> CreateProcess.ensureExitCode
+    |> Proc.run
+    |> ignore
+  )
 )
 
 Target.create "Report" (fun _ ->
-  [ 
-    "reportgenerator"
-    "--configuration Release"
-    "-reports:**/coverage.xml"
-    "-targetdir:coveragereport";
-    "-reporttypes:\"HTML;Cobertura\"";
-    "-assemblyfilters:\"+Morgemil.*;-Morgemil.*.Tests\""     
-  ]
-  |> CreateProcess.fromRawCommand "dotnet"
+  CreateProcess.fromRawCommandLine  "dotnet" "reportgenerator -reports:\"**/coverage.xml\" -targetdir:\"coveragereport\" -reporttypes:\"HTML;Cobertura\" -assemblyfilters:\"+Morgemil.*;-Morgemil.*.Tests\""
   |> CreateProcess.ensureExitCode
   |> Proc.run
   |> ignore
