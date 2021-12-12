@@ -34,23 +34,20 @@ Target.create "Build" (fun _ ->
 )
 
 Target.create "Test" (fun _ ->
-  !! "src/**/*Tests*proj"
-  |> Seq.iter (fun proj ->
-    [ 
-      "test"
-      "src"
-      "--configuration"
-      "Release"
-      "/p:AltCoverForce=true"
-      "/p:AltCover=true"
-      "--logger"
-      "trx;LogFileName=testresults.trx"           
-    ]
-    |> CreateProcess.fromRawCommand "dotnet" 
-    |> CreateProcess.ensureExitCode
-    |> Proc.run
-    |> ignore
-  )
+  [ 
+    "test"
+    "src"
+    "--configuration"
+    "Release"
+    "/p:AltCoverForce=true"
+    "/p:AltCover=true"
+    "--logger"
+    "trx;LogFileName=testresults.trx"           
+  ]
+  |> CreateProcess.fromRawCommand "dotnet" 
+  |> CreateProcess.ensureExitCode
+  |> Proc.run
+  |> ignore
 )
 
 Target.create "Report" (fun _ ->
