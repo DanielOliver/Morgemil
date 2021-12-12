@@ -31,5 +31,19 @@ jobs:
       - name: Install Dotnet Tools
         run: dotnet tool restore
         
-      - name: Run Fake
-        run: dotnet fake build
+      - name: Run Fake, up to Reports
+        if: github.ref == 'refs/heads/nightly'
+        run: dotnet fake build target Report
+        
+      - name: Run Fake, up to Tests
+        if: github.ref != 'refs/heads/nightly'
+        run: dotnet fake build target Test
+      
+      - name: Upload codecov
+        if: runner.os == 'Linux'
+        run: |
+          curl -Os https://uploader.codecov.io/latest/linux/codecov
+          chmod +x codecov
+          ./codecov
+
+        
