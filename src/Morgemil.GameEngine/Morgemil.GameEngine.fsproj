@@ -2,15 +2,15 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
     <Content Include="Cheepicus_12x12.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="Cheepicus12.font">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Compile Include="Program.fs" />
   </ItemGroup>
@@ -18,7 +18,8 @@
   <ItemGroup />
 
   <ItemGroup>
-    <PackageReference Include="SadConsole.Standard" Version="7.3.0" />
+    <PackageReference Include="SadConsole" Version="9.1.1" />
+    <PackageReference Include="SadConsole.Host.MonoGame" Version="9.1.1" />
   </ItemGroup>
 
   <ItemGroup>

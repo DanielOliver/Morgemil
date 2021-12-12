@@ -213,7 +213,10 @@ src/.idea/**/uiDesigner.xml
 src/.idea/**/dbnavigator.xml
 *.iml
 
-
 # Test Results
 coverage.xml*
 src/coveragereport
+coveragereport
+
+# FAKE - F# Make
+.fake/
