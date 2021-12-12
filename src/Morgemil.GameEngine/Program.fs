@@ -103,7 +103,8 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
 
         base.Clear()
 
-        for (position, tile, tileFeature) in viewOnlyTileMap.Tiles do
+        for tileInstance in viewOnlyTileMap.Tiles do
+            let (position, tile, tileFeature) = (tileInstance.Position, tileInstance.Tile, tileInstance.TileFeature)
             match tileFeature with
             | Some(feature) ->
                 let (showFeatureChar, foregroundColor) =

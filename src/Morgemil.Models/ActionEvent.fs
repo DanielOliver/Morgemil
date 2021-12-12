@@ -31,9 +31,17 @@ type EventMapChange =
         TileMapData: TileMapData
     }
 
+type EventTileFeatureChanged =
+    {
+        Position: Vector2i
+        OldTileFeature: TileFeature option
+        NewTileFeature: TileFeature option
+    }
+
 [<RequireQualifiedAccess>]
 type ActionEvent =
     | AfterMove of EventAfterMove
     | RefusedMove of EventRefusedMoved
     | MapChange of EventMapChange
+    | TileFeatureChanged of EventTileFeatureChanged
     | Empty of int
