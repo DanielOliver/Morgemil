@@ -102,39 +102,39 @@ let ``Can transition states``() =
             floorParameters
         ]
         ScenarioData.MonsterGenerationParameters = Table.CreateReadonlyTable (fun (MonsterGenerationParameterID id) -> id) []
+        ScenarioData.Aspects = Table.CreateReadonlyTable (fun (AspectID id) -> id) []
     }
-    
+
     let loadScenarioData (callback: ScenarioData -> unit) =
         callback scenarioData
-    
+
     let machine: IGameBuilder = SimpleGameBuilderMachine(loadScenarioData) :> IGameBuilder
     Assert.Equal(GameBuilderStateType.SelectScenario, machine.CurrentState.GameBuilderStateType)
-    
+
     match machine.CurrentState with
     | GameBuilderState.SelectScenario (scenarioList, scenarioCallback) ->
         scenarioCallback (scenarioList.Head)
-    | _ -> Assert.False(true)           
+    | _ -> Assert.False(true)
 
     while machine.CurrentState.GameBuilderStateType = GameBuilderStateType.LoadedScenarioData do
         System.Threading.Thread.Sleep 200
     Assert.Equal(GameBuilderStateType.WaitingForCurrentPlayer, machine.CurrentState.GameBuilderStateType)
-    
+
     match machine.CurrentState with
     | GameBuilderState.WaitingForCurrentPlayer (addPlayer) ->
         addPlayer (RaceID 1L)
     | _ -> Assert.False(true)
-    
+
     Assert.Equal(GameBuilderStateType.LoadingGameProgress, machine.CurrentState.GameBuilderStateType)
-    
+
     while machine.CurrentState.GameBuilderStateType = GameBuilderStateType.LoadingGameProgress do
         System.Threading.Thread.Sleep 200
     Assert.Equal(GameBuilderStateType.GameBuilt, machine.CurrentState.GameBuilderStateType)
-    
+
     match machine.CurrentState with
     | GameBuilderState.GameBuilt (gameState, initialGameData) ->
         Assert.Equal(1, initialGameData.Characters.Length)
         Assert.Equal(PlayerID 1L, initialGameData.CurrentPlayerID)
-    | _ -> Assert.False(true)    
+    | _ -> Assert.False(true)
     ()
-    
-    
+

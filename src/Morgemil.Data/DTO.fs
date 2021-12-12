@@ -38,6 +38,19 @@ type Race =
   interface IRow with
       member this.Key = this.ID
 
+type Aspect =
+  { ID : int64
+    ///Proper noun
+    Noun : string
+    ///Proper adjective
+    Adjective : string
+    ///User-visible description
+    Description : string
+  }
+
+  interface IRow with
+      member this.Key = this.ID
+
 type RaceModifier =
   { ID: int64
     ///Proper noun
@@ -178,6 +191,7 @@ type RawDtoPhase0 =
          MonsterGenerationParameters: DtoValidResult<MonsterGenerationParameter[]>
          Items: DtoValidResult<Item[]>
          FloorGenerationParameters: DtoValidResult<FloorGenerationParameter[]>
+         Aspects: DtoValidResult<Aspect[]>
     }
 
     member this.Errors: string list =
@@ -188,6 +202,7 @@ type RawDtoPhase0 =
               this.MonsterGenerationParameters.Errors
               this.Items.Errors
               this.FloorGenerationParameters.Errors
+              this.Aspects.Errors
         |] |> List.concat
 
     member this.Success: bool =
@@ -199,6 +214,7 @@ type RawDtoPhase0 =
              this.MonsterGenerationParameters.Success
              this.Items.Success
              this.FloorGenerationParameters.Success
+             this.Aspects.Success
         ] |> List.forall id
 
 
@@ -210,6 +226,7 @@ type RawDtoPhase1 =
          MonsterGenerationParameters: DtoValidResult<DtoValidResult<MonsterGenerationParameter>[]>
          Items: DtoValidResult<DtoValidResult<Item>[]>
          FloorGenerationParameters: DtoValidResult<DtoValidResult<FloorGenerationParameter>[]>
+         Aspects: DtoValidResult<DtoValidResult<Aspect>[]>
     }
 
     member this.Errors: string list =
@@ -220,6 +237,7 @@ type RawDtoPhase1 =
               this.MonsterGenerationParameters.Errors
               this.Items.Errors
               this.FloorGenerationParameters.Errors
+              this.Aspects.Errors
         |] |> List.concat
 
     member this.Success: bool =
@@ -231,6 +249,7 @@ type RawDtoPhase1 =
              this.MonsterGenerationParameters.Success
              this.Items.Success
              this.FloorGenerationParameters.Success
+             this.Aspects.Success
         ] |> List.forall id
 
 
@@ -242,4 +261,5 @@ type RawDtoPhase2 =
          MonsterGenerationParameters: Morgemil.Models.MonsterGenerationParameter []
          Items: Morgemil.Models.Item []
          FloorGenerationParameters: Morgemil.Models.FloorGenerationParameter []
+         Aspects: Morgemil.Models.Aspect []
     }

@@ -3,80 +3,101 @@ namespace Morgemil.Models
 open System
 
 
-type [<AttributeUsage(AttributeTargets.Class)>] RecordAttribute() =
+[<AttributeUsage(AttributeTargets.Class)>]
+type RecordAttribute() =
     inherit Attribute()
 
-type [<AttributeUsage(AttributeTargets.Property)>] RecordIdAttribute() =
+[<AttributeUsage(AttributeTargets.Property)>]
+type RecordIdAttribute() =
     inherit Attribute()
 
-type [<AttributeUsage(AttributeTargets.Property)>] MeasureByAttribute(name: string) =
+[<AttributeUsage(AttributeTargets.Property)>]
+type MeasureByAttribute(name: string) =
     inherit Attribute()
     member this.Name = name
 
-type [<Struct>] TileFeatureID =
+[<Struct>]
+type TileFeatureID =
     | TileFeatureID of int64
 
     member this.Key =
         let (TileFeatureID rowID) = this
         rowID
 
-type [<Struct>] RaceID =
+[<Struct>]
+type RaceID =
     | RaceID of int64
 
     member this.Key =
         let (RaceID rowID) = this
         rowID
 
-type [<Struct>] RaceModifierID =
+[<Struct>]
+type RaceModifierID =
     | RaceModifierID of int64
 
     member this.Key =
         let (RaceModifierID rowID) = this
         rowID
 
-type [<Struct>] TileID =
+[<Struct>]
+type TileID =
     | TileID of int64
 
     member this.Key =
         let (TileID rowID) = this
         rowID
 
-type [<Struct>] TileInstanceID =
+[<Struct>]
+type TileInstanceID =
     | TileInstanceID of int64
 
     member this.Key =
         let (TileInstanceID rowID) = this
         rowID
 
-type [<Struct>] CharacterID =
+[<Struct>]
+type CharacterID =
     | CharacterID of int64
 
     member this.Key =
         let (CharacterID characterID) = this
         characterID
 
-type [<Struct>] ItemID =
+[<Struct>]
+type ItemID =
     | ItemID of int64
 
     member this.Key =
         let (ItemID rowID) = this
         rowID
 
-type [<Struct>] FloorGenerationParameterID =
+[<Struct>]
+type AspectID =
+    | AspectID of int64
+
+    member this.Key =
+        let (AspectID rowID) = this
+        rowID
+
+[<Struct>]
+type FloorGenerationParameterID =
     | FloorGenerationParameterID of int64
 
     member this.Key =
         let (FloorGenerationParameterID rowID) = this
         rowID
 
-type [<Struct>] MonsterGenerationParameterID =
+[<Struct>]
+type MonsterGenerationParameterID =
     | MonsterGenerationParameterID of int64
 
     member this.Key =
         let (MonsterGenerationParameterID rowID) = this
         rowID
 
-type [<Struct>] PlayerID =
+[<Struct>]
+type PlayerID =
     | PlayerID of int64
 
     member this.Key =

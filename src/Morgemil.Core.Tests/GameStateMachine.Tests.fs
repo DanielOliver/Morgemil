@@ -23,6 +23,7 @@ let ``Can transition states``() =
         ScenarioData.RaceModifiers = Table.CreateReadonlyTable (fun (RaceModifierID id) -> id) []
         ScenarioData.FloorGenerationParameters = Table.CreateReadonlyTable (fun (FloorGenerationParameterID id) -> id) []
         ScenarioData.MonsterGenerationParameters = Table.CreateReadonlyTable (fun (MonsterGenerationParameterID id) -> id) []
+        ScenarioData.Aspects = Table.CreateReadonlyTable (fun (AspectID id) -> id) []
     }
 
     let stateMachine: IGameStateMachine = SimpleGameStateMachine(exampleLoop, Table.EmptyScenarioData) :> IGameStateMachine

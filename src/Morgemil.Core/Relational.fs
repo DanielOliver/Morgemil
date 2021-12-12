@@ -212,6 +212,7 @@ module Table =
             RaceModifiers = CreateReadonlyTable (fun (RaceModifierID id) -> id) []
             FloorGenerationParameters = CreateReadonlyTable (fun (FloorGenerationParameterID id) -> id) []
             MonsterGenerationParameters = CreateReadonlyTable (fun (MonsterGenerationParameterID id) -> id) []
+            Aspects = CreateReadonlyTable (fun (AspectID id) -> id) []
         }
 
 module TableQuery =

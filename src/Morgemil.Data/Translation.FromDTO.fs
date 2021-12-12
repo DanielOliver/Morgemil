@@ -139,6 +139,15 @@ let FloorGenerationParameterFromDto (getTileByID: TileID -> Tile) (floorGenerati
         Strategy = floorGenerationParameter.Strategy
     }
 
+///DTO to Aspect
+let AspectFromDto (aspect: DTO.Aspect) : Aspect =
+    {
+        Aspect.ID = AspectID aspect.ID
+        Noun = aspect.Noun
+        Adjective = aspect.Adjective
+        Description = aspect.Description
+    }
+
 ///DTO to Phase2
 let TranslateFromDtosToPhase2 (dtos: RawDtoPhase0): RawDtoPhase2 =
     let tiles = dtos.Tiles.Object |> Seq.map (TileFromDto) |> Table.CreateReadonlyTable (fun (t: TileID) -> t.Key)
@@ -157,6 +166,8 @@ let TranslateFromDtosToPhase2 (dtos: RawDtoPhase0): RawDtoPhase2 =
 
     let floorGenerationParameters = dtos.FloorGenerationParameters.Object |> Seq.map (FloorGenerationParameterFromDto (fun t -> tiles.Item(t))) |> Table.CreateReadonlyTable (fun (t: FloorGenerationParameterID) -> t.Key)
 
+    let aspects = dtos.Aspects.Object |> Seq.map (AspectFromDto) |> Table.CreateReadonlyTable (fun (t: AspectID) -> t.Key)
+
     {
         RawDtoPhase2.Tiles = tiles.Items |> Seq.toArray
         RaceModifiers = raceModifiers.Items |> Seq.toArray
@@ -165,6 +176,7 @@ let TranslateFromDtosToPhase2 (dtos: RawDtoPhase0): RawDtoPhase2 =
         MonsterGenerationParameters = monsterGenerationParameters.Items |> Seq.toArray
         TileFeatures = tileFeatures.Items |> Seq.toArray
         FloorGenerationParameters = floorGenerationParameters.Items |> Seq.toArray
+        Aspects = aspects.Items |> Seq.toArray
     }
 
 ///DTO to Scenario
@@ -183,6 +195,8 @@ let TranslateFromDtosToScenario (dtos: RawDtoPhase0): ScenarioData =
 
     let floorGenerationParameters = dtos.FloorGenerationParameters.Object |> Seq.map (FloorGenerationParameterFromDto (fun t -> tiles.Item(t))) |> Table.CreateReadonlyTable (fun (t: FloorGenerationParameterID) -> t.Key)
 
+    let aspects = dtos.Aspects.Object |> Seq.map AspectFromDto |> Table.CreateReadonlyTable (fun (t: AspectID) -> t.Key)
+
     {
         ScenarioData.Tiles = tiles
         RaceModifiers = raceModifiers
@@ -191,4 +205,5 @@ let TranslateFromDtosToScenario (dtos: RawDtoPhase0): ScenarioData =
         MonsterGenerationParameters = monsterGenerationParameters
         TileFeatures = tileFeatures
         FloorGenerationParameters = floorGenerationParameters
+        Aspects = aspects
     }

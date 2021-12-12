@@ -166,6 +166,14 @@ let private ValidateDtoFloorGenerationParameters (item: DtoValidResult<FloorGene
         ]
     )
 
+/// Validate Tiles
+let private ValidateDtoAspects (aspect: DtoValidResult<Aspect[]>): DtoValidResult<DtoValidResult<Aspect>[]> * IReadonlyTable<Aspect, int64> =
+    aspect
+    |> ValidateGameDataWithTable (fun acc element ->
+        [
+            ExpectedUnique element (fun x -> x.ID) "AspectID" acc
+        ]
+    )
 
 /// Tie together all validation routines
 let ValidateDtos (phase0: RawDtoPhase0): RawDtoPhase1 =
@@ -183,6 +191,8 @@ let ValidateDtos (phase0: RawDtoPhase0): RawDtoPhase1 =
 
     let (floorGenerationParameterResults, floorGenerationParametersLinkTable) = ValidateDtoFloorGenerationParameters phase0.FloorGenerationParameters tileTable
 
+    let (aspectResults, aspectTable) = ValidateDtoAspects phase0.Aspects
+
     {
         RawDtoPhase1.Tiles = tileResults
         TileFeatures = tileFeatureResults
@@ -191,5 +201,6 @@ let ValidateDtos (phase0: RawDtoPhase0): RawDtoPhase1 =
         MonsterGenerationParameters = monsterGenerationParameterResults
         Items = itemResults
         FloorGenerationParameters = floorGenerationParameterResults
+        Aspects = aspectResults
     }
 
