@@ -22,12 +22,12 @@ type SimpleGameStateMachine
 
                 let inputFunc = (GameStateRequest.Input >> inbox.Post)
 
+                let resultQ =
+                    new System.Collections.Generic.Queue<Step list>()
+
                 let rec loop (previousState: GameState) =
                     async {
                         let mutable currentState: GameState = previousState
-
-                        let resultQ =
-                            new System.Collections.Generic.Queue<Step list>()
 
                         let! message = inbox.Receive()
 
