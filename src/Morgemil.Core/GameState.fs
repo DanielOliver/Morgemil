@@ -2,10 +2,12 @@ namespace Morgemil.Core
 
 open Morgemil.Models
 open Morgemil.Models.Relational
+open Morgemil.Models.Tracked
 
 [<RequireQualifiedAccess>]
 type StepItem =
     | Character of Character TableEvent
+    | GameContext of GameContext TrackedEvent
 
 type Step =
     {   Event: ActionEvent

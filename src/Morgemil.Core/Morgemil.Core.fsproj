@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Compile Include="Relational.fs" />
+    <Compile Include="Tracked.fs" />
     <Compile Include="TileFeatureTable.fs" />
     <Compile Include="CharacterTable.fs" />
     <Compile Include="TileMap.fs" />

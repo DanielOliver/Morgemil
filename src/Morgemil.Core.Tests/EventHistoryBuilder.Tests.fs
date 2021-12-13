@@ -37,10 +37,15 @@ let exampleItem3 = {
     Character.RaceModifier = None
 }
 
+let exampleGameContext = {
+    GameContext.CurrentTimeTick = 1L<TimeTick>
+}
+
 [<Fact>]
 let ``Can yield Results without updates``() =
     let table1 = CharacterTable()
-    use eventBuilder = new EventHistoryBuilder(table1)
+    let trackedGameContext = TrackedEntity(exampleGameContext)
+    use eventBuilder = new EventHistoryBuilder(table1, trackedGameContext)
     let results =
         eventBuilder {
             yield ActionEvent.Empty 1

@@ -14,9 +14,11 @@ let scenarioData = Translation.FromDTO.TranslateFromDtosToScenario rawGameDataPh
 type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialGameData) =
     inherit SadConsole.Console(40, 40)
 
+
     let mutable viewOnlyTileMap = initialGameData.TileMap
     let mutable viewCharacterTable = CharacterTable()
     let character1 = initialGameData.Characters.[0]
+    let gameContext = TrackedEntity initialGameData.GameContext
 
     let createColor (color: Color) = SadRogue.Primitives.Color(color.R, color.G, color.B, color.A)
     let createTileMapFromData(data: TileMapData) =
@@ -81,7 +83,7 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
         | GameState.Results (results, acknowledgeCallback) ->
             results
             |> List.iter (fun event ->
-                printfn "%A" event.Event
+                printfn "%A" event
                 match event.Event with
                 | ActionEvent.MapChange mapChange ->
                     viewOnlyTileMap <- createTileMapFromData mapChange.TileMapData
@@ -97,6 +99,8 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
                             | TableEvent.Added(row) -> Table.AddRow viewCharacterTable row
                             | TableEvent.Updated(_, row) -> Table.AddRow viewCharacterTable row
                             | TableEvent.Removed(row) -> Table.RemoveRow viewCharacterTable row
+                        | StepItem.GameContext context ->
+                            TrackedEntity.Update gameContext context.NewValue
                     )
                 )
             acknowledgeCallback()

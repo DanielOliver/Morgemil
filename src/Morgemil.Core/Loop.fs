@@ -3,14 +3,22 @@ namespace Morgemil.Core
 open Morgemil.Models
 open Morgemil.Math
 
-type Loop(initialCharacters: CharacterTable, initialTileMap: TileMap, scenarioData: ScenarioData, rng: RNG.DefaultRNG) =
+type Loop
+    (
+        initialCharacters: CharacterTable,
+        initialTileMap: TileMap,
+        scenarioData: ScenarioData,
+        rng: RNG.DefaultRNG,
+        gameContext: GameContext TrackedEntity
+    ) =
     let mutable characters = initialCharacters
     let mutable tileMap = initialTileMap
 
     member this.ScenarioData = scenarioData
 
     member this.ProcessRequest(event: ActionRequest) : Step list =
-        use builder = new EventHistoryBuilder(characters)
+        use builder =
+            new EventHistoryBuilder(characters, gameContext)
 
         builder {
             match event with
@@ -92,4 +100,6 @@ type Loop(initialCharacters: CharacterTable, initialTileMap: TileMap, scenarioDa
                                   |> Array.ofSeq
                               TileMapData = tileMap.TileMapData }
                             |> ActionEvent.MapChange
+
+            yield ActionEvent.Empty 0
         }

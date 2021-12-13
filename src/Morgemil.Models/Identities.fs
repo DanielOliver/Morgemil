@@ -112,3 +112,6 @@ type Weight
 
 [<Measure>]
 type HandSlot
+
+[<Measure>]
+type TimeTick

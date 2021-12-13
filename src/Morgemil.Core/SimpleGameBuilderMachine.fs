@@ -1,5 +1,6 @@
 namespace Morgemil.Core
 
+open Morgemil.Core
 open Morgemil.Models
 open Morgemil.Math
 
@@ -43,8 +44,11 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
 
             Table.AddRow characterTable character1
 
+            let gameContext =
+                { GameContext.CurrentTimeTick = 0L<TimeTick> }
+
             let gameLoop =
-                Loop(characterTable, tileMap, scenarioData, rng)
+                Loop(characterTable, tileMap, scenarioData, rng, TrackedEntity gameContext)
 
             let gameState =
                 SimpleGameStateMachine(gameLoop.ProcessRequest, scenarioData) :> IGameStateMachine
@@ -52,7 +56,8 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
             let initialGameData =
                 { InitialGameData.Characters = [| character1 |]
                   TileMap = tileMap
-                  CurrentPlayerID = currentPlayerID.Value }
+                  CurrentPlayerID = currentPlayerID.Value
+                  GameContext = gameContext }
 
             callback (gameState, initialGameData)
         }

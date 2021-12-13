@@ -1,6 +1,7 @@
 namespace Morgemil.Core
 
 open Morgemil.Models
+open Morgemil.Models.Tracked
 
 
 [<RequireQualifiedAccess>]
@@ -10,13 +11,14 @@ type GameBuilderStateType =
     | LoadingGameProgress
     | LoadedScenarioData
     | SelectScenario
-    
+
 /// The initial game data returned
 type InitialGameData =
     {
         TileMap: TileMap
         Characters: Character[]
         CurrentPlayerID: PlayerID
+        GameContext: GameContext
     }
 
 /// The steps and state of a game that's being built.
@@ -26,8 +28,8 @@ type GameBuilderState =
     | GameBuilt of GameEngine: IGameStateMachine * InitialGameData: InitialGameData
     | LoadingGameProgress of State: string
     | LoadedScenarioData of ScenarioData: ScenarioData
-    | SelectScenario of Scenarios: string list * ChooseScenario: (string -> unit)    
-    
+    | SelectScenario of Scenarios: string list * ChooseScenario: (string -> unit)
+
     member this.GameBuilderStateType =
         match this with
         | GameBuilderState.WaitingForCurrentPlayer _ -> GameBuilderStateType.WaitingForCurrentPlayer
