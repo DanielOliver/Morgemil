@@ -11,11 +11,11 @@ type EventHistoryBuilder(characterTable: CharacterTable, gameContext: TrackedEnt
     let characterTableCallback = Table.GetHistoryCallback characterTable
 
     let gameContextCallback =
-        TrackedEntity.GetHistoryCallback gameContext
+        Tracked.GetHistoryCallback gameContext
 
     do
         Table.SetHistoryCallback characterTable (fun t -> _events <- (t |> StepItem.Character) :: _events)
-        TrackedEntity.SetHistoryCallback gameContext (fun t -> _events <- (t |> StepItem.GameContext) :: _events)
+        Tracked.SetHistoryCallback gameContext (fun t -> _events <- (t |> StepItem.GameContext) :: _events)
 
     member this.Bind(m, f) = f m
 
@@ -40,5 +40,5 @@ type EventHistoryBuilder(characterTable: CharacterTable, gameContext: TrackedEnt
         member this.Dispose() =
             if not isDisposed then
                 Table.SetHistoryCallback characterTable characterTableCallback
-                TrackedEntity.SetHistoryCallback gameContext gameContextCallback
+                Tracked.SetHistoryCallback gameContext gameContextCallback
                 isDisposed <- true

@@ -19,6 +19,7 @@ let exampleItem1 = {
     Character.Position = Vector2i.Identity
     Character.ID = CharacterID 51L
     Character.RaceModifier = None
+    Character.NextTick = 1L<TimeTick>
 }
 
 let exampleItem2 = {
@@ -27,6 +28,7 @@ let exampleItem2 = {
     Character.Position = Vector2i.Identity
     Character.ID = CharacterID 52L
     Character.RaceModifier = None
+    Character.NextTick = 1L<TimeTick>
 }
 
 let exampleItem3 = {
@@ -35,6 +37,7 @@ let exampleItem3 = {
     Character.Position = Vector2i.Identity
     Character.ID = CharacterID 53L
     Character.RaceModifier = None
+    Character.NextTick = 1L<TimeTick>
 }
 
 let exampleGameContext = {

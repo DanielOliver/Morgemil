@@ -1,7 +1,9 @@
 namespace Morgemil.Models
 
 open Morgemil.Math
+open Morgemil.Models
 open Newtonsoft.Json
+
 
 [<Record>]
 type Character =
@@ -10,6 +12,7 @@ type Character =
         Race: Race
         RaceModifier: RaceModifier option
         Position: Vector2i
+        NextTick: int64<TimeTick>
         PlayerID: PlayerID option
     }
     interface Relational.IRow with

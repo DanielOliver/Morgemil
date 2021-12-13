@@ -39,6 +39,7 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
                 { Character.ID = Table.GenerateKey characterTable
                   Race = Table.GetRowByKey scenarioData.Races chosenRaceID.Value
                   RaceModifier = None
+                  NextTick = 0L<TimeTick>
                   Position = mapGenerationResults.EntranceCoordinate
                   PlayerID = currentPlayerID.Value |> Some }
 
@@ -51,7 +52,7 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
                 Loop(characterTable, tileMap, scenarioData, rng, TrackedEntity gameContext)
 
             let gameState =
-                SimpleGameStateMachine(gameLoop.ProcessRequest, scenarioData) :> IGameStateMachine
+                SimpleGameStateMachine(gameLoop.ProcessRequest, (fun () -> gameLoop.WaitingType), scenarioData) :> IGameStateMachine
 
             let initialGameData =
                 { InitialGameData.Characters = [| character1 |]

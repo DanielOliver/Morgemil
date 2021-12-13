@@ -26,21 +26,17 @@ let ``Can transition states``() =
         ScenarioData.Aspects = Table.CreateReadonlyTable (fun (AspectID id) -> id) []
     }
 
-    let stateMachine: IGameStateMachine = SimpleGameStateMachine(exampleLoop, Table.EmptyScenarioData) :> IGameStateMachine
+    let stateMachine: IGameStateMachine = SimpleGameStateMachine(exampleLoop, (fun () -> GameStateWaitingType.WaitingForInput), Table.EmptyScenarioData) :> IGameStateMachine
     Assert.Equal(GameStateType.WaitingForInput, stateMachine.CurrentState.GameStateType)
 
     let testState() =
-        while stateMachine.CurrentState.GameStateType = GameStateType.Processing do
-            System.Threading.Thread.Sleep 500
-        Assert.Equal(GameStateType.Results, stateMachine.CurrentState.GameStateType)
-
-        match stateMachine.CurrentState with
-        | GameState.Results (results, acknowledgeCallback) ->
-            acknowledgeCallback()
-        | _ -> ()
-
         while stateMachine.CurrentState.GameStateType <> GameStateType.WaitingForInput do
-            System.Threading.Thread.Sleep 500
+            System.Threading.Thread.Sleep 100
+
+            match stateMachine.CurrentState with
+            | GameState.Results (results, acknowledge) ->
+                acknowledge()
+            | _ -> ()
         Assert.Equal(GameStateType.WaitingForInput, stateMachine.CurrentState.GameStateType)
 
 

@@ -15,21 +15,27 @@ type Step =
     }
 
 [<RequireQualifiedAccess>]
+type GameStateWaitingType =
+    | WaitingForInput
+    | WaitingForAI
+    | WaitingForEngine
+
+[<RequireQualifiedAccess>]
 type GameStateType =
     | Processing
-    | Results
     | WaitingForInput
+//    | WaitingForAI
 
 [<RequireQualifiedAccess>]
 type GameState =
     | Processing
-    | Results of Steps: Step list * AcknowledgeCallback: (unit -> unit)
+    | Results of Steps: Step list  * AcknowledgeCallback: (unit -> unit)
     | WaitingForInput of InputCallback: (ActionRequest -> unit)
 
     member this.GameStateType =
         match this with
         | GameState.Processing -> GameStateType.Processing
-        | GameState.Results _ -> GameStateType.Results
+        | GameState.Results _ -> GameStateType.Processing
         | GameState.WaitingForInput _ -> GameStateType.WaitingForInput
 
 [<RequireQualifiedAccess>]

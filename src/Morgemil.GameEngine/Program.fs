@@ -100,7 +100,7 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
                             | TableEvent.Updated(_, row) -> Table.AddRow viewCharacterTable row
                             | TableEvent.Removed(row) -> Table.RemoveRow viewCharacterTable row
                         | StepItem.GameContext context ->
-                            TrackedEntity.Update gameContext context.NewValue
+                            Tracked.Update gameContext context.NewValue
                     )
                 )
             acknowledgeCallback()

@@ -1,8 +1,14 @@
 namespace Morgemil.Core
 
+open Morgemil.Core
 open Morgemil.Models
 
-type SimpleGameStateMachine(gameLoop: ActionRequest -> Step list, scenarioData: ScenarioData) =
+type SimpleGameStateMachine
+    (
+        gameLoop: ActionRequest -> Step list,
+        waitingType: unit -> GameStateWaitingType,
+        scenarioData: ScenarioData
+    ) =
 
     let loopWorkAgent =
         MailboxProcessor<GameStateRequest>.Start
@@ -19,6 +25,10 @@ type SimpleGameStateMachine(gameLoop: ActionRequest -> Step list, scenarioData: 
                 let rec loop (previousState: GameState) =
                     async {
                         let mutable currentState: GameState = previousState
+
+                        let resultQ =
+                            new System.Collections.Generic.Queue<Step list>()
+
                         let! message = inbox.Receive()
 
                         match message with
@@ -30,15 +40,26 @@ type SimpleGameStateMachine(gameLoop: ActionRequest -> Step list, scenarioData: 
                             | GameState.Processing
                             | GameState.Results _ -> ()
                         | GameStateRequest.SetResults results ->
-                            currentState <-
-                                GameState.Results(results, (fun () -> inbox.Post GameStateRequest.Acknowledge))
-                        | GameStateRequest.QueryState replyChannel -> replyChannel.Reply currentState
+                            resultQ.Enqueue(results)
+
+                            match waitingType () with
+                            | GameStateWaitingType.WaitingForInput ->
+                                currentState <- GameState.WaitingForInput inputFunc
+                            | GameStateWaitingType.WaitingForEngine
+                            | GameStateWaitingType.WaitingForAI ->
+                                //TODO: Engine tick
+                                currentState <- GameState.Processing
+                        | GameStateRequest.QueryState replyChannel ->
+                            if resultQ.Count > 0 then
+                                (resultQ.Peek(), (fun () -> inbox.Post GameStateRequest.Acknowledge))
+                                |> GameState.Results
+                                |> replyChannel.Reply
+                            else
+                                currentState |> replyChannel.Reply
                         | GameStateRequest.Kill -> ()
                         | GameStateRequest.Acknowledge ->
-                            match currentState with
-                            | GameState.Results _ -> currentState <- GameState.WaitingForInput inputFunc
-                            | GameState.Processing
-                            | GameState.WaitingForInput _ -> ()
+                            if resultQ.Count > 0 then
+                                resultQ.Dequeue() |> ignore
 
                         match message with
                         | GameStateRequest.Kill -> ()

@@ -1,5 +1,6 @@
 namespace Morgemil.Core
 
+open Morgemil.Core
 open Morgemil.Models
 open Morgemil.Math
 
@@ -15,6 +16,12 @@ type Loop
     let mutable tileMap = initialTileMap
 
     member this.ScenarioData = scenarioData
+
+    member this.WaitingType: GameStateWaitingType =
+        if (characters.ByTicks |> Seq.head).PlayerID.IsSome then
+            GameStateWaitingType.WaitingForInput
+        else
+            GameStateWaitingType.WaitingForEngine
 
     member this.ProcessRequest(event: ActionRequest) : Step list =
         use builder =
@@ -45,7 +52,8 @@ type Loop
                         Table.AddRow
                             characters
                             { moveCharacter with
-                                  Position = newPosition }
+                                  Position = newPosition
+                                  NextTick = moveCharacter.NextTick + 1000L<TimeTick> }
 
                         yield
                             { CharacterID = moveCharacter.ID
@@ -96,7 +104,8 @@ type Loop
                                   |> Seq.map
                                       (fun t ->
                                           { t with
-                                                Position = mapGenerationResults.EntranceCoordinate })
+                                                Position = mapGenerationResults.EntranceCoordinate
+                                                NextTick = t.NextTick + 1L<TimeTick> })
                                   |> Array.ofSeq
                               TileMapData = tileMap.TileMapData }
                             |> ActionEvent.MapChange

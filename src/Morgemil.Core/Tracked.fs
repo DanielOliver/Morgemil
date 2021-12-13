@@ -33,7 +33,7 @@ type TrackedEntity<'T>(initialValue: 'T) =
                 { TrackedEvent.NewValue = _value
                   OldValue = oldValue }
 
-module TrackedEntity =
+module Tracked =
     let GetHistoryCallback (entity: 'T :> ITrackedEventHistory<'U>) : (TrackedEvent<'U> -> unit) =
         entity.HistoryCallback
 
