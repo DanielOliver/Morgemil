@@ -45,3 +45,4 @@ type ActionEvent =
     | MapChange of EventMapChange
     | TileFeatureChanged of EventTileFeatureChanged
     | Empty of int
+    | EndResponse of int

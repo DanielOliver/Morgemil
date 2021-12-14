@@ -28,9 +28,12 @@ type EventHistoryBuilder(characterTable: CharacterTable, gameContext: TrackedEnt
     member this.Zero() : Step list = []
 
     member this.Yield(x: ActionEvent) : Step list =
-        let step = { Step.Event = x; Updates = _events }
-        _events <- []
-        [ step ]
+        match x with
+        | ActionEvent.Empty _ when _events.IsEmpty -> []
+        | _ ->
+            let step = { Step.Event = x; Updates = _events }
+            _events <- []
+            [ step ]
 
     member this.Yield(x: Step list) : Step list = x
     member this.Combine(a: Step list, b: Step list) : Step list = List.concat [ b; a ]

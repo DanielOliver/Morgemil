@@ -110,5 +110,5 @@ type Loop
                               TileMapData = tileMap.TileMapData }
                             |> ActionEvent.MapChange
 
-            yield ActionEvent.Empty 0
+            yield ActionEvent.EndResponse 0
         }
