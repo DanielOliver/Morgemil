@@ -158,8 +158,6 @@ let TranslateFromDtosToPhase2 (dtos: RawDtoPhase0): RawDtoPhase2 =
 
     let items = dtos.Items.Object |> Seq.map (ItemFromDto) |> Table.CreateReadonlyTable (fun (t: ItemID) -> t.Key)
 
-//    let monsterGenerationParameters = dtos.MonsterGenerationParameters.Object |> Seq.map (MonsterGenerationParameterFromDto) |> Table.CreateReadonlyTable (fun (t: MonsterGenerationParameterID) -> t.Key)
-
     let tileFeatures = dtos.TileFeatures.Object |> Seq.map (TileFeatureFromDto (fun t -> tiles.Item(t))) |> Table.CreateReadonlyTable (fun (t: TileFeatureID) -> t.Key)
 
     let monsterGenerationParameters = dtos.MonsterGenerationParameters.Object |> Seq.map (MonsterGenerationParameterFromDto) |> Table.CreateReadonlyTable (fun (t: MonsterGenerationParameterID) -> t.Key)

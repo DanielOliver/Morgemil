@@ -19,7 +19,6 @@ type FloorGenerationParameter =
     Strategy : FloorGenerationStrategy
   }
 
-
   interface Relational.IRow with
         [<JsonIgnore()>]
         member this.Key = this.ID.Key

@@ -5,7 +5,7 @@ open Newtonsoft.Json
 [<Record>]
 type Race =
   { [<RecordId>] ID : RaceID
-    ///Proper noun
+    ///Proper noun. eg: "minatour"
     Noun : string
     ///Proper adjective
     Adjective : string

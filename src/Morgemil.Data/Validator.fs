@@ -155,7 +155,7 @@ let private ValidateDtoItems (item: DtoValidResult<Item[]>) : DtoValidResult<Dto
         ]
     )
 
-/// Validate FLoor Generation Parameters
+/// Validate Floor Generation Parameters
 let private ValidateDtoFloorGenerationParameters (item: DtoValidResult<FloorGenerationParameter[]>) (tileTable: IReadonlyTable<Tile, int64>) : DtoValidResult<DtoValidResult<FloorGenerationParameter>[]> * IReadonlyTable<FloorGenerationParameter, int64> =
     item
     |> ValidateGameDataWithTable (fun acc element ->

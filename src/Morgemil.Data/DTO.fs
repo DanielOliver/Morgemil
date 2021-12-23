@@ -206,7 +206,6 @@ type RawDtoPhase0 =
         |] |> List.concat
 
     member this.Success: bool =
-        let isOk = function | Ok _ -> true | _ -> false
         [    this.Tiles.Success
              this.TileFeatures.Success
              this.Races.Success
@@ -241,7 +240,6 @@ type RawDtoPhase1 =
         |] |> List.concat
 
     member this.Success: bool =
-        let isOk = function | Ok _ -> true | _ -> false
         [    this.Tiles.Success
              this.TileFeatures.Success
              this.Races.Success
