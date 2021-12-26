@@ -30,7 +30,7 @@ let ``Can transition states`` () =
           ScenarioData.Aspects = Table.CreateReadonlyTable(fun (AspectID id) -> id) [] }
 
     let stateMachine: IGameStateMachine =
-        SimpleGameStateMachine(exampleLoop, (fun () -> GameStateWaitingType.WaitingForInput), Table.EmptyScenarioData)
+        SimpleGameStateMachine(exampleLoop, (fun () -> GameStateWaitingType.WaitingForInput (CharacterID 0L)), Table.EmptyScenarioData)
         :> IGameStateMachine
 
     Assert.Equal(GameStateType.WaitingForInput, stateMachine.CurrentState.GameStateType)
