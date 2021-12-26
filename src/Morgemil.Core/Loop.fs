@@ -46,6 +46,9 @@ type Loop(world: StaticLoopContext, initialContext: LoopContext) =
                         context.Characters
                         { pauseCharacter with
                               NextTick = pauseCharacter.NextTick + 1000L<TimeTick> }
+                    yield
+                        { EventPaused.CharacterID = characterID }
+                        |> ActionEvent.Paused
 
             | ActionRequest.Move actionRequestMove ->
                 match actionRequestMove.CharacterID

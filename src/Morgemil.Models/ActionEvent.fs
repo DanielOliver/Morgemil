@@ -13,6 +13,9 @@ type EventRefusedMoved =
       OldPosition: Vector2i
       RequestedPosition: Vector2i }
 
+type EventPaused =
+    { CharacterID: CharacterID }
+
 type TileMapData =
     { Tiles: Tile array
       DefaultTile: Tile
@@ -33,6 +36,7 @@ type ActionEvent =
     | AfterMove of EventAfterMove
     | RefusedMove of EventRefusedMoved
     | MapChange of EventMapChange
+    | Paused of EventPaused
     | TileFeatureChanged of EventTileFeatureChanged
     | Empty of int
     | EndResponse of int
