@@ -7,33 +7,33 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Translation.Tests.fs" />
-        <Compile Include="JsonReader.Tests.fs" />
-        <Compile Include="JsonWriter.Tests.fs" />
-        <Compile Include="Validation.Tests.fs" />
+        <Compile Include="Translation.Tests.fs"/>
+        <Compile Include="JsonReader.Tests.fs"/>
+        <Compile Include="JsonWriter.Tests.fs"/>
+        <Compile Include="Validation.Tests.fs"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="altcover" Version="8.2.831" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-        <PackageReference Include="xunit" Version="2.4.1" />
+        <PackageReference Include="altcover" Version="8.2.831"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
+        <PackageReference Include="xunit" Version="2.4.1"/>
         <PackageReference Include="xunit.runner.console" Version="2.4.1">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Morgemil.Data\Morgemil.Data.fsproj" />
+        <ProjectReference Include="..\Morgemil.Data\Morgemil.Data.fsproj"/>
     </ItemGroup>
-    
+
     <ItemGroup>
-        <DotNetCliToolReference Include="dotnet-reportgenerator-cli" Version="4.0.13.1" />
+        <DotNetCliToolReference Include="dotnet-reportgenerator-cli" Version="4.0.13.1"/>
     </ItemGroup>
 
 </Project>

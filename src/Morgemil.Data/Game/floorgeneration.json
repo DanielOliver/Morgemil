@@ -1,11 +1,21 @@
 [
-	{	"id": "0",
-		"DefaultTile": 1,
-		"tiles": [ 0, 1 ],
-		"sizerange": {
-			"position": { "x": 8, "y": 8 },
-			"size": { "x": 10, "y": 10 }
-		},
-		"strategy": "openfloor"
-	}
+  {
+    "id": "0",
+    "DefaultTile": 1,
+    "tiles": [
+      0,
+      1
+    ],
+    "sizerange": {
+      "position": {
+        "x": 8,
+        "y": 8
+      },
+      "size": {
+        "x": 10,
+        "y": 10
+      }
+    },
+    "strategy": "openfloor"
+  }
 ]

@@ -1,6 +1,3 @@
 ﻿namespace Morgemil.Models
 
-type Consumable =
-  { Uses: int
-  }
-
+type Consumable = { Uses: int }

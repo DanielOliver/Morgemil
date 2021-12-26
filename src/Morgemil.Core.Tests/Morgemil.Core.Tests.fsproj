@@ -1,38 +1,38 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
 
-    <IsPackable>false</IsPackable>
-  </PropertyGroup>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="TileMap.Tests.fs" />
-    <Compile Include="FloorGenerator.Tests.fs" />
-    <Compile Include="Relational.Tests.fs" />
-    <Compile Include="EventHistoryBuilder.Tests.fs" />
-    <Compile Include="GameStateMachine.Tests.fs" />
-    <Compile Include="GameBuilderMachine.Tests.fs" />
-  </ItemGroup>
+    <ItemGroup>
+        <Compile Include="TileMap.Tests.fs"/>
+        <Compile Include="FloorGenerator.Tests.fs"/>
+        <Compile Include="Relational.Tests.fs"/>
+        <Compile Include="EventHistoryBuilder.Tests.fs"/>
+        <Compile Include="GameStateMachine.Tests.fs"/>
+        <Compile Include="GameBuilderMachine.Tests.fs"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="altcover" Version="8.2.831" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
-    <PackageReference Include="xunit" Version="2.4.1" />
-    <PackageReference Include="xunit.runner.console" Version="2.4.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="altcover" Version="8.2.831"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0"/>
+        <PackageReference Include="xunit" Version="2.4.1"/>
+        <PackageReference Include="xunit.runner.console" Version="2.4.1">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1"/>
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Morgemil.Core\Morgemil.Core.fsproj" />
-    <ProjectReference Include="..\Morgemil.Models\Morgemil.Models.fsproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Morgemil.Core\Morgemil.Core.fsproj"/>
+        <ProjectReference Include="..\Morgemil.Models\Morgemil.Models.fsproj"/>
+    </ItemGroup>
 
 </Project>

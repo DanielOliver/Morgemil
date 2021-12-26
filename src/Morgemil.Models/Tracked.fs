@@ -7,5 +7,5 @@ type ITrackedEventHistory<'T> =
 
 type ITrackedEntity<'T> =
     abstract member Value : 'T with get, set
-    abstract member Get: 'T
-    abstract member Set: 'T -> unit
+    abstract member Get : 'T
+    abstract member Set : 'T -> unit

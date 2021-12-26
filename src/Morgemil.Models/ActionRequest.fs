@@ -4,10 +4,8 @@ open Morgemil.Math
 
 
 type ActionRequestMove =
-    {
-        CharacterID: CharacterID
-        Direction: Vector2i
-    }
+    { CharacterID: CharacterID
+      Direction: Vector2i }
 
 [<RequireQualifiedAccess>]
 type ActionRequest =
