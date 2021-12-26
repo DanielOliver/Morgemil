@@ -23,7 +23,7 @@ type SimpleGameStateMachine
                 let inputFunc = (GameStateRequest.Input >> inbox.Post)
 
                 let resultQ =
-                    new System.Collections.Generic.Queue<Step list>()
+                    System.Collections.Generic.Queue<Step list>()
 
                 let rec loop (previousState: GameState) =
                     async {
@@ -43,11 +43,11 @@ type SimpleGameStateMachine
                             resultQ.Enqueue(results)
 
                             match waitingType () with
-                            | GameStateWaitingType.WaitingForInput ->
+                            | GameStateWaitingType.WaitingForInput characterID ->
                                 currentState <- GameState.WaitingForInput inputFunc
-                            | GameStateWaitingType.WaitingForEngine
-                            | GameStateWaitingType.WaitingForAI ->
-                                //TODO: Engine tick
+                            | GameStateWaitingType.WaitingForEngine characterID
+                            | GameStateWaitingType.WaitingForAI characterID ->
+                                processRequest (ActionRequest.Pause characterID) (GameStateRequest.SetResults >> inbox.Post)
                                 currentState <- GameState.Processing
                         | GameStateRequest.QueryState replyChannel ->
                             if resultQ.Count > 0 then

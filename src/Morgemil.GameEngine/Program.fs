@@ -201,7 +201,7 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
             let color1 = Color.Black
 
             let representation =
-                { TileRepresentation.AnsiCharacter = '@'
+                { TileRepresentation.AnsiCharacter = if character.PlayerID.IsSome then '@' else 'M'
                   BackGroundColor = None
                   ForegroundColor = Some color1 }
 

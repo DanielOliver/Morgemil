@@ -15,9 +15,9 @@ type Step =
 
 [<RequireQualifiedAccess>]
 type GameStateWaitingType =
-    | WaitingForInput
-    | WaitingForAI
-    | WaitingForEngine
+    | WaitingForInput of CharacterID: CharacterID
+    | WaitingForAI of CharacterID: CharacterID
+    | WaitingForEngine of CharacterID: CharacterID
 
 [<RequireQualifiedAccess>]
 type GameStateType =

@@ -21,16 +21,32 @@ type Loop(world: StaticLoopContext, initialContext: LoopContext) =
 
     member this.WaitingType: GameStateWaitingType =
         if context.TimeTable.Next.PlayerID.IsSome then
-            GameStateWaitingType.WaitingForInput
+            GameStateWaitingType.WaitingForInput context.TimeTable.Next.ID
         else
-            GameStateWaitingType.WaitingForEngine
+            GameStateWaitingType.WaitingForEngine context.TimeTable.Next.ID
 
     member this.ProcessRequest(event: ActionRequest) : Step list =
         use builder =
             new EventHistoryBuilder(context.Characters, initialContext.GameContext)
 
         builder {
+            Tracked.Replace
+                context.GameContext
+                (fun t ->
+                    { t with
+                          CurrentTimeTick = context.TimeTable.Next.NextTick })
+
             match event with
+            | ActionRequest.Pause characterID ->
+                match characterID
+                      |> Table.TryGetRowByKey context.Characters with
+                | None -> ()
+                | Some pauseCharacter ->
+                    Table.AddRow
+                        context.Characters
+                        { pauseCharacter with
+                              NextTick = pauseCharacter.NextTick + 1000L<TimeTick> }
+
             | ActionRequest.Move actionRequestMove ->
                 match actionRequestMove.CharacterID
                       |> Table.TryGetRowByKey context.Characters with
@@ -52,17 +68,30 @@ type Loop(world: StaticLoopContext, initialContext: LoopContext) =
                               RequestedPosition = newPosition }
                             |> ActionEvent.RefusedMove
                     else
-                        Table.AddRow
-                            context.Characters
-                            { moveCharacter with
-                                  Position = newPosition
-                                  NextTick = moveCharacter.NextTick + 1000L<TimeTick> }
+                        let isFreeFromOtherCharacters =
+                            context.Characters.ByPositions
+                            |> Seq.where (fun (pos, c) -> pos = newPosition)
+                            |> Seq.isEmpty
 
-                        yield
-                            { CharacterID = moveCharacter.ID
-                              OldPosition = oldPosition
-                              NewPosition = newPosition }
-                            |> ActionEvent.AfterMove
+                        if not isFreeFromOtherCharacters then
+                            yield
+                                { CharacterID = moveCharacter.ID
+                                  OldPosition = oldPosition
+                                  RequestedPosition = newPosition }
+                                |> ActionEvent.RefusedMove
+
+                        else
+                            Table.AddRow
+                                context.Characters
+                                { moveCharacter with
+                                      Position = newPosition
+                                      NextTick = moveCharacter.NextTick + 1000L<TimeTick> }
+
+                            yield
+                                { CharacterID = moveCharacter.ID
+                                  OldPosition = oldPosition
+                                  NewPosition = newPosition }
+                                |> ActionEvent.AfterMove
             | ActionRequest.GoToNextLevel (characterID) ->
                 match characterID
                       |> Table.TryGetRowByKey context.Characters with

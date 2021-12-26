@@ -47,6 +47,15 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
 
             Table.AddRow characterTable character1
 
+            let npc1 =
+                { Character.ID = Table.GenerateKey characterTable
+                  Race = scenarioData.Races.Items |> Seq.last
+                  RaceModifier = None
+                  NextTick = 2L<TimeTick>
+                  Position = mapGenerationResults.EntranceCoordinate + Vector2i.create(1,2)
+                  PlayerID = None }
+            Table.AddRow characterTable npc1
+
             let gameContext =
                 { GameContext.CurrentTimeTick = 0L<TimeTick> }
 
@@ -65,7 +74,7 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
                 :> IGameStateMachine
 
             let initialGameData =
-                { InitialGameData.Characters = [| character1 |]
+                { InitialGameData.Characters = characterTable.ByTicks |> Seq.toArray
                   TileMap = tileMap
                   CurrentPlayerID = currentPlayerID.Value
                   GameContext = gameContext }

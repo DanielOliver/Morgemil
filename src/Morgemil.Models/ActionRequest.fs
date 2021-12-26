@@ -11,3 +11,4 @@ type ActionRequestMove =
 type ActionRequest =
     | Move of ActionRequestMove
     | GoToNextLevel of CharacterID: CharacterID
+    | Pause of CharacterID: CharacterID
