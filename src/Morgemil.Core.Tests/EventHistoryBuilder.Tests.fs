@@ -42,7 +42,8 @@ let exampleGameContext =
 
 [<Fact>]
 let ``Can yield Results without updates`` () =
-    let table1 = CharacterTable()
+    let timeTable = TimeTable()
+    let table1 = CharacterTable(timeTable)
     let trackedGameContext = TrackedEntity(exampleGameContext)
 
     use eventBuilder =

@@ -2,8 +2,10 @@ namespace Morgemil.Core
 
 open Morgemil.Models
 
-type CharacterTable() =
+type CharacterTable(timeTable: TimeTable) as this =
     inherit Table<Character, CharacterID>(CharacterID, (fun (key) -> key.Key))
+
+    do this.AddIndex timeTable
 
     member this.ByPositions =
         this

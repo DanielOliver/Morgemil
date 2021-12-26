@@ -27,8 +27,9 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
     inherit SadConsole.Console(40, 40)
 
 
+    let mutable viewOnlyTimeTable = TimeTable()
     let mutable viewOnlyTileMap = initialGameData.TileMap
-    let mutable viewCharacterTable = CharacterTable()
+    let mutable viewCharacterTable = CharacterTable(viewOnlyTimeTable)
     let character1 = initialGameData.Characters.[0]
 
     let gameContext =
@@ -110,7 +111,8 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
                     match event.Event with
                     | ActionEvent.MapChange mapChange ->
                         viewOnlyTileMap <- createTileMapFromData mapChange.TileMapData
-                        viewCharacterTable <- CharacterTable()
+                        viewOnlyTimeTable <- TimeTable()
+                        viewCharacterTable <- CharacterTable(viewOnlyTimeTable)
 
                         mapChange.Characters
                         |> Array.iter (Table.AddRow viewCharacterTable)

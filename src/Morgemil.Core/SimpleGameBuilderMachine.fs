@@ -33,7 +33,9 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
             let tileMap =
                 createTileMapFromData tileMap.TileMapData
 
-            let characterTable = CharacterTable()
+            let timeTable = TimeTable()
+
+            let characterTable = CharacterTable(timeTable)
 
             let character1 =
                 { Character.ID = Table.GenerateKey characterTable
@@ -54,6 +56,7 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
                       RNG = rng },
                     { LoopContext.Characters = characterTable
                       TileMap = tileMap
+                      TimeTable = timeTable
                       GameContext = TrackedEntity gameContext }
                 )
 
