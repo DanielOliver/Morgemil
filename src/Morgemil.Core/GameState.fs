@@ -10,9 +10,8 @@ type StepItem =
     | GameContext of GameContext TrackedEvent
 
 type Step =
-    {   Event: ActionEvent
-        Updates: StepItem list
-    }
+    { Event: ActionEvent
+      Updates: StepItem list }
 
 [<RequireQualifiedAccess>]
 type GameStateWaitingType =
@@ -29,7 +28,7 @@ type GameStateType =
 [<RequireQualifiedAccess>]
 type GameState =
     | Processing
-    | Results of Steps: Step list  * AcknowledgeCallback: (unit -> unit)
+    | Results of Steps: Step list * AcknowledgeCallback: (unit -> unit)
     | WaitingForInput of InputCallback: (ActionRequest -> unit)
 
     member this.GameStateType =
@@ -48,8 +47,8 @@ type GameStateRequest =
 
 type IGameStateMachine =
     /// Stops the game engine
-    abstract member Stop: unit -> unit
+    abstract member Stop : unit -> unit
     /// Gets the current state of the game loop
-    abstract member CurrentState: GameState with get
+    abstract member CurrentState : GameState
     /// Gets the raw scenario data
-    abstract member ScenarioData: ScenarioData with get
+    abstract member ScenarioData : ScenarioData

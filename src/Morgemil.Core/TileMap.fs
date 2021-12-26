@@ -98,7 +98,9 @@ module TileMap =
             && tileInstance.TileFeature.Value.BlocksSight)
 
     let isExitPoint (tileInstance: TileInstance) =
-        (tileInstance.TileFeature.IsSome && tileInstance.TileFeature.Value.ExitPoint)
+        (tileInstance.TileFeature.IsSome
+         && tileInstance.TileFeature.Value.ExitPoint)
 
     let isEntryPoint (tileInstance: TileInstance) =
-        (tileInstance.TileFeature.IsSome && tileInstance.TileFeature.Value.EntryPoint)
+        (tileInstance.TileFeature.IsSome
+         && tileInstance.TileFeature.Value.EntryPoint)

@@ -1,6 +1,5 @@
 namespace Morgemil.Core
 
-open Morgemil.Core
 open Morgemil.Models.Tracked
 
 type TrackedEntity<'T>(initialValue: 'T) =

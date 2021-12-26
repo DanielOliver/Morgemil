@@ -10,8 +10,7 @@ type EventHistoryBuilder(characterTable: CharacterTable, gameContext: TrackedEnt
 
     let characterTableCallback = Table.GetHistoryCallback characterTable
 
-    let gameContextCallback =
-        Tracked.GetHistoryCallback gameContext
+    let gameContextCallback = Tracked.GetHistoryCallback gameContext
 
     do
         Table.SetHistoryCallback characterTable (fun t -> _events <- (t |> StepItem.Character) :: _events)

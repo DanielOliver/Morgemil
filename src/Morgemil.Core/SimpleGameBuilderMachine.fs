@@ -49,10 +49,17 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
                 { GameContext.CurrentTimeTick = 0L<TimeTick> }
 
             let gameLoop =
-                Loop(characterTable, tileMap, scenarioData, rng, TrackedEntity gameContext)
+                Loop(
+                    { StaticLoopContext.ScenarioData = scenarioData
+                      RNG = rng },
+                    { LoopContext.Characters = characterTable
+                      TileMap = tileMap
+                      GameContext = TrackedEntity gameContext }
+                )
 
             let gameState =
-                SimpleGameStateMachine(gameLoop.ProcessRequest, (fun () -> gameLoop.WaitingType), scenarioData) :> IGameStateMachine
+                SimpleGameStateMachine(gameLoop.ProcessRequest, (fun () -> gameLoop.WaitingType), scenarioData)
+                :> IGameStateMachine
 
             let initialGameData =
                 { InitialGameData.Characters = [| character1 |]
