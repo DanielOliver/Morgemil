@@ -26,14 +26,18 @@ let scenarioData =
 type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialGameData) =
     inherit SadConsole.Console(40, 40)
 
-
-    let mutable viewOnlyTimeTable = TimeTable()
-    let mutable viewOnlyTileMap = initialGameData.TileMap
-    let mutable viewCharacterTable = CharacterTable(viewOnlyTimeTable)
-    let character1 = initialGameData.Characters.[0]
+    let timeTable = TimeTable()
 
     let gameContext =
         TrackedEntity initialGameData.GameContext
+
+    let character1 = initialGameData.Characters.[0]
+
+    let mutable loopContext: LoopContext =
+        { LoopContext.Characters = CharacterTable(timeTable)
+          TimeTable = timeTable
+          TileMap = initialGameData.TileMap
+          GameContext = gameContext }
 
     let createColor (color: Color) =
         SadRogue.Primitives.Color(color.R, color.G, color.B, color.A)
@@ -66,7 +70,7 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
 
     do
         for character in initialGameData.Characters do
-            Table.AddRow viewCharacterTable character
+            Table.AddRow loopContext.Characters character
 
     override this.Update(timeElapsed: TimeSpan) =
         let event =
@@ -110,12 +114,16 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
 
                     match event.Event with
                     | ActionEvent.MapChange mapChange ->
-                        viewOnlyTileMap <- createTileMapFromData mapChange.TileMapData
-                        viewOnlyTimeTable <- TimeTable()
-                        viewCharacterTable <- CharacterTable(viewOnlyTimeTable)
+                        let timeTable = TimeTable()
+
+                        loopContext <-
+                            { loopContext with
+                                  TileMap = createTileMapFromData mapChange.TileMapData
+                                  Characters = CharacterTable(timeTable)
+                                  TimeTable = timeTable }
 
                         mapChange.Characters
-                        |> Array.iter (Table.AddRow viewCharacterTable)
+                        |> Array.iter (Table.AddRow loopContext.Characters)
                     | _ ->
                         event.Updates
                         |> List.iter
@@ -123,16 +131,16 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
                                 match tableEvent with
                                 | StepItem.Character character ->
                                     match character with
-                                    | TableEvent.Added (row) -> Table.AddRow viewCharacterTable row
-                                    | TableEvent.Updated (_, row) -> Table.AddRow viewCharacterTable row
-                                    | TableEvent.Removed (row) -> Table.RemoveRow viewCharacterTable row
+                                    | TableEvent.Added (row) -> Table.AddRow loopContext.Characters row
+                                    | TableEvent.Updated (_, row) -> Table.AddRow loopContext.Characters row
+                                    | TableEvent.Removed (row) -> Table.RemoveRow loopContext.Characters row
                                 | StepItem.GameContext context -> Tracked.Update gameContext context.NewValue))
 
             acknowledgeCallback ()
 
         base.Clear()
 
-        for tileInstance in viewOnlyTileMap.Tiles do
+        for tileInstance in loopContext.TileMap.Tiles do
             let (position, tile, tileFeature) =
                 (tileInstance.Position, tileInstance.Tile, tileInstance.TileFeature)
 
@@ -189,7 +197,7 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
                 )
                 |> ignore
 
-        for (position, character) in viewCharacterTable.ByPositions do
+        for (position, character) in loopContext.Characters.ByPositions do
             let color1 = Color.Black
 
             let representation =
@@ -203,8 +211,6 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
                 |> Option.defaultValue SadRogue.Primitives.Color.TransparentBlack
 
             base.Print(position.X, position.Y, representation.AnsiCharacter.ToString(), foregroundColor)
-
-
 
 let StartMainStateMachine () =
     let mainGameState =
