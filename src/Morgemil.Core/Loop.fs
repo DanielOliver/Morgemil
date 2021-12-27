@@ -128,25 +128,23 @@ module Loop =
                         let items =
                             context.Characters |> Table.Items |> Seq.toArray
 
+                        Table.AddRow
+                            context.Characters
+                            { moveCharacter with
+                                  NextTick = moveCharacter.NextTick + 1000L<TimeTick>
+                                  NextAction = moveCharacter.NextAction.NextInList moveCharacter.TickActions }
+
                         items
                         |> Seq.map
                             (fun t ->
                                 { t with
-                                      Position = context.TileMap.EntryPoints |> Seq.head })
+                                      Position =
+                                          (context.TileMap.EntryPoints |> Seq.head)
+                                          + int (t.ID.Key) })
                         |> Seq.iter (Table.AddRow context.Characters)
 
                         yield
-                            { Characters =
-                                  context.Characters
-                                  |> Table.Items
-                                  |> Seq.map
-                                      (fun t ->
-                                          { t with
-                                                Position =
-                                                    mapGenerationResults.EntranceCoordinate
-                                                    + int (t.ID.Key)
-                                                NextTick = t.NextTick + 1L<TimeTick> })
-                                  |> Array.ofSeq
+                            { Characters = context.Characters |> Table.Items |> Array.ofSeq
                               TileMapData = context.TileMap.TileMapData }
                             |> ActionEvent.MapChange
 
@@ -163,7 +161,7 @@ type Loop(world: StaticLoopContext, initialContext: LoopContext) =
         let direction =
             (RNG.RandomVector world.RNG (Vector2i.create (2, 2)))
             - Vector2i.create (1, 1)
-        //        ActionRequest.Pause context.TimeTable.Next.ID
+
         if direction = Vector2i.Zero then
             ActionRequest.Pause context.TimeTable.Next.ID
         else

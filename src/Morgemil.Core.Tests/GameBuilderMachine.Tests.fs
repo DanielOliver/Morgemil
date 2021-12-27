@@ -113,7 +113,7 @@ let ``Can transition states`` () =
 
     match machine.CurrentState with
     | GameBuilderState.GameBuilt (gameState, initialGameData) ->
-        Assert.Equal(2, initialGameData.Characters.Length)
+        Assert.Equal(6, initialGameData.Characters.Length)
         Assert.Equal(PlayerID 1L, initialGameData.CurrentPlayerID)
     | _ -> Assert.False(true)
 

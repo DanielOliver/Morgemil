@@ -49,19 +49,21 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
 
             Table.AddRow characterTable character1
 
-            let npc1 =
-                { Character.ID = Table.GenerateKey characterTable
-                  Race = scenarioData.Races.Items |> Seq.last
-                  RaceModifier = None
-                  NextTick = 0L<TimeTick>
-                  NextAction = Character.DefaultTickActions.Head
-                  TickActions = Character.DefaultTickActions
-                  Position =
-                      mapGenerationResults.EntranceCoordinate
-                      + Vector2i.create (1, 2)
-                  PlayerID = None }
+            for i in [ 2 .. 6 ] do
 
-            Table.AddRow characterTable npc1
+                let npc1 =
+                    { Character.ID = Table.GenerateKey characterTable
+                      Race = scenarioData.Races.Items |> Seq.last
+                      RaceModifier = None
+                      NextTick = 0L<TimeTick>
+                      NextAction = Character.DefaultTickActions.Head
+                      TickActions = Character.DefaultTickActions
+                      Position =
+                          mapGenerationResults.EntranceCoordinate
+                          + Vector2i.create (i, i)
+                      PlayerID = None }
+
+                Table.AddRow characterTable npc1
 
             let gameContext =
                 { GameContext.CurrentTimeTick = 0L<TimeTick> }
