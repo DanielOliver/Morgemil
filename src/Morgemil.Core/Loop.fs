@@ -14,20 +14,14 @@ type StaticLoopContext =
     { ScenarioData: ScenarioData
       RNG: RNG.DefaultRNG }
 
-type Loop(world: StaticLoopContext, initialContext: LoopContext) =
-    let mutable context: LoopContext = initialContext
-
-    member this.ScenarioData = world.ScenarioData
-
-    member this.WaitingType: GameStateWaitingType =
-        if context.TimeTable.Next.PlayerID.IsSome then
-            GameStateWaitingType.WaitingForInput context.TimeTable.Next.ID
-        else
-            GameStateWaitingType.WaitingForEngine context.TimeTable.Next.ID
-
-    member this.ProcessRequest(event: ActionRequest) : Step list =
-        use builder =
-            new EventHistoryBuilder(context.Characters, initialContext.GameContext)
+module Loop =
+    let processRequest
+        (world: StaticLoopContext)
+        (context: LoopContext)
+        (builder: EventHistoryBuilder)
+        (event: ActionRequest)
+        : Step list * LoopContext =
+        let mutable context = context
 
         builder {
             Tracked.Replace
@@ -37,6 +31,7 @@ type Loop(world: StaticLoopContext, initialContext: LoopContext) =
                           CurrentTimeTick = context.TimeTable.Next.NextTick })
 
             match event with
+            | ActionRequest.Engine -> ()
             | ActionRequest.Pause characterID ->
                 match characterID
                       |> Table.TryGetRowByKey context.Characters with
@@ -45,7 +40,9 @@ type Loop(world: StaticLoopContext, initialContext: LoopContext) =
                     Table.AddRow
                         context.Characters
                         { pauseCharacter with
-                              NextTick = pauseCharacter.NextTick + 1000L<TimeTick> }
+                              NextTick = pauseCharacter.NextTick + 1000L<TimeTick>
+                              NextAction = pauseCharacter.NextAction.NextInList pauseCharacter.TickActions }
+
                     yield
                         { EventPause.CharacterID = characterID }
                         |> ActionEvent.Pause
@@ -88,7 +85,8 @@ type Loop(world: StaticLoopContext, initialContext: LoopContext) =
                                 context.Characters
                                 { moveCharacter with
                                       Position = newPosition
-                                      NextTick = moveCharacter.NextTick + 1000L<TimeTick> }
+                                      NextTick = moveCharacter.NextTick + 1000L<TimeTick>
+                                      NextAction = moveCharacter.NextAction.NextInList moveCharacter.TickActions }
 
                             yield
                                 { CharacterID = moveCharacter.ID
@@ -144,11 +142,58 @@ type Loop(world: StaticLoopContext, initialContext: LoopContext) =
                                   |> Seq.map
                                       (fun t ->
                                           { t with
-                                                Position = mapGenerationResults.EntranceCoordinate
+                                                Position =
+                                                    mapGenerationResults.EntranceCoordinate
+                                                    + int (t.ID.Key)
                                                 NextTick = t.NextTick + 1L<TimeTick> })
                                   |> Array.ofSeq
                               TileMapData = context.TileMap.TileMapData }
                             |> ActionEvent.MapChange
 
             yield ActionEvent.EndResponse 0
-        }
+        },
+        context
+
+type Loop(world: StaticLoopContext, initialContext: LoopContext) =
+    let mutable context: LoopContext = initialContext
+
+    member this.WaitingType: GameStateWaitingType = context.TimeTable.WaitingType
+
+    member this.NextMove =
+        let direction =
+            (RNG.RandomVector world.RNG (Vector2i.create (2, 2)))
+            - Vector2i.create (1, 1)
+        //        ActionRequest.Pause context.TimeTable.Next.ID
+        if direction = Vector2i.Zero then
+            ActionRequest.Pause context.TimeTable.Next.ID
+        else
+            ActionRequest.Move
+                { ActionRequestMove.CharacterID = context.TimeTable.Next.ID
+                  Direction = direction }
+
+    member this.ProcessRequest(event: ActionRequest) : Step list =
+        use builder =
+            new EventHistoryBuilder(context.Characters, context.GameContext)
+
+        match context.TimeTable.NextAction with
+        | ActionArchetype.CharacterAfterInput
+        | ActionArchetype.CharacterBeforeInput ->
+            builder {
+                let nextCharacter = context.TimeTable.Next
+
+                Table.AddRow
+                    context.Characters
+                    { nextCharacter with
+                          NextAction = nextCharacter.NextAction.NextInList nextCharacter.TickActions }
+
+                yield ActionEvent.EndResponse 0
+            }
+
+        | ActionArchetype.CharacterEngineInput
+        | ActionArchetype.CharacterPlayerInput ->
+
+            let (steps, nextContext) =
+                Loop.processRequest world context builder event
+
+            context <- nextContext
+            steps

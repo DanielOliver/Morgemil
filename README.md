@@ -46,4 +46,4 @@ These coding guidelines are not absolute. There are always cases not considered 
 ## Tools used
 
 * JetBrains Rider
-* .NET Core 3.1
+* .NET 6.0

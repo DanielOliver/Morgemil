@@ -7,7 +7,8 @@ type SimpleGameStateMachine
     (
         gameLoop: ActionRequest -> Step list,
         waitingType: unit -> GameStateWaitingType,
-        scenarioData: ScenarioData
+        scenarioData: ScenarioData,
+        nextMove: unit -> ActionRequest
     ) =
 
     let loopWorkAgent =
@@ -40,14 +41,16 @@ type SimpleGameStateMachine
                             | GameState.Processing
                             | GameState.Results _ -> ()
                         | GameStateRequest.SetResults results ->
-                            resultQ.Enqueue(results)
+                            if not results.IsEmpty then
+                                resultQ.Enqueue(results)
 
                             match waitingType () with
-                            | GameStateWaitingType.WaitingForInput characterID ->
+                            | GameStateWaitingType.WaitingForInput ->
                                 currentState <- GameState.WaitingForInput inputFunc
-                            | GameStateWaitingType.WaitingForEngine characterID
-                            | GameStateWaitingType.WaitingForAI characterID ->
-                                processRequest (ActionRequest.Pause characterID) (GameStateRequest.SetResults >> inbox.Post)
+                            | GameStateWaitingType.WaitingForEngine ->
+                                processRequest (ActionRequest.Engine) (GameStateRequest.SetResults >> inbox.Post)
+                            | GameStateWaitingType.WaitingForAI ->
+                                processRequest (nextMove ()) (GameStateRequest.SetResults >> inbox.Post)
                                 currentState <- GameState.Processing
                         | GameStateRequest.QueryState replyChannel ->
                             if resultQ.Count > 0 then
@@ -67,6 +70,8 @@ type SimpleGameStateMachine
                     }
 
                 loop (GameState.WaitingForInput inputFunc))
+
+    do loopWorkAgent.Post(GameStateRequest.SetResults [])
 
     interface IGameStateMachine with
         /// Stops

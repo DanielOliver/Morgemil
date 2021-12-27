@@ -18,6 +18,8 @@ let exampleItem1 =
       Character.Race = exampleRace1
       Character.Position = Vector2i.Identity
       Character.ID = CharacterID 51L
+      Character.NextAction = Character.DefaultTickActions.Head
+      Character.TickActions = Character.DefaultTickActions
       Character.RaceModifier = None
       Character.NextTick = 1L<TimeTick> }
 
@@ -26,6 +28,8 @@ let exampleItem2 =
       Character.Race = exampleRace1
       Character.Position = Vector2i.Identity
       Character.ID = CharacterID 52L
+      Character.NextAction = Character.DefaultTickActions.Head
+      Character.TickActions = Character.DefaultTickActions
       Character.RaceModifier = None
       Character.NextTick = 1L<TimeTick> }
 
@@ -34,6 +38,8 @@ let exampleItem3 =
       Character.Race = exampleRace1
       Character.Position = Vector2i.Identity
       Character.ID = CharacterID 53L
+      Character.NextAction = Character.DefaultTickActions.Head
+      Character.TickActions = Character.DefaultTickActions
       Character.RaceModifier = None
       Character.NextTick = 1L<TimeTick> }
 

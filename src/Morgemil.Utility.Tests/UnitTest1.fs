@@ -1,9 +1,7 @@
-namespace Morgemil.Utility.Tests
+module Morgemil.Utility.Tests.UnitTest1
 
 open Xunit
 
-[<TestClass>]
-type TestClass() =
 
-    [<Fact>]
-    member this.Test1() = Assert.True(true)
+[<Fact>]
+let Test1 () = Assert.True(true)

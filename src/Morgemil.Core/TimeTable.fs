@@ -1,6 +1,7 @@
 namespace Morgemil.Core
 
 open System.Collections.Generic
+open Morgemil.Core
 open Morgemil.Models
 open Morgemil.Models.Relational
 
@@ -17,6 +18,14 @@ type TimeComparer() =
 type TimeTable() =
     let items = SortedSet<Character>([], TimeComparer())
     member this.Next = items.Min
+    member this.NextAction = items.Min.NextAction
+
+    member this.WaitingType: GameStateWaitingType =
+        match items.Min.NextAction with
+        | ActionArchetype.CharacterAfterInput
+        | ActionArchetype.CharacterBeforeInput -> GameStateWaitingType.WaitingForEngine
+        | ActionArchetype.CharacterEngineInput -> GameStateWaitingType.WaitingForAI
+        | ActionArchetype.CharacterPlayerInput -> GameStateWaitingType.WaitingForInput
 
     interface IIndex<Character> with
         member this.AddRow next = next |> items.Add |> ignore
