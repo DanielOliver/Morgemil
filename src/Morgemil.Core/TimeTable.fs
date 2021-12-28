@@ -28,9 +28,9 @@ type TimeTable() =
         | ActionArchetype.CharacterPlayerInput -> GameStateWaitingType.WaitingForInput
 
     interface IIndex<Character> with
-        member this.AddRow next = next |> items.Add |> ignore
+        member this.Add next = next |> items.Add |> ignore
 
-        member this.UpdateRow old next =
+        member this.Update old next =
             old |> items.Remove |> ignore
             next |> items.Add |> ignore
 

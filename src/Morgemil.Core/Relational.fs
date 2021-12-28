@@ -26,9 +26,9 @@ type UniqueIndex<'tRow, 'tKey when 'tKey: equality and 'tRow :> IRow>(getKey: 't
         member this.Remove row =
             _dictionary.Remove(getKey row) |> ignore
 
-        member this.AddRow row = _dictionary.[getKey row] <- row
+        member this.Add row = _dictionary.[getKey row] <- row
 
-        member this.UpdateRow oldRow row =
+        member this.Update oldRow row =
             let oldKey = getKey oldRow
             let newKey = getKey row
 
@@ -54,14 +54,14 @@ type MultiIndex<'tRow, 'tKey when 'tKey: equality and 'tRow :> IRow>(getKey: 'tR
                     _dictionary.[key] <- value |> List.filter (fun t -> t.Key <> row.Key)
             | _ -> ()
 
-        member this.AddRow row =
+        member this.Add row =
             let key = getKey row
 
             match _dictionary.TryGetValue key with
             | true, value -> _dictionary.[key] <- row :: value
             | _ -> _dictionary.[key] <- [ row ]
 
-        member this.UpdateRow oldRow row =
+        member this.Update oldRow row =
             let oldKey = getKey oldRow
             let newKey = getKey row
 
@@ -103,7 +103,7 @@ type PrimaryIndex<'tRow when 'tRow :> IRow>() =
         member this.Items = _dictionary.Values |> Seq.map id
         member this.Remove row = _dictionary.Remove row.Key |> ignore
         member this.RemoveByKey key = _dictionary.Remove key |> ignore
-        member this.AddRow row = _dictionary.[row.Key] <- row
+        member this.Add row = _dictionary.[row.Key] <- row
 
         member this.TryGetRow key =
             match _dictionary.TryGetValue key with
@@ -117,7 +117,7 @@ type PrimaryIndex<'tRow when 'tRow :> IRow>() =
                 | _ -> failwithf "Couldn't find key %A" key
             and set key row = _dictionary.[key] <- row
 
-        member this.UpdateRow oldRow row =
+        member this.Update oldRow row =
             let oldKey = oldRow.Key
             let newKey = row.Key
 
@@ -170,7 +170,7 @@ type Table<'tRow, 'tKey when 'tRow :> IRow>(fromKey: 'tKey -> int64, generator: 
 
         member this.Item
             with get key = _primaryKey.[key |> fromKey]
-            and set _ row = (this :> ITable<'tRow, 'tKey>).AddRow row
+            and set _ row = (this :> ITable<'tRow, 'tKey>).Add row
 
         member this.Remove row =
             _indices |> List.iter (fun t -> t.Remove row)
@@ -181,25 +181,25 @@ type Table<'tRow, 'tKey when 'tRow :> IRow>(fromKey: 'tKey -> int64, generator: 
             | Some row -> (this :> ITable<'tRow, 'tKey>).Remove row
             | None -> ()
 
-        member this.AddRow(row: 'tRow) =
+        member this.Add(row: 'tRow) =
             let key = (row :> IRow).Key
 
             match _primaryKey.TryGetRow key with
             | Some oldRow ->
                 _indices
-                |> List.iter (fun t -> t.UpdateRow oldRow row)
+                |> List.iter (fun t -> t.Update oldRow row)
 
                 _recordEvent (TableEvent.Updated(oldRow, row))
             | None ->
                 generator.CheckKey key
-                _indices |> List.iter (fun t -> t.AddRow row)
+                _indices |> List.iter (fun t -> t.Add row)
                 _recordEvent (TableEvent.Added row)
 
-        member this.UpdateRow _ row =
+        member this.Update _ row =
             match _primaryKey.TryGetRow (row :> IRow).Key with
             | Some oldRow ->
                 _indices
-                |> List.iter (fun t -> t.UpdateRow oldRow row)
+                |> List.iter (fun t -> t.Update oldRow row)
 
                 _recordEvent (TableEvent.Updated(oldRow, row))
             | None -> ()
@@ -239,7 +239,7 @@ type ReadonlyTable<'tRow, 'tKey when 'tRow :> IRow>(rows: seq<'tRow>, fromKey: ^
 module Table =
     let Items (table: 'T :> IReadonlyTable<'U, _>) : 'U seq = table.Items
 
-    let AddRow (table: 'T :> ITable<'U, _>) (row: 'U) : unit = table.AddRow(row)
+    let AddRow (table: 'T :> ITable<'U, _>) (row: 'U) : unit = table.Add(row)
 
     let GetRowByKey (table: 'T :> IReadonlyTable<'Row, 'U>) (key: 'U) : 'Row = table.Item key
 

@@ -31,8 +31,8 @@ type IGenerateKeys<'tKey> =
     abstract member CheckKey : int64 -> unit
 
 type IIndex<'tRow when 'tRow :> IRow> =
-    abstract member AddRow : next: 'tRow -> unit
-    abstract member UpdateRow : old: 'tRow -> next: 'tRow -> unit
+    abstract member Add : next: 'tRow -> unit
+    abstract member Update : old: 'tRow -> next: 'tRow -> unit
     abstract member Remove : old: 'tRow -> unit
 
 type IUniqueIndex<'tRow, 'tKey when 'tRow :> IRow> =
@@ -59,8 +59,8 @@ type IReadonlyTable<'tRow, 'tKey when 'tRow :> IRow> =
 type ITable<'tRow, 'tKey when 'tRow :> IRow> =
     inherit IReadonlyTable<'tRow, 'tKey>
     abstract member GenerateKey : unit -> 'tKey
-    abstract member AddRow : 'tRow -> unit
-    abstract member UpdateRow : 'tRow -> 'tRow -> unit
+    abstract member Add : 'tRow -> unit
+    abstract member Update : 'tRow -> 'tRow -> unit
     abstract member Remove : 'tRow -> unit
     abstract member Item : 'tKey -> 'tRow with get, set
     abstract member RemoveByKey : 'tKey -> unit
