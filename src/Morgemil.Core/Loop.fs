@@ -124,6 +124,7 @@ module Loop =
                             createTileMapFromData newtileMap.TileMapData
 
                         context <- { context with TileMap = tileMap }
+                        Tracked.Replace context.GameContext (fun t -> { t with Floor = t.Floor + 1L<Floor> })
 
                         let items =
                             context.Characters |> Table.Items |> Seq.toArray
@@ -140,7 +141,8 @@ module Loop =
                                 { t with
                                       Position =
                                           (context.TileMap.EntryPoints |> Seq.head)
-                                          + int (t.ID.Key) })
+                                          + int (t.ID.Key)
+                                      Floor = context.GameContext.Value.Floor })
                         |> Seq.iter (Table.AddRow context.Characters)
 
                         yield

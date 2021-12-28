@@ -21,6 +21,7 @@ let exampleItem1 =
       Character.NextAction = Character.DefaultTickActions.Head
       Character.TickActions = Character.DefaultTickActions
       Character.RaceModifier = None
+      Character.Floor = 1L<Floor>
       Character.NextTick = 1L<TimeTick> }
 
 let exampleItem2 =
@@ -31,6 +32,7 @@ let exampleItem2 =
       Character.NextAction = Character.DefaultTickActions.Head
       Character.TickActions = Character.DefaultTickActions
       Character.RaceModifier = None
+      Character.Floor = 1L<Floor>
       Character.NextTick = 1L<TimeTick> }
 
 let exampleItem3 =
@@ -41,10 +43,12 @@ let exampleItem3 =
       Character.NextAction = Character.DefaultTickActions.Head
       Character.TickActions = Character.DefaultTickActions
       Character.RaceModifier = None
+      Character.Floor = 1L<Floor>
       Character.NextTick = 1L<TimeTick> }
 
 let exampleGameContext =
-    { GameContext.CurrentTimeTick = 1L<TimeTick> }
+    { GameContext.CurrentTimeTick = 1L<TimeTick>
+      Floor = 1L<Floor> }
 
 [<Fact>]
 let ``Can yield Results without updates`` () =
@@ -81,8 +85,12 @@ let ``Can yield Results without updates`` () =
     Assert.Equal<Step list>(
         [ { Step.Event = ActionEvent.Empty 2
             Step.Updates =
-                [ { TrackedEvent.OldValue = { GameContext.CurrentTimeTick = 1L<TimeTick> }
-                    NewValue = { GameContext.CurrentTimeTick = 2L<TimeTick> } }
+                [ { TrackedEvent.OldValue =
+                        { GameContext.CurrentTimeTick = 1L<TimeTick>
+                          Floor = 1L<Floor> }
+                    NewValue =
+                        { GameContext.CurrentTimeTick = 2L<TimeTick>
+                          Floor = 1L<Floor> } }
                   |> StepItem.GameContext ] }
           { Step.Event = ActionEvent.Empty 3
             Step.Updates =

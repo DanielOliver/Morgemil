@@ -5,17 +5,15 @@ open Morgemil.Models
 open Newtonsoft.Json
 
 module Character =
-    let DefaultTickActions = [
-        ActionArchetype.CharacterBeforeInput
-        ActionArchetype.CharacterEngineInput
-        ActionArchetype.CharacterAfterInput
-    ]
+    let DefaultTickActions =
+        [ ActionArchetype.CharacterBeforeInput
+          ActionArchetype.CharacterEngineInput
+          ActionArchetype.CharacterAfterInput ]
 
-    let DefaultPlayerTickActions = [
-        ActionArchetype.CharacterBeforeInput
-        ActionArchetype.CharacterPlayerInput
-        ActionArchetype.CharacterAfterInput
-    ]
+    let DefaultPlayerTickActions =
+        [ ActionArchetype.CharacterBeforeInput
+          ActionArchetype.CharacterPlayerInput
+          ActionArchetype.CharacterAfterInput ]
 
 [<Record>]
 type Character =
@@ -25,6 +23,7 @@ type Character =
       RaceModifier: RaceModifier option
       Position: Vector2i
       NextTick: int64<TimeTick>
+      Floor: int64<Floor>
       NextAction: ActionArchetype
       TickActions: ActionArchetype list
       PlayerID: PlayerID option }

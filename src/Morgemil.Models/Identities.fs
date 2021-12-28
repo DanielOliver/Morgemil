@@ -115,3 +115,6 @@ type HandSlot
 
 [<Measure>]
 type TimeTick
+
+[<Measure>]
+type Floor

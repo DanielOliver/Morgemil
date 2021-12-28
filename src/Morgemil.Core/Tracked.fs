@@ -6,6 +6,8 @@ type TrackedEntity<'T>(initialValue: 'T) =
     let mutable _recordEvent = ignore
     let mutable _value = initialValue
 
+    member this.Value = _value
+
     interface ITrackedEventHistory<'T> with
         member this.HistoryCallback
             with get () = _recordEvent

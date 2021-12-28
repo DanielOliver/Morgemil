@@ -37,6 +37,10 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
 
             let characterTable = CharacterTable(timeTable)
 
+            let gameContext =
+                { GameContext.CurrentTimeTick = 0L<TimeTick>
+                  Floor = 1L<Floor> }
+
             let character1 =
                 { Character.ID = Table.GenerateKey characterTable
                   Race = Table.GetRowByKey scenarioData.Races chosenRaceID.Value
@@ -45,7 +49,8 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
                   NextAction = Character.DefaultPlayerTickActions.Head
                   TickActions = Character.DefaultPlayerTickActions
                   Position = mapGenerationResults.EntranceCoordinate
-                  PlayerID = currentPlayerID.Value |> Some }
+                  PlayerID = currentPlayerID.Value |> Some
+                  Floor = gameContext.Floor }
 
             Table.AddRow characterTable character1
 
@@ -61,12 +66,10 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
                       Position =
                           mapGenerationResults.EntranceCoordinate
                           + Vector2i.create (i, i)
-                      PlayerID = None }
+                      PlayerID = None
+                      Floor = gameContext.Floor }
 
                 Table.AddRow characterTable npc1
-
-            let gameContext =
-                { GameContext.CurrentTimeTick = 0L<TimeTick> }
 
             let gameLoop =
                 Loop(
