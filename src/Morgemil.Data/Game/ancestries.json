@@ -4,42 +4,36 @@
     "Noun": "Human",
     "Adjective": "Human",
     "Description": "The kings of the overworld. How shall you fare in the darkness?",
-    "Tags": [],
-    "HeritageTags": []
+    "Tags": []
   },
   {
     "ID": "1",
     "Noun": "Wight",
     "Adjective": "Wightish",
-    "Description": "That shape in the darkness?  He was your friend, care to test your friendship now?",
-    "Tags": []
+    "Description": "That shape in the darkness?  He was your friend, care to test your friendship now?"
   },
   {
     "ID": "2",
     "Noun": "Goblin",
     "Adjective": "Goblin",
-    "Description": "The sense of self-preservation is not a prevalent Goblin trait, neither is diplomacy.",
-    "Tags": []
+    "Description": "The sense of self-preservation is not a prevalent Goblin trait, neither is diplomacy."
   },
   {
     "ID": "3",
     "Noun": "Minotaur",
     "Adjective": "Minotaur",
-    "Description": "Head and tail of a bull, body of a man, rage of a volcano. Your eulogy will be delivered to a closed casket.",
-    "Tags": []
+    "Description": "Head and tail of a bull, body of a man, rage of a volcano. Your eulogy will be delivered to a closed casket."
   },
   {
     "ID": "4",
     "Noun": "Carnivorous Mold",
     "Adjective": "Carnivorous Moldy",
-    "Description": "A carnivorous mold that's not exceptionally mobile or intelligent or threatening or even aware of your presence.",
-    "Tags": []
+    "Description": "A carnivorous mold that's not exceptionally mobile or intelligent or threatening or even aware of your presence."
   },
   {
     "ID": "5",
     "Noun": "Deep Gnome",
     "Adjective": "Deep Gnome",
-    "Description": "Dwellers of the deep, kin to the rock. Beware their righteous community dedicated to their deity.",
-    "Tags": []
+    "Description": "Dwellers of the deep, kin to the rock. Beware their righteous community dedicated to their deity."
   }
 ]

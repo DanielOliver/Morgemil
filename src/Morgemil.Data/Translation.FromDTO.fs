@@ -70,8 +70,8 @@ let AncestorFromDto (ancestry: DTO.Ancestry) : Ancestry =
       Noun = ancestry.Noun
       Adjective = ancestry.Adjective
       Description = ancestry.Description
-      Tags = ancestry.Tags |> set
-      HeritageTags = ancestry.HeritageTags |> Option.defaultValue [] |> set }
+      Tags = ancestry.Tags |> Option.defaultValue Set.empty
+      HeritageTags = ancestry.HeritageTags |> Option.defaultValue Set.empty }
 
 ///DTO to Heritage
 let HeritageFromDto (getAncestryByID: AncestryID -> Ancestry) (heritage: DTO.Heritage) : Heritage =
@@ -79,8 +79,8 @@ let HeritageFromDto (getAncestryByID: AncestryID -> Ancestry) (heritage: DTO.Her
       Noun = heritage.Noun
       Adjective = heritage.Adjective
       Description = heritage.Description
-      Tags = heritage.Tags |> set
-      AncestryTags = heritage.AncestryTags |> Option.defaultValue [] |> set }
+      Tags = heritage.Tags |> Option.defaultValue Set.empty
+      AncestryTags = heritage.AncestryTags |> Option.defaultValue Set.empty }
 
 ///DTO to Item
 let ItemFromDto (item: DTO.Item) : Item =

@@ -23,9 +23,9 @@ type Ancestry =
         ///User-visible description
         Description: string
         ///Tags this ancestry has
-        Tags: Morgemil.Models.CharacterTags list
+        Tags: Morgemil.Models.CharacterTags Set option
         ///Required tags for procedural matching.
-        HeritageTags: Morgemil.Models.CharacterTags list option
+        HeritageTags: Morgemil.Models.CharacterTags Set option
     }
 
     interface IRow with
@@ -55,9 +55,9 @@ type Heritage =
         ///User-visible description
         Description: string
         ///Tags this heritage has
-        Tags: Morgemil.Models.CharacterTags list
+        Tags: Morgemil.Models.CharacterTags Set option
         ///Required tags for procedural matching.
-        AncestryTags: Morgemil.Models.CharacterTags list option
+        AncestryTags: Morgemil.Models.CharacterTags Set option
     }
 
     interface IRow with
@@ -217,7 +217,6 @@ type RawDtoPhase0 =
           this.FloorGenerationParameters.Success
           this.Aspects.Success ]
         |> List.forall id
-
 
 type RawDtoPhase1 =
     { Tiles: DtoValidResult<DtoValidResult<Tile>[]>
