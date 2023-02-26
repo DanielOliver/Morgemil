@@ -27,34 +27,28 @@ let printType (writer: TextWriter) (t: AstRecordType) =
 
 [<EntryPoint>]
 let main argv =
-    let assembly =
-        typeof<Morgemil.Models.Character>.Assembly
+    let assembly = typeof<Morgemil.Models.Character>.Assembly
 
-    let dictionary =
-        new Dictionary<string, DependencyGraph>()
+    let dictionary = new Dictionary<string, DependencyGraph>()
 
     assembly.ExportedTypes
     |> Seq.filter IsMorgemilType
     |> Seq.filter HasMorgemilRecordAttribute
-    |> Seq.iter
-        (fun t ->
-            printfn "%A" t
-            let analysis = AnalyzeType t
-            //        printfn "%A" analysis
-//        File.WriteAllText(sprintf "%s.txt" (t.Name.Trim('"')), sprintf "%A" analysis)
+    |> Seq.iter (fun t ->
+        printfn "%A" t
+        let analysis = AnalyzeType t
 
-            use writer = new StringWriter()
+        use writer = new StringWriter()
 
-            match analysis with
-            | AstCollectedType.MorgemilRecord r -> Creation.printType writer r
-            | _ -> failwithf "???"
+        match analysis with
+        | AstCollectedType.MorgemilRecord r -> Creation.printType writer r
+        | _ -> failwithf "???"
 
-            ReadDependencyGraph analysis dictionary
+        ReadDependencyGraph analysis dictionary
 
-            File.WriteAllText(sprintf "%s.txt" t.Name, writer.ToString()))
+        File.WriteAllText(sprintf "%s.txt" t.Name, writer.ToString()))
 
-    let graph =
-        dictionary |> Seq.map (fun t -> (t.Key, t.Value))
+    let graph = dictionary |> Seq.map (fun t -> (t.Key, t.Value))
 
     File.WriteAllText("graph.txt", (sprintf "%A" graph))
 

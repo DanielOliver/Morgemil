@@ -18,16 +18,16 @@ let ``Can transition states`` () =
         List.empty
 
     let scenarioData =
-        { ScenarioData.Items = Table.CreateReadonlyTable(fun (ItemID id) -> id) []
-          ScenarioData.Races = Table.CreateReadonlyTable(fun (RaceID id) -> id) []
-          ScenarioData.Tiles = Table.CreateReadonlyTable(fun (TileID id) -> id) []
-          ScenarioData.TileFeatures = Table.CreateReadonlyTable(fun (TileFeatureID id) -> id) []
-          ScenarioData.RaceModifiers = Table.CreateReadonlyTable(fun (RaceModifierID id) -> id) []
+        { ScenarioData.Items = Table.CreateReadonlyTable (fun (ItemID id) -> id) []
+          ScenarioData.Ancestries = Table.CreateReadonlyTable (fun (AncestryID id) -> id) []
+          ScenarioData.Tiles = Table.CreateReadonlyTable (fun (TileID id) -> id) []
+          ScenarioData.TileFeatures = Table.CreateReadonlyTable (fun (TileFeatureID id) -> id) []
+          ScenarioData.Heritages = Table.CreateReadonlyTable (fun (HeritageID id) -> id) []
           ScenarioData.FloorGenerationParameters =
-              Table.CreateReadonlyTable(fun (FloorGenerationParameterID id) -> id) []
+            Table.CreateReadonlyTable (fun (FloorGenerationParameterID id) -> id) []
           ScenarioData.MonsterGenerationParameters =
-              Table.CreateReadonlyTable(fun (MonsterGenerationParameterID id) -> id) []
-          ScenarioData.Aspects = Table.CreateReadonlyTable(fun (AspectID id) -> id) [] }
+            Table.CreateReadonlyTable (fun (MonsterGenerationParameterID id) -> id) []
+          ScenarioData.Aspects = Table.CreateReadonlyTable (fun (AspectID id) -> id) [] }
 
     let stateMachine: IGameStateMachine =
         SimpleGameStateMachine(
@@ -41,8 +41,7 @@ let ``Can transition states`` () =
     Assert.Equal(GameStateType.WaitingForInput, stateMachine.CurrentState.GameStateType)
 
     let testState () =
-        while stateMachine.CurrentState.GameStateType
-              <> GameStateType.WaitingForInput do
+        while stateMachine.CurrentState.GameStateType <> GameStateType.WaitingForInput do
             System.Threading.Thread.Sleep 100
 
             match stateMachine.CurrentState with

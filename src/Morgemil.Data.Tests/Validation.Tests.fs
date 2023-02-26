@@ -1,6 +1,5 @@
 module Morgemil.Data.Tests.Validation.Tests
 
-
 open Morgemil.Data
 open Xunit
 
@@ -14,8 +13,8 @@ let ``Try Validate Game With Validation`` () =
     Assert.Empty(rawDtoPhase1.Errors)
     Assert.True(rawDtoPhase1.Success)
 
-    let firstRace = rawDtoPhase1.Races.Object.[0].Object
-    Assert.Equal(0L, firstRace.ID)
-    Assert.Equal("Human", firstRace.Noun)
-    Assert.Equal("Human", firstRace.Adjective)
-    Assert.Equal("The kings of the overworld. How shall you fare in the darkness?", firstRace.Description)
+    let firstAncestry = rawDtoPhase1.Ancestries.Object.[0].Object
+    Assert.Equal(0L, firstAncestry.ID)
+    Assert.Equal("Human", firstAncestry.Noun)
+    Assert.Equal("Human", firstAncestry.Adjective)
+    Assert.Equal("The kings of the overworld. How shall you fare in the darkness?", firstAncestry.Description)

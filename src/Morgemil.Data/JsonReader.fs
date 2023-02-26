@@ -1,11 +1,9 @@
 module Morgemil.Data.JsonReader
 
 open Morgemil.Data.DTO
-open Newtonsoft.Json
 open System.IO
 
-
-let ReadJsonFile<'T> (fileName: string) : DtoValidResult<'T []> =
+let ReadJsonFile<'T> (fileName: string) : DtoValidResult<'T[]> =
     if not <| File.Exists(fileName) then
         { DtoValidResult.Errors = [ (sprintf "File \"%s\" doesn't exist " fileName) ]
           Object = [||]
@@ -14,18 +12,15 @@ let ReadJsonFile<'T> (fileName: string) : DtoValidResult<'T []> =
         try
             let fileContents = File.ReadAllText fileName
 
-            let enumUnionCaseConvertor =
-                new Morgemil.Data.Convertors.EnumUnionConvertor()
-
             let jsonContents =
-                Newtonsoft.Json.JsonConvert.DeserializeObject<'T []>(fileContents, enumUnionCaseConvertor)
+                System.Text.Json.JsonSerializer.Deserialize<'T[]>(fileContents, JsonSettings.options)
 
             { DtoValidResult.Errors = List.empty
               Object = jsonContents
               Success = true }
         with
-        | :? JsonException as ex ->
-            { DtoValidResult.Errors = [ (sprintf "File \"%s\" doesn't contains valid Json" fileName) ]
+        | :? System.Text.Json.JsonException as ex ->
+            { DtoValidResult.Errors = [ (sprintf "File \"%s\" doesn't contains valid Json. %A" fileName ex) ]
               Object = [||]
               Success = false }
         | :? IOException as ex ->
@@ -39,13 +34,9 @@ let ReadGameFiles (basePath: string) : RawDtoPhase0 =
 
     { RawDtoPhase0.Tiles = ReadJsonFile <| combinePaths "tiles.json"
       TileFeatures = ReadJsonFile <| combinePaths "tilefeatures.json"
-      Races = ReadJsonFile <| combinePaths "races.json"
-      RaceModifiers = ReadJsonFile <| combinePaths "racemodifiers.json"
-      MonsterGenerationParameters =
-          ReadJsonFile
-          <| combinePaths "monstergenerationparameters.json"
+      Ancestries = ReadJsonFile <| combinePaths "ancestries.json"
+      Heritages = ReadJsonFile <| combinePaths "heritages.json"
+      MonsterGenerationParameters = ReadJsonFile <| combinePaths "monstergenerationparameters.json"
       Items = ReadJsonFile <| combinePaths "items.json"
-      FloorGenerationParameters =
-          ReadJsonFile
-          <| combinePaths "floorgeneration.json"
+      FloorGenerationParameters = ReadJsonFile <| combinePaths "floorgeneration.json"
       Aspects = ReadJsonFile <| combinePaths "aspects.json" }

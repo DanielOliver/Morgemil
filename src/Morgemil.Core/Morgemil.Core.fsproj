@@ -5,24 +5,25 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Relational.fs" />
-        <Compile Include="Tracked.fs" />
-        <Compile Include="GameState.fs" />
-        <Compile Include="TileFeatureTable.fs" />
-        <Compile Include="TimeTable.fs" />
-        <Compile Include="CharacterTable.fs" />
-        <Compile Include="TileMap.fs" />
-        <Compile Include="FloorGenerator.fs" />
-        <Compile Include="EventHistoryBuilder.fs" />
-        <Compile Include="Loop.fs" />
-        <Compile Include="SimpleGameStateMachine.fs" />
-        <Compile Include="GameBuilder.fs" />
-        <Compile Include="SimpleGameBuilderMachine.fs" />
+        <Compile Include="Relational.fs"/>
+        <Compile Include="CharacterTagMatching.fs"/>
+        <Compile Include="Tracked.fs"/>
+        <Compile Include="GameState.fs"/>
+        <Compile Include="TileFeatureTable.fs"/>
+        <Compile Include="TimeTable.fs"/>
+        <Compile Include="CharacterTable.fs"/>
+        <Compile Include="TileMap.fs"/>
+        <Compile Include="FloorGenerator.fs"/>
+        <Compile Include="EventHistoryBuilder.fs"/>
+        <Compile Include="Loop.fs"/>
+        <Compile Include="SimpleGameStateMachine.fs"/>
+        <Compile Include="GameBuilder.fs"/>
+        <Compile Include="SimpleGameBuilderMachine.fs"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Morgemil.Math\Morgemil.Math.fsproj" />
-        <ProjectReference Include="..\Morgemil.Models\Morgemil.Models.fsproj" />
+        <ProjectReference Include="..\Morgemil.Math\Morgemil.Math.fsproj"/>
+        <ProjectReference Include="..\Morgemil.Models\Morgemil.Models.fsproj"/>
     </ItemGroup>
 
 </Project>

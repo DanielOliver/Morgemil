@@ -3,7 +3,8 @@
     "ID": "0",
     "Noun": "Human",
     "Adjective": "Human",
-    "Description": "The kings of the overworld. How shall you fare in the darkness?"
+    "Description": "The kings of the overworld. How shall you fare in the darkness?",
+    "Tags": []
   },
   {
     "ID": "1",

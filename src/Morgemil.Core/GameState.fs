@@ -47,8 +47,8 @@ type GameStateRequest =
 
 type IGameStateMachine =
     /// Stops the game engine
-    abstract member Stop : unit -> unit
+    abstract member Stop: unit -> unit
     /// Gets the current state of the game loop
-    abstract member CurrentState : GameState
+    abstract member CurrentState: GameState
     /// Gets the raw scenario data
-    abstract member ScenarioData : ScenarioData
+    abstract member ScenarioData: ScenarioData

@@ -48,8 +48,7 @@ type Vector2i =
         Vector2i.create (vec1.X / scalar, vec1.Y / scalar)
     //########## Member methods #########################################
     //Distance
-    member this.LengthSquared =
-        float ((this.X * this.X) + (this.Y * this.Y))
+    member this.LengthSquared = float ((this.X * this.X) + (this.Y * this.Y))
 
     member this.Length =
         match this.LengthSquared with

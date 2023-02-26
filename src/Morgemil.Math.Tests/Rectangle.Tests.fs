@@ -3,8 +3,7 @@
 open Xunit
 open Morgemil.Math
 
-let rect1 =
-    Rectangle.create (Vector2i.create (-5, 5), Vector2i.create (10, 4))
+let rect1 = Rectangle.create (Vector2i.create (-5, 5), Vector2i.create (10, 4))
 
 [<Fact>]
 let ``Test Rectangle Properties`` () =

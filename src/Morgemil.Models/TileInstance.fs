@@ -2,7 +2,6 @@ namespace Morgemil.Models
 
 open Morgemil.Math
 open Morgemil.Models
-open Newtonsoft.Json
 
 [<Record>]
 type TileInstance =
@@ -13,5 +12,4 @@ type TileInstance =
       Position: Vector2i }
 
     interface Relational.IRow with
-        [<JsonIgnore>]
         member this.Key = this.ID.Key

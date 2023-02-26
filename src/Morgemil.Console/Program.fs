@@ -8,6 +8,7 @@ type CLIArguments =
     | [<Unique>] GameDataRead
     | [<Unique>] GameDataValidate
     | [<Unique>] GameDataFinal
+
     interface IArgParserTemplate with
         member s.Usage =
             match s with
@@ -30,8 +31,7 @@ let main argv =
     let parser =
         ArgumentParser.Create<CLIArguments>(programName = "Morgemil.Console.exe", errorHandler = errorHandler)
 
-    let results =
-        parser.ParseCommandLine(inputs = argv, raiseOnUsage = true)
+    let results = parser.ParseCommandLine(inputs = argv, raiseOnUsage = true)
 
     let allResults = results.GetAllResults()
 
@@ -46,29 +46,35 @@ let main argv =
                     Lazy<DTO.RawDtoPhase0>(fun () -> JsonReader.ReadGameFiles path)
 
                 if results.Contains GameDataValidate then
-                    let rawGameDataPhase1 =
-                        Validator.ValidateDtos rawGameDataPhase0.Value
+                    let rawGameDataPhase1 = Validator.ValidateDtos rawGameDataPhase0.Value
 
-                    Newtonsoft.Json.JsonConvert.SerializeObject(rawGameDataPhase1, Newtonsoft.Json.Formatting.Indented)
+                    let options = JsonSettings.createOptions ()
+                    options.WriteIndented <- true
+
+                    System.Text.Json.JsonSerializer.Serialize(rawGameDataPhase1, options)
                     |> System.Console.Write
 
                 if results.Contains GameDataRead then
-                    let rawGameDataPhase0 =
-                        Validator.ValidateDtos rawGameDataPhase0.Value
+                    let rawGameDataPhase0 = Validator.ValidateDtos rawGameDataPhase0.Value
 
-                    Newtonsoft.Json.JsonConvert.SerializeObject(rawGameDataPhase0, Newtonsoft.Json.Formatting.Indented)
+                    let options = JsonSettings.createOptions ()
+                    options.WriteIndented <- true
+
+                    System.Text.Json.JsonSerializer.Serialize(rawGameDataPhase0, options)
                     |> System.Console.Write
 
                 if results.Contains GameDataFinal then
-                    let rawGameDataPhase2 =
-                        FromDTO.TranslateFromDtosToPhase2 rawGameDataPhase0.Value
+                    let rawGameDataPhase2 = FromDTO.TranslateFromDtosToPhase2 rawGameDataPhase0.Value
 
-                    Newtonsoft.Json.JsonConvert.SerializeObject(rawGameDataPhase2, Newtonsoft.Json.Formatting.Indented)
+                    let options = JsonSettings.createOptions ()
+                    options.WriteIndented <- true
+
+                    System.Text.Json.JsonSerializer.Serialize(rawGameDataPhase2, options)
                     |> System.Console.Write
 
                 System.Console.WriteLine()
             | None -> ()
-        with
-        | e -> printfn "%s" e.Message
+        with e ->
+            printfn "%s" e.Message
 
     0 // return an integer exit code

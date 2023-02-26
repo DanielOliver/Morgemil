@@ -6,15 +6,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Program.fs" />
+        <Compile Include="Program.fs"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Argu" Version="6.1.1" />
+        <PackageReference Include="Argu" Version="6.1.1"/>
+        <PackageReference Include="System.Text.Json" Version="7.0.2"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Morgemil.Data\Morgemil.Data.fsproj" />
+        <ProjectReference Include="..\Morgemil.Data\Morgemil.Data.fsproj"/>
     </ItemGroup>
 
 </Project>

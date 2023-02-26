@@ -43,10 +43,7 @@ type Rectangle =
 
     member this.IsOnEdge(pt: Vector2i) =
         (not this.IsEmpty)
-        && (pt.X = this.Left
-            || pt.X = this.Right
-            || pt.Y = this.Top
-            || pt.Y = this.Bottom)
+        && (pt.X = this.Left || pt.X = this.Right || pt.Y = this.Top || pt.Y = this.Bottom)
 
     ///Expands in every direction
     member this.Expand(scalar) =
@@ -68,19 +65,16 @@ type Rectangle =
     ///[y * area.Width + x]
     ///As if accessing an array element in a Rectangle this.Size.
     member this.FlatCoord(pt: Vector2i) =
-        (pt.Y - this.Top) * this.Width
-        + (pt.X - this.Left)
+        (pt.Y - this.Top) * this.Width + (pt.X - this.Left)
 
     ///Gets a point contained by this rectangle closest to the given point
     member this.GetClosestInsidePoint(pt: Vector2i) =
         if this.Contains(pt) then
             pt
         else
-            let x =
-                Math.Min(Math.Max(pt.X, this.Left), this.Right)
+            let x = Math.Min(Math.Max(pt.X, this.Left), this.Right)
 
-            let y =
-                Math.Min(Math.Max(pt.Y, this.Top), this.Bottom)
+            let y = Math.Min(Math.Max(pt.Y, this.Top), this.Bottom)
 
             Vector2i.create (x, y)
 
@@ -92,8 +86,8 @@ type Rectangle =
         let width = this.Width - 1
 
         seq {
-            for y in 0 .. height do
-                for x in 0 .. width do
+            for y in 0..height do
+                for x in 0..width do
                     yield Vector2i.create (x, y)
         }
 
@@ -107,8 +101,8 @@ type Rectangle =
         let right = this.Right
 
         seq {
-            for y in top .. bottom do
-                for x in left .. right do
+            for y in top..bottom do
+                for x in left..right do
                     yield Vector2i.create (x, y)
         }
 

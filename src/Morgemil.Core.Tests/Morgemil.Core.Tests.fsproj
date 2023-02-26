@@ -7,23 +7,24 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="TileMap.Tests.fs" />
-        <Compile Include="FloorGenerator.Tests.fs" />
-        <Compile Include="Relational.Tests.fs" />
-        <Compile Include="EventHistoryBuilder.Tests.fs" />
-        <Compile Include="GameStateMachine.Tests.fs" />
-        <Compile Include="GameBuilderMachine.Tests.fs" />
+        <Compile Include="CharacterTagMatching.Tests.fs"/>
+        <Compile Include="TileMap.Tests.fs"/>
+        <Compile Include="FloorGenerator.Tests.fs"/>
+        <Compile Include="Relational.Tests.fs"/>
+        <Compile Include="EventHistoryBuilder.Tests.fs"/>
+        <Compile Include="GameStateMachine.Tests.fs"/>
+        <Compile Include="GameBuilderMachine.Tests.fs"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="altcover" Version="8.6.14" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
-        <PackageReference Include="xunit" Version="2.4.2" />
+        <PackageReference Include="altcover" Version="8.6.14"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0"/>
+        <PackageReference Include="xunit" Version="2.4.2"/>
         <PackageReference Include="xunit.runner.console" Version="2.4.2">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
+        <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1"/>
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -31,8 +32,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Morgemil.Core\Morgemil.Core.fsproj" />
-        <ProjectReference Include="..\Morgemil.Models\Morgemil.Models.fsproj" />
+        <ProjectReference Include="..\Morgemil.Core\Morgemil.Core.fsproj"/>
+        <ProjectReference Include="..\Morgemil.Models\Morgemil.Models.fsproj"/>
     </ItemGroup>
 
 </Project>

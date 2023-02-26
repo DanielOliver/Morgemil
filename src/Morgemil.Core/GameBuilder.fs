@@ -14,14 +14,14 @@ type GameBuilderStateType =
 /// The initial game data returned
 type InitialGameData =
     { TileMap: TileMap
-      Characters: Character []
+      Characters: Character[]
       CurrentPlayerID: PlayerID
       GameContext: GameContext }
 
 /// The steps and state of a game that's being built.
 [<RequireQualifiedAccess>]
 type GameBuilderState =
-    | WaitingForCurrentPlayer of AddCurrentPlayer: (RaceID -> unit)
+    | WaitingForCurrentPlayer of AddCurrentPlayer: (AncestryID -> unit)
     | GameBuilt of GameEngine: IGameStateMachine * InitialGameData: InitialGameData
     | LoadingGameProgress of State: string
     | LoadedScenarioData of ScenarioData: ScenarioData
@@ -39,7 +39,7 @@ type GameBuilderState =
 [<RequireQualifiedAccess>]
 type GameBuilderStateRequest =
     | QueryState of AsyncReplyChannel<GameBuilderState>
-    | AddPlayer of RaceID: RaceID
+    | AddPlayer of AncestryID: AncestryID
     | SelectScenario of ScenarioName: string
     | SetScenarioData of ScenarioData: ScenarioData
     | SetGameData of GameEngine: IGameStateMachine * InitialGameData: InitialGameData
@@ -47,4 +47,4 @@ type GameBuilderStateRequest =
 /// The interface to interact with a game being built.
 type IGameBuilder =
     /// The current state of the builder
-    abstract member CurrentState : GameBuilderState
+    abstract member CurrentState: GameBuilderState

@@ -74,5 +74,4 @@ type Vector2f =
         Vector2f.create (this.X / length, this.Y / length)
 
     member this.IsSame(vec2: Vector2f) =
-        Math.Abs(this.X - vec2.X) <= 0.00001
-        && Math.Abs(this.Y - vec2.Y) <= 0.00001
+        Math.Abs(this.X - vec2.X) <= 0.00001 && Math.Abs(this.Y - vec2.Y) <= 0.00001

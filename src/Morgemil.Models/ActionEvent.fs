@@ -13,8 +13,7 @@ type EventRefusedMoved =
       OldPosition: Vector2i
       RequestedPosition: Vector2i }
 
-type EventPause =
-    { CharacterID: CharacterID }
+type EventPause = { CharacterID: CharacterID }
 
 type TileMapData =
     { Tiles: Tile array

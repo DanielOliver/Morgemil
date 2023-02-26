@@ -6,7 +6,7 @@ open Morgemil.Math
 
 type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) =
     let mutable currentPlayerID: PlayerID option = None
-    let mutable chosenRaceID: RaceID option = None
+    let mutable chosenAncestryID: AncestryID option = None
     let mutable chosenScenarioName: string option = None
     let mutable loadedScenarioData: ScenarioData option = None
 
@@ -19,8 +19,7 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
 
             let (tileMap, mapGenerationResults) =
                 FloorGenerator.Create
-                    (scenarioData.FloorGenerationParameters.Items
-                     |> Seq.head)
+                    (scenarioData.FloorGenerationParameters.Items |> Seq.head)
                     (scenarioData.TileFeatures)
                     rng
 
@@ -30,8 +29,7 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
 
                 result
 
-            let tileMap =
-                createTileMapFromData tileMap.TileMapData
+            let tileMap = createTileMapFromData tileMap.TileMapData
 
             let timeTable = TimeTable()
 
@@ -43,8 +41,8 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
 
             let character1 =
                 { Character.ID = Table.GenerateKey characterTable
-                  Race = Table.GetRowByKey scenarioData.Races chosenRaceID.Value
-                  RaceModifier = None
+                  Ancestry = Table.GetRowByKey scenarioData.Ancestries chosenAncestryID.Value
+                  Heritage = None
                   NextTick = 0L<TimeTick>
                   NextAction = Character.DefaultPlayerTickActions.Head
                   TickActions = Character.DefaultPlayerTickActions
@@ -54,18 +52,16 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
 
             Table.AddRow characterTable character1
 
-            for i in [ 2 .. 6 ] do
+            for i in [ 2..6 ] do
 
                 let npc1 =
                     { Character.ID = Table.GenerateKey characterTable
-                      Race = scenarioData.Races.Items |> Seq.last
-                      RaceModifier = None
+                      Ancestry = scenarioData.Ancestries.Items |> Seq.last
+                      Heritage = None
                       NextTick = 0L<TimeTick>
                       NextAction = Character.DefaultTickActions.Head
                       TickActions = Character.DefaultTickActions
-                      Position =
-                          mapGenerationResults.EntranceCoordinate
-                          + Vector2i.create (i, i)
+                      Position = mapGenerationResults.EntranceCoordinate + Vector2i.create (i, i)
                       PlayerID = None
                       Floor = gameContext.Floor }
 
@@ -114,19 +110,16 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
                             replyChannel.Reply previousState
                             do! loop previousState
 
-                        | GameBuilderStateRequest.AddPlayer raceID ->
+                        | GameBuilderStateRequest.AddPlayer ancestryID ->
                             currentPlayerID <- PlayerID 1L |> Some
-                            chosenRaceID <- Some raceID
+                            chosenAncestryID <- Some ancestryID
                             buildGameState (GameBuilderStateRequest.SetGameData >> inbox.Post)
                             do! loop (GameBuilderState.LoadingGameProgress "Creating Game")
 
                         | GameBuilderStateRequest.SelectScenario scenarioName ->
                             chosenScenarioName <- Some scenarioName
 
-                            loadScenarioData (
-                                GameBuilderStateRequest.SetScenarioData
-                                >> inbox.Post
-                            )
+                            loadScenarioData (GameBuilderStateRequest.SetScenarioData >> inbox.Post)
 
                             do! loop (GameBuilderState.LoadingGameProgress "Loading Scenario Data")
 
@@ -146,8 +139,7 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
                 loop (
                     GameBuilderState.SelectScenario(
                         [ "Main Scenario" ],
-                        (GameBuilderStateRequest.SelectScenario
-                         >> inbox.Post)
+                        (GameBuilderStateRequest.SelectScenario >> inbox.Post)
                     )
                 ))
 

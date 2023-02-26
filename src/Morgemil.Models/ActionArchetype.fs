@@ -7,8 +7,9 @@ type ActionArchetype =
     | CharacterBeforeInput
     | CharacterAfterInput
 
-    member this.NextInList (items: ActionArchetype list) =
+    member this.NextInList(items: ActionArchetype list) =
         let index = 1 + (items |> List.findIndex (fun t -> t = this))
+
         if items.Length > index then
             items.[index]
         else

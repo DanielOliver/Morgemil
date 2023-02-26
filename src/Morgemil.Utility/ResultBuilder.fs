@@ -27,8 +27,8 @@ type ResultBuilder() =
     member __.TryWith(m, h) =
         try
             __.ReturnFrom(m)
-        with
-        | e -> h e
+        with e ->
+            h e
 
     member __.TryFinally(m, compensation) =
         try

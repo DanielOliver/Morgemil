@@ -12,8 +12,7 @@ let LoadScenarioData (callback: ScenarioData -> unit) =
                     "./Game"
             )
 
-        let scenarioData =
-            Translation.FromDTO.TranslateFromDtosToScenario rawGameDataPhase0
+        let scenarioData = Translation.FromDTO.TranslateFromDtosToScenario rawGameDataPhase0
 
         callback scenarioData
     }
