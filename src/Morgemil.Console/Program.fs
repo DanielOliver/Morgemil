@@ -49,21 +49,27 @@ let main argv =
                     let rawGameDataPhase1 =
                         Validator.ValidateDtos rawGameDataPhase0.Value
 
-                    Newtonsoft.Json.JsonConvert.SerializeObject(rawGameDataPhase1, Newtonsoft.Json.Formatting.Indented)
+                    let options = JsonSettings.createOptions()
+                    options.WriteIndented <- true
+                    System.Text.Json.JsonSerializer.Serialize(rawGameDataPhase1, options)
                     |> System.Console.Write
 
                 if results.Contains GameDataRead then
                     let rawGameDataPhase0 =
                         Validator.ValidateDtos rawGameDataPhase0.Value
 
-                    Newtonsoft.Json.JsonConvert.SerializeObject(rawGameDataPhase0, Newtonsoft.Json.Formatting.Indented)
+                    let options = JsonSettings.createOptions()
+                    options.WriteIndented <- true
+                    System.Text.Json.JsonSerializer.Serialize(rawGameDataPhase0, options)
                     |> System.Console.Write
 
                 if results.Contains GameDataFinal then
                     let rawGameDataPhase2 =
                         FromDTO.TranslateFromDtosToPhase2 rawGameDataPhase0.Value
 
-                    Newtonsoft.Json.JsonConvert.SerializeObject(rawGameDataPhase2, Newtonsoft.Json.Formatting.Indented)
+                    let options = JsonSettings.createOptions()
+                    options.WriteIndented <- true
+                    System.Text.Json.JsonSerializer.Serialize(rawGameDataPhase2, options)
                     |> System.Console.Write
 
                 System.Console.WriteLine()
