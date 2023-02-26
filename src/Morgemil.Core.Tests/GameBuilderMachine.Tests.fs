@@ -64,7 +64,9 @@ let ancestry1: Ancestry =
     { Ancestry.Adjective = "Adjective"
       Ancestry.Description = "Description"
       Ancestry.ID = AncestryID 1L
-      Ancestry.Noun = "Noun" }
+      Ancestry.Noun = "Noun"
+      Ancestry.HeritageTags = set []
+      Ancestry.Tags = set [] }
 
 [<Fact>]
 let ``Can transition states`` () =

@@ -22,7 +22,11 @@ type Ancestry =
       ///Proper adjective
       Adjective: string
       ///User-visible description
-      Description: string }
+      Description: string
+      ///Tags this ancestry has
+      Tags: Morgemil.Models.CharacterTags list
+      ///Required tags for procedural matching.
+      HeritageTags: Morgemil.Models.CharacterTags list }
 
     interface IRow with
         member this.Key = this.ID
@@ -47,21 +51,24 @@ type Heritage =
       Adjective: string
       ///User-visible description
       Description: string
-      ///Valid ancestries
-      PossibleAncestries: int64 list }
+      ///Tags this heritage has
+      Tags: Morgemil.Models.CharacterTags list
+      ///Required tags for procedural matching.
+      AncestryTags: Morgemil.Models.CharacterTags list }
 
     interface IRow with
         member this.Key = this.ID
 
-type HeritageLink =
-    { AncestryID: int64
-      HeritageID: Nullable<int64>
+type GenerationRatio =
+    { Tags: Morgemil.Models.CharacterTags list
       ///The ratio doesn't have to add up to 100.  Every ratio could be thought of "10 to 1" or something like that.
-      Ratio: int }
+      Ratio: Nullable<int>
+      Min: Nullable<int>
+      Max: Nullable<int> }
 
 type MonsterGenerationParameter =
     { ID: int64
-      GenerationRatios: HeritageLink list }
+      GenerationRatios: GenerationRatio list }
 
     interface IRow with
         member this.Key = this.ID

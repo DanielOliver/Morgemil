@@ -11,6 +11,7 @@
         <Compile Include="Identities.fs" />
         <Compile Include="ActionArchetype.fs" />
         <Compile Include="TileRepresentation.fs" />
+        <Compile Include="CharacterTags.fs" />
         <Compile Include="Ancestry.fs" />
         <Compile Include="Heritage.fs" />
         <Compile Include="Tile.fs" />

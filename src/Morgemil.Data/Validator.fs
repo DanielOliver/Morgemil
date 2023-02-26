@@ -165,40 +165,31 @@ let private ValidateDtoHeritages
     item
     |> ValidateGameDataWithTable
         (fun acc element ->
-            [ ExpectedUnique element (fun x -> x.ID) "HeritageID" acc
-              ancestryTable
-              |> AllExistsInTable element.PossibleAncestries "Ancestries" ])
+            [ ExpectedUnique element (fun x -> x.ID) "HeritageID" acc])
 
 /// Validate Monster Generation Parameters
 let private ValidateDtoMonsterGenerationParameters
     (item: DtoValidResult<MonsterGenerationParameter []>)
-    (ancestryTable: IReadonlyTable<Ancestry, int64>)
-    (heritageTable: IReadonlyTable<Heritage, int64>)
     : DtoValidResult<DtoValidResult<MonsterGenerationParameter> []> * IReadonlyTable<MonsterGenerationParameter, int64> =
     item
     |> ValidateGameDataWithTable
         (fun acc element ->
-            [ ancestryTable
-              |> AllExistsInTable
-                  (element.GenerationRatios
-                   |> List.map (fun t -> t.AncestryID))
-                  "Ancestry"
-              heritageTable
-              |> AllExistsInTableIfValue
-                  (element.GenerationRatios
-                   |> List.map (fun t -> t.HeritageID))
-                  "Heritage"
-              ExpectedUnique element (fun x -> x.ID) "HeritageLinkID" acc
-              AllSatisfyCondition
+            [ AllSatisfyCondition
                   (element.GenerationRatios
                    |> List.map (fun t -> t.Ratio))
                   "Ratios should be positive values"
-                  (fun t -> t >= 1)
+                  (fun t -> not t.HasValue || t.Value >= 1)
               AllSatisfyCondition
                   (element.GenerationRatios
-                   |> List.map (fun t -> t.Ratio))
-                  "Ratios should be positive values"
-                  (fun t -> t >= 1) ])
+                   |> List.map (fun t -> t.Min))
+                  "Min should be positive values if defined"
+                  (fun t -> not t.HasValue || t.Value >= 0)
+              AllSatisfyCondition
+                  (element.GenerationRatios
+                   |> List.map (fun t -> t.Max))
+                  "Max should be positive values if defined"
+                  (fun t -> not t.HasValue || t.Value >= 1)]
+            )
 
 /// Validate Items
 let private ValidateDtoItems
@@ -253,7 +244,7 @@ let ValidateDtos (phase0: RawDtoPhase0) : RawDtoPhase1 =
         ValidateDtoHeritages phase0.Heritages ancestryTable
 
     let (monsterGenerationParameterResults, monsterGenerationParametersLinkTable) =
-        ValidateDtoMonsterGenerationParameters phase0.MonsterGenerationParameters ancestryTable heritageTable
+        ValidateDtoMonsterGenerationParameters phase0.MonsterGenerationParameters
 
     let (itemResults, itemTable) = ValidateDtoItems phase0.Items
 

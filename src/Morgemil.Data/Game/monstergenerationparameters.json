@@ -3,26 +3,9 @@
     "id": 0,
     "GenerationRatios": [
       {
-        "ancestryid": "0",
-        "ratio": "10"
-      },
-      {
-        "ancestryid": "0",
-        "heritageid": "0",
-        "ratio": "2"
-      },
-      {
-        "ancestryid": "0",
-        "heritageid": "1",
-        "ratio": "2"
-      },
-      {
-        "ancestryid": "1",
-        "ratio": "1"
-      },
-      {
-        "ancestryid": "2",
-        "ratio": "1"
+        "Min": "2",
+        "Ratio": "100",
+        "tags": []
       }
     ]
   }

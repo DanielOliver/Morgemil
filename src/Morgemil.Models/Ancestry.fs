@@ -11,7 +11,11 @@ type Ancestry =
       ///Proper adjective
       Adjective: string
       ///User-visible description
-      Description: string }
+      Description: string
+      ///Tags this ancestry has
+      Tags: CharacterTags Set
+      ///Required tags for procedural matching.
+      HeritageTags: CharacterTags Set }
 
     interface Relational.IRow with
         [<JsonIgnore>]

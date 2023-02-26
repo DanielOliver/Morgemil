@@ -1,6 +1,7 @@
 module Morgemil.Data.Translation.FromDTO
 
 open System
+open Microsoft.FSharp.Core
 open Morgemil.Core
 open Morgemil.Data.DTO
 open Morgemil.Models
@@ -13,6 +14,10 @@ let ColorFromDto (color: DTO.Color) : Color =
       B = color.B
       G = color.G
       R = color.R }
+
+let NullToOption (t: Nullable<_>) =
+    if t.HasValue then Some t.Value
+    else None
 
 ///DTO to Vector2i
 let Vector2iFromDto (vec: DTO.Vector2i) : Vector2i = Vector2i.create (vec.X, vec.Y)
@@ -71,7 +76,9 @@ let AncestorFromDto (ancestry: DTO.Ancestry) : Ancestry =
     { Ancestry.ID = AncestryID ancestry.ID
       Noun = ancestry.Noun
       Adjective = ancestry.Adjective
-      Description = ancestry.Description }
+      Description = ancestry.Description
+      Tags = ancestry.Tags |> set
+      HeritageTags = ancestry.HeritageTags |> set }
 
 ///DTO to Heritage
 let HeritageFromDto (getAncestryByID: AncestryID -> Ancestry) (heritage: DTO.Heritage) : Heritage =
@@ -79,9 +86,9 @@ let HeritageFromDto (getAncestryByID: AncestryID -> Ancestry) (heritage: DTO.Her
       Noun = heritage.Noun
       Adjective = heritage.Adjective
       Description = heritage.Description
-      PossibleAncestries =
-          heritage.PossibleAncestries
-          |> List.map (AncestryID >> getAncestryByID) }
+      Tags = heritage.Tags |> set
+      AncestryTags = heritage.Tags |> set
+    }
 
 ///DTO to Item
 let ItemFromDto (item: DTO.Item) : Item =
@@ -114,12 +121,12 @@ let MonsterGenerationParameterFromDto
           monsterGenerationParameter.GenerationRatios
           |> List.map
               (fun t ->
-                  { HeritageLink.Ratio = t.Ratio
-                    HeritageLink.AncestryID = AncestryID t.AncestryID
-                    HeritageLink.HeritageID =
-                        match t.HeritageID.HasValue with
-                        | true -> t.HeritageID.Value |> HeritageID |> Some
-                        | false -> None }) }
+                  { GenerationRatio.Ratio = t.Ratio |> NullToOption
+                    GenerationRatio.Max = t.Max |> NullToOption
+                    GenerationRatio.Min = t.Min |> NullToOption
+                    Tags = t.Tags |> set
+                  })
+    }
 
 ///DTO to FloorGenerationParameter
 let FloorGenerationParameterFromDto
