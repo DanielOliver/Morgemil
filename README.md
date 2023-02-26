@@ -25,6 +25,8 @@ Here is the list of projects and their purpose.
     * These are the rich domain models that the game is built on top of.
 * Morgemil.Utility
     * A catch-all namespace.
+* build
+    * F# Fake build project.
 
 
 ## Coding Guidelines
@@ -46,4 +48,4 @@ These coding guidelines are not absolute. There are always cases not considered 
 ## Tools used
 
 * JetBrains Rider
-* .NET 6.0
+* .NET 7.0
