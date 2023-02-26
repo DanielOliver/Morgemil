@@ -1,13 +1,16 @@
 module Morgemil.Data.JsonSettings
 
-open Morgemil.Data.ContractResolver
-open Morgemil.Data.Convertors
-open Newtonsoft.Json
+open System.Text.Json.Serialization
 
-let settings = new JsonSerializerSettings()
-settings.Converters.Add(new EnumUnionConvertor())
-settings.Converters.Add(new SingleCaseUnionConverter())
-settings.Converters.Add(new MultipleCaseUnionConverter())
-settings.Converters.Add(new OptionConverter())
-settings.Formatting <- Formatting.None
-settings.ContractResolver <- new RowContractResolver()
+let options =
+    JsonFSharpOptions.Default()
+        .WithUnionUnwrapFieldlessTags()
+        .WithSkippableOptionFields()
+        .WithUnionTagCaseInsensitive()
+        .WithUnionExternalTag()
+        .WithUnionUnwrapRecordCases()
+        .ToJsonSerializerOptions()
+do
+    options.NumberHandling <- JsonNumberHandling.AllowReadingFromString
+    options.PropertyNameCaseInsensitive <- true
+

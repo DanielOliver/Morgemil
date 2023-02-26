@@ -98,18 +98,18 @@ let ItemFromDto (item: DTO.Item) : Item =
       SubItem =
           match item.ItemType with
           | ItemType.Weapon ->
-              { Weapon.Weight = item.Weapon.Head.Weight * 1M<Weight>
-                Weapon.BaseRange = item.Weapon.Head.BaseRange * 1<TileDistance>
-                Weapon.HandCount = item.Weapon.Head.HandCount * 1<HandSlot>
-                Weapon.RangeType = item.Weapon.Head.RangeType }
+              { Weapon.Weight = item.Weapon.Value.Weight * 1M<Weight>
+                Weapon.BaseRange = item.Weapon.Value.BaseRange * 1<TileDistance>
+                Weapon.HandCount = item.Weapon.Value.HandCount * 1<HandSlot>
+                Weapon.RangeType = item.Weapon.Value.RangeType }
               |> SubItem.Weapon
           | ItemType.Wearable ->
-              { Wearable.Weight = item.Wearable.Head.Weight * 1M<Weight>
-                Wearable.WearableType = item.Wearable.Head.WearableType }
+              { Wearable.Weight = item.Wearable.Value.Weight * 1M<Weight>
+                Wearable.WearableType = item.Wearable.Value.WearableType }
               |> SubItem.Wearable
           | ItemType.Consumable
           | _ ->
-              { Consumable.Uses = item.Consumable.Head.Uses }
+              { Consumable.Uses = item.Consumable.Value.Uses }
               |> SubItem.Consumable }
 
 ///DTO to MonsterGenerationParameter
@@ -121,9 +121,9 @@ let MonsterGenerationParameterFromDto
           monsterGenerationParameter.GenerationRatios
           |> List.map
               (fun t ->
-                  { GenerationRatio.Ratio = t.Ratio |> NullToOption
-                    GenerationRatio.Max = t.Max |> NullToOption
-                    GenerationRatio.Min = t.Min |> NullToOption
+                  { GenerationRatio.Ratio = t.Ratio
+                    GenerationRatio.Max = t.Max
+                    GenerationRatio.Min = t.Min
                     Tags = t.Tags |> set
                   })
     }

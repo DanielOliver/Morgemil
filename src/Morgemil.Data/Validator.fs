@@ -178,17 +178,17 @@ let private ValidateDtoMonsterGenerationParameters
                   (element.GenerationRatios
                    |> List.map (fun t -> t.Ratio))
                   "Ratios should be positive values"
-                  (fun t -> not t.HasValue || t.Value >= 1)
+                  (Option.map(fun v -> v >= 1) >> Option.defaultValue true)
               AllSatisfyCondition
                   (element.GenerationRatios
                    |> List.map (fun t -> t.Min))
                   "Min should be positive values if defined"
-                  (fun t -> not t.HasValue || t.Value >= 0)
+                  (Option.map(fun v -> v >= 0) >> Option.defaultValue true)
               AllSatisfyCondition
                   (element.GenerationRatios
                    |> List.map (fun t -> t.Max))
                   "Max should be positive values if defined"
-                  (fun t -> not t.HasValue || t.Value >= 1)]
+                  (Option.map(fun v -> v >= 1) >> Option.defaultValue true)]
             )
 
 /// Validate Items
@@ -200,9 +200,9 @@ let private ValidateDtoItems
         (fun acc element ->
             let itemTypeError =
                 match element.ItemType, element.Weapon, element.Wearable, element.Consumable with
-                | Morgemil.Models.ItemType.Weapon, x, _, _ when not x.IsEmpty -> None
-                | Morgemil.Models.ItemType.Wearable, _, x, _ when not x.IsEmpty -> None
-                | Morgemil.Models.ItemType.Consumable, _, _, x when not x.IsEmpty -> None
+                | Morgemil.Models.ItemType.Weapon, Some _, _, _ -> None
+                | Morgemil.Models.ItemType.Wearable, _, Some _, _ -> None
+                | Morgemil.Models.ItemType.Consumable, _, _, Some _ -> None
                 | _ ->
                     sprintf "Expected ItemType %A to have associated info" element.ItemType
                     |> Some

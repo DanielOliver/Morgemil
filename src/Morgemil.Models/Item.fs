@@ -1,7 +1,5 @@
 namespace Morgemil.Models
 
-open Newtonsoft.Json
-
 [<RequireQualifiedAccess>]
 type ItemType =
     | Weapon
@@ -32,9 +30,9 @@ type Item =
       IsUnique: bool }
 
     ///The general classification
-    [<JsonIgnore>]
+    [<System.Text.Json.Serialization.JsonIgnore>]
     member this.ItemType = this.SubItem.ItemType
 
     interface Relational.IRow with
-        [<JsonIgnore>]
+        [<System.Text.Json.Serialization.JsonIgnore>]
         member this.Key = this.ID.Key

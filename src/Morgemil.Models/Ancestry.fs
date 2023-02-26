@@ -1,7 +1,5 @@
 namespace Morgemil.Models
 
-open Newtonsoft.Json
-
 [<Record>]
 type Ancestry =
     { [<RecordId>]
@@ -18,5 +16,5 @@ type Ancestry =
       HeritageTags: CharacterTags Set }
 
     interface Relational.IRow with
-        [<JsonIgnore>]
+        [<System.Text.Json.Serialization.JsonIgnore>]
         member this.Key = this.ID.Key

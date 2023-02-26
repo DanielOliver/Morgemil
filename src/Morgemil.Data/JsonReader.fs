@@ -1,7 +1,6 @@
 module Morgemil.Data.JsonReader
 
 open Morgemil.Data.DTO
-open Newtonsoft.Json
 open System.IO
 
 
@@ -14,15 +13,16 @@ let ReadJsonFile<'T> (fileName: string) : DtoValidResult<'T[]> =
         try
             let fileContents = File.ReadAllText fileName
 
-            let jsonContents =
-                Newtonsoft.Json.JsonConvert.DeserializeObject<'T[]>(fileContents, JsonSettings.settings)
+            // let jsonContents =
+            //     Newtonsoft.Json.JsonConvert.DeserializeObject<'T[]>(fileContents, JsonSettings.settings)
+            let jsonContents = System.Text.Json.JsonSerializer.Deserialize<'T[]>(fileContents, JsonSettings.options)
 
             { DtoValidResult.Errors = List.empty
               Object = jsonContents
               Success = true }
         with
-        | :? JsonException as ex ->
-            { DtoValidResult.Errors = [ (sprintf "File \"%s\" doesn't contains valid Json" fileName) ]
+        | :? System.Text.Json.JsonException as ex ->
+            { DtoValidResult.Errors = [ (sprintf "File \"%s\" doesn't contains valid Json. %A" fileName ex) ]
               Object = [||]
               Success = false }
         | :? IOException as ex ->

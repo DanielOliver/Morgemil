@@ -2,17 +2,14 @@
   {
     "id": "0",
     "noun": "short sword",
-    "isunique": "false",
+    "isunique": false,
     "itemtype": "weapon",
-    "weapon": [
+    "weapon":
       {
         "rangetype": "melee",
         "baserange": "1",
         "handcount": "1",
         "weight": "5.0"
       }
-    ],
-    "wearable": [],
-    "consumable": []
   }
 ]

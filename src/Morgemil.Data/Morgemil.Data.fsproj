@@ -12,13 +12,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Include="Convertors\EnumUnionConvertor.fs" />
-        <Compile Include="Convertors\MultipleCaseUnionConvertor.fs" />
-        <Compile Include="Convertors\OptionConvertor.fs" />
-        <Compile Include="Convertors\SingleCaseUnionConvertor.fs" />
-        <Compile Include="Convertors\RowKeyOptionConvertor.fs" />
-        <Compile Include="Convertors\RowKeyConvertor.fs" />
-        <Compile Include="ContractResolver\RowContractResolver.fs" />
         <Compile Include="JsonSettings.fs" />
         <Compile Include="DTO.fs" />
         <Compile Include="JsonReader.fs" />
@@ -56,7 +49,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+        <PackageReference Include="FSharp.SystemTextJson" Version="1.1.23" />
+        <PackageReference Include="System.Text.Json" Version="7.0.2" />
     </ItemGroup>
 
 </Project>

@@ -1,18 +1,10 @@
 module Morgemil.Data.Tests.JsonWriter.Tests
 
+open System.Text.Json
+open System.Text.Json.Serialization
+open Morgemil.Data
 open Morgemil.Models
-open Newtonsoft.Json
 open Xunit
-open Morgemil.Data.Convertors
-open Morgemil.Data.ContractResolver
-
-let settings = new JsonSerializerSettings()
-settings.Converters.Add(new EnumUnionConvertor())
-settings.Converters.Add(new SingleCaseUnionConverter())
-settings.Converters.Add(new MultipleCaseUnionConverter())
-settings.Converters.Add(new OptionConverter())
-settings.Formatting <- Formatting.None
-settings.ContractResolver <- new RowContractResolver()
 
 [<Fact>]
 let ``Try serialize and serialize odd case`` () =
@@ -28,15 +20,15 @@ let ``Try serialize and serialize odd case`` () =
                     Weapon.Weight = 5M<Weight> } }
 
     let text1 =
-        JsonConvert.SerializeObject(item1, settings)
+        JsonSerializer.Serialize(item1, JsonSettings.options)
 
     let expectedText =
-        "{\"ID\":50,\"SubItem\":{\"Weapon\":[{\"RangeType\":\"Melee\",\"BaseRange\":5,\"HandCount\":2,\"Weight\":5.0}]},\"Noun\":\"one\",\"IsUnique\":false}"
+        "{\"ID\":50,\"SubItem\":{\"Weapon\":{\"RangeType\":\"Melee\",\"BaseRange\":5,\"HandCount\":2,\"Weight\":5}},\"Noun\":\"one\",\"IsUnique\":false}"
 
     Assert.Equal(expectedText, text1)
 
     let deserializedItem =
-        JsonConvert.DeserializeObject<Item>(expectedText, settings)
+        JsonSerializer.Deserialize<Item>(expectedText, JsonSettings.options)
 
     Assert.Equal(item1, deserializedItem)
 
@@ -82,7 +74,7 @@ let ``Try serialize and serialize row case`` () =
               |> Some }
 
     let text1 =
-        JsonConvert.SerializeObject(tileFeature1, settings)
+        JsonSerializer.Serialize(tileFeature1, JsonSettings.options)
 
     let expectedText =
         "{\"ID\":50,\"SubItem\":{\"Weapon\":[{\"RangeType\":\"Melee\",\"BaseRange\":5,\"HandCount\":2,\"Weight\":5.0}]},\"Noun\":\"one\",\"IsUnique\":false}"

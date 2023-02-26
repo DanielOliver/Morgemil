@@ -1,7 +1,5 @@
 namespace Morgemil.Models
 
-open Newtonsoft.Json
-
 [<Record>]
 type GenerationRatio =
     { Tags: CharacterTags Set
@@ -17,5 +15,5 @@ type MonsterGenerationParameter =
       GenerationRatios: GenerationRatio list }
 
     interface Relational.IRow with
-        [<JsonIgnore>]
+        [<System.Text.Json.Serialization.JsonIgnore>]
         member this.Key = this.ID.Key

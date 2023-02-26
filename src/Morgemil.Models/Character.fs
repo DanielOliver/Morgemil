@@ -2,7 +2,6 @@ namespace Morgemil.Models
 
 open Morgemil.Math
 open Morgemil.Models
-open Newtonsoft.Json
 
 module Character =
     let DefaultTickActions =
@@ -28,5 +27,5 @@ type Character =
       TickActions: ActionArchetype list
       PlayerID: PlayerID option }
     interface Relational.IRow with
-        [<JsonIgnore>]
+        [<System.Text.Json.Serialization.JsonIgnore>]
         member this.Key = this.ID.Key

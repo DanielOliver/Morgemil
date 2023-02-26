@@ -1,7 +1,5 @@
 namespace Morgemil.Models
 
-open Newtonsoft.Json
-
 [<Record>]
 type Aspect =
     { [<RecordId>]
@@ -14,5 +12,5 @@ type Aspect =
       Description: string }
 
     interface Relational.IRow with
-        [<JsonIgnore>]
+        [<System.Text.Json.Serialization.JsonIgnore>]
         member this.Key = this.ID.Key

@@ -11,6 +11,7 @@
 
     <ItemGroup>
         <PackageReference Include="Argu" Version="6.1.1" />
+        <PackageReference Include="System.Text.Json" Version="7.0.2" />
     </ItemGroup>
 
     <ItemGroup>

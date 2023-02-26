@@ -62,9 +62,9 @@ type Heritage =
 type GenerationRatio =
     { Tags: Morgemil.Models.CharacterTags list
       ///The ratio doesn't have to add up to 100.  Every ratio could be thought of "10 to 1" or something like that.
-      Ratio: Nullable<int>
-      Min: Nullable<int>
-      Max: Nullable<int> }
+      Ratio: int option
+      Min: int option
+      Max: int option }
 
 type MonsterGenerationParameter =
     { ID: int64
@@ -134,9 +134,9 @@ type Consumable = { Uses: int }
 type Item =
     { ID: int64
       ///The union of items
-      Weapon: Weapon list
-      Wearable: Wearable list
-      Consumable: Consumable list
+      Weapon: Weapon option
+      Wearable: Wearable option
+      Consumable: Consumable option
       ///The general classification
       ItemType: Morgemil.Models.ItemType
       ///Name of this item
