@@ -23,7 +23,4 @@ type Circle =
                 Vector2i.create (this.Radius * 2 + 1)
             )
             .Coordinates
-        |> Seq.filter
-            (fun t ->
-                (int) ((t - center).LengthSquared - 0.5)
-                <= radiusSq)
+        |> Seq.filter (fun t -> (int) ((t - center).LengthSquared - 0.5) <= radiusSq)

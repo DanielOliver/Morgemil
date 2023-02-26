@@ -8,14 +8,13 @@ open SadConsole
 open SadConsole.Input
 
 let rawGameDataPhase0 =
-    Lazy<DTO.RawDtoPhase0>
-        (fun () ->
-            JsonReader.ReadGameFiles(
-                if System.IO.Directory.Exists "../Morgemil.Data/Game" then
-                    "../Morgemil.Data/Game"
-                else
-                    "./Game"
-            ))
+    Lazy<DTO.RawDtoPhase0>(fun () ->
+        JsonReader.ReadGameFiles(
+            if System.IO.Directory.Exists "../Morgemil.Data/Game" then
+                "../Morgemil.Data/Game"
+            else
+                "./Game"
+        ))
 
 let rawGameDataPhase2 =
     Translation.FromDTO.TranslateFromDtosToPhase2 rawGameDataPhase0.Value
@@ -28,8 +27,7 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
 
     let timeTable = TimeTable()
 
-    let gameContext =
-        TrackedEntity initialGameData.GameContext
+    let gameContext = TrackedEntity initialGameData.GameContext
 
     let character1 = initialGameData.Characters.[0]
 
@@ -52,18 +50,14 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
         (color1: SadRogue.Primitives.Color)
         (color2: SadRogue.Primitives.Color)
         : SadRogue.Primitives.Color =
-        if color1.A = Byte.MaxValue
-           || color2.A = Byte.MinValue then
+        if color1.A = Byte.MaxValue || color2.A = Byte.MinValue then
             color1
         elif color1.A = Byte.MinValue then
             color2
         else
-            let ratio =
-                ((float32) color2.A)
-                / ((float32) color1.A + (float32) color2.A)
+            let ratio = ((float32) color2.A) / ((float32) color1.A + (float32) color2.A)
 
-            let returnColor =
-                SadRogue.Primitives.Color.Lerp(color1, color2, ratio)
+            let returnColor = SadRogue.Primitives.Color.Lerp(color1, color2, ratio)
 
             SadRogue.Primitives.Color(returnColor, 255)
 
@@ -84,22 +78,18 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
                 (character1.ID, Vector2i.create (0, -1)) |> Some
             else
                 None
-            |> Option.map
-                (fun (characterID, direction) ->
-                    { ActionRequestMove.CharacterID = characterID
-                      ActionRequestMove.Direction = direction }
-                    |> ActionRequest.Move)
+            |> Option.map (fun (characterID, direction) ->
+                { ActionRequestMove.CharacterID = characterID
+                  ActionRequestMove.Direction = direction }
+                |> ActionRequest.Move)
 
         let event =
             event
-            |> Option.orElseWith
-                (fun () ->
-                    if SadConsole.GameHost.Instance.Keyboard.IsKeyReleased Keys.Space then
-                        character1.ID
-                        |> ActionRequest.GoToNextLevel
-                        |> Some
-                    else
-                        None)
+            |> Option.orElseWith (fun () ->
+                if SadConsole.GameHost.Instance.Keyboard.IsKeyReleased Keys.Space then
+                    character1.ID |> ActionRequest.GoToNextLevel |> Some
+                else
+                    None)
 
         match gameState.CurrentState with
         | GameState.WaitingForInput (inputCallback) ->
@@ -108,33 +98,30 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
         | GameState.Processing -> printfn "processing"
         | GameState.Results (results, acknowledgeCallback) ->
             results
-            |> List.iter
-                (fun event ->
-                    printfn "%A" event
+            |> List.iter (fun event ->
+                printfn "%A" event
 
-                    match event.Event with
-                    | ActionEvent.MapChange mapChange ->
-                        let timeTable = TimeTable()
+                match event.Event with
+                | ActionEvent.MapChange mapChange ->
+                    let timeTable = TimeTable()
 
-                        loopContext <-
-                            { loopContext with
-                                  TileMap = createTileMapFromData mapChange.TileMapData
-                                  Characters = CharacterTable(timeTable)
-                                  TimeTable = timeTable }
+                    loopContext <-
+                        { loopContext with
+                            TileMap = createTileMapFromData mapChange.TileMapData
+                            Characters = CharacterTable(timeTable)
+                            TimeTable = timeTable }
 
-                        mapChange.Characters
-                        |> Array.iter (Table.AddRow loopContext.Characters)
-                    | _ ->
-                        event.Updates
-                        |> List.iter
-                            (fun tableEvent ->
-                                match tableEvent with
-                                | StepItem.Character character ->
-                                    match character with
-                                    | TableEvent.Added (row) -> Table.AddRow loopContext.Characters row
-                                    | TableEvent.Updated (_, row) -> Table.AddRow loopContext.Characters row
-                                    | TableEvent.Removed (row) -> Table.RemoveRow loopContext.Characters row
-                                | StepItem.GameContext context -> Tracked.Update gameContext context.NewValue))
+                    mapChange.Characters |> Array.iter (Table.AddRow loopContext.Characters)
+                | _ ->
+                    event.Updates
+                    |> List.iter (fun tableEvent ->
+                        match tableEvent with
+                        | StepItem.Character character ->
+                            match character with
+                            | TableEvent.Added (row) -> Table.AddRow loopContext.Characters row
+                            | TableEvent.Updated (_, row) -> Table.AddRow loopContext.Characters row
+                            | TableEvent.Removed (row) -> Table.RemoveRow loopContext.Characters row
+                        | StepItem.GameContext context -> Tracked.Update gameContext context.NewValue))
 
             acknowledgeCallback ()
 
@@ -224,8 +211,7 @@ let StartMainStateMachine () =
             gameHasRun <- false
 
             let Init () =
-                let gameConsole =
-                    new MapGeneratorConsole(gameState, initialGameData)
+                let gameConsole = new MapGeneratorConsole(gameState, initialGameData)
 
                 gameConsole.UseKeyboard <- true
                 SadConsole.Settings.WindowTitle <- "Morgemil"

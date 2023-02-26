@@ -4,6 +4,7 @@
 type Axis =
     | Horizontal
     | Vertical
+
     ///Choose the opposite Axis
     member this.Opposite =
         match this with

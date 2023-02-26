@@ -4,8 +4,7 @@ open Morgemil.Models.Relational
 open Morgemil.Models
 
 type UniqueIndex<'tRow, 'tKey when 'tKey: equality and 'tRow :> IRow>(getKey: 'tRow -> 'tKey) =
-    let _dictionary =
-        new System.Collections.Generic.Dictionary<'tKey, 'tRow>()
+    let _dictionary = new System.Collections.Generic.Dictionary<'tKey, 'tRow>()
 
     interface IUniqueIndex<'tRow, 'tKey> with
         member this.TryGetRow key =
@@ -39,8 +38,7 @@ type UniqueIndex<'tRow, 'tKey when 'tKey: equality and 'tRow :> IRow>(getKey: 't
 
 
 type MultiIndex<'tRow, 'tKey when 'tKey: equality and 'tRow :> IRow>(getKey: 'tRow -> 'tKey) =
-    let _dictionary =
-        System.Collections.Generic.Dictionary<'tKey, 'tRow list>()
+    let _dictionary = System.Collections.Generic.Dictionary<'tKey, 'tRow list>()
 
     interface IIndex<'tRow> with
         member this.Remove row =
@@ -66,20 +64,12 @@ type MultiIndex<'tRow, 'tKey when 'tKey: equality and 'tRow :> IRow>(getKey: 'tR
             let newKey = getKey row
 
             if oldKey = newKey then
-                _dictionary.[newKey] <-
-                    row
-                    :: (_dictionary.[newKey]
-                        |> List.filter (fun t -> t.Key <> row.Key))
+                _dictionary.[newKey] <- row :: (_dictionary.[newKey] |> List.filter (fun t -> t.Key <> row.Key))
             else
-                _dictionary.[oldKey] <-
-                    (_dictionary.[oldKey]
-                     |> List.filter (fun t -> t.Key <> row.Key))
+                _dictionary.[oldKey] <- (_dictionary.[oldKey] |> List.filter (fun t -> t.Key <> row.Key))
 
                 match _dictionary.TryGetValue newKey with
-                | true, value ->
-                    _dictionary.[newKey] <-
-                        row
-                        :: (value |> List.filter (fun t -> t.Key <> row.Key))
+                | true, value -> _dictionary.[newKey] <- row :: (value |> List.filter (fun t -> t.Key <> row.Key))
                 | _ -> _dictionary.[newKey] <- [ row ]
 
     interface IMultiIndex<'tRow, 'tKey> with
@@ -96,8 +86,7 @@ type MultiIndex<'tRow, 'tKey when 'tKey: equality and 'tRow :> IRow>(getKey: 'tR
 
 
 type PrimaryIndex<'tRow when 'tRow :> IRow>() =
-    let _dictionary =
-        new System.Collections.Generic.Dictionary<int64, 'tRow>()
+    let _dictionary = new System.Collections.Generic.Dictionary<int64, 'tRow>()
 
     interface IPrimaryIndex<'tRow, int64> with
         member this.Items = _dictionary.Values |> Seq.map id
@@ -141,8 +130,7 @@ type KeyGeneration<'tKey>(toKey: int64 -> 'tKey) =
             key |> toKey
 
 type Table<'tRow, 'tKey when 'tRow :> IRow>(fromKey: 'tKey -> int64, generator: IGenerateKeys<'tKey>) =
-    let _primaryKey =
-        new PrimaryIndex<'tRow>() :> IPrimaryIndex<'tRow, int64>
+    let _primaryKey = new PrimaryIndex<'tRow>() :> IPrimaryIndex<'tRow, int64>
 
     let _primaryKeyIndexCast = _primaryKey :> IIndex<'tRow>
     let mutable _indices = [ _primaryKeyIndexCast ]
@@ -186,8 +174,7 @@ type Table<'tRow, 'tKey when 'tRow :> IRow>(fromKey: 'tKey -> int64, generator: 
 
             match _primaryKey.TryGetRow key with
             | Some oldRow ->
-                _indices
-                |> List.iter (fun t -> t.Update oldRow row)
+                _indices |> List.iter (fun t -> t.Update oldRow row)
 
                 _recordEvent (TableEvent.Updated(oldRow, row))
             | None ->
@@ -198,17 +185,15 @@ type Table<'tRow, 'tKey when 'tRow :> IRow>(fromKey: 'tKey -> int64, generator: 
         member this.Update _ row =
             match _primaryKey.TryGetRow (row :> IRow).Key with
             | Some oldRow ->
-                _indices
-                |> List.iter (fun t -> t.Update oldRow row)
+                _indices |> List.iter (fun t -> t.Update oldRow row)
 
                 _recordEvent (TableEvent.Updated(oldRow, row))
             | None -> ()
 
 type ReadonlyTable<'tRow, 'tKey when 'tRow :> IRow>(rows: seq<'tRow>, fromKey: ^tKey -> int64) =
-    let _rows: 'tRow [] = rows |> Seq.toArray
+    let _rows: 'tRow[] = rows |> Seq.toArray
 
-    let _primaryKeys: int64 [] =
-        rows |> Seq.map (fun t -> t.Key) |> Seq.toArray
+    let _primaryKeys: int64[] = rows |> Seq.map (fun t -> t.Key) |> Seq.toArray
 
     do System.Array.Sort(_primaryKeys, _rows)
 
@@ -217,8 +202,7 @@ type ReadonlyTable<'tRow, 'tKey when 'tRow :> IRow>(rows: seq<'tRow>, fromKey: ^
             with get key =
                 let intKey = fromKey key
 
-                let index =
-                    System.Array.BinarySearch(_primaryKeys, intKey)
+                let index = System.Array.BinarySearch(_primaryKeys, intKey)
 
                 if index < 0 then
                     failwithf "Can't find key %i" intKey
@@ -228,13 +212,9 @@ type ReadonlyTable<'tRow, 'tKey when 'tRow :> IRow>(rows: seq<'tRow>, fromKey: ^
         member this.Items = _rows |> Seq.cache
 
         member this.TryGetRow key =
-            let index =
-                System.Array.BinarySearch(_primaryKeys, fromKey key)
+            let index = System.Array.BinarySearch(_primaryKeys, fromKey key)
 
-            if index < 0 then
-                None
-            else
-                _rows.[index] |> Some
+            if index < 0 then None else _rows.[index] |> Some
 
 module Table =
     let Items (table: 'T :> IReadonlyTable<'U, _>) : 'U seq = table.Items
@@ -261,14 +241,14 @@ module Table =
         table.HistoryCallback <- callback
 
     let EmptyScenarioData: ScenarioData =
-        { Items = CreateReadonlyTable(fun (ItemID id) -> id) []
-          Ancestries = CreateReadonlyTable(fun (AncestryID id) -> id) []
-          Tiles = CreateReadonlyTable(fun (TileID id) -> id) []
-          TileFeatures = CreateReadonlyTable(fun (TileFeatureID id) -> id) []
-          Heritages = CreateReadonlyTable(fun (HeritageID id) -> id) []
-          FloorGenerationParameters = CreateReadonlyTable(fun (FloorGenerationParameterID id) -> id) []
-          MonsterGenerationParameters = CreateReadonlyTable(fun (MonsterGenerationParameterID id) -> id) []
-          Aspects = CreateReadonlyTable(fun (AspectID id) -> id) [] }
+        { Items = CreateReadonlyTable (fun (ItemID id) -> id) []
+          Ancestries = CreateReadonlyTable (fun (AncestryID id) -> id) []
+          Tiles = CreateReadonlyTable (fun (TileID id) -> id) []
+          TileFeatures = CreateReadonlyTable (fun (TileFeatureID id) -> id) []
+          Heritages = CreateReadonlyTable (fun (HeritageID id) -> id) []
+          FloorGenerationParameters = CreateReadonlyTable (fun (FloorGenerationParameterID id) -> id) []
+          MonsterGenerationParameters = CreateReadonlyTable (fun (MonsterGenerationParameterID id) -> id) []
+          Aspects = CreateReadonlyTable (fun (AspectID id) -> id) [] }
 
 module TableQuery =
     let SeqLeftJoin
@@ -277,12 +257,10 @@ module TableQuery =
         (right: IReadonlyTable<'U, 'W>)
         : seq<'T * 'U option> =
         left
-        |> Seq.map
-            (fun leftRow ->
-                let rightRow =
-                    leftRow |> getForeignKeyLeft |> right.TryGetRow
+        |> Seq.map (fun leftRow ->
+            let rightRow = leftRow |> getForeignKeyLeft |> right.TryGetRow
 
-                leftRow, rightRow)
+            leftRow, rightRow)
 
     let LeftJoin
         (left: IReadonlyTable<'T, _>)
@@ -290,20 +268,17 @@ module TableQuery =
         (right: IReadonlyTable<'U, 'X>)
         : seq<'T * 'U option> =
         left.Items
-        |> Seq.map
-            (fun leftRow ->
-                let rightRow =
-                    leftRow |> getForeignKeyLeft |> right.TryGetRow
+        |> Seq.map (fun leftRow ->
+            let rightRow = leftRow |> getForeignKeyLeft |> right.TryGetRow
 
-                leftRow, rightRow)
+            leftRow, rightRow)
 
     let SeqInnerJoin (left: seq<'T>) (getForeignKeyLeft: 'T -> 'W) (right: IReadonlyTable<'U, 'W>) : seq<'T * 'U> =
         SeqLeftJoin left getForeignKeyLeft right
-        |> Seq.choose
-            (fun (leftRow, rightRowOption) ->
-                match rightRowOption with
-                | Some rightRow -> Some(leftRow, rightRow)
-                | None -> None)
+        |> Seq.choose (fun (leftRow, rightRowOption) ->
+            match rightRowOption with
+            | Some rightRow -> Some(leftRow, rightRow)
+            | None -> None)
 
     let InnerJoin
         (left: IReadonlyTable<'T, _>)
@@ -311,11 +286,10 @@ module TableQuery =
         (right: IReadonlyTable<'U, 'W>)
         : seq<'T * 'U> =
         LeftJoin left getForeignKeyLeft right
-        |> Seq.choose
-            (fun (leftRow, rightRowOption) ->
-                match rightRowOption with
-                | Some rightRow -> Some(leftRow, rightRow)
-                | None -> None)
+        |> Seq.choose (fun (leftRow, rightRowOption) ->
+            match rightRowOption with
+            | Some rightRow -> Some(leftRow, rightRow)
+            | None -> None)
 
 module MultiIndex =
     let GetRowsByKey (index: IMultiIndex<'W, 'T>) (key: 'T) : 'W seq = index.TryGetRows key

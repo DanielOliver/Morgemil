@@ -19,8 +19,7 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
 
             let (tileMap, mapGenerationResults) =
                 FloorGenerator.Create
-                    (scenarioData.FloorGenerationParameters.Items
-                     |> Seq.head)
+                    (scenarioData.FloorGenerationParameters.Items |> Seq.head)
                     (scenarioData.TileFeatures)
                     rng
 
@@ -30,8 +29,7 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
 
                 result
 
-            let tileMap =
-                createTileMapFromData tileMap.TileMapData
+            let tileMap = createTileMapFromData tileMap.TileMapData
 
             let timeTable = TimeTable()
 
@@ -54,7 +52,7 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
 
             Table.AddRow characterTable character1
 
-            for i in [ 2 .. 6 ] do
+            for i in [ 2..6 ] do
 
                 let npc1 =
                     { Character.ID = Table.GenerateKey characterTable
@@ -63,9 +61,7 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
                       NextTick = 0L<TimeTick>
                       NextAction = Character.DefaultTickActions.Head
                       TickActions = Character.DefaultTickActions
-                      Position =
-                          mapGenerationResults.EntranceCoordinate
-                          + Vector2i.create (i, i)
+                      Position = mapGenerationResults.EntranceCoordinate + Vector2i.create (i, i)
                       PlayerID = None
                       Floor = gameContext.Floor }
 
@@ -123,10 +119,7 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
                         | GameBuilderStateRequest.SelectScenario scenarioName ->
                             chosenScenarioName <- Some scenarioName
 
-                            loadScenarioData (
-                                GameBuilderStateRequest.SetScenarioData
-                                >> inbox.Post
-                            )
+                            loadScenarioData (GameBuilderStateRequest.SetScenarioData >> inbox.Post)
 
                             do! loop (GameBuilderState.LoadingGameProgress "Loading Scenario Data")
 
@@ -146,8 +139,7 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
                 loop (
                     GameBuilderState.SelectScenario(
                         [ "Main Scenario" ],
-                        (GameBuilderStateRequest.SelectScenario
-                         >> inbox.Post)
+                        (GameBuilderStateRequest.SelectScenario >> inbox.Post)
                     )
                 ))
 

@@ -14,16 +14,16 @@ let defaultTile: Tile =
       BlocksMovement = true
       BlocksSight = true
       Representation =
-          { AnsiCharacter = '#'
-            ForegroundColor = Some <| Color.From(200, 200, 200)
-            BackGroundColor = Some <| Color.From(0, 0, 0) } }
+        { AnsiCharacter = '#'
+          ForegroundColor = Some <| Color.From(200, 200, 200)
+          BackGroundColor = Some <| Color.From(0, 0, 0) } }
 
 let tile2 =
     { defaultTile with
-          Name = "Dungeon Floor"
-          BlocksMovement = false
-          BlocksSight = false
-          ID = TileID 4L }
+        Name = "Dungeon Floor"
+        BlocksMovement = false
+        BlocksSight = false
+        ID = TileID 4L }
 
 let floorParameters: FloorGenerationParameter =
     { Strategy = FloorGenerationStrategy.OpenFloor
@@ -39,9 +39,9 @@ let stairTileFeature: TileFeature =
       BlocksMovement = false
       BlocksSight = false
       Representation =
-          { AnsiCharacter = char (242)
-            ForegroundColor = Some <| Color.From(30, 30, 255)
-            BackGroundColor = Some <| Color.From(0, 240, 0, 50) }
+        { AnsiCharacter = char (242)
+          ForegroundColor = Some <| Color.From(30, 30, 255)
+          BackGroundColor = Some <| Color.From(0, 240, 0, 50) }
       PossibleTiles = [ tile2 ]
       ExitPoint = true
       EntryPoint = false }
@@ -53,9 +53,9 @@ let startingPointFeature: TileFeature =
       BlocksMovement = false
       BlocksSight = false
       Representation =
-          { AnsiCharacter = '@'
-            ForegroundColor = Some <| Color.From(0)
-            BackGroundColor = None }
+        { AnsiCharacter = '@'
+          ForegroundColor = Some <| Color.From(0)
+          BackGroundColor = None }
       PossibleTiles = [ tile2 ]
       ExitPoint = false
       EntryPoint = true }
@@ -71,20 +71,17 @@ let ancestry1: Ancestry =
 [<Fact>]
 let ``Can transition states`` () =
     let scenarioData =
-        { ScenarioData.Items = Table.CreateReadonlyTable(fun (ItemID id) -> id) []
-          ScenarioData.Ancestries = Table.CreateReadonlyTable(fun (AncestryID id) -> id) [ ancestry1 ]
-          ScenarioData.Tiles = Table.CreateReadonlyTable(fun (TileID id) -> id) [ defaultTile; tile2 ]
+        { ScenarioData.Items = Table.CreateReadonlyTable (fun (ItemID id) -> id) []
+          ScenarioData.Ancestries = Table.CreateReadonlyTable (fun (AncestryID id) -> id) [ ancestry1 ]
+          ScenarioData.Tiles = Table.CreateReadonlyTable (fun (TileID id) -> id) [ defaultTile; tile2 ]
           ScenarioData.TileFeatures =
-              Table.CreateReadonlyTable
-                  (fun (TileFeatureID id) -> id)
-                  [ startingPointFeature
-                    stairTileFeature ]
-          ScenarioData.Heritages = Table.CreateReadonlyTable(fun (HeritageID id) -> id) []
+            Table.CreateReadonlyTable (fun (TileFeatureID id) -> id) [ startingPointFeature; stairTileFeature ]
+          ScenarioData.Heritages = Table.CreateReadonlyTable (fun (HeritageID id) -> id) []
           ScenarioData.FloorGenerationParameters =
-              Table.CreateReadonlyTable(fun (FloorGenerationParameterID id) -> id) [ floorParameters ]
+            Table.CreateReadonlyTable (fun (FloorGenerationParameterID id) -> id) [ floorParameters ]
           ScenarioData.MonsterGenerationParameters =
-              Table.CreateReadonlyTable(fun (MonsterGenerationParameterID id) -> id) []
-          ScenarioData.Aspects = Table.CreateReadonlyTable(fun (AspectID id) -> id) [] }
+            Table.CreateReadonlyTable (fun (MonsterGenerationParameterID id) -> id) []
+          ScenarioData.Aspects = Table.CreateReadonlyTable (fun (AspectID id) -> id) [] }
 
     let loadScenarioData (callback: ScenarioData -> unit) = callback scenarioData
 

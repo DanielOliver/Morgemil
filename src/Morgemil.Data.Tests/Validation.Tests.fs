@@ -1,6 +1,5 @@
 module Morgemil.Data.Tests.Validation.Tests
 
-
 open Morgemil.Data
 open Xunit
 

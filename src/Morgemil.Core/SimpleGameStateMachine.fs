@@ -23,8 +23,7 @@ type SimpleGameStateMachine
 
                 let inputFunc = (GameStateRequest.Input >> inbox.Post)
 
-                let resultQ =
-                    System.Collections.Generic.Queue<Step list>()
+                let resultQ = System.Collections.Generic.Queue<Step list>()
 
                 let rec loop (previousState: GameState) =
                     async {
@@ -77,8 +76,10 @@ type SimpleGameStateMachine
         /// Stops
         member this.Stop() =
             GameStateRequest.Kill |> loopWorkAgent.Post
+
         /// Gets the current state of the game loop
         member this.CurrentState: GameState =
             loopWorkAgent.PostAndReply((fun replyChannel -> GameStateRequest.QueryState replyChannel), 5000)
+
         /// Get Scenario Data
         member this.ScenarioData = scenarioData

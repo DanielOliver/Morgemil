@@ -24,42 +24,31 @@ module Loop =
         let mutable context = context
 
         builder {
-            Tracked.Replace
-                context.GameContext
-                (fun t ->
-                    { t with
-                          CurrentTimeTick = context.TimeTable.Next.NextTick })
+            Tracked.Replace context.GameContext (fun t -> { t with CurrentTimeTick = context.TimeTable.Next.NextTick })
 
             match event with
             | ActionRequest.Engine -> ()
             | ActionRequest.Pause characterID ->
-                match characterID
-                      |> Table.TryGetRowByKey context.Characters with
+                match characterID |> Table.TryGetRowByKey context.Characters with
                 | None -> ()
                 | Some pauseCharacter ->
                     Table.AddRow
                         context.Characters
                         { pauseCharacter with
-                              NextTick = pauseCharacter.NextTick + 1000L<TimeTick>
-                              NextAction = pauseCharacter.NextAction.NextInList pauseCharacter.TickActions }
+                            NextTick = pauseCharacter.NextTick + 1000L<TimeTick>
+                            NextAction = pauseCharacter.NextAction.NextInList pauseCharacter.TickActions }
 
-                    yield
-                        { EventPause.CharacterID = characterID }
-                        |> ActionEvent.Pause
+                    yield { EventPause.CharacterID = characterID } |> ActionEvent.Pause
 
             | ActionRequest.Move actionRequestMove ->
-                match actionRequestMove.CharacterID
-                      |> Table.TryGetRowByKey context.Characters with
+                match actionRequestMove.CharacterID |> Table.TryGetRowByKey context.Characters with
                 | None -> ()
                 | Some moveCharacter ->
                     let oldPosition = moveCharacter.Position
 
-                    let newPosition =
-                        oldPosition + actionRequestMove.Direction
+                    let newPosition = oldPosition + actionRequestMove.Direction
 
-                    let blocksMovement =
-                        context.TileMap.[newPosition]
-                        |> TileMap.blocksMovement
+                    let blocksMovement = context.TileMap.[newPosition] |> TileMap.blocksMovement
 
                     if blocksMovement then
                         yield
@@ -84,9 +73,9 @@ module Loop =
                             Table.AddRow
                                 context.Characters
                                 { moveCharacter with
-                                      Position = newPosition
-                                      NextTick = moveCharacter.NextTick + 1000L<TimeTick>
-                                      NextAction = moveCharacter.NextAction.NextInList moveCharacter.TickActions }
+                                    Position = newPosition
+                                    NextTick = moveCharacter.NextTick + 1000L<TimeTick>
+                                    NextAction = moveCharacter.NextAction.NextInList moveCharacter.TickActions }
 
                             yield
                                 { CharacterID = moveCharacter.ID
@@ -94,19 +83,16 @@ module Loop =
                                   NewPosition = newPosition }
                                 |> ActionEvent.AfterMove
             | ActionRequest.GoToNextLevel (characterID) ->
-                match characterID
-                      |> Table.TryGetRowByKey context.Characters with
+                match characterID |> Table.TryGetRowByKey context.Characters with
                 | None -> ()
                 | Some moveCharacter ->
-                    if context.TileMap.[moveCharacter.Position]
-                       |> TileMap.isExitPoint then
+                    if context.TileMap.[moveCharacter.Position] |> TileMap.isExitPoint then
 
                         let rng = world.RNG
 
                         let (newtileMap, mapGenerationResults) =
                             FloorGenerator.Create
-                                (world.ScenarioData.FloorGenerationParameters.Items
-                                 |> Seq.head)
+                                (world.ScenarioData.FloorGenerationParameters.Items |> Seq.head)
                                 (world.ScenarioData.TileFeatures)
                                 rng
 
@@ -120,29 +106,24 @@ module Loop =
 
                             result
 
-                        let tileMap =
-                            createTileMapFromData newtileMap.TileMapData
+                        let tileMap = createTileMapFromData newtileMap.TileMapData
 
                         context <- { context with TileMap = tileMap }
                         Tracked.Replace context.GameContext (fun t -> { t with Floor = t.Floor + 1L<Floor> })
 
-                        let items =
-                            context.Characters |> Table.Items |> Seq.toArray
+                        let items = context.Characters |> Table.Items |> Seq.toArray
 
                         Table.AddRow
                             context.Characters
                             { moveCharacter with
-                                  NextTick = moveCharacter.NextTick + 1000L<TimeTick>
-                                  NextAction = moveCharacter.NextAction.NextInList moveCharacter.TickActions }
+                                NextTick = moveCharacter.NextTick + 1000L<TimeTick>
+                                NextAction = moveCharacter.NextAction.NextInList moveCharacter.TickActions }
 
                         items
-                        |> Seq.map
-                            (fun t ->
-                                { t with
-                                      Position =
-                                          (context.TileMap.EntryPoints |> Seq.head)
-                                          + int (t.ID.Key)
-                                      Floor = context.GameContext.Value.Floor })
+                        |> Seq.map (fun t ->
+                            { t with
+                                Position = (context.TileMap.EntryPoints |> Seq.head) + int (t.ID.Key)
+                                Floor = context.GameContext.Value.Floor })
                         |> Seq.iter (Table.AddRow context.Characters)
 
                         yield
@@ -161,8 +142,7 @@ type Loop(world: StaticLoopContext, initialContext: LoopContext) =
 
     member this.NextMove =
         let direction =
-            (RNG.RandomVector world.RNG (Vector2i.create (2, 2)))
-            - Vector2i.create (1, 1)
+            (RNG.RandomVector world.RNG (Vector2i.create (2, 2))) - Vector2i.create (1, 1)
 
         if direction = Vector2i.Zero then
             ActionRequest.Pause context.TimeTable.Next.ID
@@ -172,8 +152,7 @@ type Loop(world: StaticLoopContext, initialContext: LoopContext) =
                   Direction = direction }
 
     member this.ProcessRequest(event: ActionRequest) : Step list =
-        use builder =
-            new EventHistoryBuilder(context.Characters, context.GameContext)
+        use builder = new EventHistoryBuilder(context.Characters, context.GameContext)
 
         match context.TimeTable.NextAction with
         | ActionArchetype.CharacterAfterInput
@@ -183,8 +162,7 @@ type Loop(world: StaticLoopContext, initialContext: LoopContext) =
 
                 Table.AddRow
                     context.Characters
-                    { nextCharacter with
-                          NextAction = nextCharacter.NextAction.NextInList nextCharacter.TickActions }
+                    { nextCharacter with NextAction = nextCharacter.NextAction.NextInList nextCharacter.TickActions }
 
                 yield ActionEvent.EndResponse 0
             }
@@ -192,8 +170,7 @@ type Loop(world: StaticLoopContext, initialContext: LoopContext) =
         | ActionArchetype.CharacterEngineInput
         | ActionArchetype.CharacterPlayerInput ->
 
-            let (steps, nextContext) =
-                Loop.processRequest world context builder event
+            let (steps, nextContext) = Loop.processRequest world context builder event
 
             context <- nextContext
             steps

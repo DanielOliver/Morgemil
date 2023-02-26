@@ -4,4 +4,3 @@ namespace Morgemil.Models
 type CharacterTags =
     | Undead
     | HasSkeleton
-

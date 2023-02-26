@@ -7,10 +7,7 @@ type CharacterTable(timeTable: TimeTable) as this =
 
     do this.AddIndex timeTable
 
-    member this.ByPositions =
-        this
-        |> Table.Items
-        |> Seq.map (fun t -> t.Position, t)
+    member this.ByPositions = this |> Table.Items |> Seq.map (fun t -> t.Position, t)
 
     member this.ByID(characterID: CharacterID) = characterID |> Table.GetRowByKey this
 
@@ -19,7 +16,4 @@ type CharacterTable(timeTable: TimeTable) as this =
         |> Table.Items
         |> Seq.tryFind (fun t -> t.PlayerID.IsSome && t.PlayerID.Value = playerID)
 
-    member this.ByTicks =
-        this
-        |> Table.Items
-        |> Seq.sortBy (fun t -> t.NextTick)
+    member this.ByTicks = this |> Table.Items |> Seq.sortBy (fun t -> t.NextTick)

@@ -12,10 +12,9 @@ let ``Test Circle Properties`` () =
     let size1Circle = Circle.create (Vector2i.Zero, 1)
     Assert.Equal(9, size1Circle.Points |> Seq.length)
 
-    let rectangleOfSize1Circle =
-        size1Circle.Points |> Rectangle.EncloseAll
+    let rectangleOfSize1Circle = size1Circle.Points |> Rectangle.EncloseAll
 
-    Assert.Equal(Rectangle.Enclose(Vector2i.create (-1)) (Vector2i.create (1)), rectangleOfSize1Circle)
+    Assert.Equal(Rectangle.Enclose (Vector2i.create (-1)) (Vector2i.create (1)), rectangleOfSize1Circle)
 
     let size2Circle = Circle.create (Vector2i.Zero, 2)
     Assert.Equal(21, size2Circle.Points |> Seq.length)

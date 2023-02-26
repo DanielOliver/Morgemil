@@ -13,16 +13,16 @@ let defaultTile: Tile =
       BlocksMovement = true
       BlocksSight = true
       Representation =
-          { AnsiCharacter = '#'
-            ForegroundColor = Some <| Color.From(200, 200, 200)
-            BackGroundColor = Some <| Color.From(0, 0, 0) } }
+        { AnsiCharacter = '#'
+          ForegroundColor = Some <| Color.From(200, 200, 200)
+          BackGroundColor = Some <| Color.From(0, 0, 0) } }
 
 let tile2 =
     { defaultTile with
-          Name = "Dungeon Floor"
-          BlocksMovement = false
-          BlocksSight = false
-          ID = TileID 4L }
+        Name = "Dungeon Floor"
+        BlocksMovement = false
+        BlocksSight = false
+        ID = TileID 4L }
 
 let fromTileInstance (t: TileInstance) = t.Position, t.Tile, t.TileFeature
 
@@ -33,9 +33,9 @@ let stairTileFeature: TileFeature =
       BlocksMovement = false
       BlocksSight = false
       Representation =
-          { AnsiCharacter = char (242)
-            ForegroundColor = Some <| Color.From(30, 30, 255)
-            BackGroundColor = Some <| Color.From(0, 240, 0, 50) }
+        { AnsiCharacter = char (242)
+          ForegroundColor = Some <| Color.From(30, 30, 255)
+          BackGroundColor = Some <| Color.From(0, 240, 0, 50) }
       PossibleTiles = [ defaultTile; tile2 ]
       EntryPoint = false
       ExitPoint = true }
@@ -50,24 +50,14 @@ let TileMapTests () =
 
     Assert.Equal(false, (tileMap.Tile Vector2i.Zero).BlocksMovement)
 
-    Assert.Equal(
-        true,
-        (tileMap.Tile(Vector2i.Zero - Vector2i.Identity))
-            .BlocksMovement
-    )
+    Assert.Equal(true, (tileMap.Tile(Vector2i.Zero - Vector2i.Identity)).BlocksMovement)
 
     tileMap.Tile(Vector2i.Zero - Vector2i.Identity) <- tile2
 
-    Assert.Equal(
-        true,
-        (tileMap.Tile(Vector2i.Zero - Vector2i.Identity))
-            .BlocksMovement
-    )
+    Assert.Equal(true, (tileMap.Tile(Vector2i.Zero - Vector2i.Identity)).BlocksMovement)
 
     let (coord1, firstTile, tileFeature) =
-        tileMap.Tiles
-        |> Seq.map fromTileInstance
-        |> Seq.head
+        tileMap.Tiles |> Seq.map fromTileInstance |> Seq.head
 
     Assert.Equal(Vector2i.Zero, coord1)
     Assert.Equal(tile2, firstTile)
@@ -76,17 +66,13 @@ let TileMapTests () =
     tileMap.Item(Vector2i.Zero - Vector2i.Identity) <- (tile2, tileFeature)
 
     let (_, tile1, feature1) =
-        tileMap.Item(Vector2i.Zero - Vector2i.Identity)
-        |> fromTileInstance
+        tileMap.Item(Vector2i.Zero - Vector2i.Identity) |> fromTileInstance
 
     Assert.Equal(defaultTile, tile1)
     Assert.True(feature1.IsNone)
 
     let (coord2, secondTile, tileFeature) =
-        tileMap.Tiles
-        |> Seq.skip (1)
-        |> Seq.head
-        |> fromTileInstance
+        tileMap.Tiles |> Seq.skip (1) |> Seq.head |> fromTileInstance
 
     Assert.Equal(Vector2i.create (1, 0), coord2)
     Assert.Equal(defaultTile, secondTile)

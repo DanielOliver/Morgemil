@@ -13,7 +13,9 @@ type WearableType =
     | Shield
 
 type Wearable =
-    { ///The weight of this item. Used in stamina
-      Weight: decimal<Weight>
-      ///Where this wearable resides
-      WearableType: WearableType }
+    {
+        ///The weight of this item. Used in stamina
+        Weight: decimal<Weight>
+        ///Where this wearable resides
+        WearableType: WearableType
+    }

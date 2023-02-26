@@ -1,6 +1,5 @@
 module Morgemil.Data.Tests.JsonReader.Tests
 
-
 open Morgemil.Data
 open Newtonsoft.Json
 open Xunit

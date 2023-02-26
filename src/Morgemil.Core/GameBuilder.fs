@@ -14,7 +14,7 @@ type GameBuilderStateType =
 /// The initial game data returned
 type InitialGameData =
     { TileMap: TileMap
-      Characters: Character []
+      Characters: Character[]
       CurrentPlayerID: PlayerID
       GameContext: GameContext }
 
@@ -47,4 +47,4 @@ type GameBuilderStateRequest =
 /// The interface to interact with a game being built.
 type IGameBuilder =
     /// The current state of the builder
-    abstract member CurrentState : GameBuilderState
+    abstract member CurrentState: GameBuilderState

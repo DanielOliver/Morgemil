@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-latest]
+        os: [ windows-latest, ubuntu-latest ]
     steps:
       - name: Get the sources
         uses: actions/checkout@v2
@@ -27,18 +27,18 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '7.0.100'
-    
+
       - name: Install Dotnet Tools
         run: dotnet tool restore
-        
+
       - name: Run Fake, up to Reports
         if: github.ref == 'refs/heads/nightly'
         run: dotnet run -- Report
-        
+
       - name: Run Fake, up to Tests
         if: github.ref != 'refs/heads/nightly'
         run: dotnet run -- Test
-      
+
       - name: Upload codecov
         if: runner.os == 'Linux'
         run: |

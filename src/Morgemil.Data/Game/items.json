@@ -4,12 +4,11 @@
     "noun": "short sword",
     "isunique": false,
     "itemtype": "weapon",
-    "weapon":
-      {
-        "rangetype": "melee",
-        "baserange": "1",
-        "handcount": "1",
-        "weight": "5.0"
-      }
+    "weapon": {
+      "rangetype": "melee",
+      "baserange": "1",
+      "handcount": "1",
+      "weight": "5.0"
+    }
   }
 ]

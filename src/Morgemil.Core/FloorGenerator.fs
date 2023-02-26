@@ -13,11 +13,9 @@ let Create
     (tileFeatures: IReadonlyTable<TileFeature, TileFeatureID>)
     (rng: RNG.DefaultRNG)
     : (TileMap * Results) =
-    let floorSize =
-        Rectangle.create (RNG.RandomPoint rng parameters.SizeRange)
+    let floorSize = Rectangle.create (RNG.RandomPoint rng parameters.SizeRange)
 
-    let tileMap: TileMap =
-        TileMap(floorSize, parameters.DefaultTile)
+    let tileMap: TileMap = TileMap(floorSize, parameters.DefaultTile)
 
     let subFloorSize = floorSize.Expand(-1)
     let mutable entraceCoordinate = Vector2i.Zero
@@ -25,8 +23,7 @@ let Create
     match parameters.Strategy with
     | FloorGenerationStrategy.OpenFloor ->
         let openFloorTile =
-            parameters.Tiles
-            |> Seq.tryFind (fun t -> not (t.BlocksMovement))
+            parameters.Tiles |> Seq.tryFind (fun t -> not (t.BlocksMovement))
 
         match openFloorTile with
         | Some (tile1: Tile) ->

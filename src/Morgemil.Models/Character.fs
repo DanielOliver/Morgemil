@@ -26,6 +26,7 @@ type Character =
       NextAction: ActionArchetype
       TickActions: ActionArchetype list
       PlayerID: PlayerID option }
+
     interface Relational.IRow with
         [<System.Text.Json.Serialization.JsonIgnore>]
         member this.Key = this.ID.Key

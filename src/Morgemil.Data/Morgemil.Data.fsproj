@@ -5,20 +5,20 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Morgemil.Core\Morgemil.Core.fsproj" />
-        <ProjectReference Include="..\Morgemil.Math\Morgemil.Math.fsproj" />
-        <ProjectReference Include="..\Morgemil.Models\Morgemil.Models.fsproj" />
-        <ProjectReference Include="..\Morgemil.Utility\Morgemil.Utility.fsproj" />
+        <ProjectReference Include="..\Morgemil.Core\Morgemil.Core.fsproj"/>
+        <ProjectReference Include="..\Morgemil.Math\Morgemil.Math.fsproj"/>
+        <ProjectReference Include="..\Morgemil.Models\Morgemil.Models.fsproj"/>
+        <ProjectReference Include="..\Morgemil.Utility\Morgemil.Utility.fsproj"/>
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Include="JsonSettings.fs" />
-        <Compile Include="DTO.fs" />
-        <Compile Include="JsonReader.fs" />
-        <Compile Include="Translation.FromDTO.fs" />
-        <Compile Include="Translation.ToDTO.fs" />
-        <Compile Include="Validator.fs" />
-        <Compile Include="DataLoader.fs" />
+        <Compile Include="JsonSettings.fs"/>
+        <Compile Include="DTO.fs"/>
+        <Compile Include="JsonReader.fs"/>
+        <Compile Include="Translation.FromDTO.fs"/>
+        <Compile Include="Translation.ToDTO.fs"/>
+        <Compile Include="Validator.fs"/>
+        <Compile Include="DataLoader.fs"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -49,8 +49,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="FSharp.SystemTextJson" Version="1.1.23" />
-        <PackageReference Include="System.Text.Json" Version="7.0.2" />
+        <PackageReference Include="FSharp.SystemTextJson" Version="1.1.23"/>
+        <PackageReference Include="System.Text.Json" Version="7.0.2"/>
     </ItemGroup>
 
 </Project>

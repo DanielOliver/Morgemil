@@ -3,7 +3,6 @@ module Morgemil.Data.JsonReader
 open Morgemil.Data.DTO
 open System.IO
 
-
 let ReadJsonFile<'T> (fileName: string) : DtoValidResult<'T[]> =
     if not <| File.Exists(fileName) then
         { DtoValidResult.Errors = [ (sprintf "File \"%s\" doesn't exist " fileName) ]
@@ -13,9 +12,8 @@ let ReadJsonFile<'T> (fileName: string) : DtoValidResult<'T[]> =
         try
             let fileContents = File.ReadAllText fileName
 
-            // let jsonContents =
-            //     Newtonsoft.Json.JsonConvert.DeserializeObject<'T[]>(fileContents, JsonSettings.settings)
-            let jsonContents = System.Text.Json.JsonSerializer.Deserialize<'T[]>(fileContents, JsonSettings.options)
+            let jsonContents =
+                System.Text.Json.JsonSerializer.Deserialize<'T[]>(fileContents, JsonSettings.options)
 
             { DtoValidResult.Errors = List.empty
               Object = jsonContents

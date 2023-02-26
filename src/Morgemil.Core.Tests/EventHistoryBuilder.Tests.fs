@@ -58,8 +58,7 @@ let ``Can yield Results without updates`` () =
     let table1 = CharacterTable(timeTable)
     let trackedGameContext = TrackedEntity(exampleGameContext)
 
-    use eventBuilder =
-        new EventHistoryBuilder(table1, trackedGameContext)
+    use eventBuilder = new EventHistoryBuilder(table1, trackedGameContext)
 
     let results =
         eventBuilder {
@@ -67,11 +66,7 @@ let ``Can yield Results without updates`` () =
 
             yield
                 eventBuilder {
-                    Tracked.Replace
-                        trackedGameContext
-                        (fun t ->
-                            { t with
-                                  CurrentTimeTick = 2L<TimeTick> })
+                    Tracked.Replace trackedGameContext (fun t -> { t with CurrentTimeTick = 2L<TimeTick> })
 
                     yield ActionEvent.Empty 2
                     Table.AddRow table1 exampleItem2
@@ -87,23 +82,17 @@ let ``Can yield Results without updates`` () =
     Assert.Equal<Step list>(
         [ { Step.Event = ActionEvent.Empty 2
             Step.Updates =
-                [ { TrackedEvent.OldValue =
-                        { GameContext.CurrentTimeTick = 1L<TimeTick>
-                          Floor = 1L<Floor> }
-                    NewValue =
-                        { GameContext.CurrentTimeTick = 2L<TimeTick>
-                          Floor = 1L<Floor> } }
-                  |> StepItem.GameContext ] }
+              [ { TrackedEvent.OldValue =
+                    { GameContext.CurrentTimeTick = 1L<TimeTick>
+                      Floor = 1L<Floor> }
+                  NewValue =
+                    { GameContext.CurrentTimeTick = 2L<TimeTick>
+                      Floor = 1L<Floor> } }
+                |> StepItem.GameContext ] }
           { Step.Event = ActionEvent.Empty 3
-            Step.Updates =
-                [ exampleItem2
-                  |> TableEvent.Added
-                  |> StepItem.Character ] }
+            Step.Updates = [ exampleItem2 |> TableEvent.Added |> StepItem.Character ] }
           { Step.Event = ActionEvent.Empty 4
-            Step.Updates =
-                [ exampleItem1
-                  |> TableEvent.Added
-                  |> StepItem.Character ] } ]
+            Step.Updates = [ exampleItem1 |> TableEvent.Added |> StepItem.Character ] } ]
         |> List.rev,
         results
     )

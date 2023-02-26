@@ -16,8 +16,7 @@ let ColorFromDto (color: DTO.Color) : Color =
       R = color.R }
 
 let NullToOption (t: Nullable<_>) =
-    if t.HasValue then Some t.Value
-    else None
+    if t.HasValue then Some t.Value else None
 
 ///DTO to Vector2i
 let Vector2iFromDto (vec: DTO.Vector2i) : Vector2i = Vector2i.create (vec.X, vec.Y)
@@ -40,12 +39,8 @@ let ColorOptionFromDto (color: DTO.Color) : Color option =
 ///DTO to TileRepresentation
 let TileRepresentationFromDto (tileRepresentation: DTO.TileRepresentation) : TileRepresentation =
     { AnsiCharacter = (char) tileRepresentation.AnsiCharacter
-      ForegroundColor =
-          tileRepresentation.ForegroundColor
-          |> ColorOptionFromDto
-      BackGroundColor =
-          tileRepresentation.BackGroundColor
-          |> ColorOptionFromDto }
+      ForegroundColor = tileRepresentation.ForegroundColor |> ColorOptionFromDto
+      BackGroundColor = tileRepresentation.BackGroundColor |> ColorOptionFromDto }
 
 ///DTO to Tile
 let TileFromDto (tile: DTO.Tile) : Tile =
@@ -65,9 +60,7 @@ let TileFeatureFromDto (getTilebyID: TileID -> Tile) (tileFeature: DTO.TileFeatu
       Representation = TileRepresentationFromDto tileFeature.Representation
       BlocksSight = tileFeature.BlocksSight
       BlocksMovement = tileFeature.BlocksMovement
-      PossibleTiles =
-          tileFeature.PossibleTiles
-          |> List.map (TileID >> getTilebyID)
+      PossibleTiles = tileFeature.PossibleTiles |> List.map (TileID >> getTilebyID)
       ExitPoint = tileFeature.ExitPoint
       EntryPoint = tileFeature.EntryPoint }
 
@@ -87,8 +80,7 @@ let HeritageFromDto (getAncestryByID: AncestryID -> Ancestry) (heritage: DTO.Her
       Adjective = heritage.Adjective
       Description = heritage.Description
       Tags = heritage.Tags |> set
-      AncestryTags = heritage.AncestryTags |> Option.defaultValue [] |> set
-    }
+      AncestryTags = heritage.AncestryTags |> Option.defaultValue [] |> set }
 
 ///DTO to Item
 let ItemFromDto (item: DTO.Item) : Item =
@@ -96,21 +88,19 @@ let ItemFromDto (item: DTO.Item) : Item =
       Noun = item.Noun
       IsUnique = item.IsUnique
       SubItem =
-          match item.ItemType with
-          | ItemType.Weapon ->
-              { Weapon.Weight = item.Weapon.Value.Weight * 1M<Weight>
-                Weapon.BaseRange = item.Weapon.Value.BaseRange * 1<TileDistance>
-                Weapon.HandCount = item.Weapon.Value.HandCount * 1<HandSlot>
-                Weapon.RangeType = item.Weapon.Value.RangeType }
-              |> SubItem.Weapon
-          | ItemType.Wearable ->
-              { Wearable.Weight = item.Wearable.Value.Weight * 1M<Weight>
-                Wearable.WearableType = item.Wearable.Value.WearableType }
-              |> SubItem.Wearable
-          | ItemType.Consumable
-          | _ ->
-              { Consumable.Uses = item.Consumable.Value.Uses }
-              |> SubItem.Consumable }
+        match item.ItemType with
+        | ItemType.Weapon ->
+            { Weapon.Weight = item.Weapon.Value.Weight * 1M<Weight>
+              Weapon.BaseRange = item.Weapon.Value.BaseRange * 1<TileDistance>
+              Weapon.HandCount = item.Weapon.Value.HandCount * 1<HandSlot>
+              Weapon.RangeType = item.Weapon.Value.RangeType }
+            |> SubItem.Weapon
+        | ItemType.Wearable ->
+            { Wearable.Weight = item.Wearable.Value.Weight * 1M<Weight>
+              Wearable.WearableType = item.Wearable.Value.WearableType }
+            |> SubItem.Wearable
+        | ItemType.Consumable
+        | _ -> { Consumable.Uses = item.Consumable.Value.Uses } |> SubItem.Consumable }
 
 ///DTO to MonsterGenerationParameter
 let MonsterGenerationParameterFromDto
@@ -118,15 +108,12 @@ let MonsterGenerationParameterFromDto
     : MonsterGenerationParameter =
     { MonsterGenerationParameter.ID = MonsterGenerationParameterID monsterGenerationParameter.ID
       GenerationRatios =
-          monsterGenerationParameter.GenerationRatios
-          |> List.map
-              (fun t ->
-                  { GenerationRatio.Ratio = t.Ratio
-                    GenerationRatio.Max = t.Max
-                    GenerationRatio.Min = t.Min
-                    Tags = t.Tags |> set
-                  })
-    }
+        monsterGenerationParameter.GenerationRatios
+        |> List.map (fun t ->
+            { GenerationRatio.Ratio = t.Ratio
+              GenerationRatio.Max = t.Max
+              GenerationRatio.Min = t.Min
+              Tags = t.Tags |> set }) }
 
 ///DTO to FloorGenerationParameter
 let FloorGenerationParameterFromDto
@@ -134,17 +121,9 @@ let FloorGenerationParameterFromDto
     (floorGenerationParameter: DTO.FloorGenerationParameter)
     : FloorGenerationParameter =
     { FloorGenerationParameter.ID = FloorGenerationParameterID floorGenerationParameter.ID
-      DefaultTile =
-          floorGenerationParameter.DefaultTile
-          |> TileID
-          |> getTileByID
-      Tiles =
-          floorGenerationParameter.Tiles
-          |> Seq.map (TileID >> getTileByID)
-          |> Seq.toList
-      SizeRange =
-          floorGenerationParameter.SizeRange
-          |> RectangleFromDto
+      DefaultTile = floorGenerationParameter.DefaultTile |> TileID |> getTileByID
+      Tiles = floorGenerationParameter.Tiles |> Seq.map (TileID >> getTileByID) |> Seq.toList
+      SizeRange = floorGenerationParameter.SizeRange |> RectangleFromDto
       Strategy = floorGenerationParameter.Strategy }
 
 ///DTO to Aspect

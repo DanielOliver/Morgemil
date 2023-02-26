@@ -13,14 +13,13 @@ let ``Try serialize and serialize odd case`` () =
           Item.IsUnique = false
           Item.Noun = "one"
           Item.SubItem =
-              SubItem.Weapon
-                  { Weapon.BaseRange = 5<TileDistance>
-                    Weapon.HandCount = 2<HandSlot>
-                    Weapon.RangeType = WeaponRangeType.Melee
-                    Weapon.Weight = 5M<Weight> } }
+            SubItem.Weapon
+                { Weapon.BaseRange = 5<TileDistance>
+                  Weapon.HandCount = 2<HandSlot>
+                  Weapon.RangeType = WeaponRangeType.Melee
+                  Weapon.Weight = 5M<Weight> } }
 
-    let text1 =
-        JsonSerializer.Serialize(item1, JsonSettings.options)
+    let text1 = JsonSerializer.Serialize(item1, JsonSettings.options)
 
     let expectedText =
         "{\"ID\":50,\"SubItem\":{\"Weapon\":{\"RangeType\":\"Melee\",\"BaseRange\":5,\"HandCount\":2,\"Weight\":5}},\"Noun\":\"one\",\"IsUnique\":false}"
@@ -50,31 +49,30 @@ let ``Try serialize and serialize row case`` () =
     let tileFeature1 =
         { TileFeature2.ID = TileFeatureID 52L
           TileFeature2.Tile23 =
-              { Tile.Description = "Desc2"
-                Tile.Name = "Name2"
-                Tile.Representation =
-                    { TileRepresentation.AnsiCharacter = '1'
-                      TileRepresentation.ForegroundColor = None
-                      TileRepresentation.BackGroundColor = None }
-                Tile.BlocksMovement = false
-                Tile.BlocksSight = false
-                Tile.ID = TileID 42L
-                Tile.TileType = TileType.Ground }
+            { Tile.Description = "Desc2"
+              Tile.Name = "Name2"
+              Tile.Representation =
+                { TileRepresentation.AnsiCharacter = '1'
+                  TileRepresentation.ForegroundColor = None
+                  TileRepresentation.BackGroundColor = None }
+              Tile.BlocksMovement = false
+              Tile.BlocksSight = false
+              Tile.ID = TileID 42L
+              Tile.TileType = TileType.Ground }
           TileFeature2.Tile234 =
-              { Tile.Description = "Desc2"
-                Tile.Name = "Name2"
-                Tile.Representation =
-                    { TileRepresentation.AnsiCharacter = '1'
-                      TileRepresentation.ForegroundColor = None
-                      TileRepresentation.BackGroundColor = None }
-                Tile.BlocksMovement = false
-                Tile.BlocksSight = false
-                Tile.ID = TileID 43L
-                Tile.TileType = TileType.Ground }
-              |> Some }
+            { Tile.Description = "Desc2"
+              Tile.Name = "Name2"
+              Tile.Representation =
+                { TileRepresentation.AnsiCharacter = '1'
+                  TileRepresentation.ForegroundColor = None
+                  TileRepresentation.BackGroundColor = None }
+              Tile.BlocksMovement = false
+              Tile.BlocksSight = false
+              Tile.ID = TileID 43L
+              Tile.TileType = TileType.Ground }
+            |> Some }
 
-    let text1 =
-        JsonSerializer.Serialize(tileFeature1, JsonSettings.options)
+    let text1 = JsonSerializer.Serialize(tileFeature1, JsonSettings.options)
 
     let expectedText =
         "{\"ID\":50,\"SubItem\":{\"Weapon\":[{\"RangeType\":\"Melee\",\"BaseRange\":5,\"HandCount\":2,\"Weight\":5.0}]},\"Noun\":\"one\",\"IsUnique\":false}"

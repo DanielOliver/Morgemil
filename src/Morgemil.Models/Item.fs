@@ -20,14 +20,16 @@ type SubItem =
 
 [<Record>]
 type Item =
-    { [<RecordId>]
-      ID: ItemID
-      ///The union of items
-      SubItem: SubItem
-      ///Name of this item
-      Noun: string
-      ///If true, then never appears more than once in a game.
-      IsUnique: bool }
+    {
+        [<RecordId>]
+        ID: ItemID
+        ///The union of items
+        SubItem: SubItem
+        ///Name of this item
+        Noun: string
+        ///If true, then never appears more than once in a game.
+        IsUnique: bool
+    }
 
     ///The general classification
     [<System.Text.Json.Serialization.JsonIgnore>]

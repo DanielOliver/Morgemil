@@ -5,20 +5,18 @@ open Morgemil.Models
 
 type TileMap(mapSize: Rectangle, defaultTile: Tile, ?chunkData: (Tile * TileFeature option) array) =
     let chunk: (Tile * TileFeature option) array =
-        chunkData |> defaultArg
-        <| Array.create mapSize.Area (defaultTile, None)
+        chunkData |> defaultArg <| Array.create mapSize.Area (defaultTile, None)
 
     let translateOffsetToCoordinate (position: int) =
         Vector2i.create (position % mapSize.Width, position / mapSize.Width)
 
     member this.EntryPoints =
         chunk
-        |> Seq.mapi
-            (fun index (_, t) ->
-                if t.IsSome && t.Value.EntryPoint then
-                    Some <| translateOffsetToCoordinate index
-                else
-                    None)
+        |> Seq.mapi (fun index (_, t) ->
+            if t.IsSome && t.Value.EntryPoint then
+                Some <| translateOffsetToCoordinate index
+            else
+                None)
         |> Seq.choose id
 
     member this.TileMapData: TileMapData =
@@ -78,29 +76,24 @@ type TileMap(mapSize: Rectangle, defaultTile: Tile, ?chunkData: (Tile * TileFeat
     member this.Tiles: TileInstance seq =
         chunk
         |> Seq.zip mapSize.Coordinates
-        |> Seq.mapi
-            (fun index (t, (u, v)) ->
-                { TileInstance.ID = index |> int64 |> TileInstanceID
-                  Position = t
-                  TileInstance.Tile = u
-                  TileFeature = v })
+        |> Seq.mapi (fun index (t, (u, v)) ->
+            { TileInstance.ID = index |> int64 |> TileInstanceID
+              Position = t
+              TileInstance.Tile = u
+              TileFeature = v })
 
 module TileMap =
 
     let blocksMovement (tileInstance: TileInstance) =
         tileInstance.Tile.BlocksMovement
-        || (tileInstance.TileFeature.IsSome
-            && tileInstance.TileFeature.Value.BlocksMovement)
+        || (tileInstance.TileFeature.IsSome && tileInstance.TileFeature.Value.BlocksMovement)
 
     let blocksSight (tileInstance: TileInstance) =
         tileInstance.Tile.BlocksSight
-        || (tileInstance.TileFeature.IsSome
-            && tileInstance.TileFeature.Value.BlocksSight)
+        || (tileInstance.TileFeature.IsSome && tileInstance.TileFeature.Value.BlocksSight)
 
     let isExitPoint (tileInstance: TileInstance) =
-        (tileInstance.TileFeature.IsSome
-         && tileInstance.TileFeature.Value.ExitPoint)
+        (tileInstance.TileFeature.IsSome && tileInstance.TileFeature.Value.ExitPoint)
 
     let isEntryPoint (tileInstance: TileInstance) =
-        (tileInstance.TileFeature.IsSome
-         && tileInstance.TileFeature.Value.EntryPoint)
+        (tileInstance.TileFeature.IsSome && tileInstance.TileFeature.Value.EntryPoint)

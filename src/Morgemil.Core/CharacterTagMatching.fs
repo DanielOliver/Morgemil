@@ -10,4 +10,4 @@ let isMatch (ancestry: Ancestry) (heritage: Heritage) : bool =
     && (heritage.Tags
         |> set
         |> Set.intersect (ancestry.HeritageTags |> set)
-    |> Set.count) = (ancestry.HeritageTags.Count)
+        |> Set.count) = (ancestry.HeritageTags.Count)

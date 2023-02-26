@@ -38,13 +38,13 @@ let RectangleToDto (rectangle: Rectangle) : DTO.Rectangle =
 let TileRepresentationToDto (tileRepresentation: TileRepresentation) : DTO.TileRepresentation =
     { AnsiCharacter = (int) (Char.GetNumericValue tileRepresentation.AnsiCharacter)
       ForegroundColor =
-          tileRepresentation.ForegroundColor
-          |> Option.map ColorToDto
-          |> Option.defaultValue (ZeroColorDto())
+        tileRepresentation.ForegroundColor
+        |> Option.map ColorToDto
+        |> Option.defaultValue (ZeroColorDto())
       BackGroundColor =
-          tileRepresentation.BackGroundColor
-          |> Option.map ColorToDto
-          |> Option.defaultValue (ZeroColorDto()) }
+        tileRepresentation.BackGroundColor
+        |> Option.map ColorToDto
+        |> Option.defaultValue (ZeroColorDto()) }
 
 let TileToDto (tile: Tile) : DTO.Tile =
     { Description = tile.Description
