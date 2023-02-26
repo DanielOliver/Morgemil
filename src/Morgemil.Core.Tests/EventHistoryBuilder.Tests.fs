@@ -7,42 +7,42 @@ open Morgemil.Models
 open Morgemil.Math
 open Morgemil.Models.Relational
 
-let exampleRace1 =
-    { Race.Noun = ""
-      Race.Adjective = ""
-      Race.Description = ""
-      Race.ID = RaceID 50L }
+let exampleAncestry1 =
+    { Ancestry.Noun = ""
+      Ancestry.Adjective = ""
+      Ancestry.Description = ""
+      Ancestry.ID = AncestryID 50L }
 
 let exampleItem1 =
     { Character.PlayerID = None
-      Character.Race = exampleRace1
+      Character.Ancestry = exampleAncestry1
       Character.Position = Vector2i.Identity
       Character.ID = CharacterID 51L
       Character.NextAction = Character.DefaultTickActions.Head
       Character.TickActions = Character.DefaultTickActions
-      Character.RaceModifier = None
+      Character.Heritage = None
       Character.Floor = 1L<Floor>
       Character.NextTick = 1L<TimeTick> }
 
 let exampleItem2 =
     { Character.PlayerID = None
-      Character.Race = exampleRace1
+      Character.Ancestry = exampleAncestry1
       Character.Position = Vector2i.Identity
       Character.ID = CharacterID 52L
       Character.NextAction = Character.DefaultTickActions.Head
       Character.TickActions = Character.DefaultTickActions
-      Character.RaceModifier = None
+      Character.Heritage = None
       Character.Floor = 1L<Floor>
       Character.NextTick = 1L<TimeTick> }
 
 let exampleItem3 =
     { Character.PlayerID = None
-      Character.Race = exampleRace1
+      Character.Ancestry = exampleAncestry1
       Character.Position = Vector2i.Identity
       Character.ID = CharacterID 53L
       Character.NextAction = Character.DefaultTickActions.Head
       Character.TickActions = Character.DefaultTickActions
-      Character.RaceModifier = None
+      Character.Heritage = None
       Character.Floor = 1L<Floor>
       Character.NextTick = 1L<TimeTick> }
 

@@ -150,45 +150,45 @@ let private ValidateDtoTileFeatures
               tileTable
               |> AllExistsInTable element.PossibleTiles "Tiles" ])
 
-/// Validate Races
-let private ValidateDtoRaces
-    (item: DtoValidResult<Race []>)
-    : DtoValidResult<DtoValidResult<Race> []> * IReadonlyTable<Race, int64> =
+/// Validate Ancestries
+let private ValidateDtoAncestries
+    (item: DtoValidResult<Ancestry []>)
+    : DtoValidResult<DtoValidResult<Ancestry> []> * IReadonlyTable<Ancestry, int64> =
     item
-    |> ValidateGameDataWithTable(fun acc element -> [ ExpectedUnique element (fun x -> x.ID) "RaceID" acc ])
+    |> ValidateGameDataWithTable(fun acc element -> [ ExpectedUnique element (fun x -> x.ID) "AncestryID" acc ])
 
-/// Validate Race Modifiers
-let private ValidateDtoRaceModifiers
-    (item: DtoValidResult<RaceModifier []>)
-    (raceTable: IReadonlyTable<Race, int64>)
-    : DtoValidResult<DtoValidResult<RaceModifier> []> * IReadonlyTable<RaceModifier, int64> =
+/// Validate Heritages
+let private ValidateDtoHeritages
+    (item: DtoValidResult<Heritage []>)
+    (ancestryTable: IReadonlyTable<Ancestry, int64>)
+    : DtoValidResult<DtoValidResult<Heritage> []> * IReadonlyTable<Heritage, int64> =
     item
     |> ValidateGameDataWithTable
         (fun acc element ->
-            [ ExpectedUnique element (fun x -> x.ID) "RaceModifierID" acc
-              raceTable
-              |> AllExistsInTable element.PossibleRaces "Races" ])
+            [ ExpectedUnique element (fun x -> x.ID) "HeritageID" acc
+              ancestryTable
+              |> AllExistsInTable element.PossibleAncestries "Ancestries" ])
 
 /// Validate Monster Generation Parameters
 let private ValidateDtoMonsterGenerationParameters
     (item: DtoValidResult<MonsterGenerationParameter []>)
-    (raceTable: IReadonlyTable<Race, int64>)
-    (raceModifierTable: IReadonlyTable<RaceModifier, int64>)
+    (ancestryTable: IReadonlyTable<Ancestry, int64>)
+    (heritageTable: IReadonlyTable<Heritage, int64>)
     : DtoValidResult<DtoValidResult<MonsterGenerationParameter> []> * IReadonlyTable<MonsterGenerationParameter, int64> =
     item
     |> ValidateGameDataWithTable
         (fun acc element ->
-            [ raceTable
+            [ ancestryTable
               |> AllExistsInTable
                   (element.GenerationRatios
-                   |> List.map (fun t -> t.RaceID))
-                  "Race"
-              raceModifierTable
+                   |> List.map (fun t -> t.AncestryID))
+                  "Ancestry"
+              heritageTable
               |> AllExistsInTableIfValue
                   (element.GenerationRatios
-                   |> List.map (fun t -> t.RaceModifierID))
-                  "RaceModifier"
-              ExpectedUnique element (fun x -> x.ID) "RaceModifierLinkID" acc
+                   |> List.map (fun t -> t.HeritageID))
+                  "Heritage"
+              ExpectedUnique element (fun x -> x.ID) "HeritageLinkID" acc
               AllSatisfyCondition
                   (element.GenerationRatios
                    |> List.map (fun t -> t.Ratio))
@@ -247,13 +247,13 @@ let ValidateDtos (phase0: RawDtoPhase0) : RawDtoPhase1 =
     let (tileFeatureResults, tileFeatureTable) =
         ValidateDtoTileFeatures phase0.TileFeatures tileTable
 
-    let (raceResults, raceTable) = ValidateDtoRaces phase0.Races
+    let (ancestryResults, ancestryTable) = ValidateDtoAncestries phase0.Ancestries
 
-    let (raceModifierResults, raceModifierTable) =
-        ValidateDtoRaceModifiers phase0.RaceModifiers raceTable
+    let (heritageResults, heritageTable) =
+        ValidateDtoHeritages phase0.Heritages ancestryTable
 
     let (monsterGenerationParameterResults, monsterGenerationParametersLinkTable) =
-        ValidateDtoMonsterGenerationParameters phase0.MonsterGenerationParameters raceTable raceModifierTable
+        ValidateDtoMonsterGenerationParameters phase0.MonsterGenerationParameters ancestryTable heritageTable
 
     let (itemResults, itemTable) = ValidateDtoItems phase0.Items
 
@@ -264,8 +264,8 @@ let ValidateDtos (phase0: RawDtoPhase0) : RawDtoPhase1 =
 
     { RawDtoPhase1.Tiles = tileResults
       TileFeatures = tileFeatureResults
-      Races = raceResults
-      RaceModifiers = raceModifierResults
+      Ancestries = ancestryResults
+      Heritages = heritageResults
       MonsterGenerationParameters = monsterGenerationParameterResults
       Items = itemResults
       FloorGenerationParameters = floorGenerationParameterResults

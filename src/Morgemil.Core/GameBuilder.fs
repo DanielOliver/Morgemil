@@ -21,7 +21,7 @@ type InitialGameData =
 /// The steps and state of a game that's being built.
 [<RequireQualifiedAccess>]
 type GameBuilderState =
-    | WaitingForCurrentPlayer of AddCurrentPlayer: (RaceID -> unit)
+    | WaitingForCurrentPlayer of AddCurrentPlayer: (AncestryID -> unit)
     | GameBuilt of GameEngine: IGameStateMachine * InitialGameData: InitialGameData
     | LoadingGameProgress of State: string
     | LoadedScenarioData of ScenarioData: ScenarioData
@@ -39,7 +39,7 @@ type GameBuilderState =
 [<RequireQualifiedAccess>]
 type GameBuilderStateRequest =
     | QueryState of AsyncReplyChannel<GameBuilderState>
-    | AddPlayer of RaceID: RaceID
+    | AddPlayer of AncestryID: AncestryID
     | SelectScenario of ScenarioName: string
     | SetScenarioData of ScenarioData: ScenarioData
     | SetGameData of GameEngine: IGameStateMachine * InitialGameData: InitialGameData

@@ -262,10 +262,10 @@ module Table =
 
     let EmptyScenarioData: ScenarioData =
         { Items = CreateReadonlyTable(fun (ItemID id) -> id) []
-          Races = CreateReadonlyTable(fun (RaceID id) -> id) []
+          Ancestries = CreateReadonlyTable(fun (AncestryID id) -> id) []
           Tiles = CreateReadonlyTable(fun (TileID id) -> id) []
           TileFeatures = CreateReadonlyTable(fun (TileFeatureID id) -> id) []
-          RaceModifiers = CreateReadonlyTable(fun (RaceModifierID id) -> id) []
+          Heritages = CreateReadonlyTable(fun (HeritageID id) -> id) []
           FloorGenerationParameters = CreateReadonlyTable(fun (FloorGenerationParameterID id) -> id) []
           MonsterGenerationParameters = CreateReadonlyTable(fun (MonsterGenerationParameterID id) -> id) []
           Aspects = CreateReadonlyTable(fun (AspectID id) -> id) [] }

@@ -1,3 +1,4 @@
+
 module Morgemil.Data.DTO
 
 open System
@@ -14,7 +15,7 @@ type TileRepresentation =
       ForegroundColor: Color
       BackGroundColor: Color }
 
-type Race =
+type Ancestry =
     { ID: int64
       ///Proper noun
       Noun: string
@@ -38,7 +39,7 @@ type Aspect =
     interface IRow with
         member this.Key = this.ID
 
-type RaceModifier =
+type Heritage =
     { ID: int64
       ///Proper noun
       Noun: string
@@ -46,21 +47,21 @@ type RaceModifier =
       Adjective: string
       ///User-visible description
       Description: string
-      ///Valid races
-      PossibleRaces: int64 list }
+      ///Valid ancestries
+      PossibleAncestries: int64 list }
 
     interface IRow with
         member this.Key = this.ID
 
-type RaceModifierLink =
-    { RaceID: int64
-      RaceModifierID: Nullable<int64>
+type HeritageLink =
+    { AncestryID: int64
+      HeritageID: Nullable<int64>
       ///The ratio doesn't have to add up to 100.  Every ratio could be thought of "10 to 1" or something like that.
       Ratio: int }
 
 type MonsterGenerationParameter =
     { ID: int64
-      GenerationRatios: RaceModifierLink list }
+      GenerationRatios: HeritageLink list }
 
     interface IRow with
         member this.Key = this.ID
@@ -163,8 +164,8 @@ type DtoValidResult<'T> =
 type RawDtoPhase0 =
     { Tiles: DtoValidResult<Tile []>
       TileFeatures: DtoValidResult<TileFeature []>
-      Races: DtoValidResult<Race []>
-      RaceModifiers: DtoValidResult<RaceModifier []>
+      Ancestries: DtoValidResult<Ancestry []>
+      Heritages: DtoValidResult<Heritage []>
       MonsterGenerationParameters: DtoValidResult<MonsterGenerationParameter []>
       Items: DtoValidResult<Item []>
       FloorGenerationParameters: DtoValidResult<FloorGenerationParameter []>
@@ -173,8 +174,8 @@ type RawDtoPhase0 =
     member this.Errors: string list =
         [| this.Tiles.Errors
            this.TileFeatures.Errors
-           this.Races.Errors
-           this.RaceModifiers.Errors
+           this.Ancestries.Errors
+           this.Heritages.Errors
            this.MonsterGenerationParameters.Errors
            this.Items.Errors
            this.FloorGenerationParameters.Errors
@@ -184,8 +185,8 @@ type RawDtoPhase0 =
     member this.Success: bool =
         [ this.Tiles.Success
           this.TileFeatures.Success
-          this.Races.Success
-          this.RaceModifiers.Success
+          this.Ancestries.Success
+          this.Heritages.Success
           this.MonsterGenerationParameters.Success
           this.Items.Success
           this.FloorGenerationParameters.Success
@@ -196,8 +197,8 @@ type RawDtoPhase0 =
 type RawDtoPhase1 =
     { Tiles: DtoValidResult<DtoValidResult<Tile> []>
       TileFeatures: DtoValidResult<DtoValidResult<TileFeature> []>
-      Races: DtoValidResult<DtoValidResult<Race> []>
-      RaceModifiers: DtoValidResult<DtoValidResult<RaceModifier> []>
+      Ancestries: DtoValidResult<DtoValidResult<Ancestry> []>
+      Heritages: DtoValidResult<DtoValidResult<Heritage> []>
       MonsterGenerationParameters: DtoValidResult<DtoValidResult<MonsterGenerationParameter> []>
       Items: DtoValidResult<DtoValidResult<Item> []>
       FloorGenerationParameters: DtoValidResult<DtoValidResult<FloorGenerationParameter> []>
@@ -206,8 +207,8 @@ type RawDtoPhase1 =
     member this.Errors: string list =
         [| this.Tiles.Errors
            this.TileFeatures.Errors
-           this.Races.Errors
-           this.RaceModifiers.Errors
+           this.Ancestries.Errors
+           this.Heritages.Errors
            this.MonsterGenerationParameters.Errors
            this.Items.Errors
            this.FloorGenerationParameters.Errors
@@ -217,8 +218,8 @@ type RawDtoPhase1 =
     member this.Success: bool =
         [ this.Tiles.Success
           this.TileFeatures.Success
-          this.Races.Success
-          this.RaceModifiers.Success
+          this.Ancestries.Success
+          this.Heritages.Success
           this.MonsterGenerationParameters.Success
           this.Items.Success
           this.FloorGenerationParameters.Success
@@ -229,8 +230,8 @@ type RawDtoPhase1 =
 type RawDtoPhase2 =
     { Tiles: Morgemil.Models.Tile []
       TileFeatures: Morgemil.Models.TileFeature []
-      Races: Morgemil.Models.Race []
-      RaceModifiers: Morgemil.Models.RaceModifier []
+      Ancestries: Morgemil.Models.Ancestry []
+      Heritages: Morgemil.Models.Heritage []
       MonsterGenerationParameters: Morgemil.Models.MonsterGenerationParameter []
       Items: Morgemil.Models.Item []
       FloorGenerationParameters: Morgemil.Models.FloorGenerationParameter []

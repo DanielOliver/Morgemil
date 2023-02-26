@@ -4,7 +4,7 @@
     "noun": "Skeleton",
     "adjective": "Skeletal",
     "description": "Skeletons are a basic form of undead.  Stupid and resilient to many mortal afflictions, but rather brittle",
-    "possibleraces": [
+    "possibleancestries": [
       0,
       2
     ]
@@ -14,7 +14,7 @@
     "noun": "Specter",
     "adjective": "Spectral",
     "description": "Specters are weak in this world and easily banished with physicial assult, but do not underestimate the mind.",
-    "possibleraces": [
+    "possibleancestries": [
       0,
       2
     ]

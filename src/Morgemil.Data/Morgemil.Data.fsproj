@@ -36,10 +36,10 @@
         <Content Include="Game\tilefeatures.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
-        <Content Include="Game\races.json">
+        <Content Include="Game\ancestries.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
-        <Content Include="Game\racemodifiers.json">
+        <Content Include="Game\heritages.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
         <Content Include="Game\monstergenerationparameters.json">

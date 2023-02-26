@@ -25,19 +25,19 @@ type TileFeatureID =
         rowID
 
 [<Struct>]
-type RaceID =
-    | RaceID of int64
+type AncestryID =
+    | AncestryID of int64
 
     member this.Key =
-        let (RaceID rowID) = this
+        let (AncestryID rowID) = this
         rowID
 
 [<Struct>]
-type RaceModifierID =
-    | RaceModifierID of int64
+type HeritageID =
+    | HeritageID of int64
 
     member this.Key =
-        let (RaceModifierID rowID) = this
+        let (HeritageID rowID) = this
         rowID
 
 [<Struct>]

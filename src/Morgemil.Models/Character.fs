@@ -19,8 +19,8 @@ module Character =
 type Character =
     { [<RecordId>]
       ID: CharacterID
-      Race: Race
-      RaceModifier: RaceModifier option
+      Ancestry: Ancestry
+      Heritage: Heritage option
       Position: Vector2i
       NextTick: int64<TimeTick>
       Floor: int64<Floor>

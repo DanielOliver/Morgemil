@@ -3,25 +3,25 @@
     "id": 0,
     "GenerationRatios": [
       {
-        "raceid": "0",
+        "ancestryid": "0",
         "ratio": "10"
       },
       {
-        "raceid": "0",
-        "racemodifierid": "0",
+        "ancestryid": "0",
+        "heritageid": "0",
         "ratio": "2"
       },
       {
-        "raceid": "0",
-        "racemodifierid": "1",
+        "ancestryid": "0",
+        "heritageid": "1",
         "ratio": "2"
       },
       {
-        "raceid": "1",
+        "ancestryid": "1",
         "ratio": "1"
       },
       {
-        "raceid": "2",
+        "ancestryid": "2",
         "ratio": "1"
       }
     ]

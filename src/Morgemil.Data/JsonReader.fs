@@ -39,8 +39,8 @@ let ReadGameFiles (basePath: string) : RawDtoPhase0 =
 
     { RawDtoPhase0.Tiles = ReadJsonFile <| combinePaths "tiles.json"
       TileFeatures = ReadJsonFile <| combinePaths "tilefeatures.json"
-      Races = ReadJsonFile <| combinePaths "races.json"
-      RaceModifiers = ReadJsonFile <| combinePaths "racemodifiers.json"
+      Ancestries = ReadJsonFile <| combinePaths "ancestries.json"
+      Heritages = ReadJsonFile <| combinePaths "heritages.json"
       MonsterGenerationParameters =
           ReadJsonFile
           <| combinePaths "monstergenerationparameters.json"

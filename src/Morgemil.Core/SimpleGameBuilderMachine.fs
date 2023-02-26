@@ -6,7 +6,7 @@ open Morgemil.Math
 
 type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) =
     let mutable currentPlayerID: PlayerID option = None
-    let mutable chosenRaceID: RaceID option = None
+    let mutable chosenAncestryID: AncestryID option = None
     let mutable chosenScenarioName: string option = None
     let mutable loadedScenarioData: ScenarioData option = None
 
@@ -43,8 +43,8 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
 
             let character1 =
                 { Character.ID = Table.GenerateKey characterTable
-                  Race = Table.GetRowByKey scenarioData.Races chosenRaceID.Value
-                  RaceModifier = None
+                  Ancestry = Table.GetRowByKey scenarioData.Ancestries chosenAncestryID.Value
+                  Heritage = None
                   NextTick = 0L<TimeTick>
                   NextAction = Character.DefaultPlayerTickActions.Head
                   TickActions = Character.DefaultPlayerTickActions
@@ -58,8 +58,8 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
 
                 let npc1 =
                     { Character.ID = Table.GenerateKey characterTable
-                      Race = scenarioData.Races.Items |> Seq.last
-                      RaceModifier = None
+                      Ancestry = scenarioData.Ancestries.Items |> Seq.last
+                      Heritage = None
                       NextTick = 0L<TimeTick>
                       NextAction = Character.DefaultTickActions.Head
                       TickActions = Character.DefaultTickActions
@@ -114,9 +114,9 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
                             replyChannel.Reply previousState
                             do! loop previousState
 
-                        | GameBuilderStateRequest.AddPlayer raceID ->
+                        | GameBuilderStateRequest.AddPlayer ancestryID ->
                             currentPlayerID <- PlayerID 1L |> Some
-                            chosenRaceID <- Some raceID
+                            chosenAncestryID <- Some ancestryID
                             buildGameState (GameBuilderStateRequest.SetGameData >> inbox.Post)
                             do! loop (GameBuilderState.LoadingGameProgress "Creating Game")
 

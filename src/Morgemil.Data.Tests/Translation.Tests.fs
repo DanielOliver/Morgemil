@@ -53,9 +53,9 @@ let ``Try Translate Game`` () =
     let rawDtoPhase2 =
         FromDTO.TranslateFromDtosToPhase2 rawDtoPhase0
 
-    Assert.NotEmpty(rawDtoPhase2.Races)
+    Assert.NotEmpty(rawDtoPhase2.Ancestries)
     Assert.NotEmpty(rawDtoPhase2.Tiles)
-    Assert.NotEmpty(rawDtoPhase2.RaceModifiers)
+    Assert.NotEmpty(rawDtoPhase2.Heritages)
     Assert.NotEmpty(rawDtoPhase2.Items)
     Assert.NotEmpty(rawDtoPhase2.FloorGenerationParameters)
     Assert.NotEmpty(rawDtoPhase2.MonsterGenerationParameters)

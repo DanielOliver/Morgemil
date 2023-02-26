@@ -19,10 +19,10 @@ let ``Can transition states`` () =
 
     let scenarioData =
         { ScenarioData.Items = Table.CreateReadonlyTable(fun (ItemID id) -> id) []
-          ScenarioData.Races = Table.CreateReadonlyTable(fun (RaceID id) -> id) []
+          ScenarioData.Ancestries = Table.CreateReadonlyTable(fun (AncestryID id) -> id) []
           ScenarioData.Tiles = Table.CreateReadonlyTable(fun (TileID id) -> id) []
           ScenarioData.TileFeatures = Table.CreateReadonlyTable(fun (TileFeatureID id) -> id) []
-          ScenarioData.RaceModifiers = Table.CreateReadonlyTable(fun (RaceModifierID id) -> id) []
+          ScenarioData.Heritages = Table.CreateReadonlyTable(fun (HeritageID id) -> id) []
           ScenarioData.FloorGenerationParameters =
               Table.CreateReadonlyTable(fun (FloorGenerationParameterID id) -> id) []
           ScenarioData.MonsterGenerationParameters =

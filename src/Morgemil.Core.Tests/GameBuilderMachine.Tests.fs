@@ -60,24 +60,24 @@ let startingPointFeature: TileFeature =
       ExitPoint = false
       EntryPoint = true }
 
-let race1: Race =
-    { Race.Adjective = "Adjective"
-      Race.Description = "Description"
-      Race.ID = RaceID 1L
-      Race.Noun = "Noun" }
+let ancestry1: Ancestry =
+    { Ancestry.Adjective = "Adjective"
+      Ancestry.Description = "Description"
+      Ancestry.ID = AncestryID 1L
+      Ancestry.Noun = "Noun" }
 
 [<Fact>]
 let ``Can transition states`` () =
     let scenarioData =
         { ScenarioData.Items = Table.CreateReadonlyTable(fun (ItemID id) -> id) []
-          ScenarioData.Races = Table.CreateReadonlyTable(fun (RaceID id) -> id) [ race1 ]
+          ScenarioData.Ancestries = Table.CreateReadonlyTable(fun (AncestryID id) -> id) [ ancestry1 ]
           ScenarioData.Tiles = Table.CreateReadonlyTable(fun (TileID id) -> id) [ defaultTile; tile2 ]
           ScenarioData.TileFeatures =
               Table.CreateReadonlyTable
                   (fun (TileFeatureID id) -> id)
                   [ startingPointFeature
                     stairTileFeature ]
-          ScenarioData.RaceModifiers = Table.CreateReadonlyTable(fun (RaceModifierID id) -> id) []
+          ScenarioData.Heritages = Table.CreateReadonlyTable(fun (HeritageID id) -> id) []
           ScenarioData.FloorGenerationParameters =
               Table.CreateReadonlyTable(fun (FloorGenerationParameterID id) -> id) [ floorParameters ]
           ScenarioData.MonsterGenerationParameters =
@@ -101,7 +101,7 @@ let ``Can transition states`` () =
     Assert.Equal(GameBuilderStateType.WaitingForCurrentPlayer, machine.CurrentState.GameBuilderStateType)
 
     match machine.CurrentState with
-    | GameBuilderState.WaitingForCurrentPlayer (addPlayer) -> addPlayer (RaceID 1L)
+    | GameBuilderState.WaitingForCurrentPlayer (addPlayer) -> addPlayer (AncestryID 1L)
     | _ -> Assert.False(true)
 
     Assert.Equal(GameBuilderStateType.LoadingGameProgress, machine.CurrentState.GameBuilderStateType)

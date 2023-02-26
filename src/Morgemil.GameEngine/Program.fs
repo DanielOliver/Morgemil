@@ -244,7 +244,7 @@ let StartMainStateMachine () =
             printfn "Choose Scenario: "
             Console.ReadLine() |> callback
         | GameBuilderState.LoadedScenarioData _ -> failwith "one"
-        | GameBuilderState.WaitingForCurrentPlayer addCurrentPlayer -> addCurrentPlayer (RaceID 1L)
+        | GameBuilderState.WaitingForCurrentPlayer addCurrentPlayer -> addCurrentPlayer (AncestryID 1L)
         | GameBuilderState.LoadingGameProgress status -> printfn "Status %s" status
 
     ()

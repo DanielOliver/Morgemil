@@ -3,17 +3,15 @@ namespace Morgemil.Models
 open Newtonsoft.Json
 
 [<Record>]
-type RaceModifier =
+type Ancestry =
     { [<RecordId>]
-      ID: RaceModifierID
-      ///Proper noun
+      ID: AncestryID
+      ///Proper noun. eg: "minatour"
       Noun: string
       ///Proper adjective
       Adjective: string
       ///User-visible description
-      Description: string
-      ///Valid races for this modifier
-      PossibleRaces: Race list }
+      Description: string }
 
     interface Relational.IRow with
         [<JsonIgnore>]

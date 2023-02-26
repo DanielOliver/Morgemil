@@ -66,22 +66,22 @@ let TileFeatureFromDto (getTilebyID: TileID -> Tile) (tileFeature: DTO.TileFeatu
       ExitPoint = tileFeature.ExitPoint
       EntryPoint = tileFeature.EntryPoint }
 
-///DTO to Race
-let RaceFromDto (race: DTO.Race) : Race =
-    { Race.ID = RaceID race.ID
-      Noun = race.Noun
-      Adjective = race.Adjective
-      Description = race.Description }
+///DTO to Ancestry
+let AncestorFromDto (ancestry: DTO.Ancestry) : Ancestry =
+    { Ancestry.ID = AncestryID ancestry.ID
+      Noun = ancestry.Noun
+      Adjective = ancestry.Adjective
+      Description = ancestry.Description }
 
-///DTO to RaceModifier
-let RaceModifierFromDto (getRaceByID: RaceID -> Race) (raceModifier: DTO.RaceModifier) : RaceModifier =
-    { RaceModifier.ID = RaceModifierID raceModifier.ID
-      Noun = raceModifier.Noun
-      Adjective = raceModifier.Adjective
-      Description = raceModifier.Description
-      PossibleRaces =
-          raceModifier.PossibleRaces
-          |> List.map (RaceID >> getRaceByID) }
+///DTO to Heritage
+let HeritageFromDto (getAncestryByID: AncestryID -> Ancestry) (heritage: DTO.Heritage) : Heritage =
+    { Heritage.ID = HeritageID heritage.ID
+      Noun = heritage.Noun
+      Adjective = heritage.Adjective
+      Description = heritage.Description
+      PossibleAncestries =
+          heritage.PossibleAncestries
+          |> List.map (AncestryID >> getAncestryByID) }
 
 ///DTO to Item
 let ItemFromDto (item: DTO.Item) : Item =
@@ -114,11 +114,11 @@ let MonsterGenerationParameterFromDto
           monsterGenerationParameter.GenerationRatios
           |> List.map
               (fun t ->
-                  { RaceModifierLink.Ratio = t.Ratio
-                    RaceModifierLink.RaceID = RaceID t.RaceID
-                    RaceModifierLink.RaceModifierID =
-                        match t.RaceModifierID.HasValue with
-                        | true -> t.RaceModifierID.Value |> RaceModifierID |> Some
+                  { HeritageLink.Ratio = t.Ratio
+                    HeritageLink.AncestryID = AncestryID t.AncestryID
+                    HeritageLink.HeritageID =
+                        match t.HeritageID.HasValue with
+                        | true -> t.HeritageID.Value |> HeritageID |> Some
                         | false -> None }) }
 
 ///DTO to FloorGenerationParameter
@@ -154,15 +154,15 @@ let TranslateFromDtosToPhase2 (dtos: RawDtoPhase0) : RawDtoPhase2 =
         |> Seq.map (TileFromDto)
         |> Table.CreateReadonlyTable(fun (t: TileID) -> t.Key)
 
-    let races =
-        dtos.Races.Object
-        |> Seq.map (RaceFromDto)
-        |> Table.CreateReadonlyTable(fun (t: RaceID) -> t.Key)
+    let ancestries =
+        dtos.Ancestries.Object
+        |> Seq.map (AncestorFromDto)
+        |> Table.CreateReadonlyTable(fun (t: AncestryID) -> t.Key)
 
-    let raceModifiers =
-        dtos.RaceModifiers.Object
-        |> Seq.map (RaceModifierFromDto(fun t -> races.Item(t)))
-        |> Table.CreateReadonlyTable(fun (t: RaceModifierID) -> t.Key)
+    let heritages =
+        dtos.Heritages.Object
+        |> Seq.map (HeritageFromDto(fun t -> ancestries.Item(t)))
+        |> Table.CreateReadonlyTable(fun (t: HeritageID) -> t.Key)
 
     let items =
         dtos.Items.Object
@@ -190,8 +190,8 @@ let TranslateFromDtosToPhase2 (dtos: RawDtoPhase0) : RawDtoPhase2 =
         |> Table.CreateReadonlyTable(fun (t: AspectID) -> t.Key)
 
     { RawDtoPhase2.Tiles = tiles.Items |> Seq.toArray
-      RaceModifiers = raceModifiers.Items |> Seq.toArray
-      Races = races.Items |> Seq.toArray
+      Heritages = heritages.Items |> Seq.toArray
+      Ancestries = ancestries.Items |> Seq.toArray
       Items = items.Items |> Seq.toArray
       MonsterGenerationParameters = monsterGenerationParameters.Items |> Seq.toArray
       TileFeatures = tileFeatures.Items |> Seq.toArray
@@ -205,15 +205,15 @@ let TranslateFromDtosToScenario (dtos: RawDtoPhase0) : ScenarioData =
         |> Seq.map (TileFromDto)
         |> Table.CreateReadonlyTable(fun (t: TileID) -> t.Key)
 
-    let races =
-        dtos.Races.Object
-        |> Seq.map (RaceFromDto)
-        |> Table.CreateReadonlyTable(fun (t: RaceID) -> t.Key)
+    let ancestries =
+        dtos.Ancestries.Object
+        |> Seq.map (AncestorFromDto)
+        |> Table.CreateReadonlyTable(fun (t: AncestryID) -> t.Key)
 
-    let raceModifiers =
-        dtos.RaceModifiers.Object
-        |> Seq.map (RaceModifierFromDto(fun t -> races.Item(t)))
-        |> Table.CreateReadonlyTable(fun (t: RaceModifierID) -> t.Key)
+    let heritages =
+        dtos.Heritages.Object
+        |> Seq.map (HeritageFromDto(fun t -> ancestries.Item(t)))
+        |> Table.CreateReadonlyTable(fun (t: HeritageID) -> t.Key)
 
     let items =
         dtos.Items.Object
@@ -241,8 +241,8 @@ let TranslateFromDtosToScenario (dtos: RawDtoPhase0) : ScenarioData =
         |> Table.CreateReadonlyTable(fun (t: AspectID) -> t.Key)
 
     { ScenarioData.Tiles = tiles
-      RaceModifiers = raceModifiers
-      Races = races
+      Heritages = heritages
+      Ancestries = ancestries
       Items = items
       MonsterGenerationParameters = monsterGenerationParameters
       TileFeatures = tileFeatures

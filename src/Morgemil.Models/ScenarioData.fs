@@ -4,11 +4,11 @@ open Morgemil.Models
 open Morgemil.Models.Relational
 
 type ScenarioData =
-    { Races: IReadonlyTable<Race, RaceID>
+    { Ancestries: IReadonlyTable<Ancestry, AncestryID>
       Tiles: IReadonlyTable<Tile, TileID>
       TileFeatures: IReadonlyTable<TileFeature, TileFeatureID>
       Items: IReadonlyTable<Item, ItemID>
-      RaceModifiers: IReadonlyTable<RaceModifier, RaceModifierID>
+      Heritages: IReadonlyTable<Heritage, HeritageID>
       MonsterGenerationParameters: IReadonlyTable<MonsterGenerationParameter, MonsterGenerationParameterID>
       FloorGenerationParameters: IReadonlyTable<FloorGenerationParameter, FloorGenerationParameterID>
       Aspects: IReadonlyTable<Aspect, AspectID> }
