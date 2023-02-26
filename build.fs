@@ -63,7 +63,7 @@ let dependencies = [
 let program argv =
 
 
-    Target.runOrDefaultWithArguments "All"
+    Target.runOrDefaultWithArguments (match argv.Length with 0 -> "All" | _ -> argv[0])
     0
 
 

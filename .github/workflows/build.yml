@@ -33,11 +33,11 @@ jobs:
         
       - name: Run Fake, up to Reports
         if: github.ref == 'refs/heads/nightly'
-        run: dotnet fake build target Report
+        run: dotnet run -- Report
         
       - name: Run Fake, up to Tests
         if: github.ref != 'refs/heads/nightly'
-        run: dotnet fake build target Test
+        run: dotnet run -- Test
       
       - name: Upload codecov
         if: runner.os == 'Linux'
