@@ -23,21 +23,21 @@ jobs:
       - name: Fetch all history for all tags and branches
         run: git fetch --prune --unshallow
 
-      - name: Install .NET Core SDK 6.0.100
+      - name: Install .NET Core SDK 7.0.100
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '6.0.100'
+          dotnet-version: '7.0.100'
     
       - name: Install Dotnet Tools
         run: dotnet tool restore
         
       - name: Run Fake, up to Reports
         if: github.ref == 'refs/heads/nightly'
-        run: dotnet fake build target Report
+        run: dotnet run -- Report
         
       - name: Run Fake, up to Tests
         if: github.ref != 'refs/heads/nightly'
-        run: dotnet fake build target Test
+        run: dotnet run -- Test
       
       - name: Upload codecov
         if: runner.os == 'Linux'

@@ -1,24 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
         <NoWarn>NU1605</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Axis.fs"/>
-        <Compile Include="Color.fs"/>
-        <Compile Include="Vector2f.fs"/>
-        <Compile Include="Vector2i.fs"/>
-        <Compile Include="Vector2.fs"/>
-        <Compile Include="Rectangle.fs"/>
-        <Compile Include="Circle.fs"/>
-        <Compile Include="Matrix2f.fs"/>
-        <Compile Include="RNG.fs"/>
+        <Compile Include="Axis.fs" />
+        <Compile Include="Color.fs" />
+        <Compile Include="Vector2f.fs" />
+        <Compile Include="Vector2i.fs" />
+        <Compile Include="Vector2.fs" />
+        <Compile Include="Rectangle.fs" />
+        <Compile Include="Circle.fs" />
+        <Compile Include="Matrix2f.fs" />
+        <Compile Include="RNG.fs" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="MathNet.Numerics" Version="4.15.0"/>
+        <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
     </ItemGroup>
 
 </Project>
