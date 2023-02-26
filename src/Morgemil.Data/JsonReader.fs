@@ -5,7 +5,7 @@ open Newtonsoft.Json
 open System.IO
 
 
-let ReadJsonFile<'T> (fileName: string) : DtoValidResult<'T []> =
+let ReadJsonFile<'T> (fileName: string) : DtoValidResult<'T[]> =
     if not <| File.Exists(fileName) then
         { DtoValidResult.Errors = [ (sprintf "File \"%s\" doesn't exist " fileName) ]
           Object = [||]
@@ -14,11 +14,8 @@ let ReadJsonFile<'T> (fileName: string) : DtoValidResult<'T []> =
         try
             let fileContents = File.ReadAllText fileName
 
-            let enumUnionCaseConvertor =
-                new Morgemil.Data.Convertors.EnumUnionConvertor()
-
             let jsonContents =
-                Newtonsoft.Json.JsonConvert.DeserializeObject<'T []>(fileContents, enumUnionCaseConvertor)
+                Newtonsoft.Json.JsonConvert.DeserializeObject<'T[]>(fileContents, JsonSettings.settings)
 
             { DtoValidResult.Errors = List.empty
               Object = jsonContents
@@ -41,11 +38,7 @@ let ReadGameFiles (basePath: string) : RawDtoPhase0 =
       TileFeatures = ReadJsonFile <| combinePaths "tilefeatures.json"
       Ancestries = ReadJsonFile <| combinePaths "ancestries.json"
       Heritages = ReadJsonFile <| combinePaths "heritages.json"
-      MonsterGenerationParameters =
-          ReadJsonFile
-          <| combinePaths "monstergenerationparameters.json"
+      MonsterGenerationParameters = ReadJsonFile <| combinePaths "monstergenerationparameters.json"
       Items = ReadJsonFile <| combinePaths "items.json"
-      FloorGenerationParameters =
-          ReadJsonFile
-          <| combinePaths "floorgeneration.json"
+      FloorGenerationParameters = ReadJsonFile <| combinePaths "floorgeneration.json"
       Aspects = ReadJsonFile <| combinePaths "aspects.json" }

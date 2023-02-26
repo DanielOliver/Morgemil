@@ -18,6 +18,8 @@
         <Compile Include="Convertors\SingleCaseUnionConvertor.fs" />
         <Compile Include="Convertors\RowKeyOptionConvertor.fs" />
         <Compile Include="Convertors\RowKeyConvertor.fs" />
+        <Compile Include="ContractResolver\RowContractResolver.fs" />
+        <Compile Include="JsonSettings.fs" />
         <Compile Include="DTO.fs" />
         <Compile Include="JsonReader.fs" />
         <Compile Include="Translation.FromDTO.fs" />
@@ -51,7 +53,6 @@
         <Content Include="Game\floorgeneration.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
-        <Compile Include="ContractResolver\RowContractResolver.fs" />
     </ItemGroup>
 
     <ItemGroup>

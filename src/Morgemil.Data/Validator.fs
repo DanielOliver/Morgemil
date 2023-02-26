@@ -229,7 +229,10 @@ let private ValidateDtoAspects
     (aspect: DtoValidResult<Aspect []>)
     : DtoValidResult<DtoValidResult<Aspect> []> * IReadonlyTable<Aspect, int64> =
     aspect
-    |> ValidateGameDataWithTable(fun acc element -> [ ExpectedUnique element (fun x -> x.ID) "AspectID" acc ])
+    |> ValidateGameDataWithTable(fun acc element ->
+        [
+        ExpectedUnique element (fun x -> x.ID) "AspectID" acc
+    ])
 
 /// Tie together all validation routines
 let ValidateDtos (phase0: RawDtoPhase0) : RawDtoPhase1 =

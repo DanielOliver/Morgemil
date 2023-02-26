@@ -49,3 +49,7 @@ These coding guidelines are not absolute. There are always cases not considered 
 
 * JetBrains Rider
 * .NET 7.0
+
+## Scratchpad notes
+
+* [Interesting F# extensions to System.Text.Json](https://github.com/Tarmil/FSharp.SystemTextJson/)

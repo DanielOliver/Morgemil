@@ -26,7 +26,7 @@ type Ancestry =
       ///Tags this ancestry has
       Tags: Morgemil.Models.CharacterTags list
       ///Required tags for procedural matching.
-      HeritageTags: Morgemil.Models.CharacterTags list }
+      HeritageTags: Morgemil.Models.CharacterTags list option }
 
     interface IRow with
         member this.Key = this.ID
@@ -54,7 +54,7 @@ type Heritage =
       ///Tags this heritage has
       Tags: Morgemil.Models.CharacterTags list
       ///Required tags for procedural matching.
-      AncestryTags: Morgemil.Models.CharacterTags list }
+      AncestryTags: Morgemil.Models.CharacterTags list option }
 
     interface IRow with
         member this.Key = this.ID
