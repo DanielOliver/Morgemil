@@ -42,13 +42,14 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
             let character1 =
                 { Character.ID = Table.GenerateKey characterTable
                   Ancestry = Table.GetRowByKey scenarioData.Ancestries chosenAncestryID.Value
-                  Heritage = None
+                  Heritage = []
                   NextTick = 0L<TimeTick>
                   NextAction = Character.DefaultPlayerTickActions.Head
                   TickActions = Character.DefaultPlayerTickActions
                   Position = mapGenerationResults.EntranceCoordinate
                   PlayerID = currentPlayerID.Value |> Some
-                  Floor = gameContext.Floor }
+                  Floor = gameContext.Floor
+                  Tags = Map.empty }
 
             Table.AddRow characterTable character1
 
@@ -57,13 +58,14 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
                 let npc1 =
                     { Character.ID = Table.GenerateKey characterTable
                       Ancestry = scenarioData.Ancestries.Items |> Seq.last
-                      Heritage = None
+                      Heritage = []
                       NextTick = 0L<TimeTick>
                       NextAction = Character.DefaultTickActions.Head
                       TickActions = Character.DefaultTickActions
                       Position = mapGenerationResults.EntranceCoordinate + Vector2i.create (i, i)
                       PlayerID = None
-                      Floor = gameContext.Floor }
+                      Floor = gameContext.Floor
+                      Tags = Map.empty }
 
                 Table.AddRow characterTable npc1
 

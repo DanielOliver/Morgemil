@@ -12,9 +12,9 @@ type Ancestry =
         ///User-visible description
         Description: string
         ///Tags this ancestry has
-        Tags: CharacterTags Set
+        Tags: Map<string, string>
         ///Required tags for procedural matching.
-        HeritageTags: CharacterTags Set
+        HeritageTags: Map<string, bool>
     }
 
     interface Relational.IRow with
