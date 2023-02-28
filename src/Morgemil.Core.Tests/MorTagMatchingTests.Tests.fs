@@ -1,4 +1,4 @@
-module Morgemil.Core.Tests.CharacterTagMatchingTests
+module Morgemil.Core.Tests.MorTagMatchingTests
 
 open Xunit
 open Morgemil.Core
@@ -10,7 +10,7 @@ let ancestry1: Ancestry =
       Ancestry.ID = AncestryID 1L
       Ancestry.Noun = "Noun"
       Ancestry.HeritageTags = Map.empty
-      Ancestry.Tags = [ MorTags.HasSkeleton, "" ] |> MorTags.fromList }
+      Ancestry.Tags = [ MorTags.HasSkeleton, ""; MorTags.Humanoid, "Green" ] |> MorTags.fromList }
 
 let ancestry2: Ancestry =
     { Ancestry.Adjective = "Adjective"
@@ -25,7 +25,7 @@ let heritage1: Heritage =
       Adjective = "Adjective"
       Description = "Description"
       Noun = "Noun"
-      Tags = [ MorTags.Undead, "" ] |> MorTags.fromList
+      Tags = [ MorTags.Undead, ""; MorTags.Humanoid, "Blue" ] |> MorTags.fromList
       AncestryTags = Map.empty }
 
 let heritage2: Heritage =
@@ -41,11 +41,19 @@ let heritage4: Heritage =
       Adjective = "Adjective"
       Description = "Description"
       Noun = "Noun"
-      Tags = [ MorTags.Undead, "" ] |> MorTags.fromList
+      Tags = [ MorTags.Undead, ""; MorTags.Humanoid, "Red" ] |> MorTags.fromList
       AncestryTags = [ MorTags.HasSkeleton, true ] |> MorTags.fromList }
 
 [<Fact>]
 let CharacterTagMatchingTests () =
-    Assert.True(CharacterTagMatching.isMatch ancestry1 heritage1)
-    Assert.False(CharacterTagMatching.isMatch ancestry1 heritage2)
-    Assert.True(CharacterTagMatching.isMatch ancestry2 heritage4)
+    Assert.True(MorTagMatching.isMatch ancestry1 heritage1)
+    Assert.False(MorTagMatching.isMatch ancestry1 heritage2)
+    Assert.True(MorTagMatching.isMatch ancestry2 heritage4)
+
+[<Fact>]
+let CharacterTagMergingTests () =
+    let mergedTags = MorTagMatching.mergeTags heritage1.Tags ancestry1.Tags
+    Assert.Equal("Blue", mergedTags[MorTags.Humanoid.ToString()])
+    Assert.True(mergedTags.ContainsKey(MorTags.HasSkeleton.ToString()))
+    let mergedTags = MorTagMatching.mergeTags heritage4.Tags mergedTags
+    Assert.Equal("Red", mergedTags[MorTags.Humanoid.ToString()])
