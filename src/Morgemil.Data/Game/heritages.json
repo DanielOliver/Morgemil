@@ -4,14 +4,17 @@
     "noun": "Skeleton",
     "adjective": "Skeletal",
     "description": "Skeletons are a basic form of undead.  Stupid and resilient to many mortal afflictions, but rather brittle",
-    "tags": [],
-    "AncestryTags": []
+    "tags": {
+      "undead": ""
+    },
+    "AncestryTags": {
+      "hasSkeleton": true
+    }
   },
   {
     "id": "1",
     "noun": "Specter",
     "adjective": "Spectral",
-    "description": "Specters are weak in this world and easily banished with physicial assult, but do not underestimate the mind.",
-    "tags": []
+    "description": "Specters are weak in this world and easily banished with physicial assult, but do not underestimate the single minded obsession of the departed."
   }
 ]

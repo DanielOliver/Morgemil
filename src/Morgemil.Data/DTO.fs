@@ -23,9 +23,9 @@ type Ancestry =
         ///User-visible description
         Description: string
         ///Tags this ancestry has
-        Tags: Morgemil.Models.CharacterTags Set option
+        Tags: Map<string, string> option
         ///Required tags for procedural matching.
-        HeritageTags: Morgemil.Models.CharacterTags Set option
+        HeritageTags: Map<string, bool> option
     }
 
     interface IRow with
@@ -55,9 +55,9 @@ type Heritage =
         ///User-visible description
         Description: string
         ///Tags this heritage has
-        Tags: Morgemil.Models.CharacterTags Set option
+        Tags: Map<string, string> option
         ///Required tags for procedural matching.
-        AncestryTags: Morgemil.Models.CharacterTags Set option
+        AncestryTags: Map<string, bool> option
     }
 
     interface IRow with
@@ -65,7 +65,7 @@ type Heritage =
 
 type GenerationRatio =
     {
-        Tags: Morgemil.Models.CharacterTags list
+        Tags: Morgemil.Models.MorTags list
         ///The ratio doesn't have to add up to 100.  Every ratio could be thought of "10 to 1" or something like that.
         Ratio: int option
         Min: int option

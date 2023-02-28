@@ -4,7 +4,10 @@
     "Noun": "Human",
     "Adjective": "Human",
     "Description": "The kings of the overworld. How shall you fare in the darkness?",
-    "Tags": []
+    "Tags": {
+      "humanoid": "",
+      "HasSkeleton": ""
+    }
   },
   {
     "ID": "1",
@@ -16,13 +19,21 @@
     "ID": "2",
     "Noun": "Goblin",
     "Adjective": "Goblin",
-    "Description": "The sense of self-preservation is not a prevalent Goblin trait, neither is diplomacy."
+    "Description": "The sense of self-preservation is not a prevalent Goblin trait, neither is diplomacy.",
+    "Tags": {
+      "humanoid": "",
+      "HasSkeleton": ""
+    }
   },
   {
     "ID": "3",
     "Noun": "Minotaur",
     "Adjective": "Minotaur",
-    "Description": "Head and tail of a bull, body of a man, rage of a volcano. Your eulogy will be delivered to a closed casket."
+    "Description": "Head and tail of a bull, body of a man, rage of a volcano. Your eulogy will be delivered to a closed casket.",
+    "Tags": {
+      "humanoid": "",
+      "HasSkeleton": ""
+    }
   },
   {
     "ID": "4",
@@ -34,6 +45,10 @@
     "ID": "5",
     "Noun": "Deep Gnome",
     "Adjective": "Deep Gnome",
-    "Description": "Dwellers of the deep, kin to the rock. Beware their righteous community dedicated to their deity."
+    "Description": "Dwellers of the deep, kin to the rock. Beware their righteous community dedicated to their deity.",
+    "Tags": {
+      "humanoid": "",
+      "HasSkeleton": ""
+    }
   }
 ]

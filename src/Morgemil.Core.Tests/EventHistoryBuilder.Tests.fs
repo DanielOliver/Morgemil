@@ -12,8 +12,8 @@ let exampleAncestry1 =
       Ancestry.Adjective = ""
       Ancestry.Description = ""
       Ancestry.ID = AncestryID 50L
-      Ancestry.Tags = set []
-      Ancestry.HeritageTags = set [] }
+      Ancestry.Tags = Map.empty
+      Ancestry.HeritageTags = Map.empty }
 
 let exampleItem1 =
     { Character.PlayerID = None

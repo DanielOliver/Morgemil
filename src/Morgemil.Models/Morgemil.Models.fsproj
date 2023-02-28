@@ -3,35 +3,35 @@
         <TargetFramework>net7.0</TargetFramework>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Morgemil.Math\Morgemil.Math.fsproj"/>
+        <ProjectReference Include="..\Morgemil.Math\Morgemil.Math.fsproj" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Relational.fs"/>
-        <Compile Include="Tracked.fs"/>
-        <Compile Include="Identities.fs"/>
-        <Compile Include="ActionArchetype.fs"/>
-        <Compile Include="TileRepresentation.fs"/>
-        <Compile Include="CharacterTags.fs"/>
-        <Compile Include="Ancestry.fs"/>
-        <Compile Include="Heritage.fs"/>
-        <Compile Include="Tile.fs"/>
-        <Compile Include="TileFeature.fs"/>
-        <Compile Include="TileInstance.fs"/>
-        <Compile Include="Aspect.fs"/>
-        <Compile Include="Character.fs"/>
-        <Compile Include="Weapon.fs"/>
-        <Compile Include="Wearable.fs"/>
-        <Compile Include="Consumable.fs"/>
-        <Compile Include="Item.fs"/>
-        <Compile Include="Scenario.fs"/>
-        <Compile Include="MonsterGenerationParameter.fs"/>
-        <Compile Include="FloorGenerationParameter.fs"/>
-        <Compile Include="GameContext.fs"/>
-        <Compile Include="ScenarioData.fs"/>
-        <Compile Include="ActionRequest.fs"/>
-        <Compile Include="ActionEvent.fs"/>
+        <Compile Include="Relational.fs" />
+        <Compile Include="Tracked.fs" />
+        <Compile Include="Identities.fs" />
+        <Compile Include="ActionArchetype.fs" />
+        <Compile Include="TileRepresentation.fs" />
+        <Compile Include="MorTags.fs" />
+        <Compile Include="Ancestry.fs" />
+        <Compile Include="Heritage.fs" />
+        <Compile Include="Tile.fs" />
+        <Compile Include="TileFeature.fs" />
+        <Compile Include="TileInstance.fs" />
+        <Compile Include="Aspect.fs" />
+        <Compile Include="Character.fs" />
+        <Compile Include="Weapon.fs" />
+        <Compile Include="Wearable.fs" />
+        <Compile Include="Consumable.fs" />
+        <Compile Include="Item.fs" />
+        <Compile Include="Scenario.fs" />
+        <Compile Include="MonsterGenerationParameter.fs" />
+        <Compile Include="FloorGenerationParameter.fs" />
+        <Compile Include="GameContext.fs" />
+        <Compile Include="ScenarioData.fs" />
+        <Compile Include="ActionRequest.fs" />
+        <Compile Include="ActionEvent.fs" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="System.Text.Json" Version="7.0.2"/>
+        <PackageReference Include="System.Text.Json" Version="7.0.2" />
     </ItemGroup>
 </Project>
