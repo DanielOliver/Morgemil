@@ -50,6 +50,11 @@ set aside.
     * camel Casing for function parameters and privately scoped variables.
 9. Be sparing in use of F# Computation Expressions.
 
+## Data Files
+
+No guarantees are made towards backwards compatible save files, scenario files, or serialized data of any sort. Files
+are associated with and expected to be used with the same version program.
+
 ## Tools used
 
 * JetBrains Rider

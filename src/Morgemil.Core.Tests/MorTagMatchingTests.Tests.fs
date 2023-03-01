@@ -10,7 +10,10 @@ let ancestry1: Ancestry =
       Ancestry.ID = AncestryID 1L
       Ancestry.Noun = "Noun"
       Ancestry.HeritageTags = Map.empty
-      Ancestry.Tags = [ MorTags.HasSkeleton, ""; MorTags.Humanoid, "Green" ] |> MorTags.fromList }
+      Ancestry.Tags =
+        [ MorTags.HasSkeleton, MorTags.Custom
+          MorTags.Humanoid, (MorTags.Placeholder "Green") ]
+        |> MorTags.fromList }
 
 let ancestry2: Ancestry =
     { Ancestry.Adjective = "Adjective"
@@ -18,14 +21,17 @@ let ancestry2: Ancestry =
       Ancestry.ID = AncestryID 2L
       Ancestry.Noun = "Noun"
       Ancestry.HeritageTags = [ MorTags.Undead, true ] |> MorTags.fromList
-      Ancestry.Tags = [ MorTags.HasSkeleton, "" ] |> MorTags.fromList }
+      Ancestry.Tags = [ MorTags.HasSkeleton, MorTags.Custom ] |> MorTags.fromList }
 
 let heritage1: Heritage =
     { Heritage.ID = HeritageID 2L
       Adjective = "Adjective"
       Description = "Description"
       Noun = "Noun"
-      Tags = [ MorTags.Undead, ""; MorTags.Humanoid, "Blue" ] |> MorTags.fromList
+      Tags =
+        [ MorTags.Undead, MorTags.Custom
+          MorTags.Humanoid, (MorTags.Placeholder "Blue") ]
+        |> MorTags.fromList
       AncestryTags = Map.empty }
 
 let heritage2: Heritage =
@@ -33,7 +39,7 @@ let heritage2: Heritage =
       Adjective = "Adjective"
       Description = "Description"
       Noun = "Noun"
-      Tags = [ MorTags.Undead, "" ] |> MorTags.fromList
+      Tags = [ MorTags.Undead, MorTags.Custom ] |> MorTags.fromList
       AncestryTags = [ MorTags.Undead, true ] |> MorTags.fromList }
 
 let heritage4: Heritage =
@@ -41,7 +47,10 @@ let heritage4: Heritage =
       Adjective = "Adjective"
       Description = "Description"
       Noun = "Noun"
-      Tags = [ MorTags.Undead, ""; MorTags.Humanoid, "Red" ] |> MorTags.fromList
+      Tags =
+        [ MorTags.Undead, MorTags.Custom
+          MorTags.Humanoid, (MorTags.Placeholder "Red") ]
+        |> MorTags.fromList
       AncestryTags = [ MorTags.HasSkeleton, true ] |> MorTags.fromList }
 
 [<Fact>]
@@ -53,7 +62,14 @@ let CharacterTagMatchingTests () =
 [<Fact>]
 let CharacterTagMergingTests () =
     let mergedTags = MorTagMatching.mergeTags heritage1.Tags ancestry1.Tags
-    Assert.Equal("Blue", mergedTags[MorTags.Humanoid.ToString()])
-    Assert.True(mergedTags.ContainsKey(MorTags.HasSkeleton.ToString()))
+
+    match mergedTags[nameof (MorTags.Humanoid)] with
+    | MorTags.Placeholder any -> Assert.Equal("Blue", any)
+    | _ -> Assert.Fail "Wrong placeholder"
+
+    Assert.True(mergedTags.ContainsKey(nameof (MorTags.HasSkeleton)))
     let mergedTags = MorTagMatching.mergeTags heritage4.Tags mergedTags
-    Assert.Equal("Red", mergedTags[MorTags.Humanoid.ToString()])
+
+    match mergedTags[nameof (MorTags.Humanoid)] with
+    | MorTags.Placeholder any -> Assert.Equal("Red", any)
+    | _ -> Assert.Fail "Wrong placeholder"

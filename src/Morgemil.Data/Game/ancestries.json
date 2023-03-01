@@ -6,7 +6,10 @@
     "Description": "The kings of the overworld. How shall you fare in the darkness?",
     "Tags": {
       "humanoid": "",
-      "HasSkeleton": ""
+      "HasSkeleton": "",
+      "Placeholder": {
+        "Any": ""
+      }
     }
   },
   {

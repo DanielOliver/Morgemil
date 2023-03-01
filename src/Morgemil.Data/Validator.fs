@@ -1,7 +1,10 @@
 module Morgemil.Data.Validator
 
+open System.Text.Json
+open System.Text.Json.Nodes
 open Morgemil.Core
 open Morgemil.Data.DTO
+open Morgemil.Data.Translation
 open Morgemil.Models.Relational
 
 /// Expects the value to be an unique occurence
@@ -23,6 +26,27 @@ let inline private DefinedEnum< ^T> (value: ^T) : string option =
         None
     else
         sprintf "Value %A is not defined for enum %s" value typeof<'T>.Name |> Some
+
+let private DefinedMorTag (title: string) (value: JsonNode) : string option =
+    try
+        let tag = FromDTO.ParseMorTag title value
+
+        match tag with
+        | Morgemil.Models.MorTags.Custom ->
+            if value.ToString() |> System.String.IsNullOrWhiteSpace then
+                None
+            else
+                Some(sprintf "%s: Values on custom tags is not accepted for validation purposes." title)
+        | _ -> None
+    with :? JsonException as ex ->
+        Some(sprintf "Tag %s failed. %A" title ex)
+
+let private ExpectDefinedMorTags (values: Map<string, JsonNode>) : string option list =
+    values |> Seq.map (fun kv -> DefinedMorTag kv.Key kv.Value) |> Seq.toList
+
+
+let private ExpectDefinedMorTagsOption (values: Map<string, JsonNode> option) : string option list =
+    values |> Option.map (ExpectDefinedMorTags) |> Option.defaultValue List.empty
 
 ///Checks if an id exists in a readonly table.
 let private ExistsInTable (id: int64) (propertyName: string) (table: IReadonlyTable<_, int64>) : string option =
@@ -137,7 +161,10 @@ let private ValidateDtoAncestries
     (item: DtoValidResult<Ancestry[]>)
     : DtoValidResult<DtoValidResult<Ancestry>[]> * IReadonlyTable<Ancestry, int64> =
     item
-    |> ValidateGameDataWithTable(fun acc element -> [ ExpectedUnique element (fun x -> x.ID) "AncestryID" acc ])
+    |> ValidateGameDataWithTable(fun acc element ->
+        element.Tags
+        |> ExpectDefinedMorTagsOption
+        |> List.append [ ExpectedUnique element (fun x -> x.ID) "AncestryID" acc ])
 
 /// Validate Heritages
 let private ValidateDtoHeritages
@@ -145,7 +172,10 @@ let private ValidateDtoHeritages
     (ancestryTable: IReadonlyTable<Ancestry, int64>)
     : DtoValidResult<DtoValidResult<Heritage>[]> * IReadonlyTable<Heritage, int64> =
     item
-    |> ValidateGameDataWithTable(fun acc element -> [ ExpectedUnique element (fun x -> x.ID) "HeritageID" acc ])
+    |> ValidateGameDataWithTable(fun acc element ->
+        element.Tags
+        |> ExpectDefinedMorTagsOption
+        |> List.append [ ExpectedUnique element (fun x -> x.ID) "HeritageID" acc ])
 
 /// Validate Monster Generation Parameters
 let private ValidateDtoMonsterGenerationParameters

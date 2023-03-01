@@ -1,5 +1,6 @@
 namespace Morgemil.Models
 
+
 [<Record>]
 type Ancestry =
     {
@@ -12,7 +13,7 @@ type Ancestry =
         ///User-visible description
         Description: string
         ///Tags this ancestry has
-        Tags: Map<string, string>
+        Tags: Map<string, MorTags>
         ///Required tags for procedural matching.
         HeritageTags: Map<string, bool>
     }
