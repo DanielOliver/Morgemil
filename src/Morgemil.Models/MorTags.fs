@@ -16,13 +16,7 @@ type MorTags =
     | Humanoid
     | Modifier of Stat: int
 
-
 module MorTags =
-    // let private stringNames =
-    //     FSharpType.GetUnionCases(typeof<MorTags>)
-    //     |> Array.map (fun t -> t.Name, t)
-    //     |> Map.ofArray
-
     let merge (priority: MorTags) (tag: MorTags) : MorTags =
         match priority, tag with
         | MorTags.Modifier statP, MorTags.Modifier stat -> MorTags.Modifier(stat + statP)
