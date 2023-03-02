@@ -1,5 +1,6 @@
 module Morgemil.Data.DTO
 
+open System.Text.Json.Nodes
 open Morgemil.Models.Relational
 
 type Color = { A: byte; B: byte; G: byte; R: byte }
@@ -23,7 +24,7 @@ type Ancestry =
         ///User-visible description
         Description: string
         ///Tags this ancestry has
-        Tags: Map<string, string> option
+        Tags: Map<string, JsonNode> option
         ///Required tags for procedural matching.
         HeritageTags: Map<string, bool> option
     }
@@ -55,7 +56,7 @@ type Heritage =
         ///User-visible description
         Description: string
         ///Tags this heritage has
-        Tags: Map<string, string> option
+        Tags: Map<string, JsonNode> option
         ///Required tags for procedural matching.
         AncestryTags: Map<string, bool> option
     }

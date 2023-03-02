@@ -1,9 +1,14 @@
 module Morgemil.Data.Tests.Translation.TestsTileT
 
+open System.Collections.Generic
+open System.Text.Json
+open System.Text.Json.Nodes
 open Morgemil.Data
 open Morgemil.Math
+open Morgemil.Models
 open Xunit
 open Morgemil.Data.Translation
+
 
 let isError =
     function
@@ -34,6 +39,28 @@ let ``ColorFromDto Tests`` () =
     let serial1 = Newtonsoft.Json.JsonConvert.SerializeObject expected1
 
     Assert.Equal(s1, serial1)
+
+[<Fact>]
+let ``ParseMorTag Tests`` () =
+    let json2 = JsonSerializer.Serialize(MorTags.Humanoid, JsonSettings.options)
+
+    let u1 =
+        FromDTO.ParseMorTag
+            "Placeholder"
+            (JsonObject([| KeyValuePair<string, JsonNode>("Any", JsonValue.Create("test")) |]))
+
+    match u1 with
+    | MorTags.Placeholder any -> Assert.Equal("test", any)
+    | _ -> Assert.Fail("HOW YOU REACH?!")
+
+    let u2 =
+        FromDTO.ParseMorTag
+            "Anything else at all"
+            (JsonObject([| KeyValuePair<string, JsonNode>("Any", JsonValue.Create("test")) |]))
+
+    match u2 with
+    | MorTags.Custom -> ()
+    | _ -> Assert.Fail("HOW YOU REACH?!")
 
 
 [<Fact>]

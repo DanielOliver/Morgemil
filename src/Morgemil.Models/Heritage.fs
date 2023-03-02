@@ -12,7 +12,7 @@ type Heritage =
         ///User-visible description
         Description: string
         ///Tags this heritage has
-        Tags: Map<string, string>
+        Tags: Map<string, MorTags>
         ///Required tags for procedural matching.
         AncestryTags: Map<string, bool>
     }

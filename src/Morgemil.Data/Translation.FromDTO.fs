@@ -1,7 +1,11 @@
 module Morgemil.Data.Translation.FromDTO
 
 open System
+open System.Collections.Generic
+open System.Text.Json
+open System.Text.Json.Nodes
 open Microsoft.FSharp.Core
+open Microsoft.FSharp.Reflection
 open Morgemil.Core
 open Morgemil.Data.DTO
 open Morgemil.Models
@@ -17,6 +21,26 @@ let ColorFromDto (color: DTO.Color) : Color =
 
 let NullToOption (t: Nullable<_>) =
     if t.HasValue then Some t.Value else None
+
+let private MorTagCases =
+    FSharpType.GetUnionCases(typeof<Morgemil.Models.MorTags>)
+    |> Array.map (fun x -> x.Name, x)
+    |> Map.ofArray
+
+let ParseMorTag (title: string) (value: JsonNode) : Morgemil.Models.MorTags =
+    MorTagCases
+    |> Map.tryFind title
+    |> Option.map (fun t ->
+        match t.GetFields().Length with
+        | 0 ->
+            JsonValue
+                .Create(title)
+                .Deserialize<Morgemil.Models.MorTags>(JsonSettings.options)
+        | _ ->
+            let clonedValueHack = value.Deserialize<JsonNode>(JsonSettings.options)
+            let unionObject = JsonObject([| KeyValuePair(title, clonedValueHack) |])
+            unionObject.Deserialize<Morgemil.Models.MorTags>(JsonSettings.options))
+    |> Option.defaultValue Morgemil.Models.MorTags.Custom
 
 ///DTO to Vector2i
 let Vector2iFromDto (vec: DTO.Vector2i) : Vector2i = Vector2i.create (vec.X, vec.Y)
@@ -70,7 +94,10 @@ let AncestorFromDto (ancestry: DTO.Ancestry) : Ancestry =
       Noun = ancestry.Noun
       Adjective = ancestry.Adjective
       Description = ancestry.Description
-      Tags = ancestry.Tags |> Option.defaultValue Map.empty
+      Tags =
+        ancestry.Tags
+        |> Option.map (Map.map ParseMorTag)
+        |> Option.defaultValue Map.empty
       HeritageTags = ancestry.HeritageTags |> Option.defaultValue Map.empty }
 
 ///DTO to Heritage
@@ -79,7 +106,10 @@ let HeritageFromDto (getAncestryByID: AncestryID -> Ancestry) (heritage: DTO.Her
       Noun = heritage.Noun
       Adjective = heritage.Adjective
       Description = heritage.Description
-      Tags = heritage.Tags |> Option.defaultValue Map.empty
+      Tags =
+        heritage.Tags
+        |> Option.map (Map.map ParseMorTag)
+        |> Option.defaultValue Map.empty
       AncestryTags = heritage.AncestryTags |> Option.defaultValue Map.empty }
 
 ///DTO to Item
