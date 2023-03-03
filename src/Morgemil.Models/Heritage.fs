@@ -14,7 +14,7 @@ type Heritage =
         ///Tags this heritage has
         Tags: Map<string, MorTags>
         ///Required tags for procedural matching.
-        AncestryTags: Map<string, bool>
+        AncestryTags: Map<string, MorTagMatches>
     }
 
     interface Relational.IRow with
