@@ -11,6 +11,8 @@ let createOptions () =
             .WithUnionTagCaseInsensitive()
             .WithUnionExternalTag()
             .WithUnionUnwrapRecordCases()
+            .WithUnionUnwrapSingleFieldCases()
+            //default includes .WithUnionUnwrapSingleCaseUnions()
             .ToJsonSerializerOptions()
 
     options.NumberHandling <- JsonNumberHandling.AllowReadingFromString

@@ -1,5 +1,7 @@
 namespace Morgemil.Models
 
+/// Every inhabitant may have zero or more pieces of heritage.
+/// A heritage is a collection of attributes that modify and affect a creature for good or for ill.
 [<Record>]
 type Heritage =
     {
@@ -14,7 +16,7 @@ type Heritage =
         ///Tags this heritage has
         Tags: Map<string, MorTags>
         ///Required tags for procedural matching.
-        AncestryTags: Map<string, MorTagMatches>
+        RequireTags: Map<string, MorTagMatches>
     }
 
     interface Relational.IRow with

@@ -44,10 +44,7 @@ let ``ColorFromDto Tests`` () =
 let ``ParseMorTag Tests`` () =
     let json2 = JsonSerializer.Serialize(MorTags.Humanoid, JsonSettings.options)
 
-    let u1 =
-        FromDTO.ParseMorTag
-            "Placeholder"
-            (JsonObject([| KeyValuePair<string, JsonNode>("Any", JsonValue.Create("test")) |]))
+    let u1 = FromDTO.ParseMorTag "Placeholder" (JsonValue.Create("test"))
 
     match u1 with
     | MorTags.Placeholder any -> Assert.Equal("test", any)
@@ -59,7 +56,7 @@ let ``ParseMorTag Tests`` () =
             (JsonObject([| KeyValuePair<string, JsonNode>("Any", JsonValue.Create("test")) |]))
 
     match u2 with
-    | MorTags.Custom -> ()
+    | MorTags.Custom _ -> ()
     | _ -> Assert.Fail("HOW YOU REACH?!")
 
 

@@ -26,7 +26,7 @@ type Ancestry =
         ///Tags this ancestry has
         Tags: Map<string, JsonNode> option
         ///Required tags for procedural matching.
-        HeritageTags: Map<string, Morgemil.Models.MorTagMatches> option
+        RequireTags: Map<string, Morgemil.Models.MorTagMatches> option
     }
 
     interface IRow with
@@ -58,7 +58,7 @@ type Heritage =
         ///Tags this heritage has
         Tags: Map<string, JsonNode> option
         ///Required tags for procedural matching.
-        AncestryTags: Map<string, Morgemil.Models.MorTagMatches> option
+        RequireTags: Map<string, Morgemil.Models.MorTagMatches> option
     }
 
     interface IRow with

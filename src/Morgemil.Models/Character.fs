@@ -16,17 +16,20 @@ module Character =
 
 [<Record>]
 type Character =
-    { [<RecordId>]
-      ID: CharacterID
-      Ancestry: Ancestry
-      Heritage: Heritage list
-      Position: Vector2i
-      NextTick: int64<TimeTick>
-      Floor: int64<Floor>
-      NextAction: ActionArchetype
-      TickActions: ActionArchetype list
-      PlayerID: PlayerID option
-      Tags: Map<string, string> }
+    {
+        [<RecordId>]
+        ID: CharacterID
+        Ancestry: Ancestry
+        /// Ordered by priority
+        Heritage: Heritage list
+        Position: Vector2i
+        NextTick: int64<TimeTick>
+        Floor: int64<Floor>
+        NextAction: ActionArchetype
+        TickActions: ActionArchetype list
+        PlayerID: PlayerID option
+        Tags: Map<string, string>
+    }
 
     interface Relational.IRow with
         [<System.Text.Json.Serialization.JsonIgnore>]

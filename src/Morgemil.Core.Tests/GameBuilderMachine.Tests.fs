@@ -65,7 +65,7 @@ let ancestry1: Ancestry =
       Ancestry.Description = "Description"
       Ancestry.ID = AncestryID 1L
       Ancestry.Noun = "Noun"
-      Ancestry.HeritageTags = Map.empty
+      Ancestry.RequireTags = Map.empty
       Ancestry.Tags = Map.empty }
 
 [<Fact>]

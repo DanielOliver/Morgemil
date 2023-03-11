@@ -98,7 +98,7 @@ let AncestorFromDto (ancestry: DTO.Ancestry) : Ancestry =
         ancestry.Tags
         |> Option.map (Map.map ParseMorTag)
         |> Option.defaultValue Map.empty
-      HeritageTags = ancestry.HeritageTags |> Option.defaultValue Map.empty }
+      RequireTags = ancestry.RequireTags |> Option.defaultValue Map.empty }
 
 ///DTO to Heritage
 let HeritageFromDto (getAncestryByID: AncestryID -> Ancestry) (heritage: DTO.Heritage) : Heritage =
@@ -110,7 +110,7 @@ let HeritageFromDto (getAncestryByID: AncestryID -> Ancestry) (heritage: DTO.Her
         heritage.Tags
         |> Option.map (Map.map ParseMorTag)
         |> Option.defaultValue Map.empty
-      AncestryTags = heritage.AncestryTags |> Option.defaultValue Map.empty }
+      RequireTags = heritage.RequireTags |> Option.defaultValue Map.empty }
 
 ///DTO to Item
 let ItemFromDto (item: DTO.Item) : Item =
