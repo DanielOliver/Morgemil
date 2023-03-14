@@ -169,7 +169,8 @@ let TowerFromDto (tower: DTO.Tower) : Tower =
       Name = tower.Name
       LevelRangeInclusive = tower.LevelRangeInclusive |> Vector2iFromDto
       BacktrackBehavior = tower.BacktrackBehavior
-      OverworldConnection = tower.OverworldConnection }
+      OverworldConnection = tower.OverworldConnection
+      DefaultFloorGenerationParameters = FloorGenerationParameterID tower.DefaultFloorGenerationParameters }
 
 ///DTO to Phase2
 let TranslateFromDtosToPhase2 (dtos: RawDtoPhase0) : RawDtoPhase2 =

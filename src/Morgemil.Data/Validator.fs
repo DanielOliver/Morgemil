@@ -232,6 +232,7 @@ let private ValidateDtoAspects
 /// Validate Towers
 let private ValidateDtoTowers
     (tower: DtoValidResult<Tower[]>)
+    (floorGenerationParameterTable: IReadonlyTable<FloorGenerationParameter, int64>)
     : DtoValidResult<DtoValidResult<Tower>[]> * IReadonlyTable<Tower, int64> =
     tower
     |> ValidateGameDataWithTable(fun acc element ->
@@ -242,7 +243,10 @@ let private ValidateDtoTowers
             | r when r.X > r.Y -> Some "Level X must be equal to or less than Y."
             | _ -> None
 
-        [ ExpectedUnique element (fun x -> x.ID) "TowerID" acc; levelRangeError ])
+        [ ExpectedUnique element (fun x -> x.ID) "TowerID" acc
+          levelRangeError
+          floorGenerationParameterTable
+          |> ExistsInTable element.DefaultFloorGenerationParameters "DefaultFloorGenerationParameters" ])
 
 /// Tie together all validation routines
 let ValidateDtos (phase0: RawDtoPhase0) : RawDtoPhase1 =
@@ -266,7 +270,8 @@ let ValidateDtos (phase0: RawDtoPhase0) : RawDtoPhase1 =
 
     let (aspectResults, aspectTable) = ValidateDtoAspects phase0.Aspects
 
-    let (towerResults, towerTable) = ValidateDtoTowers phase0.Towers
+    let (towerResults, towerTable) =
+        ValidateDtoTowers phase0.Towers floorGenerationParametersLinkTable
 
     { RawDtoPhase1.Tiles = tileResults
       TileFeatures = tileFeatureResults

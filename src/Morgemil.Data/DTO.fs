@@ -185,7 +185,8 @@ type Tower =
       Name: string
       LevelRangeInclusive: Vector2i
       BacktrackBehavior: Morgemil.Models.TowerBacktrackBehavior
-      OverworldConnection: Morgemil.Models.TowerOverworldConnection }
+      OverworldConnection: Morgemil.Models.TowerOverworldConnection
+      DefaultFloorGenerationParameters: int64 }
 
     interface IRow with
         member this.Key = this.ID

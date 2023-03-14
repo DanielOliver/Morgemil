@@ -24,7 +24,8 @@ type Tower =
       Name: string
       LevelRangeInclusive: Vector2i
       BacktrackBehavior: TowerBacktrackBehavior
-      OverworldConnection: TowerOverworldConnection }
+      OverworldConnection: TowerOverworldConnection
+      DefaultFloorGenerationParameters: FloorGenerationParameterID }
 
     interface Relational.IRow with
         [<System.Text.Json.Serialization.JsonIgnore>]
