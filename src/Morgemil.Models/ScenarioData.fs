@@ -11,4 +11,5 @@ type ScenarioData =
       Heritages: IReadonlyTable<Heritage, HeritageID>
       MonsterGenerationParameters: IReadonlyTable<MonsterGenerationParameter, MonsterGenerationParameterID>
       FloorGenerationParameters: IReadonlyTable<FloorGenerationParameter, FloorGenerationParameterID>
-      Aspects: IReadonlyTable<Aspect, AspectID> }
+      Aspects: IReadonlyTable<Aspect, AspectID>
+      Towers: IReadonlyTable<Tower, TowerID> }

@@ -248,7 +248,8 @@ module Table =
           Heritages = CreateReadonlyTable (fun (HeritageID id) -> id) []
           FloorGenerationParameters = CreateReadonlyTable (fun (FloorGenerationParameterID id) -> id) []
           MonsterGenerationParameters = CreateReadonlyTable (fun (MonsterGenerationParameterID id) -> id) []
-          Aspects = CreateReadonlyTable (fun (AspectID id) -> id) [] }
+          Aspects = CreateReadonlyTable (fun (AspectID id) -> id) []
+          Towers = CreateReadonlyTable (fun (TowerID id) -> id) [] }
 
 module TableQuery =
     let SeqLeftJoin

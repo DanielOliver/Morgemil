@@ -23,6 +23,7 @@
         <Compile Include="Wearable.fs" />
         <Compile Include="Consumable.fs" />
         <Compile Include="Item.fs" />
+        <Compile Include="Tower.fs" />
         <Compile Include="Scenario.fs" />
         <Compile Include="MonsterGenerationParameter.fs" />
         <Compile Include="FloorGenerationParameter.fs" />

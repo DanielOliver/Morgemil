@@ -1,0 +1,12 @@
+[
+  {
+    "id": 0,
+    "Name": "Wizard's Tower of Unending Doom",
+    "LevelRangeInclusive": {
+      "x": 11,
+      "y": 10
+    },
+    "BacktrackBehavior": "DoNotAllow",
+    "OverworldConnection": "NoExit"
+  }
+]

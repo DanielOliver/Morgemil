@@ -163,6 +163,14 @@ let AspectFromDto (aspect: DTO.Aspect) : Aspect =
       Adjective = aspect.Adjective
       Description = aspect.Description }
 
+///DTO to Tower
+let TowerFromDto (tower: DTO.Tower) : Tower =
+    { Tower.ID = TowerID tower.ID
+      Name = tower.Name
+      LevelRangeInclusive = tower.LevelRangeInclusive |> Vector2iFromDto
+      BacktrackBehavior = tower.BacktrackBehavior
+      OverworldConnection = tower.OverworldConnection }
+
 ///DTO to Phase2
 let TranslateFromDtosToPhase2 (dtos: RawDtoPhase0) : RawDtoPhase2 =
     let tiles =
@@ -205,6 +213,11 @@ let TranslateFromDtosToPhase2 (dtos: RawDtoPhase0) : RawDtoPhase2 =
         |> Seq.map (AspectFromDto)
         |> Table.CreateReadonlyTable(fun (t: AspectID) -> t.Key)
 
+    let towers =
+        dtos.Towers.Object
+        |> Seq.map TowerFromDto
+        |> Table.CreateReadonlyTable(fun (t: TowerID) -> t.Key)
+
     { RawDtoPhase2.Tiles = tiles.Items |> Seq.toArray
       Heritages = heritages.Items |> Seq.toArray
       Ancestries = ancestries.Items |> Seq.toArray
@@ -212,7 +225,8 @@ let TranslateFromDtosToPhase2 (dtos: RawDtoPhase0) : RawDtoPhase2 =
       MonsterGenerationParameters = monsterGenerationParameters.Items |> Seq.toArray
       TileFeatures = tileFeatures.Items |> Seq.toArray
       FloorGenerationParameters = floorGenerationParameters.Items |> Seq.toArray
-      Aspects = aspects.Items |> Seq.toArray }
+      Aspects = aspects.Items |> Seq.toArray
+      Towers = towers.Items |> Seq.toArray }
 
 ///DTO to Scenario
 let TranslateFromDtosToScenario (dtos: RawDtoPhase0) : ScenarioData =
@@ -256,6 +270,11 @@ let TranslateFromDtosToScenario (dtos: RawDtoPhase0) : ScenarioData =
         |> Seq.map AspectFromDto
         |> Table.CreateReadonlyTable(fun (t: AspectID) -> t.Key)
 
+    let towers =
+        dtos.Towers.Object
+        |> Seq.map TowerFromDto
+        |> Table.CreateReadonlyTable(fun (t: TowerID) -> t.Key)
+
     { ScenarioData.Tiles = tiles
       Heritages = heritages
       Ancestries = ancestries
@@ -263,4 +282,5 @@ let TranslateFromDtosToScenario (dtos: RawDtoPhase0) : ScenarioData =
       MonsterGenerationParameters = monsterGenerationParameters
       TileFeatures = tileFeatures
       FloorGenerationParameters = floorGenerationParameters
-      Aspects = aspects }
+      Aspects = aspects
+      Towers = towers }

@@ -104,6 +104,14 @@ type PlayerID =
         let (PlayerID rowID) = this
         rowID
 
+[<Struct>]
+type TowerID =
+    | TowerID of int64
+
+    member this.Key =
+        let (TowerID rowID) = this
+        rowID
+
 [<Measure>]
 type TileDistance
 

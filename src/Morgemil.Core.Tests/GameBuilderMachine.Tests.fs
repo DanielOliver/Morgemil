@@ -71,17 +71,13 @@ let ancestry1: Ancestry =
 [<Fact>]
 let ``Can transition states`` () =
     let scenarioData =
-        { ScenarioData.Items = Table.CreateReadonlyTable (fun (ItemID id) -> id) []
-          ScenarioData.Ancestries = Table.CreateReadonlyTable (fun (AncestryID id) -> id) [ ancestry1 ]
-          ScenarioData.Tiles = Table.CreateReadonlyTable (fun (TileID id) -> id) [ defaultTile; tile2 ]
-          ScenarioData.TileFeatures =
-            Table.CreateReadonlyTable (fun (TileFeatureID id) -> id) [ startingPointFeature; stairTileFeature ]
-          ScenarioData.Heritages = Table.CreateReadonlyTable (fun (HeritageID id) -> id) []
-          ScenarioData.FloorGenerationParameters =
-            Table.CreateReadonlyTable (fun (FloorGenerationParameterID id) -> id) [ floorParameters ]
-          ScenarioData.MonsterGenerationParameters =
-            Table.CreateReadonlyTable (fun (MonsterGenerationParameterID id) -> id) []
-          ScenarioData.Aspects = Table.CreateReadonlyTable (fun (AspectID id) -> id) [] }
+        { Table.EmptyScenarioData with
+            ScenarioData.Ancestries = Table.CreateReadonlyTable (fun (AncestryID id) -> id) [ ancestry1 ]
+            ScenarioData.Tiles = Table.CreateReadonlyTable (fun (TileID id) -> id) [ defaultTile; tile2 ]
+            ScenarioData.TileFeatures =
+                Table.CreateReadonlyTable (fun (TileFeatureID id) -> id) [ startingPointFeature; stairTileFeature ]
+            ScenarioData.FloorGenerationParameters =
+                Table.CreateReadonlyTable (fun (FloorGenerationParameterID id) -> id) [ floorParameters ] }
 
     let loadScenarioData (callback: ScenarioData -> unit) = callback scenarioData
 
