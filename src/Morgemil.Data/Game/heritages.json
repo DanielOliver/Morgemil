@@ -5,16 +5,29 @@
     "adjective": "Skeletal",
     "description": "Skeletons are a basic form of undead.  Stupid and resilient to many mortal afflictions, but rather brittle",
     "tags": {
-      "undead": ""
+      "undead": "",
+      "NoBlood": ""
     },
-    "AncestryTags": {
-      "hasSkeleton": "has"
+    "RequireTags": {
+      "NoSkeleton": "not"
     }
   },
   {
     "id": "1",
     "noun": "Specter",
     "adjective": "Spectral",
-    "description": "Specters are weak in this world and easily banished with physicial assult, but do not underestimate the single minded obsession of the departed."
+    "description": "Specters are weak in this world and easily banished with physicial assult, but do not underestimate the single minded obsession of the departed.",
+    "Tags": {
+      "NoBlood": ""
+    }
+  },
+  {
+    "id": "2",
+    "noun": "Vampire",
+    "adjective": "Vampiric",
+    "description": "Blood calls to them. Do you have blood? If you do, they want it. Keep your blood away from them.",
+    "RequireTags": {
+      "NoBlood": "not"
+    }
   }
 ]

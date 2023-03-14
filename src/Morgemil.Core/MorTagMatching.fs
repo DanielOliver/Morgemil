@@ -33,5 +33,5 @@ let mergeMatchingTags (priority: Map<string, MorTagMatches>) (tags: Map<string, 
     |> Map.ofSeq
 
 let isMatch (ancestry: Ancestry) (heritage: Heritage) : bool =
-    (compatible ancestry.Tags ancestry.HeritageTags heritage.AncestryTags)
-    && (compatible heritage.Tags heritage.AncestryTags ancestry.HeritageTags)
+    (compatible ancestry.Tags ancestry.RequireTags heritage.RequireTags)
+    && (compatible heritage.Tags heritage.RequireTags ancestry.RequireTags)

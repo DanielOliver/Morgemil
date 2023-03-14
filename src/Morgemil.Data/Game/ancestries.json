@@ -6,10 +6,8 @@
     "Description": "The kings of the overworld. How shall you fare in the darkness?",
     "Tags": {
       "humanoid": "",
-      "HasSkeleton": "",
-      "Placeholder": {
-        "Any": ""
-      }
+      "Placeholder": "Any",
+      "Playable": ""
     }
   },
   {
@@ -24,8 +22,7 @@
     "Adjective": "Goblin",
     "Description": "The sense of self-preservation is not a prevalent Goblin trait, neither is diplomacy.",
     "Tags": {
-      "humanoid": "",
-      "HasSkeleton": ""
+      "humanoid": ""
     }
   },
   {
@@ -34,24 +31,26 @@
     "Adjective": "Minotaur",
     "Description": "Head and tail of a bull, body of a man, rage of a volcano. Your eulogy will be delivered to a closed casket.",
     "Tags": {
-      "humanoid": "",
-      "HasSkeleton": ""
+      "humanoid": ""
     }
   },
   {
     "ID": "4",
     "Noun": "Carnivorous Mold",
     "Adjective": "Carnivorous Moldy",
-    "Description": "A carnivorous mold that's not exceptionally mobile or intelligent or threatening or even aware of your presence."
+    "Description": "A carnivorous mold that's not exceptionally mobile or intelligent or threatening or even aware of your presence.",
+    "Tags": {
+      "NoSkeleton": "",
+      "NoBlood": ""
+    }
   },
   {
     "ID": "5",
     "Noun": "Deep Gnome",
-    "Adjective": "Deep Gnome",
+    "Adjective": "Deep Gnomish",
     "Description": "Dwellers of the deep, kin to the rock. Beware their righteous community dedicated to their deity.",
     "Tags": {
-      "humanoid": "",
-      "HasSkeleton": ""
+      "humanoid": ""
     }
   }
 ]

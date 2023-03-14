@@ -32,7 +32,7 @@ let private DefinedMorTag (title: string) (value: JsonNode) : string option =
         let tag = FromDTO.ParseMorTag title value
 
         match tag with
-        | Morgemil.Models.MorTags.Custom ->
+        | Morgemil.Models.MorTags.Custom _ ->
             if value.ToString() |> System.String.IsNullOrWhiteSpace then
                 None
             else

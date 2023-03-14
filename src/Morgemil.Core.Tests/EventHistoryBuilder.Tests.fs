@@ -13,7 +13,7 @@ let exampleAncestry1 =
       Ancestry.Description = ""
       Ancestry.ID = AncestryID 50L
       Ancestry.Tags = Map.empty
-      Ancestry.HeritageTags = Map.empty }
+      Ancestry.RequireTags = Map.empty }
 
 let exampleItem1 =
     { Character.PlayerID = None
