@@ -17,17 +17,7 @@ let ``Can transition states`` () =
 
         List.empty
 
-    let scenarioData =
-        { ScenarioData.Items = Table.CreateReadonlyTable (fun (ItemID id) -> id) []
-          ScenarioData.Ancestries = Table.CreateReadonlyTable (fun (AncestryID id) -> id) []
-          ScenarioData.Tiles = Table.CreateReadonlyTable (fun (TileID id) -> id) []
-          ScenarioData.TileFeatures = Table.CreateReadonlyTable (fun (TileFeatureID id) -> id) []
-          ScenarioData.Heritages = Table.CreateReadonlyTable (fun (HeritageID id) -> id) []
-          ScenarioData.FloorGenerationParameters =
-            Table.CreateReadonlyTable (fun (FloorGenerationParameterID id) -> id) []
-          ScenarioData.MonsterGenerationParameters =
-            Table.CreateReadonlyTable (fun (MonsterGenerationParameterID id) -> id) []
-          ScenarioData.Aspects = Table.CreateReadonlyTable (fun (AspectID id) -> id) [] }
+    let scenarioData = Table.EmptyScenarioData
 
     let stateMachine: IGameStateMachine =
         SimpleGameStateMachine(

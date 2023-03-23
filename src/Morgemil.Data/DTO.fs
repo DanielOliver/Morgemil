@@ -180,12 +180,21 @@ type FloorGenerationParameter =
     interface IRow with
         member this.Key = this.ID
 
+type Tower =
+    { ID: int64
+      Name: string
+      LevelRangeInclusive: Vector2i
+      BacktrackBehavior: Morgemil.Models.TowerBacktrackBehavior
+      OverworldConnection: Morgemil.Models.TowerOverworldConnection
+      DefaultFloorGenerationParameters: int64 }
+
+    interface IRow with
+        member this.Key = this.ID
 
 type DtoValidResult<'T> =
     { Object: 'T
       Errors: string list
       Success: bool }
-
 
 type RawDtoPhase0 =
     { Tiles: DtoValidResult<Tile[]>
@@ -195,7 +204,8 @@ type RawDtoPhase0 =
       MonsterGenerationParameters: DtoValidResult<MonsterGenerationParameter[]>
       Items: DtoValidResult<Item[]>
       FloorGenerationParameters: DtoValidResult<FloorGenerationParameter[]>
-      Aspects: DtoValidResult<Aspect[]> }
+      Aspects: DtoValidResult<Aspect[]>
+      Towers: DtoValidResult<Tower[]> }
 
     member this.Errors: string list =
         [| this.Tiles.Errors
@@ -205,7 +215,8 @@ type RawDtoPhase0 =
            this.MonsterGenerationParameters.Errors
            this.Items.Errors
            this.FloorGenerationParameters.Errors
-           this.Aspects.Errors |]
+           this.Aspects.Errors
+           this.Towers.Errors |]
         |> List.concat
 
     member this.Success: bool =
@@ -216,7 +227,8 @@ type RawDtoPhase0 =
           this.MonsterGenerationParameters.Success
           this.Items.Success
           this.FloorGenerationParameters.Success
-          this.Aspects.Success ]
+          this.Aspects.Success
+          this.Towers.Success ]
         |> List.forall id
 
 type RawDtoPhase1 =
@@ -227,7 +239,8 @@ type RawDtoPhase1 =
       MonsterGenerationParameters: DtoValidResult<DtoValidResult<MonsterGenerationParameter>[]>
       Items: DtoValidResult<DtoValidResult<Item>[]>
       FloorGenerationParameters: DtoValidResult<DtoValidResult<FloorGenerationParameter>[]>
-      Aspects: DtoValidResult<DtoValidResult<Aspect>[]> }
+      Aspects: DtoValidResult<DtoValidResult<Aspect>[]>
+      Towers: DtoValidResult<DtoValidResult<Tower>[]> }
 
     member this.Errors: string list =
         [| this.Tiles.Errors
@@ -237,7 +250,8 @@ type RawDtoPhase1 =
            this.MonsterGenerationParameters.Errors
            this.Items.Errors
            this.FloorGenerationParameters.Errors
-           this.Aspects.Errors |]
+           this.Aspects.Errors
+           this.Towers.Errors |]
         |> List.concat
 
     member this.Success: bool =
@@ -248,7 +262,8 @@ type RawDtoPhase1 =
           this.MonsterGenerationParameters.Success
           this.Items.Success
           this.FloorGenerationParameters.Success
-          this.Aspects.Success ]
+          this.Aspects.Success
+          this.Towers.Success ]
         |> List.forall id
 
 
@@ -260,4 +275,5 @@ type RawDtoPhase2 =
       MonsterGenerationParameters: Morgemil.Models.MonsterGenerationParameter[]
       Items: Morgemil.Models.Item[]
       FloorGenerationParameters: Morgemil.Models.FloorGenerationParameter[]
-      Aspects: Morgemil.Models.Aspect[] }
+      Aspects: Morgemil.Models.Aspect[]
+      Towers: Morgemil.Models.Tower[] }

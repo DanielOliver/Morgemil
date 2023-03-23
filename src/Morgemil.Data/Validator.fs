@@ -222,12 +222,31 @@ let private ValidateDtoFloorGenerationParameters
           tileTable |> AllExistsInTable element.Tiles "Tiles"
           tileTable |> ExistsInTable element.DefaultTile "DefaultTile" ])
 
-/// Validate Tiles
+/// Validate Aspects
 let private ValidateDtoAspects
     (aspect: DtoValidResult<Aspect[]>)
     : DtoValidResult<DtoValidResult<Aspect>[]> * IReadonlyTable<Aspect, int64> =
     aspect
     |> ValidateGameDataWithTable(fun acc element -> [ ExpectedUnique element (fun x -> x.ID) "AspectID" acc ])
+
+/// Validate Towers
+let private ValidateDtoTowers
+    (tower: DtoValidResult<Tower[]>)
+    (floorGenerationParameterTable: IReadonlyTable<FloorGenerationParameter, int64>)
+    : DtoValidResult<DtoValidResult<Tower>[]> * IReadonlyTable<Tower, int64> =
+    tower
+    |> ValidateGameDataWithTable(fun acc element ->
+        let levelRangeError =
+            match element.LevelRangeInclusive with
+            | r when r.X <= 0 || r.Y <= 0 || r.Y > 100 || r.X > 100 ->
+                Some "Level X & Y must be between 1 and 100 inclusive."
+            | r when r.X > r.Y -> Some "Level X must be equal to or less than Y."
+            | _ -> None
+
+        [ ExpectedUnique element (fun x -> x.ID) "TowerID" acc
+          levelRangeError
+          floorGenerationParameterTable
+          |> ExistsInTable element.DefaultFloorGenerationParameters "DefaultFloorGenerationParameters" ])
 
 /// Tie together all validation routines
 let ValidateDtos (phase0: RawDtoPhase0) : RawDtoPhase1 =
@@ -251,6 +270,9 @@ let ValidateDtos (phase0: RawDtoPhase0) : RawDtoPhase1 =
 
     let (aspectResults, aspectTable) = ValidateDtoAspects phase0.Aspects
 
+    let (towerResults, towerTable) =
+        ValidateDtoTowers phase0.Towers floorGenerationParametersLinkTable
+
     { RawDtoPhase1.Tiles = tileResults
       TileFeatures = tileFeatureResults
       Ancestries = ancestryResults
@@ -258,4 +280,5 @@ let ValidateDtos (phase0: RawDtoPhase0) : RawDtoPhase1 =
       MonsterGenerationParameters = monsterGenerationParameterResults
       Items = itemResults
       FloorGenerationParameters = floorGenerationParameterResults
-      Aspects = aspectResults }
+      Aspects = aspectResults
+      Towers = towerResults }
