@@ -12,6 +12,9 @@
         <None Include="Cheepicus12.font">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <Compile Include="ScreenGameState.fs"/>
+        <Compile Include="MapGeneratorConsole.fs"/>
+        <Compile Include="ScreenContainer.fs"/>
         <Compile Include="Program.fs"/>
     </ItemGroup>
 
@@ -21,7 +24,7 @@
         <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303"/>
         <PackageReference Include="SadConsole" Version="9.2.2"/>
         <PackageReference Include="SadConsole.Host.MonoGame" Version="9.2.2"/>
-        <PackageReference Update="FSharp.Core" Version="7.0.300" />
+        <PackageReference Update="FSharp.Core" Version="7.0.300"/>
     </ItemGroup>
 
     <ItemGroup>
