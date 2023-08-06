@@ -30,30 +30,20 @@ Target.create "Build" (fun _ ->
                 Configuration = DotNet.Release })
     ))
 
-
-
 Target.create "Test" (fun _ ->
     !! "src/**/*.*proj"
-    |> Seq.iter (fun proj ->
-        // CreateProcess.fromRawCommandLine "dotnet" ("test --logger \"trx;LogFileName=testresults.trx\"")
-        // |> CreateProcess.withWorkingDirectory (Path.getDirectory proj)
-        // |> CreateProcess.ensureExitCode
-        // |> Proc.run
-        // |> ignore))
-
-        DotNet.test
-            (fun p ->
+    |> Seq.iter (
+        DotNet.test (fun p ->
+            { p with
+                Configuration = DotNet.BuildConfiguration.Release }
+            |> Coverlet.withDotNetTestOptions (fun p ->
                 { p with
-                    Configuration = DotNet.BuildConfiguration.Release }
-                |> Coverlet.withDotNetTestOptions (fun p ->
-                    { p with
 
-                        Output = "TestResults/coverage.xml"
-                        Include = [ "Morgemil.*", "*" ]
-                        Exclude = [ "*.Tests?", "*" ]
-                        OutputFormat = [ Coverlet.OutputFormat.OpenCover ] }))
-            proj))
-
+                    Output = "TestResults/coverage.xml"
+                    Include = [ "Morgemil.*", "*" ]
+                    Exclude = [ "*.Tests?", "*" ]
+                    OutputFormat = [ Coverlet.OutputFormat.OpenCover ] }))
+    ))
 
 Target.create "Report" (fun _ ->
     !! "**/coverage.xml"
@@ -64,35 +54,9 @@ Target.create "Report" (fun _ ->
             ReportTypes = [ ReportGenerator.ReportType.Cobertura; ReportGenerator.ReportType.Html ]
             TargetDir = "./coveragereport/" }))
 
-Target.create "Test with coverage" (fun _ ->
-    !! "src/**/*.*proj"
-    |> Seq.iter (fun proj ->
-        CreateProcess.fromRawCommandLine
-            "dotnet"
-            ("test /p:AltCover=true /p:AltCoverAssemblyFilter=\"Morgemil*\" /p:AltCoverAssemblyExcludeFilter=\"xunit*\" /p:AltCoverReport=\"./coverage.xml\" --logger \"trx;LogFileName=testresults.trx\"")
-        |> CreateProcess.withWorkingDirectory (Path.getDirectory proj)
-        |> CreateProcess.ensureExitCode
-        |> Proc.run
-        |> ignore))
-
-let report (_: TargetParameter) =
-    CreateProcess.fromRawCommandLine
-        "dotnet"
-        "reportgenerator -reports:\"**/coverage.xml\" -targetdir:\"coveragereport\" -reporttypes:\"HTML;Cobertura\" -assemblyfilters:\"+Morgemil.*.dll;-Morgemil.*.Tests\""
-    |> CreateProcess.ensureExitCode
-    |> Proc.run
-    |> ignore
-
-// Target.create "Report" report
-
-Target.create "Report with Coverage" report
-
 Target.create "All" ignore
 
-let dependencies =
-    [ "Clean" ==> "Build"
-      "Build" ==> "Test" ==> "Report"
-      "Build" ==> "Test with Coverage" ==> "Report with Coverage" ]
+let dependencies = [ "Clean" ==> "Build" ==> "Test" ==> "Report" ]
 
 [<EntryPoint>]
 let program argv =
