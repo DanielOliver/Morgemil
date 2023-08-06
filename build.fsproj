@@ -14,9 +14,11 @@
         <PackageReference Include="Fake.Core.Process" Version="6.0.0"/>
         <PackageReference Include="Fake.Core.Target" Version="6.0.0"/>
         <PackageReference Include="Fake.DotNet.Cli" Version="6.0.0"/>
+        <PackageReference Include="Fake.DotNet.Testing.Coverlet" Version="6.0.0"/>
         <PackageReference Include="Fake.IO.FileSystem" Version="6.0.0"/>
-        <PackageReference Update="FSharp.Core" Version="7.0.300" />
-        <PackageReference Include="MSBuild.StructuredLogger" Version="2.1.844" />
+        <PackageReference Update="FSharp.Core" Version="7.0.300"/>
+        <PackageReference Include="Fake.Testing.ReportGenerator" Version="6.0.0"/>
+        <PackageReference Include="MSBuild.StructuredLogger" Version="2.1.844"/>
     </ItemGroup>
 
 </Project>
