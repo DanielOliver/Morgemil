@@ -13,7 +13,9 @@
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <Compile Include="ScreenGameState.fs"/>
-        <Compile Include="MapGeneratorConsole.fs"/>
+        <Compile Include="SadConsoleExtensions.fs"/>
+        <Compile Include="BasicCrawlConsole.fs"/>
+        <Compile Include="ScenarioSelectorConsole.fs"/>
         <Compile Include="ScreenContainer.fs"/>
         <Compile Include="Program.fs"/>
     </ItemGroup>

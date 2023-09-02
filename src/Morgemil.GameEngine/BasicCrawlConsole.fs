@@ -8,7 +8,12 @@ open Morgemil.Models.Relational
 open SadConsole
 open SadConsole.Input
 
-type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialGameData) =
+type BasicCrawlConsole
+    (
+        gameState: IGameStateMachine,
+        initialGameData: InitialGameData,
+        gameServerRequestCallback: GameServerRequest -> unit
+    ) =
     inherit SadConsole.Console(40, 40)
 
     let timeTable = TimeTable()
@@ -31,7 +36,18 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
         for character in initialGameData.Characters do
             Table.AddRow loopContext.Characters character
 
+
+    override this.ProcessKeyboard(info: Keyboard) : bool =
+        if info.IsKeyPressed Keys.Escape then
+            gameServerRequestCallback (GameServerRequest.Workflow GameServerWorkflow.ScenarioSelection)
+            true
+        else
+            false
+
+
     override this.Update(timeElapsed: TimeSpan) =
+        base.Update(timeElapsed)
+
         let event =
             if SadConsole.GameHost.Instance.Keyboard.IsKeyReleased Keys.Left then
                 (character1.ID, Point.create (-1, 0)) |> Some
@@ -47,6 +63,11 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
                 { ActionRequestMove.CharacterID = characterID
                   ActionRequestMove.Direction = direction }
                 |> ActionRequest.Move)
+            |> Option.orElseWith (fun () ->
+                if SadConsole.GameHost.Instance.Keyboard.IsKeyReleased Keys.LeftShift then
+                    character1.ID |> ActionRequest.Pause |> Some
+                else
+                    None)
 
         let event =
             event
@@ -64,7 +85,8 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
         | GameState.Results(results, acknowledgeCallback) ->
             results
             |> List.iter (fun event ->
-                printfn "%A" event
+                //DEBUG: UNCOMMENT FOR EVENT PRINTING
+                // printfn "%A" event
 
                 match event.Event with
                 | ActionEvent.MapChange mapChange ->
