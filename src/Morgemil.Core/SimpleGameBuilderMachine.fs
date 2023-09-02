@@ -150,8 +150,11 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
                 )
             ))
 
+    do
+        // Primes the agent loop.
+        loopWorkAgent.PostAndReply((fun replyChannel -> GameBuilderStateRequest.QueryState replyChannel), 5000)
+        |> ignore
 
     interface IGameBuilder with
         /// Gets the current state of the game loop
         member this.CurrentState: GameBuilderState = lastKnownState
-// loopWorkAgent.PostAndReply((fun replyChannel -> GameBuilderStateRequest.QueryState replyChannel), 5000)
