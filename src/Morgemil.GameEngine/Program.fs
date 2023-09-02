@@ -5,26 +5,19 @@ open Morgemil.GameEngine
 
 let StartMainStateMachine () =
     let mainGameState =
-        new SimpleGameBuilderMachine(DataLoader.LoadScenarioData) :> IGameBuilder
+        SimpleGameBuilderMachine(DataLoader.LoadScenarioData) :> IGameBuilder
 
-    let mutable gameHasRun = true
+    let Init () =
+        SadConsole.Settings.WindowTitle <- "Morgemil"
 
-    while gameHasRun do
-        gameHasRun <- false
+        SadConsole.Game.Instance.Screen <- ScreenContainer(ScreenGameState.SelectingScenario, mainGameState)
 
-        let Init () =
-            SadConsole.Settings.WindowTitle <- "Morgemil"
+        SadConsole.Game.Instance.DestroyDefaultStartingConsole()
 
-            SadConsole.Game.Instance.Screen <- ScreenContainer(ScreenGameState.SelectingScenario, mainGameState)
-
-            SadConsole.Game.Instance.DestroyDefaultStartingConsole()
-
-        SadConsole.Game.Create(80, 40, "Cheepicus12.font")
-        SadConsole.Game.Instance.OnStart <- new Action(Init)
-        SadConsole.Game.Instance.Run()
-        SadConsole.Game.Instance.Dispose()
-
-    ()
+    SadConsole.Game.Create(80, 40, "Cheepicus12.font")
+    SadConsole.Game.Instance.OnStart <- new Action(Init)
+    SadConsole.Game.Instance.Run()
+    SadConsole.Game.Instance.Dispose()
 
 [<EntryPoint>]
 let main argv =

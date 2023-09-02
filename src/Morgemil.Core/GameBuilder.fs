@@ -19,9 +19,13 @@ type InitialGameData =
       GameContext: GameContext }
 
 [<RequireQualifiedAccess>]
+type GameBuilderWorkflow = | ScenarioSelection
+
+[<RequireQualifiedAccess>]
 type GameBuilderRequest =
     | AddCurrentPlayer of AncestryID: AncestryID
     | SelectScenario of ScenarioID: string
+    | Workflow of Workflow: GameBuilderWorkflow
 
 /// The steps and state of a game that's being built.
 [<RequireQualifiedAccess>]
@@ -48,6 +52,7 @@ type GameBuilderInternalStateRequest =
     | SelectScenario of ScenarioName: string
     | SetScenarioData of ScenarioData: ScenarioData
     | SetGameData of GameEngine: IGameStateMachine * InitialGameData: InitialGameData
+    | RequestWorkflow of GameBuilderWorkflow
 
 /// The interface to interact with a game being built.
 type IGameBuilder =

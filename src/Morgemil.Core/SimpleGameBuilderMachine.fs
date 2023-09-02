@@ -113,6 +113,15 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
                     let! message = inbox.Receive()
 
                     match message with
+                    | GameBuilderInternalStateRequest.RequestWorkflow workflow ->
+                        match previousState with
+                        | GameBuilderState.GameBuilt(gameState, _) ->
+                            // Cleans up any outstanding game instances.
+                            gameState.Stop()
+                        | _ -> ()
+
+                        do! loop (GameBuilderState.SelectScenario([ "Main Scenario" ]))
+
                     | GameBuilderInternalStateRequest.QueryState replyChannel ->
                         replyChannel.Reply previousState
                         do! loop previousState
@@ -156,3 +165,5 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
                 loopWorkAgent.Post(GameBuilderInternalStateRequest.SelectScenario scenarioId)
             | GameBuilderRequest.AddCurrentPlayer ancestryID ->
                 loopWorkAgent.Post(GameBuilderInternalStateRequest.AddPlayer ancestryID)
+            | GameBuilderRequest.Workflow workflow ->
+                loopWorkAgent.Post(GameBuilderInternalStateRequest.RequestWorkflow workflow)
