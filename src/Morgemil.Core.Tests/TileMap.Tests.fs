@@ -14,8 +14,8 @@ let defaultTile: Tile =
       BlocksSight = true
       Representation =
         { AnsiCharacter = '#'
-          ForegroundColor = Some <| Color.From(200, 200, 200)
-          BackGroundColor = Some <| Color.From(0, 0, 0) } }
+          ForegroundColor = Some <| Color.From(200, 200, 200, 255)
+          BackGroundColor = Some <| Color.Black } }
 
 let tile2 =
     { defaultTile with
@@ -34,7 +34,7 @@ let stairTileFeature: TileFeature =
       BlocksSight = false
       Representation =
         { AnsiCharacter = char (242)
-          ForegroundColor = Some <| Color.From(30, 30, 255)
+          ForegroundColor = Some <| Color.From(30, 30, 255, 255)
           BackGroundColor = Some <| Color.From(0, 240, 0, 50) }
       PossibleTiles = [ defaultTile; tile2 ]
       EntryPoint = false
@@ -42,7 +42,7 @@ let stairTileFeature: TileFeature =
 
 [<Fact>]
 let TileMapTests () =
-    let mapSize = Rectangle(Vector2i(0, 0), Vector2i(10, 10))
+    let mapSize = Rectangle(Point(0, 0), Point(10, 10))
     let tileMap = TileMap(mapSize, defaultTile)
 
     Assert.Equal(mapSize, tileMap.MapSize)

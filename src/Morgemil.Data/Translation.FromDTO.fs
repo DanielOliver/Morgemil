@@ -14,10 +14,7 @@ open Morgemil.Data
 
 ///DTO to Color
 let ColorFromDto (color: DTO.Color) : Color =
-    { A = color.A
-      B = color.B
-      G = color.G
-      R = color.R }
+    Color(color.R, color.G, color.B, color.A)
 
 let NullToOption (t: Nullable<_>) =
     if t.HasValue then Some t.Value else None
@@ -50,15 +47,11 @@ let RectangleFromDto (rectangle: DTO.Rectangle) : Rectangle =
     Rectangle(rectangle.X, rectangle.Y, rectangle.W, rectangle.H)
 
 ///DTO to Color Option
-let ColorOptionFromDto (color: DTO.Color) : Color option =
+let rec ColorOptionFromDto (color: DTO.Color) : Color option =
     if color.A = Byte.MinValue then
         None
     else
-        Some
-        <| { A = color.A
-             B = color.B
-             G = color.G
-             R = color.R }
+        Some(ColorFromDto color)
 
 ///DTO to TileRepresentation
 let TileRepresentationFromDto (tileRepresentation: DTO.TileRepresentation) : TileRepresentation =

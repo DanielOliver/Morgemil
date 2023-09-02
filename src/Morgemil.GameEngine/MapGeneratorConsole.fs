@@ -13,9 +13,7 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
     inherit SadConsole.Console(40, 40)
 
     let timeTable = TimeTable()
-
     let gameContext = TrackedEntity initialGameData.GameContext
-
     let character1 = initialGameData.Characters.[0]
 
     let mutable loopContext: LoopContext =
@@ -24,30 +22,11 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
           TileMap = initialGameData.TileMap
           GameContext = gameContext }
 
-    let createColor (color: Color) =
-        SadRogue.Primitives.Color(color.R, color.G, color.B, color.A)
-
     let createTileMapFromData (data: TileMapData) =
         let result =
             TileMap(Rectangle(Point(0, 0), data.Size), data.DefaultTile, Array.zip data.Tiles data.TileFeatures)
 
         result
-
-    let blendColors
-        (color1: SadRogue.Primitives.Color)
-        (color2: SadRogue.Primitives.Color)
-        : SadRogue.Primitives.Color =
-        if color1.A = Byte.MaxValue || color2.A = Byte.MinValue then
-            color1
-        elif color1.A = Byte.MinValue then
-            color2
-        else
-            let ratio = ((float32) color2.A) / ((float32) color1.A + (float32) color2.A)
-
-            let returnColor = SadRogue.Primitives.Color.Lerp(color1, color2, ratio)
-
-            SadRogue.Primitives.Color(returnColor, 255)
-
 
     do
         for character in initialGameData.Characters do
@@ -124,23 +103,19 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
                     if Char.IsWhiteSpace feature.Representation.AnsiCharacter then
                         false,
                         (tile.Representation.ForegroundColor
-                         |> Option.map createColor
                          |> Option.defaultValue SadRogue.Primitives.Color.Black)
                     else
                         let foreground =
                             feature.Representation.ForegroundColor
-                            |> Option.map createColor
                             |> Option.defaultValue SadRogue.Primitives.Color.TransparentBlack
 
                         (foreground.A <> (byte 0)), (foreground)
 
                 let backgroundColor =
-                    blendColors
+                    Color.blendColors
                         (feature.Representation.BackGroundColor
-                         |> Option.map createColor
                          |> Option.defaultValue SadRogue.Primitives.Color.TransparentBlack)
                         (tile.Representation.BackGroundColor
-                         |> Option.map createColor
                          |> Option.defaultValue SadRogue.Primitives.Color.TransparentBlack)
 
                 let tileCharacter =
@@ -156,12 +131,10 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
             | None ->
                 let backgroundColor =
                     tile.Representation.BackGroundColor
-                    |> Option.map createColor
                     |> Option.defaultValue SadRogue.Primitives.Color.Black
 
                 let foregroundColor =
                     tile.Representation.ForegroundColor
-                    |> Option.map createColor
                     |> Option.defaultValue SadRogue.Primitives.Color.White
 
                 base.Cursor.Position <- SadRogue.Primitives.Point(position.X, position.Y)
@@ -181,7 +154,6 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
 
             let foregroundColor =
                 representation.ForegroundColor
-                |> Option.map createColor
                 |> Option.defaultValue SadRogue.Primitives.Color.TransparentBlack
 
             base.Print(position.X, position.Y, representation.AnsiCharacter.ToString(), foregroundColor)

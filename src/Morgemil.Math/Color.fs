@@ -1,49 +1,16 @@
 namespace Morgemil.Math
 
-open System
+type Color = SadRogue.Primitives.Color
 
-[<Struct>]
-type Color =
-    { A: byte
-      B: byte
-      G: byte
-      R: byte }
+module Color =
+    let From (r: int, g: int, b: int, a: int) = Color(r, g, b, a)
 
-    static member From() =
-        { A = Byte.MinValue
-          B = Byte.MinValue
-          G = Byte.MinValue
-          R = Byte.MinValue }
-
-    static member From(r: int, g: int, b: int, a: int) =
-        { A = Convert.ToByte a
-          B = Convert.ToByte b
-          G = Convert.ToByte g
-          R = Convert.ToByte r }
-
-    static member From(r: int, g: int, b: int) =
-        { A = Byte.MaxValue
-          B = Convert.ToByte b
-          G = Convert.ToByte g
-          R = Convert.ToByte r }
-
-    static member From(scalar: int, a: int) =
-        { A = Convert.ToByte a
-          B = Convert.ToByte scalar
-          G = Convert.ToByte scalar
-          R = Convert.ToByte scalar }
-
-    static member From(scalar: int) =
-        { A = Byte.MaxValue
-          B = Convert.ToByte scalar
-          G = Convert.ToByte scalar
-          R = Convert.ToByte scalar }
-
-    static member Black = Color.From(0)
-    static member White = Color.From(255)
-    static member TransparentBlack = Color.From(0, 0)
-    static member Red = Color.From(255, 0, 0)
-    static member Green = Color.From(0, 255, 0)
-    static member Blue = Color.From(0, 0, 255)
-
-    member this.HasAlpha = 0uy < this.A
+    let blendColors (color1: Color) (color2: Color) : Color =
+        if color1.A = System.Byte.MaxValue || color2.A = System.Byte.MinValue then
+            color1
+        elif color1.A = System.Byte.MinValue then
+            color2
+        else
+            let ratio = ((float32) color2.A) / ((float32) color1.A + (float32) color2.A)
+            let returnColor = SadRogue.Primitives.Color.Lerp(color1, color2, ratio)
+            SadRogue.Primitives.Color(returnColor, 255)

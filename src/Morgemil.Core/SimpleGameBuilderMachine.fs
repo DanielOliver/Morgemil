@@ -15,7 +15,7 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
 
             let scenarioData = loadedScenarioData.Value
 
-            let rng = RNG.SeedRNG(50)
+            let rng = RNG.SeedRNG(500)
 
             let (tileMap, mapGenerationResults) =
                 FloorGenerator.Create
