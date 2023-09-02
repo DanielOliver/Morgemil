@@ -40,7 +40,7 @@ let ParseMorTag (title: string) (value: JsonNode) : Morgemil.Models.MorTags =
     |> Option.defaultValue Morgemil.Models.MorTags.Custom
 
 ///DTO to Vector2i
-let Vector2iFromDto (vec: DTO.Vector2i) : Point = Point.create (vec.X, vec.Y)
+let Vector2iFromDto (vec: DTO.Point) : Point = Point.create (vec.X, vec.Y)
 
 ///DTO to Rectangle
 let RectangleFromDto (rectangle: DTO.Rectangle) : Rectangle =

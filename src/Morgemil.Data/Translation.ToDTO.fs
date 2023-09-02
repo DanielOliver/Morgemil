@@ -27,9 +27,9 @@ let ColorOptionToDto (color: Color option) : DTO.Color =
           G = Byte.MinValue
           R = Byte.MinValue }
 
-let Vector2iToDto (vec: Point) : DTO.Vector2i =
-    { DTO.Vector2i.X = vec.X
-      DTO.Vector2i.Y = vec.Y }
+let Vector2iToDto (vec: Point) : DTO.Point =
+    { DTO.Point.X = vec.X
+      DTO.Point.Y = vec.Y }
 
 let RectangleToDto (rectangle: Rectangle) : DTO.Rectangle =
     { DTO.Rectangle.X = rectangle.X
