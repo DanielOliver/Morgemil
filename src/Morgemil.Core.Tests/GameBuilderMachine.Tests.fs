@@ -87,7 +87,8 @@ let ``Can transition states`` () =
     Assert.Equal(GameBuilderStateType.SelectScenario, machine.CurrentState.GameBuilderStateType)
 
     match machine.CurrentState with
-    | GameBuilderState.SelectScenario(scenarioList, scenarioCallback) -> scenarioCallback (scenarioList.Head)
+    | GameBuilderState.SelectScenario(scenarioList) ->
+        machine.Request(GameBuilderRequest.SelectScenario scenarioList[0])
     | _ -> Assert.False(true)
 
     while machine.CurrentState.GameBuilderStateType = GameBuilderStateType.LoadedScenarioData
@@ -97,7 +98,7 @@ let ``Can transition states`` () =
     Assert.Equal(GameBuilderStateType.WaitingForCurrentPlayer, machine.CurrentState.GameBuilderStateType)
 
     match machine.CurrentState with
-    | GameBuilderState.WaitingForCurrentPlayer(addPlayer) -> addPlayer (AncestryID 1L)
+    | GameBuilderState.WaitingForCurrentPlayer -> machine.Request(GameBuilderRequest.AddCurrentPlayer(AncestryID 1L))
     | _ -> Assert.False(true)
 
     while machine.CurrentState.GameBuilderStateType = GameBuilderStateType.WaitingForCurrentPlayer

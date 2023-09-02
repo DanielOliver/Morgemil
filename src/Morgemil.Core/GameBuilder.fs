@@ -18,14 +18,19 @@ type InitialGameData =
       CurrentPlayerID: PlayerID
       GameContext: GameContext }
 
+[<RequireQualifiedAccess>]
+type GameBuilderRequest =
+    | AddCurrentPlayer of AncestryID: AncestryID
+    | SelectScenario of ScenarioID: string
+
 /// The steps and state of a game that's being built.
 [<RequireQualifiedAccess>]
 type GameBuilderState =
-    | WaitingForCurrentPlayer of AddCurrentPlayer: (AncestryID -> unit)
+    | WaitingForCurrentPlayer
     | GameBuilt of GameEngine: IGameStateMachine * InitialGameData: InitialGameData
     | LoadingGameProgress of State: string
     | LoadedScenarioData of ScenarioData: ScenarioData
-    | SelectScenario of Scenarios: string list * ChooseScenario: (string -> unit)
+    | SelectScenario of Scenarios: string list
 
     member this.GameBuilderStateType =
         match this with
@@ -37,7 +42,7 @@ type GameBuilderState =
 
 /// The steps and state of a game that's being built.
 [<RequireQualifiedAccess>]
-type GameBuilderStateRequest =
+type GameBuilderInternalStateRequest =
     | QueryState of AsyncReplyChannel<GameBuilderState>
     | AddPlayer of AncestryID: AncestryID
     | SelectScenario of ScenarioName: string
@@ -48,3 +53,4 @@ type GameBuilderStateRequest =
 type IGameBuilder =
     /// The current state of the builder
     abstract member CurrentState: GameBuilderState
+    abstract member Request: GameBuilderRequest -> unit
