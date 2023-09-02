@@ -25,7 +25,11 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
 
             let createTileMapFromData (data: TileMapData) =
                 let result =
-                    TileMap(Rectangle.create data.Size, data.DefaultTile, Array.zip data.Tiles data.TileFeatures)
+                    TileMap(
+                        Rectangle.WithPositionAndSize(Point(0, 0), data.Size),
+                        data.DefaultTile,
+                        Array.zip data.Tiles data.TileFeatures
+                    )
 
                 result
 
@@ -62,7 +66,7 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
                       NextTick = 0L<TimeTick>
                       NextAction = Character.DefaultTickActions.Head
                       TickActions = Character.DefaultTickActions
-                      Position = mapGenerationResults.EntranceCoordinate + Vector2i.create (i, i)
+                      Position = mapGenerationResults.EntranceCoordinate + Point.create (i, i)
                       PlayerID = None
                       Floor = gameContext.Floor
                       Tags = Map.empty }
@@ -101,49 +105,48 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
 
 
     let loopWorkAgent =
-        MailboxProcessor<GameBuilderStateRequest>.Start
-            (fun inbox ->
-                let rec loop (previousState: GameBuilderState) =
-                    async {
-                        let! message = inbox.Receive()
+        MailboxProcessor<GameBuilderStateRequest>.Start(fun inbox ->
+            let rec loop (previousState: GameBuilderState) =
+                async {
+                    let! message = inbox.Receive()
 
-                        match message with
-                        | GameBuilderStateRequest.QueryState replyChannel ->
-                            replyChannel.Reply previousState
-                            do! loop previousState
+                    match message with
+                    | GameBuilderStateRequest.QueryState replyChannel ->
+                        replyChannel.Reply previousState
+                        do! loop previousState
 
-                        | GameBuilderStateRequest.AddPlayer ancestryID ->
-                            currentPlayerID <- PlayerID 1L |> Some
-                            chosenAncestryID <- Some ancestryID
-                            buildGameState (GameBuilderStateRequest.SetGameData >> inbox.Post)
-                            do! loop (GameBuilderState.LoadingGameProgress "Creating Game")
+                    | GameBuilderStateRequest.AddPlayer ancestryID ->
+                        currentPlayerID <- PlayerID 1L |> Some
+                        chosenAncestryID <- Some ancestryID
+                        buildGameState (GameBuilderStateRequest.SetGameData >> inbox.Post)
+                        do! loop (GameBuilderState.LoadingGameProgress "Creating Game")
 
-                        | GameBuilderStateRequest.SelectScenario scenarioName ->
-                            chosenScenarioName <- Some scenarioName
+                    | GameBuilderStateRequest.SelectScenario scenarioName ->
+                        chosenScenarioName <- Some scenarioName
 
-                            loadScenarioData (GameBuilderStateRequest.SetScenarioData >> inbox.Post)
+                        loadScenarioData (GameBuilderStateRequest.SetScenarioData >> inbox.Post)
 
-                            do! loop (GameBuilderState.LoadingGameProgress "Loading Scenario Data")
+                        do! loop (GameBuilderState.LoadingGameProgress "Loading Scenario Data")
 
-                        | GameBuilderStateRequest.SetScenarioData scenarioData ->
-                            loadedScenarioData <- Some scenarioData
+                    | GameBuilderStateRequest.SetScenarioData scenarioData ->
+                        loadedScenarioData <- Some scenarioData
 
-                            do!
-                                loop (
-                                    (GameBuilderStateRequest.AddPlayer >> inbox.Post)
-                                    |> GameBuilderState.WaitingForCurrentPlayer
-                                )
-                        | GameBuilderStateRequest.SetGameData (gameState, initialGameData) ->
-                            do! loop (GameBuilderState.GameBuilt(gameState, initialGameData))
+                        do!
+                            loop (
+                                (GameBuilderStateRequest.AddPlayer >> inbox.Post)
+                                |> GameBuilderState.WaitingForCurrentPlayer
+                            )
+                    | GameBuilderStateRequest.SetGameData(gameState, initialGameData) ->
+                        do! loop (GameBuilderState.GameBuilt(gameState, initialGameData))
 
-                    }
+                }
 
-                loop (
-                    GameBuilderState.SelectScenario(
-                        [ "Main Scenario" ],
-                        (GameBuilderStateRequest.SelectScenario >> inbox.Post)
-                    )
-                ))
+            loop (
+                GameBuilderState.SelectScenario(
+                    [ "Main Scenario" ],
+                    (GameBuilderStateRequest.SelectScenario >> inbox.Post)
+                )
+            ))
 
     interface IGameBuilder with
         /// Gets the current state of the game loop

@@ -18,7 +18,7 @@ let exampleAncestry1 =
 let exampleItem1 =
     { Character.PlayerID = None
       Character.Ancestry = exampleAncestry1
-      Character.Position = Vector2i.Identity
+      Character.Position = Point.Identity
       Character.ID = CharacterID 51L
       Character.NextAction = Character.DefaultTickActions.Head
       Character.TickActions = Character.DefaultTickActions
@@ -30,7 +30,7 @@ let exampleItem1 =
 let exampleItem2 =
     { Character.PlayerID = None
       Character.Ancestry = exampleAncestry1
-      Character.Position = Vector2i.Identity
+      Character.Position = Point.Identity
       Character.ID = CharacterID 52L
       Character.NextAction = Character.DefaultTickActions.Head
       Character.TickActions = Character.DefaultTickActions
@@ -42,7 +42,7 @@ let exampleItem2 =
 let exampleItem3 =
     { Character.PlayerID = None
       Character.Ancestry = exampleAncestry1
-      Character.Position = Vector2i.Identity
+      Character.Position = Point.Identity
       Character.ID = CharacterID 53L
       Character.NextAction = Character.DefaultTickActions.Head
       Character.TickActions = Character.DefaultTickActions
@@ -69,7 +69,9 @@ let ``Can yield Results without updates`` () =
 
             yield
                 eventBuilder {
-                    Tracked.Replace trackedGameContext (fun t -> { t with CurrentTimeTick = 2L<TimeTick> })
+                    Tracked.Replace trackedGameContext (fun t ->
+                        { t with
+                            CurrentTimeTick = 2L<TimeTick> })
 
                     yield ActionEvent.Empty 2
                     Table.AddRow table1 exampleItem2

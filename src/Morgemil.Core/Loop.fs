@@ -24,7 +24,9 @@ module Loop =
         let mutable context = context
 
         builder {
-            Tracked.Replace context.GameContext (fun t -> { t with CurrentTimeTick = context.TimeTable.Next.NextTick })
+            Tracked.Replace context.GameContext (fun t ->
+                { t with
+                    CurrentTimeTick = context.TimeTable.Next.NextTick })
 
             match event with
             | ActionRequest.Engine -> ()
@@ -82,7 +84,7 @@ module Loop =
                                   OldPosition = oldPosition
                                   NewPosition = newPosition }
                                 |> ActionEvent.AfterMove
-            | ActionRequest.GoToNextLevel (characterID) ->
+            | ActionRequest.GoToNextLevel(characterID) ->
                 match characterID |> Table.TryGetRowByKey context.Characters with
                 | None -> ()
                 | Some moveCharacter ->
@@ -99,7 +101,7 @@ module Loop =
                         let createTileMapFromData (data: TileMapData) =
                             let result =
                                 TileMap(
-                                    Rectangle.create data.Size,
+                                    Rectangle.WithPositionAndSize(Point(0, 0), data.Size),
                                     data.DefaultTile,
                                     Array.zip data.Tiles data.TileFeatures
                                 )
@@ -142,9 +144,9 @@ type Loop(world: StaticLoopContext, initialContext: LoopContext) =
 
     member this.NextMove =
         let direction =
-            (RNG.RandomVector world.RNG (Vector2i.create (2, 2))) - Vector2i.create (1, 1)
+            (RNG.RandomVector world.RNG (Point.create (2, 2))) - Point.create (1, 1)
 
-        if direction = Vector2i.Zero then
+        if direction = Point.Zero then
             ActionRequest.Pause context.TimeTable.Next.ID
         else
             ActionRequest.Move
@@ -162,7 +164,8 @@ type Loop(world: StaticLoopContext, initialContext: LoopContext) =
 
                 Table.AddRow
                     context.Characters
-                    { nextCharacter with NextAction = nextCharacter.NextAction.NextInList nextCharacter.TickActions }
+                    { nextCharacter with
+                        NextAction = nextCharacter.NextAction.NextInList nextCharacter.TickActions }
 
                 yield ActionEvent.EndResponse 0
             }

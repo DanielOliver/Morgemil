@@ -29,7 +29,7 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
 
     let createTileMapFromData (data: TileMapData) =
         let result =
-            TileMap(Rectangle.create data.Size, data.DefaultTile, Array.zip data.Tiles data.TileFeatures)
+            TileMap(Rectangle(Point(0, 0), data.Size), data.DefaultTile, Array.zip data.Tiles data.TileFeatures)
 
         result
 
@@ -56,13 +56,13 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
     override this.Update(timeElapsed: TimeSpan) =
         let event =
             if SadConsole.GameHost.Instance.Keyboard.IsKeyReleased Keys.Left then
-                (character1.ID, Vector2i.create (-1, 0)) |> Some
+                (character1.ID, Point.create (-1, 0)) |> Some
             else if SadConsole.GameHost.Instance.Keyboard.IsKeyReleased Keys.Right then
-                (character1.ID, Vector2i.create (1, 0)) |> Some
+                (character1.ID, Point.create (1, 0)) |> Some
             else if SadConsole.GameHost.Instance.Keyboard.IsKeyReleased Keys.Down then
-                (character1.ID, Vector2i.create (0, 1)) |> Some
+                (character1.ID, Point.create (0, 1)) |> Some
             else if SadConsole.GameHost.Instance.Keyboard.IsKeyReleased Keys.Up then
-                (character1.ID, Vector2i.create (0, -1)) |> Some
+                (character1.ID, Point.create (0, -1)) |> Some
             else
                 None
             |> Option.map (fun (characterID, direction) ->

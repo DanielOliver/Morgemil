@@ -22,7 +22,7 @@ type Tower =
     { [<RecordId>]
       ID: TowerID
       Name: string
-      LevelRangeInclusive: Vector2i
+      LevelRangeInclusive: Point
       BacktrackBehavior: TowerBacktrackBehavior
       OverworldConnection: TowerOverworldConnection
       DefaultFloorGenerationParameters: FloorGenerationParameterID }

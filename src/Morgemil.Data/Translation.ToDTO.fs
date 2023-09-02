@@ -27,13 +27,15 @@ let ColorOptionToDto (color: Color option) : DTO.Color =
           G = Byte.MinValue
           R = Byte.MinValue }
 
-let Vector2iToDto (vec: Vector2i) : DTO.Vector2i =
+let Vector2iToDto (vec: Point) : DTO.Vector2i =
     { DTO.Vector2i.X = vec.X
       DTO.Vector2i.Y = vec.Y }
 
 let RectangleToDto (rectangle: Rectangle) : DTO.Rectangle =
-    { DTO.Rectangle.Position = Vector2iToDto(rectangle.Position)
-      DTO.Rectangle.Size = Vector2iToDto(rectangle.Size) }
+    { DTO.Rectangle.X = rectangle.X
+      DTO.Rectangle.Y = rectangle.Y
+      DTO.Rectangle.W = rectangle.Width
+      DTO.Rectangle.H = rectangle.Height }
 
 let TileRepresentationToDto (tileRepresentation: TileRepresentation) : DTO.TileRepresentation =
     { AnsiCharacter = (int) (Char.GetNumericValue tileRepresentation.AnsiCharacter)

@@ -22,7 +22,7 @@ type Character =
         Ancestry: Ancestry
         /// Ordered by priority
         Heritage: Heritage list
-        Position: Vector2i
+        Position: Point
         NextTick: int64<TimeTick>
         Floor: int64<Floor>
         NextAction: ActionArchetype

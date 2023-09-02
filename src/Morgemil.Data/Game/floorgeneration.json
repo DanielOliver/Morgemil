@@ -7,14 +7,10 @@
       1
     ],
     "sizerange": {
-      "position": {
-        "x": 8,
-        "y": 8
-      },
-      "size": {
-        "x": 10,
-        "y": 10
-      }
+      "x": 10,
+      "y": 10,
+      "w": 20,
+      "h": 30
     },
     "strategy": "openfloor"
   }
