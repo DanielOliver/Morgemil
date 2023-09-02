@@ -5,9 +5,9 @@ open Morgemil.Models.Relational
 
 type Color = { A: byte; B: byte; G: byte; R: byte }
 
-type Vector2i = { X: int; Y: int }
+type Point = { X: int; Y: int }
 
-type Rectangle = { Position: Vector2i; Size: Vector2i }
+type Rectangle = { X: int; Y: int; W: int; H: int }
 
 type TileRepresentation =
     { AnsiCharacter: int
@@ -183,7 +183,7 @@ type FloorGenerationParameter =
 type Tower =
     { ID: int64
       Name: string
-      LevelRangeInclusive: Vector2i
+      LevelRangeInclusive: Point
       BacktrackBehavior: Morgemil.Models.TowerBacktrackBehavior
       OverworldConnection: Morgemil.Models.TowerOverworldConnection
       DefaultFloorGenerationParameters: int64 }

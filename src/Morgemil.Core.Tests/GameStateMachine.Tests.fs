@@ -11,7 +11,7 @@ let ``Can transition states`` () =
         Assert.Equal(
             (ActionRequest.Move
                 { ActionRequestMove.CharacterID = CharacterID 0L
-                  ActionRequestMove.Direction = Morgemil.Math.Vector2i.Identity }),
+                  ActionRequestMove.Direction = Morgemil.Math.Point.Identity }),
             request
         )
 
@@ -35,7 +35,7 @@ let ``Can transition states`` () =
             System.Threading.Thread.Sleep 100
 
             match stateMachine.CurrentState with
-            | GameState.Results (results, acknowledge) -> acknowledge ()
+            | GameState.Results(results, acknowledge) -> acknowledge ()
             | _ -> ()
 
         Assert.Equal(GameStateType.WaitingForInput, stateMachine.CurrentState.GameStateType)
@@ -43,11 +43,11 @@ let ``Can transition states`` () =
 
 
     match stateMachine.CurrentState with
-    | GameState.WaitingForInput (inputCallback) ->
+    | GameState.WaitingForInput(inputCallback) ->
         inputCallback (
             ActionRequest.Move
                 { ActionRequestMove.CharacterID = CharacterID 0L
-                  ActionRequestMove.Direction = Morgemil.Math.Vector2i.Identity }
+                  ActionRequestMove.Direction = Morgemil.Math.Point.Identity }
         )
     | _ -> ()
 
@@ -55,11 +55,11 @@ let ``Can transition states`` () =
 
 
     match stateMachine.CurrentState with
-    | GameState.WaitingForInput (inputCallback) ->
+    | GameState.WaitingForInput(inputCallback) ->
         inputCallback (
             ActionRequest.Move
                 { ActionRequestMove.CharacterID = CharacterID 0L
-                  ActionRequestMove.Direction = Morgemil.Math.Vector2i.Identity }
+                  ActionRequestMove.Direction = Morgemil.Math.Point.Identity }
         )
     | _ -> ()
 

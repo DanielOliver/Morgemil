@@ -8,7 +8,7 @@ type TileMap(mapSize: Rectangle, defaultTile: Tile, ?chunkData: (Tile * TileFeat
         chunkData |> defaultArg <| Array.create mapSize.Area (defaultTile, None)
 
     let translateOffsetToCoordinate (position: int) =
-        Vector2i.create (position % mapSize.Width, position / mapSize.Width)
+        Point.create (position % mapSize.Width, position / mapSize.Width)
 
     member this.EntryPoints =
         chunk
@@ -27,13 +27,13 @@ type TileMap(mapSize: Rectangle, defaultTile: Tile, ?chunkData: (Tile * TileFeat
 
     member this.DefaultTile: Tile = defaultTile
     member this.MapSize: Rectangle = mapSize
-    member this.GetCoordinateOffset(point: Vector2i) : int = (mapSize.Width * point.Y) + point.X
+
+    member this.GetCoordinateOffset(point: Point) : int = (mapSize.Width * point.Y) + point.X
 
     member this.Item
-        with get (key: Vector2i): TileInstance =
-            let offset = this.GetCoordinateOffset key
-
+        with get (key: Point): TileInstance =
             if mapSize.Contains key then
+                let offset = this.GetCoordinateOffset key
                 let (tile, tileFeature) = chunk.[offset]
 
                 { TileInstance.ID = offset |> int64 |> TileInstanceID
@@ -45,40 +45,39 @@ type TileMap(mapSize: Rectangle, defaultTile: Tile, ?chunkData: (Tile * TileFeat
                   Tile = defaultTile
                   TileFeature = None
                   Position = key }
-        and set (key: Vector2i) (tile: Tile, tileFeature: TileFeature option) =
+        and set (key: Point) (tile: Tile, tileFeature: TileFeature option) =
             if mapSize.Contains key then
                 chunk.[this.GetCoordinateOffset key] <- (tile, tileFeature)
 
     member this.Tile
-        with get (key: Vector2i): Tile =
+        with get (key: Point): Tile =
             if mapSize.Contains key then
                 let (tile, _) = chunk.[this.GetCoordinateOffset key]
                 tile
             else
                 defaultTile
-        and set (key: Vector2i) (tile: Tile) =
+        and set (key: Point) (tile: Tile) =
             if mapSize.Contains key then
                 let (_, tileFeature) = chunk.[this.GetCoordinateOffset key]
                 chunk.[this.GetCoordinateOffset key] <- (tile, tileFeature)
 
     member this.TileFeature
-        with get (key: Vector2i): TileFeature option =
+        with get (key: Point): TileFeature option =
             if mapSize.Contains key then
                 let (_, tileFeature) = chunk.[this.GetCoordinateOffset key]
                 tileFeature
             else
                 None
-        and set (key: Vector2i) (tileFeature: TileFeature option) =
+        and set (key: Point) (tileFeature: TileFeature option) =
             if mapSize.Contains key then
                 let (tile, _) = chunk.[this.GetCoordinateOffset key]
                 chunk.[this.GetCoordinateOffset key] <- (tile, tileFeature)
 
     member this.Tiles: TileInstance seq =
         chunk
-        |> Seq.zip mapSize.Coordinates
-        |> Seq.mapi (fun index (t, (u, v)) ->
+        |> Seq.mapi (fun index (u, v) ->
             { TileInstance.ID = index |> int64 |> TileInstanceID
-              Position = t
+              Position = (translateOffsetToCoordinate index)
               TileInstance.Tile = u
               TileFeature = v })
 

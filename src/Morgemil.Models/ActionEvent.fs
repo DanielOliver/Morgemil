@@ -5,13 +5,13 @@ open Morgemil.Models
 
 type EventAfterMove =
     { CharacterID: CharacterID
-      OldPosition: Vector2i
-      NewPosition: Vector2i }
+      OldPosition: Point
+      NewPosition: Point }
 
 type EventRefusedMoved =
     { CharacterID: CharacterID
-      OldPosition: Vector2i
-      RequestedPosition: Vector2i }
+      OldPosition: Point
+      RequestedPosition: Point }
 
 type EventPause = { CharacterID: CharacterID }
 
@@ -19,14 +19,14 @@ type TileMapData =
     { Tiles: Tile array
       DefaultTile: Tile
       TileFeatures: TileFeature option array
-      Size: Vector2i }
+      Size: Point }
 
 type EventMapChange =
     { Characters: Character array
       TileMapData: TileMapData }
 
 type EventTileFeatureChanged =
-    { Position: Vector2i
+    { Position: Point
       OldTileFeature: TileFeature option
       NewTileFeature: TileFeature option }
 

@@ -1,11 +1,10 @@
 namespace Morgemil.Models
 
-open Morgemil.Math
 
 
 type ActionRequestMove =
     { CharacterID: CharacterID
-      Direction: Vector2i }
+      Direction: SadRogue.Primitives.Point }
 
 [<RequireQualifiedAccess>]
 type ActionRequest =

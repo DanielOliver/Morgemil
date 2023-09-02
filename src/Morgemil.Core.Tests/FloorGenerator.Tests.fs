@@ -15,8 +15,8 @@ let defaultTile: Tile =
       BlocksSight = true
       Representation =
         { AnsiCharacter = '#'
-          ForegroundColor = Some <| Color.From(200, 200, 200)
-          BackGroundColor = Some <| Color.From(0, 0, 0) } }
+          ForegroundColor = Some <| Color.From(200, 200, 200, 255)
+          BackGroundColor = Some <| Color.Black } }
 
 let tile2 =
     { defaultTile with
@@ -28,7 +28,7 @@ let tile2 =
 let floorParameters: FloorGenerationParameter =
     { Strategy = FloorGenerationStrategy.OpenFloor
       Tiles = [ defaultTile; tile2 ]
-      SizeRange = Rectangle.create (10, 10, 15, 15)
+      SizeRange = SadRogue.Primitives.Rectangle(10, 10, 15, 15)
       DefaultTile = defaultTile
       ID = FloorGenerationParameterID 5L }
 
@@ -40,7 +40,7 @@ let stairTileFeature: TileFeature =
       BlocksSight = false
       Representation =
         { AnsiCharacter = char (242)
-          ForegroundColor = Some <| Color.From(30, 30, 255)
+          ForegroundColor = Some <| Color.From(30, 30, 255, 255)
           BackGroundColor = Some <| Color.From(0, 240, 0, 50) }
       PossibleTiles = [ tile2 ]
       ExitPoint = true
@@ -54,7 +54,7 @@ let startingPointFeature: TileFeature =
       BlocksSight = false
       Representation =
         { AnsiCharacter = '@'
-          ForegroundColor = Some <| Color.From(0)
+          ForegroundColor = Some <| Color.Black
           BackGroundColor = None }
       PossibleTiles = [ tile2 ]
       ExitPoint = false
@@ -69,10 +69,10 @@ let FloorGeneratorTests () =
 
     let (tileMap, results) = FloorGenerator.Create floorParameters tileFeatureTable rng
 
-    Assert.Equal(Vector2i.create (16, 14) |> Rectangle.create, tileMap.MapSize)
-    Assert.Equal(defaultTile, tileMap.Tile Vector2i.Zero)
-    Assert.Equal(tile2, tileMap.Tile(Vector2i.Zero + Vector2i.create (1)))
-    Assert.Equal(defaultTile, tileMap.Tile tileMap.MapSize.MaxCoord)
-    Assert.Equal(tile2, tileMap.Tile(tileMap.MapSize.MaxCoord - Vector2i.create (1)))
-    Assert.Equal(defaultTile, tileMap.Tile tileMap.MapSize.MinCoord)
-    Assert.Equal(Vector2i.create (1), results.EntranceCoordinate)
+    Assert.Equal((17, 15) |> Rectangle.create, tileMap.MapSize)
+    Assert.Equal(defaultTile, tileMap.Tile Point.Zero)
+    Assert.Equal(tile2, tileMap.Tile(Point.create (1, 1)))
+    Assert.Equal(defaultTile, tileMap.Tile tileMap.MapSize.MaxExtent)
+    Assert.Equal(tile2, tileMap.Tile(tileMap.MapSize.MaxExtent.Translate(-1, -1)))
+    Assert.Equal(defaultTile, tileMap.Tile tileMap.MapSize.MinExtent)
+    Assert.Equal(Point.create (1, 1), results.EntranceCoordinate)

@@ -3,9 +3,10 @@ module Morgemil.Core.FloorGenerator
 open Morgemil.Math
 open Morgemil.Models
 open Morgemil.Models.Relational
+open SadRogue.Primitives
 
 type Results =
-    { EntranceCoordinate: Vector2i
+    { EntranceCoordinate: Point
       Parameters: FloorGenerationParameter }
 
 let Create
@@ -13,12 +14,12 @@ let Create
     (tileFeatures: IReadonlyTable<TileFeature, TileFeatureID>)
     (rng: RNG.DefaultRNG)
     : (TileMap * Results) =
-    let floorSize = Rectangle.create (RNG.RandomPoint rng parameters.SizeRange)
+    let floorSize = Rectangle(Point(0, 0), RNG.RandomPoint rng parameters.SizeRange)
 
     let tileMap: TileMap = TileMap(floorSize, parameters.DefaultTile)
 
-    let subFloorSize = floorSize.Expand(-1)
-    let mutable entraceCoordinate = Vector2i.Zero
+    let subFloorSize = floorSize.Expand(-1, -1)
+    let mutable entraceCoordinate = Point.Zero
 
     match parameters.Strategy with
     | FloorGenerationStrategy.OpenFloor ->
@@ -26,12 +27,12 @@ let Create
             parameters.Tiles |> Seq.tryFind (fun t -> not (t.BlocksMovement))
 
         match openFloorTile with
-        | Some (tile1: Tile) ->
-            subFloorSize.Coordinates
-            |> Seq.iter (fun (vec2: Vector2i) -> tileMap.Tile(vec2) <- tile1)
+        | Some(tile1: Tile) ->
+            subFloorSize.Positions().ToEnumerable()
+            |> Seq.iter (fun (vec2: Point) -> tileMap.Tile(vec2) <- tile1)
 
-            entraceCoordinate <- subFloorSize.MinCoord
-            let exitCoordinate = subFloorSize.MaxCoord
+            entraceCoordinate <- subFloorSize.MinExtent
+            let exitCoordinate = subFloorSize.MaxExtent
 
             let entrancePointFeature =
                 tileFeatures

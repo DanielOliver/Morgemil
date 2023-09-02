@@ -15,8 +15,8 @@ let defaultTile: Tile =
       BlocksSight = true
       Representation =
         { AnsiCharacter = '#'
-          ForegroundColor = Some <| Color.From(200, 200, 200)
-          BackGroundColor = Some <| Color.From(0, 0, 0) } }
+          ForegroundColor = Some <| Color.From(200, 200, 200, 255)
+          BackGroundColor = Some <| Color.Black } }
 
 let tile2 =
     { defaultTile with
@@ -28,7 +28,7 @@ let tile2 =
 let floorParameters: FloorGenerationParameter =
     { Strategy = FloorGenerationStrategy.OpenFloor
       Tiles = [ defaultTile; tile2 ]
-      SizeRange = Rectangle.create (10, 10, 15, 15)
+      SizeRange = SadRogue.Primitives.Rectangle(10, 10, 15, 15) // Rectangle.create (10, 10, 15, 15)
       DefaultTile = defaultTile
       ID = FloorGenerationParameterID 5L }
 
@@ -40,7 +40,7 @@ let stairTileFeature: TileFeature =
       BlocksSight = false
       Representation =
         { AnsiCharacter = char (242)
-          ForegroundColor = Some <| Color.From(30, 30, 255)
+          ForegroundColor = Some <| Color.From(30, 30, 255, 255)
           BackGroundColor = Some <| Color.From(0, 240, 0, 50) }
       PossibleTiles = [ tile2 ]
       ExitPoint = true
@@ -54,7 +54,7 @@ let startingPointFeature: TileFeature =
       BlocksSight = false
       Representation =
         { AnsiCharacter = '@'
-          ForegroundColor = Some <| Color.From(0)
+          ForegroundColor = Some <| Color.Black
           BackGroundColor = None }
       PossibleTiles = [ tile2 ]
       ExitPoint = false
@@ -87,7 +87,7 @@ let ``Can transition states`` () =
     Assert.Equal(GameBuilderStateType.SelectScenario, machine.CurrentState.GameBuilderStateType)
 
     match machine.CurrentState with
-    | GameBuilderState.SelectScenario (scenarioList, scenarioCallback) -> scenarioCallback (scenarioList.Head)
+    | GameBuilderState.SelectScenario(scenarioList, scenarioCallback) -> scenarioCallback (scenarioList.Head)
     | _ -> Assert.False(true)
 
     while machine.CurrentState.GameBuilderStateType = GameBuilderStateType.LoadedScenarioData do
@@ -96,7 +96,7 @@ let ``Can transition states`` () =
     Assert.Equal(GameBuilderStateType.WaitingForCurrentPlayer, machine.CurrentState.GameBuilderStateType)
 
     match machine.CurrentState with
-    | GameBuilderState.WaitingForCurrentPlayer (addPlayer) -> addPlayer (AncestryID 1L)
+    | GameBuilderState.WaitingForCurrentPlayer(addPlayer) -> addPlayer (AncestryID 1L)
     | _ -> Assert.False(true)
 
     Assert.Equal(GameBuilderStateType.LoadingGameProgress, machine.CurrentState.GameBuilderStateType)
@@ -107,7 +107,7 @@ let ``Can transition states`` () =
     Assert.Equal(GameBuilderStateType.GameBuilt, machine.CurrentState.GameBuilderStateType)
 
     match machine.CurrentState with
-    | GameBuilderState.GameBuilt (gameState, initialGameData) ->
+    | GameBuilderState.GameBuilt(gameState, initialGameData) ->
         Assert.Equal(6, initialGameData.Characters.Length)
         Assert.Equal(PlayerID 1L, initialGameData.CurrentPlayerID)
     | _ -> Assert.False(true)

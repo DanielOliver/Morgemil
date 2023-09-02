@@ -1,6 +1,5 @@
 namespace Morgemil.Models
 
-open Morgemil.Math
 open Morgemil.Models
 
 [<Record>]
@@ -9,7 +8,7 @@ type TileInstance =
       ID: TileInstanceID
       Tile: Tile
       TileFeature: TileFeature option
-      Position: Vector2i }
+      Position: Morgemil.Math.Point }
 
     interface Relational.IRow with
         member this.Key = this.ID.Key
