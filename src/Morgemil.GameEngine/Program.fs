@@ -17,8 +17,11 @@ let StartMainStateMachine () =
 
             let Init () =
                 SadConsole.Settings.WindowTitle <- "Morgemil"
+
                 SadConsole.Game.Instance.Screen <-
                     ScreenContainer(ScreenGameState.MapGeneratorConsole(gameState, initialGameData))
+
+                SadConsole.Game.Instance.DestroyDefaultStartingConsole()
 
             SadConsole.Game.Create(80, 40, "Cheepicus12.font")
             SadConsole.Game.Instance.OnStart <- new Action(Init)

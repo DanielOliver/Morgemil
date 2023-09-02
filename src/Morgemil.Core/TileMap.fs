@@ -27,13 +27,13 @@ type TileMap(mapSize: Rectangle, defaultTile: Tile, ?chunkData: (Tile * TileFeat
 
     member this.DefaultTile: Tile = defaultTile
     member this.MapSize: Rectangle = mapSize
+
     member this.GetCoordinateOffset(point: Point) : int = (mapSize.Width * point.Y) + point.X
 
     member this.Item
         with get (key: Point): TileInstance =
-            let offset = this.GetCoordinateOffset key
-
             if mapSize.Contains key then
+                let offset = this.GetCoordinateOffset key
                 let (tile, tileFeature) = chunk.[offset]
 
                 { TileInstance.ID = offset |> int64 |> TileInstanceID
@@ -75,10 +75,9 @@ type TileMap(mapSize: Rectangle, defaultTile: Tile, ?chunkData: (Tile * TileFeat
 
     member this.Tiles: TileInstance seq =
         chunk
-        |> Seq.zip (mapSize.Positions().ToEnumerable())
-        |> Seq.mapi (fun index (t, (u, v)) ->
+        |> Seq.mapi (fun index (u, v) ->
             { TileInstance.ID = index |> int64 |> TileInstanceID
-              Position = t
+              Position = (translateOffsetToCoordinate index)
               TileInstance.Tile = u
               TileFeature = v })
 

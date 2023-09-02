@@ -8,7 +8,6 @@ open Morgemil.Models.Relational
 open SadConsole
 open SadConsole.Input
 
-
 type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialGameData) =
     inherit SadConsole.Console(40, 40)
 
@@ -24,7 +23,7 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
 
     let createTileMapFromData (data: TileMapData) =
         let result =
-            TileMap(Rectangle(Point(0, 0), data.Size), data.DefaultTile, Array.zip data.Tiles data.TileFeatures)
+            TileMap(Rectangle(0, 0, data.Size.X, data.Size.Y), data.DefaultTile, Array.zip data.Tiles data.TileFeatures)
 
         result
 
@@ -124,7 +123,7 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
                     else
                         tile.Representation.AnsiCharacter.ToString()
 
-                base.Cursor.Position <- SadRogue.Primitives.Point(position.X, position.Y)
+                base.Cursor.Position <- position
 
                 base.Cursor.Print(ColoredString(tileCharacter, foregroundColor, backgroundColor))
                 |> ignore
@@ -137,7 +136,7 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
                     tile.Representation.ForegroundColor
                     |> Option.defaultValue SadRogue.Primitives.Color.White
 
-                base.Cursor.Position <- SadRogue.Primitives.Point(position.X, position.Y)
+                base.Cursor.Position <- position
 
                 base.Cursor.Print(
                     ColoredString(tile.Representation.AnsiCharacter.ToString(), foregroundColor, backgroundColor)
