@@ -18,7 +18,7 @@
         <Compile Include="Loop.fs"/>
         <Compile Include="SimpleGameStateMachine.fs"/>
         <Compile Include="GameBuilder.fs"/>
-        <Compile Include="SimpleGameBuilderMachine.fs"/>
+        <Compile Include="GameServerLocalhost.fs"/>
     </ItemGroup>
 
     <ItemGroup>

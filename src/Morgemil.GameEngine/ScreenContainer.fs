@@ -4,7 +4,7 @@ open Morgemil.Core
 open Morgemil.Models
 open SadConsole
 
-type ScreenContainer(initialState: ScreenGameState, gameBuilder: IGameBuilder) as this =
+type ScreenContainer(initialState: ScreenGameState, gameBuilder: IGameServer) as this =
     inherit ScreenObject()
     let mutable _state = initialState
     let mutable _selected: IScreenObject = null
@@ -29,27 +29,27 @@ type ScreenContainer(initialState: ScreenGameState, gameBuilder: IGameBuilder) a
 
     override this.Update(timeElapsed: System.TimeSpan) =
         match gameBuilder.CurrentState with
-        | GameBuilderState.GameBuilt(gameState, initialGameData) ->
+        | GameServerState.GameBuilt(gameState, initialGameData) ->
             if _state <> ScreenGameState.PlayingGame || _selected = null then
-                new MapGeneratorConsole(gameState, initialGameData, gameBuilder.Request)
-                |> select
+
+                new BasicCrawlConsole(gameState, initialGameData, gameBuilder.Request) |> select
 
                 _state <- ScreenGameState.PlayingGame
 
-        | GameBuilderState.SelectScenario(scenarios) ->
+        | GameServerState.SelectScenario(scenarios) ->
             if _state <> ScreenGameState.SelectingScenario || _selected = null then
                 new ScenarioSelectorConsole(
                     scenarios,
                     (fun t ->
                         printfn "Scenario chosen %s" t
-                        gameBuilder.Request(GameBuilderRequest.SelectScenario t))
+                        gameBuilder.Request(GameServerRequest.SelectScenario t))
                 )
                 |> select
 
                 _state <- ScreenGameState.SelectingScenario
 
-        | GameBuilderState.WaitingForCurrentPlayer ->
-            gameBuilder.Request(GameBuilderRequest.AddCurrentPlayer(AncestryID 1L))
+        | GameServerState.WaitingForCurrentPlayer ->
+            gameBuilder.Request(GameServerRequest.AddCurrentPlayer(AncestryID 1L))
 
         | _ -> printfn "%A" gameBuilder.CurrentState
 

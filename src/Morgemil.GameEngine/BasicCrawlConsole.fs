@@ -8,8 +8,8 @@ open Morgemil.Models.Relational
 open SadConsole
 open SadConsole.Input
 
-type MapGeneratorConsole
-    (gameState: IGameStateMachine, initialGameData: InitialGameData, gameBuilderRequest: GameBuilderRequest -> unit) =
+type BasicCrawlConsole
+    (gameState: IGameStateMachine, initialGameData: InitialGameData, gameBuilderRequest: GameServerRequest -> unit) =
     inherit SadConsole.Console(40, 40)
 
     let timeTable = TimeTable()
@@ -35,7 +35,7 @@ type MapGeneratorConsole
 
     override this.ProcessKeyboard(info: Keyboard) : bool =
         if info.IsKeyPressed Keys.Escape then
-            gameBuilderRequest (GameBuilderRequest.Workflow GameBuilderWorkflow.ScenarioSelection)
+            gameBuilderRequest (GameServerRequest.Workflow GameServerWorkflow.ScenarioSelection)
             true
         else
             false
@@ -59,6 +59,11 @@ type MapGeneratorConsole
                 { ActionRequestMove.CharacterID = characterID
                   ActionRequestMove.Direction = direction }
                 |> ActionRequest.Move)
+            |> Option.orElseWith (fun () ->
+                if SadConsole.GameHost.Instance.Keyboard.IsKeyReleased Keys.LeftShift then
+                    character1.ID |> ActionRequest.Pause |> Some
+                else
+                    None)
 
         let event =
             event

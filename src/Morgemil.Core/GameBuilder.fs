@@ -4,7 +4,7 @@ open Morgemil.Models
 
 
 [<RequireQualifiedAccess>]
-type GameBuilderStateType =
+type GameServerStateType =
     | WaitingForCurrentPlayer
     | GameBuilt
     | LoadingGameProgress
@@ -19,17 +19,17 @@ type InitialGameData =
       GameContext: GameContext }
 
 [<RequireQualifiedAccess>]
-type GameBuilderWorkflow = | ScenarioSelection
+type GameServerWorkflow = | ScenarioSelection
 
 [<RequireQualifiedAccess>]
-type GameBuilderRequest =
+type GameServerRequest =
     | AddCurrentPlayer of AncestryID: AncestryID
     | SelectScenario of ScenarioID: string
-    | Workflow of Workflow: GameBuilderWorkflow
+    | Workflow of Workflow: GameServerWorkflow
 
 /// The steps and state of a game that's being built.
 [<RequireQualifiedAccess>]
-type GameBuilderState =
+type GameServerState =
     | WaitingForCurrentPlayer
     | GameBuilt of GameEngine: IGameStateMachine * InitialGameData: InitialGameData
     | LoadingGameProgress of State: string
@@ -38,24 +38,24 @@ type GameBuilderState =
 
     member this.GameBuilderStateType =
         match this with
-        | GameBuilderState.WaitingForCurrentPlayer _ -> GameBuilderStateType.WaitingForCurrentPlayer
-        | GameBuilderState.GameBuilt _ -> GameBuilderStateType.GameBuilt
-        | GameBuilderState.LoadingGameProgress _ -> GameBuilderStateType.LoadingGameProgress
-        | GameBuilderState.LoadedScenarioData _ -> GameBuilderStateType.LoadedScenarioData
-        | GameBuilderState.SelectScenario _ -> GameBuilderStateType.SelectScenario
+        | GameServerState.WaitingForCurrentPlayer _ -> GameServerStateType.WaitingForCurrentPlayer
+        | GameServerState.GameBuilt _ -> GameServerStateType.GameBuilt
+        | GameServerState.LoadingGameProgress _ -> GameServerStateType.LoadingGameProgress
+        | GameServerState.LoadedScenarioData _ -> GameServerStateType.LoadedScenarioData
+        | GameServerState.SelectScenario _ -> GameServerStateType.SelectScenario
 
 /// The steps and state of a game that's being built.
 [<RequireQualifiedAccess>]
-type GameBuilderInternalStateRequest =
-    | QueryState of AsyncReplyChannel<GameBuilderState>
+type GameServerInternalStateRequest =
+    | QueryState of AsyncReplyChannel<GameServerState>
     | AddPlayer of AncestryID: AncestryID
     | SelectScenario of ScenarioName: string
     | SetScenarioData of ScenarioData: ScenarioData
     | SetGameData of GameEngine: IGameStateMachine * InitialGameData: InitialGameData
-    | RequestWorkflow of GameBuilderWorkflow
+    | RequestWorkflow of GameServerWorkflow
 
 /// The interface to interact with a game being built.
-type IGameBuilder =
+type IGameServer =
     /// The current state of the builder
-    abstract member CurrentState: GameBuilderState
-    abstract member Request: GameBuilderRequest -> unit
+    abstract member CurrentState: GameServerState
+    abstract member Request: GameServerRequest -> unit

@@ -81,34 +81,32 @@ let ``Can transition states`` () =
 
     let loadScenarioData (callback: ScenarioData -> unit) = callback scenarioData
 
-    let machine: IGameBuilder =
-        SimpleGameBuilderMachine(loadScenarioData) :> IGameBuilder
+    let machine: IGameServer = GameServerLocalhost(loadScenarioData) :> IGameServer
 
-    Assert.Equal(GameBuilderStateType.SelectScenario, machine.CurrentState.GameBuilderStateType)
+    Assert.Equal(GameServerStateType.SelectScenario, machine.CurrentState.GameBuilderStateType)
 
     match machine.CurrentState with
-    | GameBuilderState.SelectScenario(scenarioList) ->
-        machine.Request(GameBuilderRequest.SelectScenario scenarioList[0])
+    | GameServerState.SelectScenario(scenarioList) -> machine.Request(GameServerRequest.SelectScenario scenarioList[0])
     | _ -> Assert.False(true)
 
-    while machine.CurrentState.GameBuilderStateType = GameBuilderStateType.LoadedScenarioData
-          || machine.CurrentState.GameBuilderStateType = GameBuilderStateType.SelectScenario do
+    while machine.CurrentState.GameBuilderStateType = GameServerStateType.LoadedScenarioData
+          || machine.CurrentState.GameBuilderStateType = GameServerStateType.SelectScenario do
         System.Threading.Thread.Sleep 50
 
-    Assert.Equal(GameBuilderStateType.WaitingForCurrentPlayer, machine.CurrentState.GameBuilderStateType)
+    Assert.Equal(GameServerStateType.WaitingForCurrentPlayer, machine.CurrentState.GameBuilderStateType)
 
     match machine.CurrentState with
-    | GameBuilderState.WaitingForCurrentPlayer -> machine.Request(GameBuilderRequest.AddCurrentPlayer(AncestryID 1L))
+    | GameServerState.WaitingForCurrentPlayer -> machine.Request(GameServerRequest.AddCurrentPlayer(AncestryID 1L))
     | _ -> Assert.False(true)
 
-    while machine.CurrentState.GameBuilderStateType = GameBuilderStateType.WaitingForCurrentPlayer
-          || machine.CurrentState.GameBuilderStateType = GameBuilderStateType.LoadingGameProgress do
+    while machine.CurrentState.GameBuilderStateType = GameServerStateType.WaitingForCurrentPlayer
+          || machine.CurrentState.GameBuilderStateType = GameServerStateType.LoadingGameProgress do
         System.Threading.Thread.Sleep 50
 
-    Assert.Equal(GameBuilderStateType.GameBuilt, machine.CurrentState.GameBuilderStateType)
+    Assert.Equal(GameServerStateType.GameBuilt, machine.CurrentState.GameBuilderStateType)
 
     match machine.CurrentState with
-    | GameBuilderState.GameBuilt(gameState, initialGameData) ->
+    | GameServerState.GameBuilt(gameState, initialGameData) ->
         Assert.Equal(6, initialGameData.Characters.Length)
         Assert.Equal(PlayerID 1L, initialGameData.CurrentPlayerID)
     | _ -> Assert.False(true)

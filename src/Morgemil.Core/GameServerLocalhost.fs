@@ -4,13 +4,13 @@ open Morgemil.Core
 open Morgemil.Models
 open Morgemil.Math
 
-type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) =
+type GameServerLocalhost(loadScenarioData: (ScenarioData -> unit) -> unit) =
     let mutable currentPlayerID: PlayerID option = None
     let mutable chosenAncestryID: AncestryID option = None
     let mutable chosenScenarioName: string option = None
     let mutable loadedScenarioData: ScenarioData option = None
 
-    let mutable lastKnownState = GameBuilderState.LoadingGameProgress "Loading"
+    let mutable lastKnownState = GameServerState.LoadingGameProgress "Loading"
 
     let buildGameState (callback: IGameStateMachine * InitialGameData -> unit) =
         async {
@@ -105,65 +105,65 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
         |> Async.Start
 
     let loopWorkAgent =
-        MailboxProcessor<GameBuilderInternalStateRequest>.Start(fun inbox ->
-            let rec loop (previousState: GameBuilderState) =
+        MailboxProcessor<GameServerInternalStateRequest>.Start(fun inbox ->
+            let rec loop (previousState: GameServerState) =
                 lastKnownState <- previousState
 
                 async {
                     let! message = inbox.Receive()
 
                     match message with
-                    | GameBuilderInternalStateRequest.RequestWorkflow workflow ->
+                    | GameServerInternalStateRequest.RequestWorkflow workflow ->
                         match previousState with
-                        | GameBuilderState.GameBuilt(gameState, _) ->
+                        | GameServerState.GameBuilt(gameState, _) ->
                             // Cleans up any outstanding game instances.
                             gameState.Stop()
                         | _ -> ()
 
-                        do! loop (GameBuilderState.SelectScenario([ "Main Scenario" ]))
+                        do! loop (GameServerState.SelectScenario([ "Main Scenario" ]))
 
-                    | GameBuilderInternalStateRequest.QueryState replyChannel ->
+                    | GameServerInternalStateRequest.QueryState replyChannel ->
                         replyChannel.Reply previousState
                         do! loop previousState
 
-                    | GameBuilderInternalStateRequest.AddPlayer ancestryID ->
+                    | GameServerInternalStateRequest.AddPlayer ancestryID ->
                         currentPlayerID <- PlayerID 1L |> Some
                         chosenAncestryID <- Some ancestryID
-                        buildGameState (GameBuilderInternalStateRequest.SetGameData >> inbox.Post)
-                        do! loop (GameBuilderState.LoadingGameProgress "Creating Game")
+                        buildGameState (GameServerInternalStateRequest.SetGameData >> inbox.Post)
+                        do! loop (GameServerState.LoadingGameProgress "Creating Game")
 
-                    | GameBuilderInternalStateRequest.SelectScenario scenarioName ->
+                    | GameServerInternalStateRequest.SelectScenario scenarioName ->
                         chosenScenarioName <- Some scenarioName
 
-                        loadScenarioData (GameBuilderInternalStateRequest.SetScenarioData >> inbox.Post)
+                        loadScenarioData (GameServerInternalStateRequest.SetScenarioData >> inbox.Post)
 
-                        do! loop (GameBuilderState.LoadingGameProgress "Loading Scenario Data")
+                        do! loop (GameServerState.LoadingGameProgress "Loading Scenario Data")
 
-                    | GameBuilderInternalStateRequest.SetScenarioData scenarioData ->
+                    | GameServerInternalStateRequest.SetScenarioData scenarioData ->
                         loadedScenarioData <- Some scenarioData
 
-                        do! loop GameBuilderState.WaitingForCurrentPlayer
-                    | GameBuilderInternalStateRequest.SetGameData(gameState, initialGameData) ->
-                        do! loop (GameBuilderState.GameBuilt(gameState, initialGameData))
+                        do! loop GameServerState.WaitingForCurrentPlayer
+                    | GameServerInternalStateRequest.SetGameData(gameState, initialGameData) ->
+                        do! loop (GameServerState.GameBuilt(gameState, initialGameData))
 
                 }
 
-            loop (GameBuilderState.SelectScenario([ "Main Scenario" ])))
+            loop (GameServerState.SelectScenario([ "Main Scenario" ])))
 
     do
         // Primes the agent loop.
-        loopWorkAgent.PostAndReply((fun replyChannel -> GameBuilderInternalStateRequest.QueryState replyChannel), 5000)
+        loopWorkAgent.PostAndReply((fun replyChannel -> GameServerInternalStateRequest.QueryState replyChannel), 5000)
         |> ignore
 
-    interface IGameBuilder with
+    interface IGameServer with
         /// Gets the current state of the game loop
-        member this.CurrentState: GameBuilderState = lastKnownState
+        member this.CurrentState: GameServerState = lastKnownState
 
-        member this.Request(request: GameBuilderRequest) =
+        member this.Request(request: GameServerRequest) =
             match request with
-            | GameBuilderRequest.SelectScenario scenarioId ->
-                loopWorkAgent.Post(GameBuilderInternalStateRequest.SelectScenario scenarioId)
-            | GameBuilderRequest.AddCurrentPlayer ancestryID ->
-                loopWorkAgent.Post(GameBuilderInternalStateRequest.AddPlayer ancestryID)
-            | GameBuilderRequest.Workflow workflow ->
-                loopWorkAgent.Post(GameBuilderInternalStateRequest.RequestWorkflow workflow)
+            | GameServerRequest.SelectScenario scenarioId ->
+                loopWorkAgent.Post(GameServerInternalStateRequest.SelectScenario scenarioId)
+            | GameServerRequest.AddCurrentPlayer ancestryID ->
+                loopWorkAgent.Post(GameServerInternalStateRequest.AddPlayer ancestryID)
+            | GameServerRequest.Workflow workflow ->
+                loopWorkAgent.Post(GameServerInternalStateRequest.RequestWorkflow workflow)
