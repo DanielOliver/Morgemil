@@ -9,7 +9,11 @@ open SadConsole
 open SadConsole.Input
 
 type BasicCrawlConsole
-    (gameState: IGameStateMachine, initialGameData: InitialGameData, gameBuilderRequest: GameServerRequest -> unit) =
+    (
+        gameState: IGameStateMachine,
+        initialGameData: InitialGameData,
+        gameServerRequestCallback: GameServerRequest -> unit
+    ) =
     inherit SadConsole.Console(40, 40)
 
     let timeTable = TimeTable()
@@ -35,7 +39,7 @@ type BasicCrawlConsole
 
     override this.ProcessKeyboard(info: Keyboard) : bool =
         if info.IsKeyPressed Keys.Escape then
-            gameBuilderRequest (GameServerRequest.Workflow GameServerWorkflow.ScenarioSelection)
+            gameServerRequestCallback (GameServerRequest.Workflow GameServerWorkflow.ScenarioSelection)
             true
         else
             false

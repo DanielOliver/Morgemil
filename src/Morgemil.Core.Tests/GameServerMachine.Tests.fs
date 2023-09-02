@@ -1,4 +1,4 @@
-module Morgemil.Core.Tests.GameBuilderMachine
+module Morgemil.Core.Tests.GameServerMachine
 
 open Xunit
 open Morgemil.Core
@@ -83,27 +83,27 @@ let ``Can transition states`` () =
 
     let machine: IGameServer = GameServerLocalhost(loadScenarioData) :> IGameServer
 
-    Assert.Equal(GameServerStateType.SelectScenario, machine.CurrentState.GameBuilderStateType)
+    Assert.Equal(GameServerStateType.SelectScenario, machine.CurrentState.GameServerStateType)
 
     match machine.CurrentState with
     | GameServerState.SelectScenario(scenarioList) -> machine.Request(GameServerRequest.SelectScenario scenarioList[0])
     | _ -> Assert.False(true)
 
-    while machine.CurrentState.GameBuilderStateType = GameServerStateType.LoadedScenarioData
-          || machine.CurrentState.GameBuilderStateType = GameServerStateType.SelectScenario do
+    while machine.CurrentState.GameServerStateType = GameServerStateType.LoadedScenarioData
+          || machine.CurrentState.GameServerStateType = GameServerStateType.SelectScenario do
         System.Threading.Thread.Sleep 50
 
-    Assert.Equal(GameServerStateType.WaitingForCurrentPlayer, machine.CurrentState.GameBuilderStateType)
+    Assert.Equal(GameServerStateType.WaitingForCurrentPlayer, machine.CurrentState.GameServerStateType)
 
     match machine.CurrentState with
     | GameServerState.WaitingForCurrentPlayer -> machine.Request(GameServerRequest.AddCurrentPlayer(AncestryID 1L))
     | _ -> Assert.False(true)
 
-    while machine.CurrentState.GameBuilderStateType = GameServerStateType.WaitingForCurrentPlayer
-          || machine.CurrentState.GameBuilderStateType = GameServerStateType.LoadingGameProgress do
+    while machine.CurrentState.GameServerStateType = GameServerStateType.WaitingForCurrentPlayer
+          || machine.CurrentState.GameServerStateType = GameServerStateType.LoadingGameProgress do
         System.Threading.Thread.Sleep 50
 
-    Assert.Equal(GameServerStateType.GameBuilt, machine.CurrentState.GameBuilderStateType)
+    Assert.Equal(GameServerStateType.GameBuilt, machine.CurrentState.GameServerStateType)
 
     match machine.CurrentState with
     | GameServerState.GameBuilt(gameState, initialGameData) ->

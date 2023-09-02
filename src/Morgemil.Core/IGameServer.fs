@@ -36,7 +36,7 @@ type GameServerState =
     | LoadedScenarioData of ScenarioData: ScenarioData
     | SelectScenario of Scenarios: string list
 
-    member this.GameBuilderStateType =
+    member this.GameServerStateType =
         match this with
         | GameServerState.WaitingForCurrentPlayer _ -> GameServerStateType.WaitingForCurrentPlayer
         | GameServerState.GameBuilt _ -> GameServerStateType.GameBuilt
