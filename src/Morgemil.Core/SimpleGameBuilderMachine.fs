@@ -10,6 +10,8 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
     let mutable chosenScenarioName: string option = None
     let mutable loadedScenarioData: ScenarioData option = None
 
+    let mutable lastKnownState = GameBuilderState.LoadingGameProgress "Loading"
+
     let buildGameState (callback: IGameStateMachine * InitialGameData -> unit) =
         async {
 
@@ -102,11 +104,11 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
         }
         |> Async.Start
 
-
-
     let loopWorkAgent =
         MailboxProcessor<GameBuilderStateRequest>.Start(fun inbox ->
             let rec loop (previousState: GameBuilderState) =
+                lastKnownState <- previousState
+
                 async {
                     let! message = inbox.Receive()
 
@@ -148,7 +150,8 @@ type SimpleGameBuilderMachine(loadScenarioData: (ScenarioData -> unit) -> unit) 
                 )
             ))
 
+
     interface IGameBuilder with
         /// Gets the current state of the game loop
-        member this.CurrentState: GameBuilderState =
-            loopWorkAgent.PostAndReply((fun replyChannel -> GameBuilderStateRequest.QueryState replyChannel), 5000)
+        member this.CurrentState: GameBuilderState = lastKnownState
+// loopWorkAgent.PostAndReply((fun replyChannel -> GameBuilderStateRequest.QueryState replyChannel), 5000)

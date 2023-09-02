@@ -32,6 +32,8 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
             Table.AddRow loopContext.Characters character
 
     override this.Update(timeElapsed: TimeSpan) =
+        base.Update(timeElapsed)
+
         let event =
             if SadConsole.GameHost.Instance.Keyboard.IsKeyReleased Keys.Left then
                 (character1.ID, Point.create (-1, 0)) |> Some
@@ -64,7 +66,8 @@ type MapGeneratorConsole(gameState: IGameStateMachine, initialGameData: InitialG
         | GameState.Results(results, acknowledgeCallback) ->
             results
             |> List.iter (fun event ->
-                printfn "%A" event
+                //DEBUG: UNCOMMENT FOR EVENT PRINTING
+                // printfn "%A" event
 
                 match event.Event with
                 | ActionEvent.MapChange mapChange ->
