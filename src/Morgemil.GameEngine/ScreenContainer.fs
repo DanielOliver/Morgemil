@@ -8,9 +8,11 @@ type ScreenContainer(initialState: ScreenGameState, gameServer: IGameServer) as 
     inherit ScreenObject()
     let mutable _state = initialState
     let mutable _selected: IScreenObject = null
+    let mutable _reposition: (unit -> unit) = (fun () -> ())
 
     let clearSelected () =
         if _selected <> null then
+            _reposition <- (fun () -> ())
             _selected.IsVisible <- false
             // _selected.IsFocused <- false
             _selected.IsEnabled <- false
@@ -32,7 +34,9 @@ type ScreenContainer(initialState: ScreenGameState, gameServer: IGameServer) as 
         | GameServerState.GameBuilt(gameState, initialGameData) ->
             if _state <> ScreenGameState.PlayingGame || _selected = null then
 
-                new BasicCrawlConsole(gameState, initialGameData, gameServer.Request) |> select
+                let crawl = new BasicCrawlConsole(gameState, initialGameData, gameServer.Request)
+                crawl |> select
+                _reposition <- crawl.Reposition
 
                 _state <- ScreenGameState.PlayingGame
 
@@ -56,3 +60,5 @@ type ScreenContainer(initialState: ScreenGameState, gameServer: IGameServer) as 
         base.Update(timeElapsed)
 
     member this.State = _state
+
+    member this.Reposition() = _reposition ()

@@ -18,13 +18,17 @@ type BasicCrawlConsole
 
     let timeTable = TimeTable()
     let gameContext = TrackedEntity initialGameData.GameContext
-    let character1 = initialGameData.Characters.[0]
+    let character1ID = initialGameData.Characters.[0].ID
+    let character1 () = initialGameData.Characters.[0]
 
     let mutable loopContext: LoopContext =
         { LoopContext.Characters = CharacterTable(timeTable)
           TimeTable = timeTable
           TileMap = initialGameData.TileMap
           GameContext = gameContext }
+
+    let sidebar = new CrawlSidebar(20, 40, 20, initialGameData, loopContext)
+    do base.Children.Add(sidebar)
 
     let createTileMapFromData (data: TileMapData) =
         let result =
@@ -36,6 +40,7 @@ type BasicCrawlConsole
         for character in initialGameData.Characters do
             Table.AddRow loopContext.Characters character
 
+    member this.Reposition() = sidebar.Reposition()
 
     override this.ProcessKeyboard(info: Keyboard) : bool =
         if info.IsKeyPressed Keys.Escape then
@@ -50,13 +55,13 @@ type BasicCrawlConsole
 
         let event =
             if SadConsole.GameHost.Instance.Keyboard.IsKeyReleased Keys.Left then
-                (character1.ID, Point.create (-1, 0)) |> Some
+                (character1ID, Point.create (-1, 0)) |> Some
             else if SadConsole.GameHost.Instance.Keyboard.IsKeyReleased Keys.Right then
-                (character1.ID, Point.create (1, 0)) |> Some
+                (character1ID, Point.create (1, 0)) |> Some
             else if SadConsole.GameHost.Instance.Keyboard.IsKeyReleased Keys.Down then
-                (character1.ID, Point.create (0, 1)) |> Some
+                (character1ID, Point.create (0, 1)) |> Some
             else if SadConsole.GameHost.Instance.Keyboard.IsKeyReleased Keys.Up then
-                (character1.ID, Point.create (0, -1)) |> Some
+                (character1ID, Point.create (0, -1)) |> Some
             else
                 None
             |> Option.map (fun (characterID, direction) ->
@@ -65,7 +70,7 @@ type BasicCrawlConsole
                 |> ActionRequest.Move)
             |> Option.orElseWith (fun () ->
                 if SadConsole.GameHost.Instance.Keyboard.IsKeyReleased Keys.LeftShift then
-                    character1.ID |> ActionRequest.Pause |> Some
+                    character1ID |> ActionRequest.Pause |> Some
                 else
                     None)
 
@@ -73,7 +78,7 @@ type BasicCrawlConsole
             event
             |> Option.orElseWith (fun () ->
                 if SadConsole.GameHost.Instance.Keyboard.IsKeyReleased Keys.Space then
-                    character1.ID |> ActionRequest.GoToNextLevel |> Some
+                    character1ID |> ActionRequest.GoToNextLevel |> Some
                 else
                     None)
 
@@ -112,6 +117,7 @@ type BasicCrawlConsole
 
             acknowledgeCallback ()
 
+        sidebar.LoopContext <- loopContext
         base.Clear()
 
         for tileInstance in loopContext.TileMap.Tiles do

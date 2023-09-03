@@ -59,7 +59,7 @@ type GameServerLocalhost(loadScenarioData: (ScenarioData -> unit) -> unit) =
 
             Table.AddRow characterTable character1
 
-            for i in [ 2..6 ] do
+            for i in [ 2 .. (RNG.Range rng 4 6) ] do
 
                 let npc1 =
                     { Character.ID = Table.GenerateKey characterTable
@@ -78,6 +78,12 @@ type GameServerLocalhost(loadScenarioData: (ScenarioData -> unit) -> unit) =
             let gameLoop =
                 Loop(
                     { StaticLoopContext.ScenarioData = scenarioData
+                      Scenario =
+                        { Scenario.Date = System.DateTime.MinValue
+                          Description = "Empty Scenario"
+                          Name = "Empty Scenario"
+                          Version = "0.0.0"
+                          BasePath = "empty" }
                       RNG = rng },
                     { LoopContext.Characters = characterTable
                       TileMap = tileMap
@@ -98,6 +104,12 @@ type GameServerLocalhost(loadScenarioData: (ScenarioData -> unit) -> unit) =
                 { InitialGameData.Characters = characterTable.ByTicks |> Seq.toArray
                   TileMap = tileMap
                   CurrentPlayerID = currentPlayerID.Value
+                  Scenario =
+                    { Scenario.Date = System.DateTime.MinValue
+                      Description = "Empty Scenario is the best kind of scenario"
+                      Name = "Basic Crawl"
+                      Version = "0.0.0"
+                      BasePath = "empty" }
                   GameContext = gameContext }
 
             callback (gameState, initialGameData)

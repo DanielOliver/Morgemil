@@ -14,6 +14,7 @@
         </None>
         <Compile Include="ScreenGameState.fs"/>
         <Compile Include="SadConsoleExtensions.fs"/>
+        <Compile Include="CrawlSidebar.fs"/>
         <Compile Include="BasicCrawlConsole.fs"/>
         <Compile Include="ScenarioSelectorConsole.fs"/>
         <Compile Include="ScreenContainer.fs"/>
