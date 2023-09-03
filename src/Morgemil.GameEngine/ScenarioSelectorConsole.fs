@@ -16,6 +16,8 @@ type ScenarioSelectorConsole(scenarios: string list, chooseScenario: (string -> 
     override this.ProcessKeyboard(info: Keyboard) : bool =
         if info.KeysPressed.Count = 0 then
             base.ProcessKeyboard(info)
-        else
+        else if info.IsKeyPressed Keys.D0 then
             chooseScenario (info.KeysPressed[0].Character.ToString())
             true
+        else
+            false

@@ -16,6 +16,9 @@ type BasicCrawlConsole
     ) =
     inherit SadConsole.Console(40, 40)
 
+    let sidebar = new CrawlSidebar(20, 40, 20)
+    do base.Children.Add(sidebar)
+
     let timeTable = TimeTable()
     let gameContext = TrackedEntity initialGameData.GameContext
     let character1 = initialGameData.Characters.[0]
@@ -36,6 +39,7 @@ type BasicCrawlConsole
         for character in initialGameData.Characters do
             Table.AddRow loopContext.Characters character
 
+    member this.Reposition() = sidebar.Reposition()
 
     override this.ProcessKeyboard(info: Keyboard) : bool =
         if info.IsKeyPressed Keys.Escape then
