@@ -12,6 +12,7 @@ type LoopContext =
 
 type StaticLoopContext =
     { ScenarioData: ScenarioData
+      Scenario: Scenario
       RNG: RNG.DefaultRNG }
 
 module Loop =

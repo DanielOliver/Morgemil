@@ -16,6 +16,7 @@ type InitialGameData =
     { TileMap: TileMap
       Characters: Character[]
       CurrentPlayerID: PlayerID
+      Scenario: Scenario
       GameContext: GameContext }
 
 [<RequireQualifiedAccess>]
