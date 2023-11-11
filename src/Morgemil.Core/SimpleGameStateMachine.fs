@@ -77,7 +77,7 @@ type SimpleGameStateMachine
         /// Gets the current state of the game loop
         member this.CurrentState: GameState =
             try
-                loopWorkAgent.PostAndReply((fun replyChannel -> GameStateRequest.QueryState replyChannel), 10)
+                loopWorkAgent.PostAndReply((fun replyChannel -> GameStateRequest.QueryState replyChannel), 20)
             with _ ->
                 GameState.Processing
 
