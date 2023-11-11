@@ -15,8 +15,8 @@
 
     <ItemGroup>
         <PackageReference Include="MathNet.Numerics" Version="5.0.0"/>
-        <PackageReference Update="FSharp.Core" Version="7.0.401" />
-        <PackageReference Include="TheSadRogue.Primitives" Version="1.5.1"/>
+        <PackageReference Update="FSharp.Core" Version="7.0.401"/>
+        <PackageReference Include="TheSadRogue.Primitives" Version="1.6.0-rc3"/>
     </ItemGroup>
 
 </Project>

@@ -28,10 +28,10 @@
 
     <ItemGroup>
         <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303"/>
-        <PackageReference Include="SadConsole" Version="10.0.2" />
-        <PackageReference Include="SadConsole.Host.MonoGame" Version="10.0.0" />
-        <PackageReference Update="FSharp.Core" Version="7.0.401" />
-        <PackageReference Include="TheSadRogue.Primitives" Version="1.5.1"/>
+        <PackageReference Include="SadConsole" Version="10.0.2"/>
+        <PackageReference Include="SadConsole.Host.MonoGame" Version="10.0.0"/>
+        <PackageReference Update="FSharp.Core" Version="7.0.401"/>
+        <PackageReference Include="TheSadRogue.Primitives" Version="1.6.0-rc3"/>
         <PackageReference Include="TheSadRogue.Primitives.MonoGame" Version="1.1.1"/>
     </ItemGroup>
 

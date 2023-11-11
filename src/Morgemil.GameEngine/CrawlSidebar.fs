@@ -12,7 +12,7 @@ type CrawlSidebar(width: int, height: int, xOffset: int, initialGameData: Initia
 
     do
         base.Position <- Point(xOffset, 0)
-        base.DefaultBackground <- Color.PaleVioletRed
+        base.Surface.DefaultBackground <- Color.PaleVioletRed
         this.Reposition()
 
     member this.Reposition() =
