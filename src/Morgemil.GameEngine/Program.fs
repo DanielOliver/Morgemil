@@ -15,6 +15,7 @@ let StartMainStateMachine () =
         let container = ScreenContainer(ScreenGameState.SelectingScenario, mainGameState)
         SadConsole.Game.Instance.Screen <- container
         SadConsole.Game.Instance.DestroyDefaultStartingConsole()
+        SadConsole.Game.Instance.MonoGameInstance.Window.Title <- "Morgemil"
         SadConsole.Game.Instance.MonoGameInstance.WindowResized.Add(fun _ -> container.Reposition())
 
     SadConsole.Game.Create(60, 30, "Cheepicus12.font")
