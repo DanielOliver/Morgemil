@@ -28,7 +28,7 @@ let Create
 
         match openFloorTile with
         | Some(tile1: Tile) ->
-            subFloorSize.Positions().ToEnumerable()
+            subFloorSize.Positions()
             |> Seq.iter (fun (vec2: Point) -> tileMap.Tile(vec2) <- tile1)
 
             entraceCoordinate <- subFloorSize.MinExtent

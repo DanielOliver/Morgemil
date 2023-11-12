@@ -6,6 +6,7 @@
 
     <ItemGroup>
         <Compile Include="GameState.fs"/>
+        <Compile Include="EventRecorder.fs"/>
         <Compile Include="Relational.fs"/>
         <Compile Include="MorTagMatching.fs"/>
         <Compile Include="Tracked.fs"/>

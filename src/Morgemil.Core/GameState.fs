@@ -26,7 +26,6 @@ type GameStateWaitingType =
 type GameStateType =
     | Processing
     | WaitingForInput
-//    | WaitingForAI
 
 [<RequireQualifiedAccess>]
 type GameState =
@@ -46,7 +45,7 @@ type GameStateRequest =
     | QueryState of AsyncReplyChannel<GameState>
     | SetResults of Steps: Step list
     | Kill
-    | Acknowledge
+    | Acknowledge of Count: int
 
 type IGameStateMachine =
     /// Stops the game engine

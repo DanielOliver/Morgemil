@@ -21,7 +21,7 @@ let exampleItem1 =
       Character.ID = CharacterID 51L
       Character.NextAction = Character.DefaultTickActions.Head
       Character.TickActions = Character.DefaultTickActions
-      Character.Floor = 1L<Floor>
+      Character.FloorID = FloorID 1L
       Character.NextTick = 1L<TimeTick> }
 
 let exampleItem2 =
@@ -30,7 +30,7 @@ let exampleItem2 =
       Character.ID = CharacterID 52L
       Character.NextAction = Character.DefaultTickActions.Head
       Character.TickActions = Character.DefaultTickActions
-      Character.Floor = 1L<Floor>
+      Character.FloorID = FloorID 1L
       Character.NextTick = 1L<TimeTick> }
 
 let exampleItem3 =
@@ -39,7 +39,7 @@ let exampleItem3 =
       Character.ID = CharacterID 53L
       Character.NextAction = Character.DefaultTickActions.Head
       Character.TickActions = Character.DefaultTickActions
-      Character.Floor = 1L<Floor>
+      Character.FloorID = FloorID 1L
       Character.NextTick = 1L<TimeTick> }
 
 
@@ -57,7 +57,7 @@ let defaultTile: Tile =
 
 let exampleGameContext =
     { GameContext.CurrentTimeTick = 1L<TimeTick>
-      Floor = 1L<Floor> }
+      FloorID = FloorID 1L }
 
 [<Fact>]
 let ``Can yield Results without updates`` () =
@@ -100,17 +100,17 @@ let ``Can yield Results without updates`` () =
             Step.Updates =
               [ { TrackedEvent.OldValue =
                     { GameContext.CurrentTimeTick = 1L<TimeTick>
-                      Floor = 1L<Floor> }
+                      FloorID = FloorID 1L }
                   NewValue =
                     { GameContext.CurrentTimeTick = 2L<TimeTick>
-                      Floor = 1L<Floor> } }
+                      FloorID = FloorID 1L } }
                 |> StepItem.GameContext
                 { TrackedEvent.OldValue =
                     { GameContext.CurrentTimeTick = 2L<TimeTick>
-                      Floor = 1L<Floor> }
+                      FloorID = FloorID 1L }
                   NewValue =
                     { GameContext.CurrentTimeTick = 3L<TimeTick>
-                      Floor = 1L<Floor> } }
+                      FloorID = FloorID 1L } }
                 |> StepItem.GameContext ] }
           { Step.Event = ActionEvent.Empty 3
             Step.Updates = [ exampleItem2 |> TableEvent.Added |> StepItem.Character ] }

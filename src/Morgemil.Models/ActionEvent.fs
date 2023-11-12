@@ -32,11 +32,13 @@ type EventTileFeatureChanged =
 
 [<RequireQualifiedAccess>]
 type ActionEvent =
+    | ActionArchetype of ActionArchetype
     | AfterMove of EventAfterMove
     | RefusedMove of EventRefusedMoved
-    // | MapChange of EventMapChange
     | MapChange
     | Pause of EventPause
     | TileFeatureChanged of EventTileFeatureChanged
+    /// Only purpose is to fix rare cases where SOME response is needed. Probably a code smell if used.
     | Empty of int
+    /// Only purpose is to capture any outstanding events. Has no meaning on its own.
     | EndResponse of int

@@ -19,6 +19,7 @@
         <Compile Include="Translation.ToDTO.fs"/>
         <Compile Include="Validator.fs"/>
         <Compile Include="DataLoader.fs"/>
+        <Compile Include="EventRecorder.fs"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -54,7 +55,7 @@
     <ItemGroup>
         <PackageReference Include="FSharp.SystemTextJson" Version="1.2.42"/>
         <PackageReference Include="System.Text.Json" Version="7.0.3"/>
-        <PackageReference Update="FSharp.Core" Version="7.0.401" />
+        <PackageReference Update="FSharp.Core" Version="7.0.401"/>
     </ItemGroup>
 
 </Project>

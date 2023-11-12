@@ -24,7 +24,8 @@ let ``Can transition states`` () =
             exampleLoop,
             (fun () -> GameStateWaitingType.WaitingForInput),
             Table.EmptyScenarioData,
-            (fun () -> ActionRequest.Pause(CharacterID 0L))
+            (fun () -> ActionRequest.Pause(CharacterID 0L)),
+            EventRecorder.Ignore
         )
         :> IGameStateMachine
 

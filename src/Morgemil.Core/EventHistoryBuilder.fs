@@ -28,7 +28,8 @@ type EventHistoryBuilder(tracked: ITrackedHistory list) =
 
     member this.Yield(x: ActionEvent) : Step list =
         match x with
-        | ActionEvent.Empty _ when _events.IsEmpty -> []
+        | ActionEvent.Empty _
+        | ActionEvent.EndResponse _ when _events.IsEmpty -> []
         | _ ->
             let step =
                 { Step.Event = x

@@ -17,8 +17,18 @@ type TimeComparer() =
 
 type TimeTable() =
     let items = SortedSet<Character>([], TimeComparer())
-    member this.Next = items.Min
-    member this.NextAction = items.Min.NextAction
+    /// This dictionary is a nasty way to keep track of what characters are currently working through their action ticks. Primarily because any step could mess with time.
+    let mutable inProgress = Dictionary<CharacterID, Character>()
+
+    member this.Next =
+        if inProgress.Count = 0 then
+            items.Min
+        else
+            (inProgress |> Seq.head).Value
+
+    member this.NextAction = this.Next.NextAction
+
+    member this.Items = items
 
     member this.WaitingType: GameStateWaitingType =
         match items.Min.NextAction with
@@ -31,6 +41,11 @@ type TimeTable() =
         member this.Add next = next |> items.Add |> ignore
 
         member this.Update old next =
+            if next.NextAction <> next.TickActions.Head then
+                inProgress.[next.ID] <- next
+            else
+                inProgress.Remove(next.ID) |> ignore
+
             old |> items.Remove |> ignore
             next |> items.Add |> ignore
 
