@@ -3,6 +3,10 @@ namespace Morgemil.Core
 open Morgemil.Models.Relational
 open Morgemil.Models
 
+
+type ITrackedHistory =
+    abstract member HistoryCallback: (StepItem -> unit) with get, set
+
 type UniqueIndex<'tRow, 'tKey when 'tKey: equality and 'tRow :> IRow>(getKey: 'tRow -> 'tKey) =
     let _dictionary = new System.Collections.Generic.Dictionary<'tKey, 'tRow>()
 
@@ -129,17 +133,24 @@ type KeyGeneration<'tKey>(toKey: int64 -> 'tKey) =
             _nextKey <- _nextKey + 1L
             key |> toKey
 
-type Table<'tRow, 'tKey when 'tRow :> IRow>(fromKey: 'tKey -> int64, generator: IGenerateKeys<'tKey>) =
+type Table<'tRow, 'tKey when 'tRow :> IRow>
+    (fromKey: 'tKey -> int64, generator: IGenerateKeys<'tKey>, historyIdentity: TableEvent<'tRow> -> StepItem) =
     let _primaryKey = new PrimaryIndex<'tRow>() :> IPrimaryIndex<'tRow, int64>
 
     let _primaryKeyIndexCast = _primaryKey :> IIndex<'tRow>
     let mutable _indices = [ _primaryKeyIndexCast ]
     let mutable _recordEvent = ignore
+    let mutable _trackedRecordEvent = ignore
 
-    new(toKey, fromKey) = Table(fromKey, KeyGeneration(toKey))
+    new(toKey, fromKey, history) = Table(fromKey, KeyGeneration(toKey), history)
 
     member this.AddIndex index = _indices <- index :: _indices
     member this.PrimaryIndex = _primaryKeyIndexCast
+
+    interface ITrackedHistory with
+        member this.HistoryCallback
+            with get () = _trackedRecordEvent
+            and set value = _trackedRecordEvent <- value
 
     interface ITableEventHistory<'tRow> with
         member this.HistoryCallback
@@ -163,6 +174,7 @@ type Table<'tRow, 'tKey when 'tRow :> IRow>(fromKey: 'tKey -> int64, generator: 
         member this.Remove row =
             _indices |> List.iter (fun t -> t.Remove row)
             _recordEvent (TableEvent.Removed row)
+            (TableEvent.Removed row) |> historyIdentity |> _trackedRecordEvent
 
         member this.RemoveByKey key =
             match key |> fromKey |> _primaryKey.TryGetRow with
@@ -177,10 +189,12 @@ type Table<'tRow, 'tKey when 'tRow :> IRow>(fromKey: 'tKey -> int64, generator: 
                 _indices |> List.iter (fun t -> t.Update oldRow row)
 
                 _recordEvent (TableEvent.Updated(oldRow, row))
+                TableEvent.Updated(oldRow, row) |> historyIdentity |> _trackedRecordEvent
             | None ->
                 generator.CheckKey key
                 _indices |> List.iter (fun t -> t.Add row)
                 _recordEvent (TableEvent.Added row)
+                TableEvent.Added row |> historyIdentity |> _trackedRecordEvent
 
         member this.Update _ row =
             match _primaryKey.TryGetRow (row :> IRow).Key with
@@ -188,6 +202,7 @@ type Table<'tRow, 'tKey when 'tRow :> IRow>(fromKey: 'tKey -> int64, generator: 
                 _indices |> List.iter (fun t -> t.Update oldRow row)
 
                 _recordEvent (TableEvent.Updated(oldRow, row))
+                TableEvent.Updated(oldRow, row) |> historyIdentity |> _trackedRecordEvent
             | None -> ()
 
 type ReadonlyTable<'tRow, 'tKey when 'tRow :> IRow>(rows: seq<'tRow>, fromKey: ^tKey -> int64) =

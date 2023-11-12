@@ -68,7 +68,7 @@ let ``Can yield Results without updates`` () =
     let attributesTable1 = CharacterAttributesTable()
 
     use eventBuilder =
-        new EventHistoryBuilder(table1, trackedGameContext, tileMap, attributesTable1)
+        new EventHistoryBuilder(trackedGameContext, tileMap, [ table1; attributesTable1 ])
 
     let results =
         eventBuilder {

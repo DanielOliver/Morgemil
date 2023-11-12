@@ -5,10 +5,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Compile Include="GameState.fs"/>
         <Compile Include="Relational.fs"/>
         <Compile Include="MorTagMatching.fs"/>
         <Compile Include="Tracked.fs"/>
-        <Compile Include="GameState.fs"/>
         <Compile Include="TileFeatureTable.fs"/>
         <Compile Include="TimeTable.fs"/>
         <Compile Include="CharacterTable.fs"/>

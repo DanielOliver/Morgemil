@@ -4,28 +4,18 @@ open System
 open Morgemil.Core
 open Morgemil.Models
 
-type EventHistoryBuilder
-    (
-        characterTable: CharacterTable,
-        gameContext: TrackedEntity<GameContext>,
-        tileMap: TileMap,
-        characterAttributesTable: CharacterAttributesTable
-    ) =
+type EventHistoryBuilder(gameContext: TrackedEntity<GameContext>, tileMap: TileMap, tracked: ITrackedHistory list) =
     let mutable _events: StepItem list = []
     let mutable isDisposed = false
+    let historyCallbacks = tracked |> List.map (fun t -> (t, t.HistoryCallback))
 
-    let characterTableCallback = Table.GetHistoryCallback characterTable
     let gameContextCallback = Tracked.GetHistoryCallback gameContext
     let tileMapTrackedCallback = Tracked.GetHistoryCallback tileMap
 
-    let characterAttributesTableCallback =
-        Table.GetHistoryCallback characterAttributesTable
-
     do
-        Table.SetHistoryCallback characterAttributesTable (fun t ->
-            _events <- (t |> StepItem.CharacterAttributes) :: _events)
+        historyCallbacks
+        |> List.iter (fun (tracked, _) -> tracked.HistoryCallback <- (fun t -> _events <- t :: _events))
 
-        Table.SetHistoryCallback characterTable (fun t -> _events <- (t |> StepItem.Character) :: _events)
         Tracked.SetHistoryCallback gameContext (fun t -> _events <- (t |> StepItem.GameContext) :: _events)
         Tracked.SetHistoryCallback tileMap (fun t -> _events <- (t |> StepItem.CompleteMapChange) :: _events)
 
@@ -60,8 +50,9 @@ type EventHistoryBuilder
     interface IDisposable with
         member this.Dispose() =
             if not isDisposed then
-                Table.SetHistoryCallback characterTable characterTableCallback
-                Table.SetHistoryCallback characterAttributesTable characterAttributesTableCallback
+                historyCallbacks
+                |> List.iter (fun (tracked, callback) -> tracked.HistoryCallback <- callback)
+
                 Tracked.SetHistoryCallback gameContext gameContextCallback
                 Tracked.SetHistoryCallback tileMap tileMapTrackedCallback
                 isDisposed <- true

@@ -9,3 +9,6 @@ type ITrackedEntity<'T> =
     abstract member Value: 'T with get, set
     abstract member Get: 'T
     abstract member Set: 'T -> unit
+
+type ITrackedHistory<'T> =
+    abstract member HistoryCallback: ('T -> unit) with get, set

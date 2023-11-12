@@ -144,10 +144,9 @@ type Loop(world: StaticLoopContext, initialContext: LoopContext) =
     member this.ProcessRequest(event: ActionRequest) : Step list =
         use builder =
             new EventHistoryBuilder(
-                context.Characters,
                 context.GameContext,
                 context.TileMap,
-                context.CharacterAttributes
+                [ context.Characters; context.CharacterAttributes ]
             )
 
         match context.TimeTable.NextAction with
