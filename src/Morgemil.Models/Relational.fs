@@ -56,12 +56,6 @@ type IReadonlyTable<'tRow, 'tKey when 'tRow :> IRow> =
     abstract member Items: 'tRow seq
     abstract member Item: 'tKey -> 'tRow with get
 
-
-type IFixedTable<'tRow, 'tKey when 'tRow :> IRow> =
-    inherit IReadonlyTable<'tRow, 'tKey>
-    abstract member Update: 'tRow -> 'tRow -> unit
-    abstract member Item: 'tKey -> 'tRow with get, set
-
 type ITable<'tRow, 'tKey when 'tRow :> IRow> =
     inherit IReadonlyTable<'tRow, 'tKey>
     abstract member GenerateKey: unit -> 'tKey

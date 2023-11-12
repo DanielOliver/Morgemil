@@ -100,23 +100,8 @@ module Loop =
                                 (world.ScenarioData.TileFeatures)
                                 rng
 
-                        let createTileMapFromData (data: TileMapData) =
-                            let result =
-                                TileMap(
-                                    Rectangle.WithPositionAndSize(Point(0, 0), data.Size),
-                                    data.DefaultTile,
-                                    Array.zip data.Tiles data.TileFeatures
-                                )
-
-                            result
-
-                        // let tileMap = createTileMapFromData newtileMap.TileMapData
                         Tracked.Replace context.TileMap (fun t -> newTileMap.TileMapData)
-
-                        // context <- { context with TileMap = tileMap }
                         Tracked.Replace context.GameContext (fun t -> { t with Floor = nextFloor })
-
-                        // let items = context.Characters |> Table.Items |> Seq.toArray
 
                         Table.AddRow
                             context.Characters
@@ -133,10 +118,6 @@ module Loop =
                                 Floor = nextFloor })
                         |> Seq.iter (Table.AddRow context.Characters)
 
-                        // yield
-                        //     { Characters = context.Characters |> Table.Items |> Array.ofSeq
-                        //       TileMapData = context.TileMap.TileMapData }
-                        //     |> ActionEvent.MapChange
                         yield ActionEvent.MapChange
 
             yield ActionEvent.EndResponse 0

@@ -87,33 +87,6 @@ type TileMap(mapSize: Rectangle, defaultTile: Tile, ?chunkData: (Tile * TileFeat
 
     member this.GetCoordinateOffset(point: Point) : int = getCoordinateOffset point
 
-    interface Relational.IReadonlyTable<TileInstance, int> with
-        member this.Item
-            with get offset =
-                let key = translateOffsetToCoordinate offset
-                getTileInstanceOrDefault key
-
-        member this.Items = this.Tiles
-        member this.TryGetRow(var0) = failwith "todo"
-
-
-    interface Relational.IFixedTable<TileInstance, int> with
-        member this.Update _ row =
-            if mapSize.Contains row.Position then
-                let offset = this.GetCoordinateOffset row.Position
-                chunk.[offset] <- (row.Tile, row.TileFeature)
-                ()
-
-        member this.Item
-            with get (offset: int): TileInstance =
-                let key = translateOffsetToCoordinate offset
-                getTileInstanceOrDefault key
-            and set key row =
-                if mapSize.Contains row.Position then
-                    let offset = this.GetCoordinateOffset row.Position
-                    chunk.[offset] <- (row.Tile, row.TileFeature)
-
-
     member this.Item
         with get (key: Point): TileInstance = getTileInstanceOrDefault key
         and set (key: Point) (tile: Tile, tileFeature: TileFeature option) =

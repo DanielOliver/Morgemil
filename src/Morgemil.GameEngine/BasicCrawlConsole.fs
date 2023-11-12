@@ -93,17 +93,8 @@ type BasicCrawlConsole
                 //DEBUG: UNCOMMENT FOR EVENT PRINTING
                 // printfn "%A" event
 
-
                 match event.Event with
-                | ActionEvent.MapChange ->
-                    // let timeTable = TimeTable()
-                    // loopContext <-
-                    //     { loopContext with
-                    //         // TileMap = createTileMapFromData mapChange.TileMapData
-                    //         // Characters = CharacterTable(timeTable)
-                    //         TimeTable = timeTable }
-                    ()
-                // mapChange.Characters |> Array.iter (Table.AddRow loopContext.Characters)
+                | ActionEvent.MapChange -> printfn "Changed Map"
                 | _ -> ()
 
                 event.Updates
