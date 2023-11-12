@@ -104,16 +104,18 @@ type BasicCrawlConsole
                             TimeTable = timeTable }
 
                     mapChange.Characters |> Array.iter (Table.AddRow loopContext.Characters)
-                | _ ->
-                    event.Updates
-                    |> List.iter (fun tableEvent ->
-                        match tableEvent with
-                        | StepItem.Character character ->
-                            match character with
-                            | TableEvent.Added(row) -> Table.AddRow loopContext.Characters row
-                            | TableEvent.Updated(_, row) -> Table.AddRow loopContext.Characters row
-                            | TableEvent.Removed(row) -> Table.RemoveRow loopContext.Characters row
-                        | StepItem.GameContext context -> Tracked.Update gameContext context.NewValue))
+                | _ -> ()
+
+                event.Updates
+                |> List.rev
+                |> List.iter (fun tableEvent ->
+                    match tableEvent with
+                    | StepItem.Character character ->
+                        match character with
+                        | TableEvent.Added(row) -> Table.AddRow loopContext.Characters row
+                        | TableEvent.Updated(_, row) -> Table.AddRow loopContext.Characters row
+                        | TableEvent.Removed(row) -> Table.RemoveRow loopContext.Characters row
+                    | StepItem.GameContext context -> Tracked.Update gameContext context.NewValue))
 
             acknowledgeCallback ()
 
