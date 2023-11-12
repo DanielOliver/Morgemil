@@ -8,6 +8,8 @@ open Morgemil.Models.Tracked
 type StepItem =
     | Character of Character TableEvent
     | GameContext of GameContext TrackedEvent
+    | CompleteMapChange of TileMapData TrackedEvent
+    | TileInstance of TileInstance TableEvent
 
 type Step =
     { Event: ActionEvent

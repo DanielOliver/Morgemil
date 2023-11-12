@@ -93,17 +93,17 @@ type BasicCrawlConsole
                 //DEBUG: UNCOMMENT FOR EVENT PRINTING
                 // printfn "%A" event
 
+
                 match event.Event with
-                | ActionEvent.MapChange mapChange ->
-                    let timeTable = TimeTable()
-
-                    loopContext <-
-                        { loopContext with
-                            TileMap = createTileMapFromData mapChange.TileMapData
-                            Characters = CharacterTable(timeTable)
-                            TimeTable = timeTable }
-
-                    mapChange.Characters |> Array.iter (Table.AddRow loopContext.Characters)
+                | ActionEvent.MapChange ->
+                    // let timeTable = TimeTable()
+                    // loopContext <-
+                    //     { loopContext with
+                    //         // TileMap = createTileMapFromData mapChange.TileMapData
+                    //         // Characters = CharacterTable(timeTable)
+                    //         TimeTable = timeTable }
+                    ()
+                // mapChange.Characters |> Array.iter (Table.AddRow loopContext.Characters)
                 | _ -> ()
 
                 event.Updates
@@ -114,7 +114,9 @@ type BasicCrawlConsole
                         | TableEvent.Added(row) -> Table.AddRow loopContext.Characters row
                         | TableEvent.Updated(_, row) -> Table.AddRow loopContext.Characters row
                         | TableEvent.Removed(row) -> Table.RemoveRow loopContext.Characters row
-                    | StepItem.GameContext context -> Tracked.Update gameContext context.NewValue))
+                    | StepItem.GameContext context -> Tracked.Update gameContext context.NewValue
+                    | StepItem.CompleteMapChange context -> Tracked.Update loopContext.TileMap context.NewValue
+                    | StepItem.TileInstance _ -> failwith "NotImplemented"))
 
             acknowledgeCallback ()
 

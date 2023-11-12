@@ -51,6 +51,19 @@ let exampleItem3 =
       Character.NextTick = 1L<TimeTick>
       Character.Tags = Map.empty }
 
+
+let defaultTile: Tile =
+    { ID = TileID 1L
+      Name = "Dungeon Wall"
+      TileType = TileType.Solid
+      Description = "Dungeon floors are rock, paved cobblestone, and very slipper when bloody."
+      BlocksMovement = true
+      BlocksSight = true
+      Representation =
+        { AnsiCharacter = '#'
+          ForegroundColor = Some <| Color.From(200, 200, 200, 255)
+          BackGroundColor = Some <| Color.Black } }
+
 let exampleGameContext =
     { GameContext.CurrentTimeTick = 1L<TimeTick>
       Floor = 1L<Floor> }
@@ -60,8 +73,9 @@ let ``Can yield Results without updates`` () =
     let timeTable = TimeTable()
     let table1 = CharacterTable(timeTable)
     let trackedGameContext = TrackedEntity(exampleGameContext)
+    let tileMap = TileMap(Rectangle.create (10, 10), defaultTile)
 
-    use eventBuilder = new EventHistoryBuilder(table1, trackedGameContext)
+    use eventBuilder = new EventHistoryBuilder(table1, trackedGameContext, tileMap)
 
     let results =
         eventBuilder {
