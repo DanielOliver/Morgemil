@@ -6,7 +6,8 @@ open SadRogue.Primitives
 open SadConsole
 
 let StartMainStateMachine () =
-    let mainGameState = GameServerLocalhost(DataLoader.LoadScenarioData) :> IGameServer
+    let mainGameState =
+        GameServerLocalhost(DataLoader.LoadScenarioData, EventRecorder.fromCurrentDirectory ()) :> IGameServer
 
     let Init (gamehost) =
 

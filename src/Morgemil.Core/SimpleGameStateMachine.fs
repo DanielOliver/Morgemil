@@ -8,14 +8,17 @@ type SimpleGameStateMachine
         gameLoop: ActionRequest -> Step list,
         waitingType: unit -> GameStateWaitingType,
         scenarioData: ScenarioData,
-        nextMove: unit -> ActionRequest
+        nextMove: unit -> ActionRequest,
+        eventRecorder: EventRecorder
     ) =
 
     let loopWorkAgent =
         MailboxProcessor<GameStateRequest>.Start(fun inbox ->
             let processRequest (actionRequest: ActionRequest) (callback: Step list -> unit) =
                 async {
+                    eventRecorder.RecordActionRequest actionRequest
                     let results = gameLoop actionRequest
+                    eventRecorder.RecordSteps results
                     callback results
                 }
                 |> Async.Start

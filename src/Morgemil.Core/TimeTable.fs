@@ -8,6 +8,12 @@ open Morgemil.Models.Relational
 type TimeComparer() =
     interface IComparer<Character> with
         member x.Compare(a, b) =
+
+            // if a.NextAction <> a.TickActions.Head then
+            //     -1
+            // else if b.NextAction <> b.TickActions.Head then
+            //     1
+            // else
             let compareTime = int64(a.NextTick).CompareTo(b.NextTick)
 
             if compareTime = 0 then

@@ -4,7 +4,7 @@ open Morgemil.Core
 open Morgemil.Models
 open Morgemil.Math
 
-type GameServerLocalhost(loadScenarioData: (ScenarioData -> unit) -> unit) =
+type GameServerLocalhost(loadScenarioData: (ScenarioData -> unit) -> unit, eventRecorder: EventRecorder) =
     let mutable currentPlayerID: PlayerID option = None
     let mutable chosenAncestryID: AncestryID option = None
     let mutable chosenScenarioName: string option = None
@@ -106,7 +106,8 @@ type GameServerLocalhost(loadScenarioData: (ScenarioData -> unit) -> unit) =
                     gameLoop.ProcessRequest,
                     (fun () -> gameLoop.WaitingType),
                     scenarioData,
-                    (fun () -> gameLoop.NextMove)
+                    (fun () -> gameLoop.NextMove),
+                    eventRecorder
                 )
                 :> IGameStateMachine
 

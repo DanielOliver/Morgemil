@@ -166,8 +166,6 @@ type Loop(world: StaticLoopContext, initialContext: LoopContext) =
 
         | ActionArchetype.CharacterEngineInput
         | ActionArchetype.CharacterPlayerInput ->
-
             let (steps, nextContext) = Loop.processRequest world context builder event
-
             context <- nextContext
             steps
