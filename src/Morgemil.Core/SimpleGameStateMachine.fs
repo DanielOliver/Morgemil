@@ -46,7 +46,7 @@ type SimpleGameStateMachine
                         match waitingType () with
                         | GameStateWaitingType.WaitingForInput -> currentState <- GameState.WaitingForInput inputFunc
                         | GameStateWaitingType.WaitingForEngine ->
-                            processRequest (ActionRequest.Engine) (GameStateRequest.SetResults >> inbox.Post)
+                            processRequest ActionRequest.Engine (GameStateRequest.SetResults >> inbox.Post)
                         | GameStateWaitingType.WaitingForAI ->
                             processRequest (nextMove ()) (GameStateRequest.SetResults >> inbox.Post)
                             currentState <- GameState.Processing
@@ -62,7 +62,7 @@ type SimpleGameStateMachine
 
                     match message with
                     | GameStateRequest.Kill -> ()
-                    | _ -> do! loop (currentState)
+                    | _ -> do! loop currentState
                 }
 
             loop (GameState.WaitingForInput inputFunc))
