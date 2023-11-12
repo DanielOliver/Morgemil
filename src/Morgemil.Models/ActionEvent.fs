@@ -34,7 +34,8 @@ type EventTileFeatureChanged =
 type ActionEvent =
     | AfterMove of EventAfterMove
     | RefusedMove of EventRefusedMoved
-    | MapChange of EventMapChange
+    // | MapChange of EventMapChange
+    | MapChange
     | Pause of EventPause
     | TileFeatureChanged of EventTileFeatureChanged
     | Empty of int

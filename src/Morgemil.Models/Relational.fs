@@ -24,7 +24,7 @@ type TableEvent<'tRow when 'tRow :> IRow> =
         match this with
         | Added x -> x |> mapper |> Added
         | Removed x -> x |> mapper |> Removed
-        | Updated (x, y) -> (x |> mapper, y |> mapper) |> Updated
+        | Updated(x, y) -> (x |> mapper, y |> mapper) |> Updated
 
 type IGenerateKeys<'tKey> =
     abstract member GenerateKey: unit -> 'tKey
@@ -64,6 +64,3 @@ type ITable<'tRow, 'tKey when 'tRow :> IRow> =
     abstract member Remove: 'tRow -> unit
     abstract member Item: 'tKey -> 'tRow with get, set
     abstract member RemoveByKey: 'tKey -> unit
-
-type ITableEventHistory<'tRow when 'tRow :> IRow> =
-    abstract member HistoryCallback: (TableEvent<'tRow> -> unit) with get, set

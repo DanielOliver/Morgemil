@@ -6,6 +6,7 @@ open Morgemil.Math
 
 type LoopContext =
     { Characters: CharacterTable
+      CharacterAttributes: CharacterAttributesTable
       TileMap: TileMap
       GameContext: GameContext TrackedEntity
       TimeTable: TimeTable }
@@ -92,47 +93,33 @@ module Loop =
                     if context.TileMap.[moveCharacter.Position] |> TileMap.isExitPoint then
 
                         let rng = world.RNG
+                        let nextFloor = context.GameContext.Value.Floor + 1L<Floor>
 
-                        let (newtileMap, mapGenerationResults) =
+                        let (newTileMap, mapGenerationResults) =
                             FloorGenerator.Create
                                 (world.ScenarioData.FloorGenerationParameters.Items |> Seq.head)
                                 (world.ScenarioData.TileFeatures)
                                 rng
 
-                        let createTileMapFromData (data: TileMapData) =
-                            let result =
-                                TileMap(
-                                    Rectangle.WithPositionAndSize(Point(0, 0), data.Size),
-                                    data.DefaultTile,
-                                    Array.zip data.Tiles data.TileFeatures
-                                )
-
-                            result
-
-                        let tileMap = createTileMapFromData newtileMap.TileMapData
-
-                        context <- { context with TileMap = tileMap }
-                        Tracked.Replace context.GameContext (fun t -> { t with Floor = t.Floor + 1L<Floor> })
-
-                        let items = context.Characters |> Table.Items |> Seq.toArray
+                        Tracked.Replace context.TileMap (fun t -> newTileMap.TileMapData)
+                        Tracked.Replace context.GameContext (fun t -> { t with Floor = nextFloor })
 
                         Table.AddRow
                             context.Characters
                             { moveCharacter with
                                 NextTick = moveCharacter.NextTick + 1000L<TimeTick>
-                                NextAction = moveCharacter.NextAction.NextInList moveCharacter.TickActions }
+                                NextAction = moveCharacter.NextAction.NextInList moveCharacter.TickActions
+                                Floor = nextFloor }
 
-                        items
+                        context.Characters
+                        |> Table.Items
                         |> Seq.map (fun t ->
                             { t with
                                 Position = (context.TileMap.EntryPoints |> Seq.head) + int (t.ID.Key)
-                                Floor = context.GameContext.Value.Floor })
+                                Floor = nextFloor })
                         |> Seq.iter (Table.AddRow context.Characters)
 
-                        yield
-                            { Characters = context.Characters |> Table.Items |> Array.ofSeq
-                              TileMapData = context.TileMap.TileMapData }
-                            |> ActionEvent.MapChange
+                        yield ActionEvent.MapChange
 
             yield ActionEvent.EndResponse 0
         },
@@ -155,7 +142,13 @@ type Loop(world: StaticLoopContext, initialContext: LoopContext) =
                   Direction = direction }
 
     member this.ProcessRequest(event: ActionRequest) : Step list =
-        use builder = new EventHistoryBuilder(context.Characters, context.GameContext)
+        use builder =
+            new EventHistoryBuilder(
+                [ context.Characters
+                  context.CharacterAttributes
+                  context.GameContext
+                  context.TileMap ]
+            )
 
         match context.TimeTable.NextAction with
         | ActionArchetype.CharacterAfterInput

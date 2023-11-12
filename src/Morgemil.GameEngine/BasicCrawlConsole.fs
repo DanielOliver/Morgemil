@@ -17,12 +17,13 @@ type BasicCrawlConsole
     inherit SadConsole.Console(40, 40)
 
     let timeTable = TimeTable()
-    let gameContext = TrackedEntity initialGameData.GameContext
+    let gameContext = TrackedEntity(initialGameData.GameContext, StepItem.GameContext)
     let character1ID = initialGameData.Characters.[0].ID
     let character1 () = initialGameData.Characters.[0]
 
     let mutable loopContext: LoopContext =
         { LoopContext.Characters = CharacterTable(timeTable)
+          CharacterAttributes = CharacterAttributesTable()
           TimeTable = timeTable
           TileMap = initialGameData.TileMap
           GameContext = gameContext }
@@ -39,6 +40,9 @@ type BasicCrawlConsole
     do
         for character in initialGameData.Characters do
             Table.AddRow loopContext.Characters character
+
+        for characterAttributes in initialGameData.CharacterAttributes do
+            Table.AddRow loopContext.CharacterAttributes characterAttributes
 
     member this.Reposition() = sidebar.Reposition()
 
@@ -94,26 +98,25 @@ type BasicCrawlConsole
                 // printfn "%A" event
 
                 match event.Event with
-                | ActionEvent.MapChange mapChange ->
-                    let timeTable = TimeTable()
+                | ActionEvent.MapChange -> printfn "Changed Map"
+                | _ -> ()
 
-                    loopContext <-
-                        { loopContext with
-                            TileMap = createTileMapFromData mapChange.TileMapData
-                            Characters = CharacterTable(timeTable)
-                            TimeTable = timeTable }
-
-                    mapChange.Characters |> Array.iter (Table.AddRow loopContext.Characters)
-                | _ ->
-                    event.Updates
-                    |> List.iter (fun tableEvent ->
-                        match tableEvent with
-                        | StepItem.Character character ->
-                            match character with
-                            | TableEvent.Added(row) -> Table.AddRow loopContext.Characters row
-                            | TableEvent.Updated(_, row) -> Table.AddRow loopContext.Characters row
-                            | TableEvent.Removed(row) -> Table.RemoveRow loopContext.Characters row
-                        | StepItem.GameContext context -> Tracked.Update gameContext context.NewValue))
+                event.Updates
+                |> List.iter (fun tableEvent ->
+                    match tableEvent with
+                    | StepItem.Character character ->
+                        match character with
+                        | TableEvent.Added(row) -> Table.AddRow loopContext.Characters row
+                        | TableEvent.Updated(_, row) -> Table.AddRow loopContext.Characters row
+                        | TableEvent.Removed(row) -> Table.RemoveRow loopContext.Characters row
+                    | StepItem.CharacterAttributes characterAttributes ->
+                        match characterAttributes with
+                        | TableEvent.Added(row) -> Table.AddRow loopContext.CharacterAttributes row
+                        | TableEvent.Updated(_, row) -> Table.AddRow loopContext.CharacterAttributes row
+                        | TableEvent.Removed(row) -> Table.RemoveRow loopContext.CharacterAttributes row
+                    | StepItem.GameContext context -> Tracked.Update gameContext context.NewValue
+                    | StepItem.CompleteMapChange context -> Tracked.Update loopContext.TileMap context.NewValue
+                    | StepItem.TileInstance _ -> failwith "NotImplemented"))
 
             acknowledgeCallback ()
 

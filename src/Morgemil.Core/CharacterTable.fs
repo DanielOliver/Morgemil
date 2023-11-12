@@ -3,7 +3,7 @@ namespace Morgemil.Core
 open Morgemil.Models
 
 type CharacterTable(timeTable: TimeTable) as this =
-    inherit Table<Character, CharacterID>(CharacterID, (fun (key) -> key.Key))
+    inherit Table<Character, CharacterID>(CharacterID, (fun (key) -> key.Key), StepItem.Character)
 
     do this.AddIndex timeTable
 

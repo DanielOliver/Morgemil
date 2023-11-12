@@ -2,16 +2,16 @@ namespace Morgemil.Core
 
 open Morgemil.Models.Tracked
 
-type TrackedEntity<'T>(initialValue: 'T) =
-    let mutable _recordEvent = ignore
+type TrackedEntity<'T when 'T: equality>(initialValue: 'T, history: 'T TrackedEvent -> StepItem) =
+    let mutable _recordTrackedEvent = ignore
     let mutable _value = initialValue
 
     member this.Value = _value
 
-    interface ITrackedEventHistory<'T> with
+    interface ITrackedHistory with
         member this.HistoryCallback
-            with get () = _recordEvent
-            and set x = _recordEvent <- x
+            with set value = _recordTrackedEvent <- value
+            and get () = _recordTrackedEvent
 
     interface ITrackedEntity<'T> with
         member this.Value
@@ -20,9 +20,11 @@ type TrackedEntity<'T>(initialValue: 'T) =
                 let oldValue = _value
                 _value <- x
 
-                _recordEvent
+                if _value <> oldValue then
                     { TrackedEvent.NewValue = _value
                       OldValue = oldValue }
+                    |> history
+                    |> _recordTrackedEvent
 
         member this.Get = _value
 
@@ -30,16 +32,12 @@ type TrackedEntity<'T>(initialValue: 'T) =
             let oldValue = _value
             _value <- x
 
-            _recordEvent
+            if _value <> oldValue then
                 { TrackedEvent.NewValue = _value
                   OldValue = oldValue }
+                |> history
+                |> _recordTrackedEvent
 
 module Tracked =
-    let GetHistoryCallback (entity: 'T :> ITrackedEventHistory<'U>) : (TrackedEvent<'U> -> unit) =
-        entity.HistoryCallback
-
-    let SetHistoryCallback (entity: 'T :> ITrackedEventHistory<'U>) (callback: (TrackedEvent<'U> -> unit)) : unit =
-        entity.HistoryCallback <- callback
-
     let Update (entity: 'T :> ITrackedEntity<'U>) (value: 'U) : unit = entity.Set value
     let Replace (entity: 'T :> ITrackedEntity<'U>) (convert: 'U -> 'U) : unit = entity.Get |> convert |> entity.Set

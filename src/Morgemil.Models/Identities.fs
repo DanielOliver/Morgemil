@@ -50,7 +50,7 @@ type TileID =
 
 [<Struct>]
 type TileInstanceID =
-    | TileInstanceID of int64
+    | TileInstanceID of int
 
     member this.Key =
         let (TileInstanceID rowID) = this

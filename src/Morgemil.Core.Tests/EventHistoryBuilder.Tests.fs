@@ -17,39 +17,43 @@ let exampleAncestry1 =
 
 let exampleItem1 =
     { Character.PlayerID = None
-      Character.Ancestry = exampleAncestry1
       Character.Position = Point.Identity
       Character.ID = CharacterID 51L
       Character.NextAction = Character.DefaultTickActions.Head
       Character.TickActions = Character.DefaultTickActions
-      Character.Heritage = []
       Character.Floor = 1L<Floor>
-      Character.NextTick = 1L<TimeTick>
-      Character.Tags = Map.empty }
+      Character.NextTick = 1L<TimeTick> }
 
 let exampleItem2 =
     { Character.PlayerID = None
-      Character.Ancestry = exampleAncestry1
       Character.Position = Point.Identity
       Character.ID = CharacterID 52L
       Character.NextAction = Character.DefaultTickActions.Head
       Character.TickActions = Character.DefaultTickActions
-      Character.Heritage = []
       Character.Floor = 1L<Floor>
-      Character.NextTick = 1L<TimeTick>
-      Character.Tags = Map.empty }
+      Character.NextTick = 1L<TimeTick> }
 
 let exampleItem3 =
     { Character.PlayerID = None
-      Character.Ancestry = exampleAncestry1
       Character.Position = Point.Identity
       Character.ID = CharacterID 53L
       Character.NextAction = Character.DefaultTickActions.Head
       Character.TickActions = Character.DefaultTickActions
-      Character.Heritage = []
       Character.Floor = 1L<Floor>
-      Character.NextTick = 1L<TimeTick>
-      Character.Tags = Map.empty }
+      Character.NextTick = 1L<TimeTick> }
+
+
+let defaultTile: Tile =
+    { ID = TileID 1L
+      Name = "Dungeon Wall"
+      TileType = TileType.Solid
+      Description = "Dungeon floors are rock, paved cobblestone, and very slipper when bloody."
+      BlocksMovement = true
+      BlocksSight = true
+      Representation =
+        { AnsiCharacter = '#'
+          ForegroundColor = Some <| Color.From(200, 200, 200, 255)
+          BackGroundColor = Some <| Color.Black } }
 
 let exampleGameContext =
     { GameContext.CurrentTimeTick = 1L<TimeTick>
@@ -59,9 +63,12 @@ let exampleGameContext =
 let ``Can yield Results without updates`` () =
     let timeTable = TimeTable()
     let table1 = CharacterTable(timeTable)
-    let trackedGameContext = TrackedEntity(exampleGameContext)
+    let trackedGameContext = TrackedEntity(exampleGameContext, StepItem.GameContext)
+    let tileMap = TileMap(Rectangle.create (10, 10), defaultTile)
+    let attributesTable1 = CharacterAttributesTable()
 
-    use eventBuilder = new EventHistoryBuilder(table1, trackedGameContext)
+    use eventBuilder =
+        new EventHistoryBuilder([ table1; attributesTable1; trackedGameContext; tileMap ])
 
     let results =
         eventBuilder {
@@ -72,6 +79,10 @@ let ``Can yield Results without updates`` () =
                     Tracked.Replace trackedGameContext (fun t ->
                         { t with
                             CurrentTimeTick = 2L<TimeTick> })
+
+                    Tracked.Replace trackedGameContext (fun t ->
+                        { t with
+                            CurrentTimeTick = 3L<TimeTick> })
 
                     yield ActionEvent.Empty 2
                     Table.AddRow table1 exampleItem2
@@ -92,6 +103,13 @@ let ``Can yield Results without updates`` () =
                       Floor = 1L<Floor> }
                   NewValue =
                     { GameContext.CurrentTimeTick = 2L<TimeTick>
+                      Floor = 1L<Floor> } }
+                |> StepItem.GameContext
+                { TrackedEvent.OldValue =
+                    { GameContext.CurrentTimeTick = 2L<TimeTick>
+                      Floor = 1L<Floor> }
+                  NewValue =
+                    { GameContext.CurrentTimeTick = 3L<TimeTick>
                       Floor = 1L<Floor> } }
                 |> StepItem.GameContext ] }
           { Step.Event = ActionEvent.Empty 3

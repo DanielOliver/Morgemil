@@ -14,22 +14,17 @@ module Character =
           ActionArchetype.CharacterPlayerInput
           ActionArchetype.CharacterAfterInput ]
 
+
 [<Record>]
 type Character =
-    {
-        [<RecordId>]
-        ID: CharacterID
-        Ancestry: Ancestry
-        /// Ordered by priority
-        Heritage: Heritage list
-        Position: Point
-        NextTick: int64<TimeTick>
-        Floor: int64<Floor>
-        NextAction: ActionArchetype
-        TickActions: ActionArchetype list
-        PlayerID: PlayerID option
-        Tags: Map<string, string>
-    }
+    { [<RecordId>]
+      ID: CharacterID
+      Position: Point
+      NextTick: int64<TimeTick>
+      Floor: int64<Floor>
+      NextAction: ActionArchetype
+      TickActions: ActionArchetype list
+      PlayerID: PlayerID option }
 
     interface Relational.IRow with
         [<System.Text.Json.Serialization.JsonIgnore>]

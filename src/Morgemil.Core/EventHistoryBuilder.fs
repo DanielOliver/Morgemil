@@ -4,22 +4,22 @@ open System
 open Morgemil.Core
 open Morgemil.Models
 
-type EventHistoryBuilder(characterTable: CharacterTable, gameContext: TrackedEntity<GameContext>) =
+type EventHistoryBuilder(tracked: ITrackedHistory list) =
     let mutable _events: StepItem list = []
     let mutable isDisposed = false
-
-    let characterTableCallback = Table.GetHistoryCallback characterTable
-
-    let gameContextCallback = Tracked.GetHistoryCallback gameContext
+    let historyCallbacks = tracked |> List.map (fun t -> (t, t.HistoryCallback))
 
     do
-        Table.SetHistoryCallback characterTable (fun t -> _events <- (t |> StepItem.Character) :: _events)
-        Tracked.SetHistoryCallback gameContext (fun t -> _events <- (t |> StepItem.GameContext) :: _events)
+        historyCallbacks
+        |> List.iter (fun (tracked, _) -> tracked.HistoryCallback <- (fun t -> _events <- t :: _events))
 
     member this.Bind(m, f) = f m
 
     member this.Return(x: ActionEvent) : Step list =
-        let step = { Step.Event = x; Updates = _events }
+        let step =
+            { Step.Event = x
+              Updates = _events |> List.rev }
+
         _events <- []
         [ step ]
 
@@ -30,7 +30,10 @@ type EventHistoryBuilder(characterTable: CharacterTable, gameContext: TrackedEnt
         match x with
         | ActionEvent.Empty _ when _events.IsEmpty -> []
         | _ ->
-            let step = { Step.Event = x; Updates = _events }
+            let step =
+                { Step.Event = x
+                  Updates = _events |> List.rev }
+
             _events <- []
             [ step ]
 
@@ -41,6 +44,7 @@ type EventHistoryBuilder(characterTable: CharacterTable, gameContext: TrackedEnt
     interface IDisposable with
         member this.Dispose() =
             if not isDisposed then
-                Table.SetHistoryCallback characterTable characterTableCallback
-                Tracked.SetHistoryCallback gameContext gameContextCallback
+                historyCallbacks
+                |> List.iter (fun (tracked, callback) -> tracked.HistoryCallback <- callback)
+
                 isDisposed <- true
