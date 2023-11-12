@@ -63,12 +63,12 @@ let exampleGameContext =
 let ``Can yield Results without updates`` () =
     let timeTable = TimeTable()
     let table1 = CharacterTable(timeTable)
-    let trackedGameContext = TrackedEntity(exampleGameContext)
+    let trackedGameContext = TrackedEntity(exampleGameContext, StepItem.GameContext)
     let tileMap = TileMap(Rectangle.create (10, 10), defaultTile)
     let attributesTable1 = CharacterAttributesTable()
 
     use eventBuilder =
-        new EventHistoryBuilder(trackedGameContext, tileMap, [ table1; attributesTable1 ])
+        new EventHistoryBuilder([ table1; attributesTable1; trackedGameContext; tileMap ])
 
     let results =
         eventBuilder {

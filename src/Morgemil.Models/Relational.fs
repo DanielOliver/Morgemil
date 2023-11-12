@@ -64,7 +64,3 @@ type ITable<'tRow, 'tKey when 'tRow :> IRow> =
     abstract member Remove: 'tRow -> unit
     abstract member Item: 'tKey -> 'tRow with get, set
     abstract member RemoveByKey: 'tKey -> unit
-
-
-type ITableEventHistory<'tRow when 'tRow :> IRow> =
-    abstract member HistoryCallback: (TableEvent<'tRow> -> unit) with get, set

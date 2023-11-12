@@ -139,7 +139,6 @@ type Table<'tRow, 'tKey when 'tRow :> IRow>
 
     let _primaryKeyIndexCast = _primaryKey :> IIndex<'tRow>
     let mutable _indices = [ _primaryKeyIndexCast ]
-    let mutable _recordEvent = ignore
     let mutable _trackedRecordEvent = ignore
 
     new(toKey, fromKey, history) = Table(fromKey, KeyGeneration(toKey), history)
@@ -151,11 +150,6 @@ type Table<'tRow, 'tKey when 'tRow :> IRow>
         member this.HistoryCallback
             with get () = _trackedRecordEvent
             and set value = _trackedRecordEvent <- value
-
-    interface ITableEventHistory<'tRow> with
-        member this.HistoryCallback
-            with get () = _recordEvent
-            and set x = _recordEvent <- x
 
     interface IReadonlyTable<'tRow, 'tKey> with
         member this.Item
@@ -173,7 +167,6 @@ type Table<'tRow, 'tKey when 'tRow :> IRow>
 
         member this.Remove row =
             _indices |> List.iter (fun t -> t.Remove row)
-            _recordEvent (TableEvent.Removed row)
             (TableEvent.Removed row) |> historyIdentity |> _trackedRecordEvent
 
         member this.RemoveByKey key =
@@ -187,21 +180,16 @@ type Table<'tRow, 'tKey when 'tRow :> IRow>
             match _primaryKey.TryGetRow key with
             | Some oldRow ->
                 _indices |> List.iter (fun t -> t.Update oldRow row)
-
-                _recordEvent (TableEvent.Updated(oldRow, row))
                 TableEvent.Updated(oldRow, row) |> historyIdentity |> _trackedRecordEvent
             | None ->
                 generator.CheckKey key
                 _indices |> List.iter (fun t -> t.Add row)
-                _recordEvent (TableEvent.Added row)
                 TableEvent.Added row |> historyIdentity |> _trackedRecordEvent
 
         member this.Update _ row =
             match _primaryKey.TryGetRow (row :> IRow).Key with
             | Some oldRow ->
                 _indices |> List.iter (fun t -> t.Update oldRow row)
-
-                _recordEvent (TableEvent.Updated(oldRow, row))
                 TableEvent.Updated(oldRow, row) |> historyIdentity |> _trackedRecordEvent
             | None -> ()
 
@@ -249,11 +237,6 @@ module Table =
     let CreateReadonlyTable (fromKey: 'U -> int64) (rows: seq<'T> when 'T :> IRow) : IReadonlyTable<'T, 'U> =
         let table = new ReadonlyTable<'T, 'U>(rows, fromKey)
         table :> IReadonlyTable<'T, 'U>
-
-    let GetHistoryCallback (table: 'T :> ITableEventHistory<'U>) : (TableEvent<'U> -> unit) = table.HistoryCallback
-
-    let SetHistoryCallback (table: 'T :> ITableEventHistory<'U>) (callback: TableEvent<'U> -> unit) : unit =
-        table.HistoryCallback <- callback
 
     let EmptyScenarioData: ScenarioData =
         { Items = CreateReadonlyTable (fun (ItemID id) -> id) []

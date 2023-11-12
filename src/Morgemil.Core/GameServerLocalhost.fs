@@ -106,7 +106,7 @@ type GameServerLocalhost(loadScenarioData: (ScenarioData -> unit) -> unit) =
                       CharacterAttributes = characterAttributesTable
                       TileMap = tileMap
                       TimeTable = timeTable
-                      GameContext = TrackedEntity gameContext }
+                      GameContext = TrackedEntity(gameContext, StepItem.GameContext) }
                 )
 
             let gameState =

@@ -17,7 +17,7 @@ type BasicCrawlConsole
     inherit SadConsole.Console(40, 40)
 
     let timeTable = TimeTable()
-    let gameContext = TrackedEntity initialGameData.GameContext
+    let gameContext = TrackedEntity(initialGameData.GameContext, StepItem.GameContext)
     let character1ID = initialGameData.Characters.[0].ID
     let character1 () = initialGameData.Characters.[0]
 

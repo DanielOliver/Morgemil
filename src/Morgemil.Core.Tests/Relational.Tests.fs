@@ -102,7 +102,10 @@ let ``Can Add items to Index`` () =
 
     for index in [ 1L .. 50_000L ] do
         { exampleItem2 with
-            ID = CharacterID(index) }
+            ID = CharacterID(index)
+            Ancestry =
+                { exampleItem2.Ancestry with
+                    Noun = index.ToString() } }
         |> Table.AddRow exampleTable
 
     Assert.Equal(50_000, exampleTable |> Table.Items |> Seq.length)

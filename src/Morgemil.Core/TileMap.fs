@@ -31,10 +31,10 @@ type TileMap(mapSize: Rectangle, defaultTile: Tile, ?chunkData: (Tile * TileFeat
               TileFeature = None
               Position = key }
 
-    interface Tracked.ITrackedEventHistory<TileMapData> with
+    interface ITrackedHistory with
         member this.HistoryCallback
             with get () = _trackedRecordEvent
-            and set x = _trackedRecordEvent <- x
+            and set value = _trackedRecordEvent <- value
 
     interface Tracked.ITrackedEntity<TileMapData> with
         member this.Get = this.TileMapData
@@ -48,6 +48,7 @@ type TileMap(mapSize: Rectangle, defaultTile: Tile, ?chunkData: (Tile * TileFeat
                 defaultTile <- newTileMapData.DefaultTile
 
                 _trackedRecordEvent
+                <| StepItem.CompleteMapChange
                     { NewValue = newTileMapData
                       OldValue = oldValue }
 
@@ -63,6 +64,7 @@ type TileMap(mapSize: Rectangle, defaultTile: Tile, ?chunkData: (Tile * TileFeat
                     defaultTile <- newTileMapData.DefaultTile
 
                     _trackedRecordEvent
+                    <| StepItem.CompleteMapChange
                         { NewValue = newTileMapData
                           OldValue = oldValue }
 

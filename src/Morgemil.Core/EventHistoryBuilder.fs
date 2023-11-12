@@ -4,20 +4,14 @@ open System
 open Morgemil.Core
 open Morgemil.Models
 
-type EventHistoryBuilder(gameContext: TrackedEntity<GameContext>, tileMap: TileMap, tracked: ITrackedHistory list) =
+type EventHistoryBuilder(tracked: ITrackedHistory list) =
     let mutable _events: StepItem list = []
     let mutable isDisposed = false
     let historyCallbacks = tracked |> List.map (fun t -> (t, t.HistoryCallback))
 
-    let gameContextCallback = Tracked.GetHistoryCallback gameContext
-    let tileMapTrackedCallback = Tracked.GetHistoryCallback tileMap
-
     do
         historyCallbacks
         |> List.iter (fun (tracked, _) -> tracked.HistoryCallback <- (fun t -> _events <- t :: _events))
-
-        Tracked.SetHistoryCallback gameContext (fun t -> _events <- (t |> StepItem.GameContext) :: _events)
-        Tracked.SetHistoryCallback tileMap (fun t -> _events <- (t |> StepItem.CompleteMapChange) :: _events)
 
     member this.Bind(m, f) = f m
 
@@ -53,6 +47,4 @@ type EventHistoryBuilder(gameContext: TrackedEntity<GameContext>, tileMap: TileM
                 historyCallbacks
                 |> List.iter (fun (tracked, callback) -> tracked.HistoryCallback <- callback)
 
-                Tracked.SetHistoryCallback gameContext gameContextCallback
-                Tracked.SetHistoryCallback tileMap tileMapTrackedCallback
                 isDisposed <- true
