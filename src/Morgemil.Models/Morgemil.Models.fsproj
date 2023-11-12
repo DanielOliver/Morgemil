@@ -19,6 +19,7 @@
         <Compile Include="TileInstance.fs"/>
         <Compile Include="Aspect.fs"/>
         <Compile Include="Character.fs"/>
+        <Compile Include="CharacterAttributes.fs"/>
         <Compile Include="Weapon.fs"/>
         <Compile Include="Wearable.fs"/>
         <Compile Include="Consumable.fs"/>

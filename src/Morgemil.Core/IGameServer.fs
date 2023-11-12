@@ -15,6 +15,7 @@ type GameServerStateType =
 type InitialGameData =
     { TileMap: TileMap
       Characters: Character[]
+      CharacterAttributes: CharacterAttributes[]
       CurrentPlayerID: PlayerID
       Scenario: Scenario
       GameContext: GameContext }

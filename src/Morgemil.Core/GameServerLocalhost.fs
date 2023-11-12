@@ -40,6 +40,7 @@ type GameServerLocalhost(loadScenarioData: (ScenarioData -> unit) -> unit) =
             let timeTable = TimeTable()
 
             let characterTable = CharacterTable(timeTable)
+            let characterAttributesTable = CharacterAttributesTable()
 
             let gameContext =
                 { GameContext.CurrentTimeTick = 0L<TimeTick>
@@ -47,33 +48,49 @@ type GameServerLocalhost(loadScenarioData: (ScenarioData -> unit) -> unit) =
 
             let character1 =
                 { Character.ID = Table.GenerateKey characterTable
-                  Ancestry = Table.GetRowByKey scenarioData.Ancestries chosenAncestryID.Value
-                  Heritage = []
+                  // Ancestry = Table.GetRowByKey scenarioData.Ancestries chosenAncestryID.Value
+                  // Heritage = []
                   NextTick = 0L<TimeTick>
                   NextAction = Character.DefaultPlayerTickActions.Head
                   TickActions = Character.DefaultPlayerTickActions
                   Position = mapGenerationResults.EntranceCoordinate
                   PlayerID = currentPlayerID.Value |> Some
                   Floor = gameContext.Floor
+                // Tags = Map.empty
+                }
+
+            let character1Attributes =
+                { CharacterAttributes.ID = character1.ID
+                  Ancestry = Table.GetRowByKey scenarioData.Ancestries chosenAncestryID.Value
+                  Heritage = []
                   Tags = Map.empty }
 
             Table.AddRow characterTable character1
+            Table.AddRow characterAttributesTable character1Attributes
 
             for i in [ 2 .. (RNG.Range rng 4 6) ] do
 
                 let npc1 =
                     { Character.ID = Table.GenerateKey characterTable
-                      Ancestry = scenarioData.Ancestries.Items |> Seq.last
-                      Heritage = []
+                      // Ancestry = scenarioData.Ancestries.Items |> Seq.last
+                      // Heritage = []
                       NextTick = 0L<TimeTick>
                       NextAction = Character.DefaultTickActions.Head
                       TickActions = Character.DefaultTickActions
                       Position = mapGenerationResults.EntranceCoordinate + Point.create (i, i)
                       PlayerID = None
                       Floor = gameContext.Floor
+                    // Tags = Map.empty
+                    }
+
+                let npc1Attributes =
+                    { CharacterAttributes.ID = npc1.ID
+                      Ancestry = scenarioData.Ancestries.Items |> Seq.last
+                      Heritage = []
                       Tags = Map.empty }
 
                 Table.AddRow characterTable npc1
+                Table.AddRow characterAttributesTable npc1Attributes
 
             let gameLoop =
                 Loop(
@@ -86,6 +103,7 @@ type GameServerLocalhost(loadScenarioData: (ScenarioData -> unit) -> unit) =
                           BasePath = "empty" }
                       RNG = rng },
                     { LoopContext.Characters = characterTable
+                      CharacterAttributes = characterAttributesTable
                       TileMap = tileMap
                       TimeTable = timeTable
                       GameContext = TrackedEntity gameContext }
@@ -102,6 +120,7 @@ type GameServerLocalhost(loadScenarioData: (ScenarioData -> unit) -> unit) =
 
             let initialGameData =
                 { InitialGameData.Characters = characterTable.ByTicks |> Seq.toArray
+                  CharacterAttributes = characterAttributesTable |> Table.Items |> Seq.toArray
                   TileMap = tileMap
                   CurrentPlayerID = currentPlayerID.Value
                   Scenario =

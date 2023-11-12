@@ -23,6 +23,7 @@ type BasicCrawlConsole
 
     let mutable loopContext: LoopContext =
         { LoopContext.Characters = CharacterTable(timeTable)
+          CharacterAttributes = CharacterAttributesTable()
           TimeTable = timeTable
           TileMap = initialGameData.TileMap
           GameContext = gameContext }
@@ -39,6 +40,9 @@ type BasicCrawlConsole
     do
         for character in initialGameData.Characters do
             Table.AddRow loopContext.Characters character
+
+        for characterAttributes in initialGameData.CharacterAttributes do
+            Table.AddRow loopContext.CharacterAttributes characterAttributes
 
     member this.Reposition() = sidebar.Reposition()
 
@@ -105,6 +109,11 @@ type BasicCrawlConsole
                         | TableEvent.Added(row) -> Table.AddRow loopContext.Characters row
                         | TableEvent.Updated(_, row) -> Table.AddRow loopContext.Characters row
                         | TableEvent.Removed(row) -> Table.RemoveRow loopContext.Characters row
+                    | StepItem.CharacterAttributes characterAttributes ->
+                        match characterAttributes with
+                        | TableEvent.Added(row) -> Table.AddRow loopContext.CharacterAttributes row
+                        | TableEvent.Updated(_, row) -> Table.AddRow loopContext.CharacterAttributes row
+                        | TableEvent.Removed(row) -> Table.RemoveRow loopContext.CharacterAttributes row
                     | StepItem.GameContext context -> Tracked.Update gameContext context.NewValue
                     | StepItem.CompleteMapChange context -> Tracked.Update loopContext.TileMap context.NewValue
                     | StepItem.TileInstance _ -> failwith "NotImplemented"))

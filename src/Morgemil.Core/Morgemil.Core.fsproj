@@ -12,6 +12,7 @@
         <Compile Include="TileFeatureTable.fs"/>
         <Compile Include="TimeTable.fs"/>
         <Compile Include="CharacterTable.fs"/>
+        <Compile Include="CharacterAttributesTable.fs"/>
         <Compile Include="TileMap.fs"/>
         <Compile Include="FloorGenerator.fs"/>
         <Compile Include="EventHistoryBuilder.fs"/>
@@ -27,7 +28,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Update="FSharp.Core" Version="7.0.401" />
+        <PackageReference Update="FSharp.Core" Version="7.0.401"/>
     </ItemGroup>
 
 </Project>

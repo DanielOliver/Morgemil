@@ -17,39 +17,30 @@ let exampleAncestry1 =
 
 let exampleItem1 =
     { Character.PlayerID = None
-      Character.Ancestry = exampleAncestry1
       Character.Position = Point.Identity
       Character.ID = CharacterID 51L
       Character.NextAction = Character.DefaultTickActions.Head
       Character.TickActions = Character.DefaultTickActions
-      Character.Heritage = []
       Character.Floor = 1L<Floor>
-      Character.NextTick = 1L<TimeTick>
-      Character.Tags = Map.empty }
+      Character.NextTick = 1L<TimeTick> }
 
 let exampleItem2 =
     { Character.PlayerID = None
-      Character.Ancestry = exampleAncestry1
       Character.Position = Point.Identity
       Character.ID = CharacterID 52L
       Character.NextAction = Character.DefaultTickActions.Head
       Character.TickActions = Character.DefaultTickActions
-      Character.Heritage = []
       Character.Floor = 1L<Floor>
-      Character.NextTick = 1L<TimeTick>
-      Character.Tags = Map.empty }
+      Character.NextTick = 1L<TimeTick> }
 
 let exampleItem3 =
     { Character.PlayerID = None
-      Character.Ancestry = exampleAncestry1
       Character.Position = Point.Identity
       Character.ID = CharacterID 53L
       Character.NextAction = Character.DefaultTickActions.Head
       Character.TickActions = Character.DefaultTickActions
-      Character.Heritage = []
       Character.Floor = 1L<Floor>
-      Character.NextTick = 1L<TimeTick>
-      Character.Tags = Map.empty }
+      Character.NextTick = 1L<TimeTick> }
 
 
 let defaultTile: Tile =
@@ -74,8 +65,10 @@ let ``Can yield Results without updates`` () =
     let table1 = CharacterTable(timeTable)
     let trackedGameContext = TrackedEntity(exampleGameContext)
     let tileMap = TileMap(Rectangle.create (10, 10), defaultTile)
+    let attributesTable1 = CharacterAttributesTable()
 
-    use eventBuilder = new EventHistoryBuilder(table1, trackedGameContext, tileMap)
+    use eventBuilder =
+        new EventHistoryBuilder(table1, trackedGameContext, tileMap, attributesTable1)
 
     let results =
         eventBuilder {
