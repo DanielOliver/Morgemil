@@ -81,7 +81,8 @@ let ``Can transition states`` () =
 
     let loadScenarioData (callback: ScenarioData -> unit) = callback scenarioData
 
-    let machine: IGameServer = GameServerLocalhost(loadScenarioData) :> IGameServer
+    let machine: IGameServer =
+        GameServerLocalhost(loadScenarioData, EventRecorder.Ignore) :> IGameServer
 
     Assert.Equal(GameServerStateType.SelectScenario, machine.CurrentState.GameServerStateType)
 
