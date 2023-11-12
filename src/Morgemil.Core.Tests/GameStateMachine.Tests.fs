@@ -5,7 +5,8 @@ open Morgemil.Core
 open Morgemil.Models
 
 
-[<Fact(Skip = "Fails constantly on github actions but works everywhere else")>]
+// [<Fact(Skip = "Fails constantly on github actions but works everywhere else")>]
+[<Fact>]
 let ``Can transition states`` () =
     let exampleLoop (request: ActionRequest) : Step list =
         Assert.Equal(

@@ -46,7 +46,7 @@ type GameStateRequest =
     | QueryState of AsyncReplyChannel<GameState>
     | SetResults of Steps: Step list
     | Kill
-    | Acknowledge
+    | Acknowledge of Count: int
 
 type IGameStateMachine =
     /// Stops the game engine

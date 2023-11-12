@@ -21,8 +21,7 @@ type SimpleGameStateMachine
                 |> Async.Start
 
             let inputFunc = (GameStateRequest.Input >> inbox.Post)
-
-            let resultQ = System.Collections.Generic.Queue<Step list>()
+            let mutable resultQ: Step list = []
 
             let rec loop (previousState: GameState) =
                 async {
@@ -39,7 +38,7 @@ type SimpleGameStateMachine
                         | GameState.Results _ -> ()
                     | GameStateRequest.SetResults results ->
                         if not results.IsEmpty then
-                            resultQ.Enqueue(results)
+                            resultQ <- List.concat [ resultQ; results ]
 
                         match waitingType () with
                         | GameStateWaitingType.WaitingForInput -> currentState <- GameState.WaitingForInput inputFunc
@@ -49,16 +48,14 @@ type SimpleGameStateMachine
                             processRequest (nextMove ()) (GameStateRequest.SetResults >> inbox.Post)
                             currentState <- GameState.Processing
                     | GameStateRequest.QueryState replyChannel ->
-                        if resultQ.Count > 0 then
-                            (resultQ.Peek(), (fun () -> inbox.Post GameStateRequest.Acknowledge))
+                        if not resultQ.IsEmpty then
+                            (resultQ, (fun () -> inbox.Post(GameStateRequest.Acknowledge resultQ.Length)))
                             |> GameState.Results
                             |> replyChannel.Reply
                         else
                             currentState |> replyChannel.Reply
                     | GameStateRequest.Kill -> ()
-                    | GameStateRequest.Acknowledge ->
-                        if resultQ.Count > 0 then
-                            resultQ.Dequeue() |> ignore
+                    | GameStateRequest.Acknowledge count -> resultQ <- resultQ |> List.skip count
 
                     match message with
                     | GameStateRequest.Kill -> ()

@@ -120,7 +120,8 @@ type BasicCrawlConsole
 
             acknowledgeCallback ()
 
-        sidebar.LoopContext <- loopContext
+    override this.Render(timeElapsed: TimeSpan) =
+        base.Render(timeElapsed)
         base.Clear()
 
         for tileInstance in loopContext.TileMap.Tiles do
