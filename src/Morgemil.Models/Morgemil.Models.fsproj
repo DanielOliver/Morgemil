@@ -28,6 +28,7 @@
         <Compile Include="MonsterGenerationParameter.fs"/>
         <Compile Include="FloorGenerationParameter.fs"/>
         <Compile Include="Tower.fs"/>
+        <Compile Include="Floor.fs"/>
         <Compile Include="GameContext.fs"/>
         <Compile Include="ScenarioData.fs"/>
         <Compile Include="ActionRequest.fs"/>

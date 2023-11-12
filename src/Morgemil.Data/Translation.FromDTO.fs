@@ -157,13 +157,19 @@ let AspectFromDto (aspect: DTO.Aspect) : Aspect =
       Description = aspect.Description }
 
 ///DTO to Tower
-let TowerFromDto (tower: DTO.Tower) : Tower =
+let TowerFromDto
+    (getFloorGenerationParameterByID: FloorGenerationParameterID -> FloorGenerationParameter)
+    (tower: DTO.Tower)
+    : Tower =
     { Tower.ID = TowerID tower.ID
       Name = tower.Name
       LevelRangeInclusive = tower.LevelRangeInclusive |> Vector2iFromDto
       BacktrackBehavior = tower.BacktrackBehavior
       OverworldConnection = tower.OverworldConnection
-      DefaultFloorGenerationParameters = FloorGenerationParameterID tower.DefaultFloorGenerationParameters }
+      DefaultFloorGenerationParameters =
+        tower.DefaultFloorGenerationParameters
+        |> FloorGenerationParameterID
+        |> getFloorGenerationParameterByID }
 
 ///DTO to Phase2
 let TranslateFromDtosToPhase2 (dtos: RawDtoPhase0) : RawDtoPhase2 =
@@ -209,7 +215,7 @@ let TranslateFromDtosToPhase2 (dtos: RawDtoPhase0) : RawDtoPhase2 =
 
     let towers =
         dtos.Towers.Object
-        |> Seq.map TowerFromDto
+        |> Seq.map (TowerFromDto(fun t -> floorGenerationParameters.Item(t)))
         |> Table.CreateReadonlyTable(fun (t: TowerID) -> t.Key)
 
     { RawDtoPhase2.Tiles = tiles.Items |> Seq.toArray
@@ -266,7 +272,7 @@ let TranslateFromDtosToScenario (dtos: RawDtoPhase0) : ScenarioData =
 
     let towers =
         dtos.Towers.Object
-        |> Seq.map TowerFromDto
+        |> Seq.map (TowerFromDto(fun t -> floorGenerationParameters.Item(t)))
         |> Table.CreateReadonlyTable(fun (t: TowerID) -> t.Key)
 
     { ScenarioData.Tiles = tiles

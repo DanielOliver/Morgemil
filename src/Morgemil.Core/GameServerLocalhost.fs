@@ -44,20 +44,16 @@ type GameServerLocalhost(loadScenarioData: (ScenarioData -> unit) -> unit) =
 
             let gameContext =
                 { GameContext.CurrentTimeTick = 0L<TimeTick>
-                  Floor = 1L<Floor> }
+                  FloorID = FloorID 1L }
 
             let character1 =
                 { Character.ID = Table.GenerateKey characterTable
-                  // Ancestry = Table.GetRowByKey scenarioData.Ancestries chosenAncestryID.Value
-                  // Heritage = []
                   NextTick = 0L<TimeTick>
                   NextAction = Character.DefaultPlayerTickActions.Head
                   TickActions = Character.DefaultPlayerTickActions
                   Position = mapGenerationResults.EntranceCoordinate
                   PlayerID = currentPlayerID.Value |> Some
-                  Floor = gameContext.Floor
-                // Tags = Map.empty
-                }
+                  FloorID = gameContext.FloorID }
 
             let character1Attributes =
                 { CharacterAttributes.ID = character1.ID
@@ -72,16 +68,12 @@ type GameServerLocalhost(loadScenarioData: (ScenarioData -> unit) -> unit) =
 
                 let npc1 =
                     { Character.ID = Table.GenerateKey characterTable
-                      // Ancestry = scenarioData.Ancestries.Items |> Seq.last
-                      // Heritage = []
                       NextTick = 0L<TimeTick>
                       NextAction = Character.DefaultTickActions.Head
                       TickActions = Character.DefaultTickActions
                       Position = mapGenerationResults.EntranceCoordinate + Point.create (i, i)
                       PlayerID = None
-                      Floor = gameContext.Floor
-                    // Tags = Map.empty
-                    }
+                      FloorID = gameContext.FloorID }
 
                 let npc1Attributes =
                     { CharacterAttributes.ID = npc1.ID

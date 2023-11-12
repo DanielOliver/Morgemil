@@ -93,7 +93,7 @@ module Loop =
                     if context.TileMap.[moveCharacter.Position] |> TileMap.isExitPoint then
 
                         let rng = world.RNG
-                        let nextFloor = context.GameContext.Value.Floor + 1L<Floor>
+                        let nextFloor = context.GameContext.Value.FloorID.TempNext
 
                         let (newTileMap, mapGenerationResults) =
                             FloorGenerator.Create
@@ -102,21 +102,21 @@ module Loop =
                                 rng
 
                         Tracked.Replace context.TileMap (fun t -> newTileMap.TileMapData)
-                        Tracked.Replace context.GameContext (fun t -> { t with Floor = nextFloor })
+                        Tracked.Replace context.GameContext (fun t -> { t with FloorID = nextFloor })
 
                         Table.AddRow
                             context.Characters
                             { moveCharacter with
                                 NextTick = moveCharacter.NextTick + 1000L<TimeTick>
                                 NextAction = moveCharacter.NextAction.NextInList moveCharacter.TickActions
-                                Floor = nextFloor }
+                                FloorID = nextFloor }
 
                         context.Characters
                         |> Table.Items
                         |> Seq.map (fun t ->
                             { t with
                                 Position = (context.TileMap.EntryPoints |> Seq.head) + int (t.ID.Key)
-                                Floor = nextFloor })
+                                FloorID = nextFloor })
                         |> Seq.iter (Table.AddRow context.Characters)
 
                         yield ActionEvent.MapChange

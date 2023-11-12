@@ -34,7 +34,7 @@ type CrawlSidebar(width: int, height: int, xOffset: int, initialGameData: Initia
             0,
             1,
             ColoredString(
-                "-- Floor " + loopContext.GameContext.Value.Floor.ToString() + " --",
+                "-- Floor " + loopContext.GameContext.Value.FloorID.Key.ToString() + " --",
                 Color.White,
                 Color.Black
             )

@@ -21,7 +21,7 @@ type Character =
       ID: CharacterID
       Position: Point
       NextTick: int64<TimeTick>
-      Floor: int64<Floor>
+      FloorID: FloorID
       NextAction: ActionArchetype
       TickActions: ActionArchetype list
       PlayerID: PlayerID option }

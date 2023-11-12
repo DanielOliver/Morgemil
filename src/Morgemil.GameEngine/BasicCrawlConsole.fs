@@ -21,7 +21,7 @@ type BasicCrawlConsole
     let character1ID = initialGameData.Characters.[0].ID
     let character1 () = initialGameData.Characters.[0]
 
-    let mutable loopContext: LoopContext =
+    let loopContext: LoopContext =
         { LoopContext.Characters = CharacterTable(timeTable)
           CharacterAttributes = CharacterAttributesTable()
           TimeTable = timeTable

@@ -112,6 +112,19 @@ type TowerID =
         let (TowerID rowID) = this
         rowID
 
+[<Struct>]
+type FloorID =
+    | FloorID of int64
+
+    member this.Key =
+        let (FloorID rowID) = this
+        rowID
+
+    member this.TempNext =
+        let (FloorID rowID) = this
+        FloorID(rowID + 1L)
+
+
 [<Measure>]
 type TileDistance
 
@@ -124,5 +137,5 @@ type HandSlot
 [<Measure>]
 type TimeTick
 
-[<Measure>]
-type Floor
+// [<Measure>]
+// type Floor
