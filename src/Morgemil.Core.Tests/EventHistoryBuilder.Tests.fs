@@ -73,6 +73,10 @@ let ``Can yield Results without updates`` () =
                         { t with
                             CurrentTimeTick = 2L<TimeTick> })
 
+                    Tracked.Replace trackedGameContext (fun t ->
+                        { t with
+                            CurrentTimeTick = 3L<TimeTick> })
+
                     yield ActionEvent.Empty 2
                     Table.AddRow table1 exampleItem2
                     yield ActionEvent.Empty 3
@@ -92,6 +96,13 @@ let ``Can yield Results without updates`` () =
                       Floor = 1L<Floor> }
                   NewValue =
                     { GameContext.CurrentTimeTick = 2L<TimeTick>
+                      Floor = 1L<Floor> } }
+                |> StepItem.GameContext
+                { TrackedEvent.OldValue =
+                    { GameContext.CurrentTimeTick = 2L<TimeTick>
+                      Floor = 1L<Floor> }
+                  NewValue =
+                    { GameContext.CurrentTimeTick = 3L<TimeTick>
                       Floor = 1L<Floor> } }
                 |> StepItem.GameContext ] }
           { Step.Event = ActionEvent.Empty 3

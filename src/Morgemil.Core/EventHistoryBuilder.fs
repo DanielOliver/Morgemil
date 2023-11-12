@@ -19,7 +19,10 @@ type EventHistoryBuilder(characterTable: CharacterTable, gameContext: TrackedEnt
     member this.Bind(m, f) = f m
 
     member this.Return(x: ActionEvent) : Step list =
-        let step = { Step.Event = x; Updates = _events }
+        let step =
+            { Step.Event = x
+              Updates = _events |> List.rev }
+
         _events <- []
         [ step ]
 
@@ -30,7 +33,10 @@ type EventHistoryBuilder(characterTable: CharacterTable, gameContext: TrackedEnt
         match x with
         | ActionEvent.Empty _ when _events.IsEmpty -> []
         | _ ->
-            let step = { Step.Event = x; Updates = _events }
+            let step =
+                { Step.Event = x
+                  Updates = _events |> List.rev }
+
             _events <- []
             [ step ]
 

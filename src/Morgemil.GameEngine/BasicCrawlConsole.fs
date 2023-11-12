@@ -107,7 +107,6 @@ type BasicCrawlConsole
                 | _ -> ()
 
                 event.Updates
-                |> List.rev
                 |> List.iter (fun tableEvent ->
                     match tableEvent with
                     | StepItem.Character character ->
