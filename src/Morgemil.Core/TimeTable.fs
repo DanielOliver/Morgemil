@@ -26,7 +26,7 @@ type TimeTable() =
         else
             (inProgress |> Seq.head).Value
 
-    member this.NextAction = items.Min.NextAction
+    member this.NextAction = this.Next.NextAction
 
     member this.Items = items
 

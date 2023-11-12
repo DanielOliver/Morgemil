@@ -150,7 +150,9 @@ type Loop(world: StaticLoopContext, initialContext: LoopContext) =
                   context.TileMap ]
             )
 
-        match context.TimeTable.NextAction with
+        let nextAction = context.TimeTable.NextAction
+
+        match nextAction with
         | ActionArchetype.CharacterAfterInput
         | ActionArchetype.CharacterBeforeInput ->
             builder {
@@ -161,7 +163,7 @@ type Loop(world: StaticLoopContext, initialContext: LoopContext) =
                     { nextCharacter with
                         NextAction = nextCharacter.NextAction.NextInList nextCharacter.TickActions }
 
-                yield ActionEvent.EndResponse 0
+                yield ActionEvent.ActionArchetype nextAction
             }
 
         | ActionArchetype.CharacterEngineInput
