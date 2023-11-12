@@ -26,7 +26,6 @@ type GameStateWaitingType =
 type GameStateType =
     | Processing
     | WaitingForInput
-//    | WaitingForAI
 
 [<RequireQualifiedAccess>]
 type GameState =
