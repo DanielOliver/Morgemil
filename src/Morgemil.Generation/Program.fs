@@ -12,11 +12,11 @@ let printType (writer: TextWriter) (t: AstRecordType) =
         fprintf writer "%s" (String.replicate (indentationLevel * level) " ")
 
     writer.WriteLine()
-    fprintfn writer "type %sDto =" t.ActualType.Name
+    fprintfn writer $"type %s{t.ActualType.Name}Dto ="
     indent 1
     fprintfn writer "{"
 
-    for (_, field) in t.Fields |> Map.toSeq do
+    for _, field in t.Fields |> Map.toSeq do
 
         indent 2
         fprintfn writer "%s: %s" field.FieldName "int?"
@@ -35,7 +35,7 @@ let main argv =
     |> Seq.filter IsMorgemilType
     |> Seq.filter HasMorgemilRecordAttribute
     |> Seq.iter (fun t ->
-        printfn "%A" t
+        printfn $"%A{t}"
         let analysis = AnalyzeType t
 
         use writer = new StringWriter()
@@ -46,10 +46,10 @@ let main argv =
 
         ReadDependencyGraph analysis dictionary
 
-        File.WriteAllText(sprintf "%s.txt" t.Name, writer.ToString()))
+        File.WriteAllText( $"%s{t.Name}.txt", writer.ToString()))
 
     let graph = dictionary |> Seq.map (fun t -> (t.Key, t.Value))
 
-    File.WriteAllText("graph.txt", (sprintf "%A" graph))
+    File.WriteAllText("graph.txt", $"%A{graph}")
 
     0 // return an integer exit code

@@ -6,7 +6,7 @@ open SadConsole
 
 type CrawlSidebar(width: int, height: int, xOffset: int, initialGameData: InitialGameData, loopContext: LoopContext) as this
     =
-    inherit SadConsole.Console(width, height)
+    inherit Console(width, height)
 
     do
         base.Position <- Point(xOffset, 0)

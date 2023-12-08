@@ -11,6 +11,6 @@ module Color =
         elif color1.A = System.Byte.MinValue then
             color2
         else
-            let ratio = ((float32) color2.A) / ((float32) color1.A + (float32) color2.A)
+            let ratio = (float32 color2.A) / (float32 color1.A + float32 color2.A)
             let returnColor = SadRogue.Primitives.Color.Lerp(color1, color2, ratio)
             SadRogue.Primitives.Color(returnColor, 255)

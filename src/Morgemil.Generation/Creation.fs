@@ -61,13 +61,13 @@ let printType (writer: TextWriter) (record: AstRecordType) =
         fprintf writer "%s" (String.replicate (indentationLevel * level) " ")
 
     writer.WriteLine()
-    fprintfn writer "type %sDto =" record.ActualType.Name
+    fprintfn writer $"type %s{record.ActualType.Name}Dto ="
     indent 1
     fprintfn writer "{"
 
-    for (_, field) in record.Fields |> Map.toSeq do
+    for _, field in record.Fields |> Map.toSeq do
         indent 2
-        fprintf writer "%s: %s" field.FieldName (describeType field.Type)
+        fprintf writer $"%s{field.FieldName}: %s{describeType field.Type}"
         fprintfn writer ""
 
     indent 1

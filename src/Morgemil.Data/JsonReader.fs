@@ -5,7 +5,7 @@ open System.IO
 
 let ReadJsonFile<'T> (fileName: string) : DtoValidResult<'T[]> =
     if not <| File.Exists(fileName) then
-        { DtoValidResult.Errors = [ (sprintf "File \"%s\" doesn't exist " fileName) ]
+        { DtoValidResult.Errors = [ $"File \"%s{fileName}\" doesn't exist " ]
           Object = [||]
           Success = false }
     else
@@ -20,17 +20,17 @@ let ReadJsonFile<'T> (fileName: string) : DtoValidResult<'T[]> =
               Success = true }
         with
         | :? System.Text.Json.JsonException as ex ->
-            { DtoValidResult.Errors = [ (sprintf "File \"%s\" doesn't contains valid Json. %A" fileName ex) ]
+            { DtoValidResult.Errors = [ $"File \"%s{fileName}\" doesn't contains valid Json. %A{ex}" ]
               Object = [||]
               Success = false }
         | :? IOException as ex ->
-            { DtoValidResult.Errors = [ (sprintf "File \"%s\" was unable to be read" fileName) ]
+            { DtoValidResult.Errors = [ $"File \"%s{fileName}\" was unable to be read" ]
               Object = [||]
               Success = false }
 
 let ReadGameFiles (basePath: string) : RawDtoPhase0 =
     let combinePaths fileName =
-        System.IO.Path.Combine(System.IO.Path.GetFullPath(basePath), fileName)
+        Path.Combine(Path.GetFullPath(basePath), fileName)
 
     { RawDtoPhase0.Tiles = ReadJsonFile <| combinePaths "tiles.json"
       TileFeatures = ReadJsonFile <| combinePaths "tilefeatures.json"

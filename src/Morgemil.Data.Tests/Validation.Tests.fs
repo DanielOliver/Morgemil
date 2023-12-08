@@ -13,7 +13,7 @@ let ``Try Validate Game With Validation`` () =
     Assert.Empty(rawDtoPhase1.Errors)
     Assert.True(rawDtoPhase1.Success)
 
-    let firstAncestry = rawDtoPhase1.Ancestries.Object.[0].Object
+    let firstAncestry = rawDtoPhase1.Ancestries.Object[0].Object
     Assert.Equal(0L, firstAncestry.ID)
     Assert.Equal("Human", firstAncestry.Noun)
     Assert.Equal("Human", firstAncestry.Adjective)

@@ -3,7 +3,7 @@ namespace Morgemil.GameEngine
 open SadConsole.Input
 
 
-type ScenarioSelectorConsole(scenarios: string list, chooseScenario: (string -> unit)) =
+type ScenarioSelectorConsole(scenarios: string list, chooseScenario: string -> unit) =
     inherit SadConsole.Console(40, 40)
 
     do
@@ -11,7 +11,7 @@ type ScenarioSelectorConsole(scenarios: string list, chooseScenario: (string -> 
 
         scenarios
         |> Seq.iteri (fun index scenarioName ->
-            cursor.Print(sprintf "%-5i | %s" index scenarioName).NewLine() |> ignore)
+            cursor.Print $"%-5i{index} | %s{scenarioName}".NewLine() |> ignore)
 
     override this.ProcessKeyboard(info: Keyboard) : bool =
         if info.KeysPressed.Count = 0 then

@@ -38,7 +38,7 @@ let RectangleToDto (rectangle: Rectangle) : DTO.Rectangle =
       DTO.Rectangle.H = rectangle.Height }
 
 let TileRepresentationToDto (tileRepresentation: TileRepresentation) : DTO.TileRepresentation =
-    { AnsiCharacter = (int) (Char.GetNumericValue tileRepresentation.AnsiCharacter)
+    { AnsiCharacter = int (Char.GetNumericValue tileRepresentation.AnsiCharacter)
       ForegroundColor =
         tileRepresentation.ForegroundColor
         |> Option.map ColorToDto

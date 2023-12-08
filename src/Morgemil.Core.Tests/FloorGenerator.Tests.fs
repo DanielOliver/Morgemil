@@ -39,7 +39,7 @@ let stairTileFeature: TileFeature =
       BlocksMovement = false
       BlocksSight = false
       Representation =
-        { AnsiCharacter = char (242)
+        { AnsiCharacter = char 242
           ForegroundColor = Some <| Color.From(30, 30, 255, 255)
           BackGroundColor = Some <| Color.From(0, 240, 0, 50) }
       PossibleTiles = [ tile2 ]
@@ -67,7 +67,7 @@ let FloorGeneratorTests () =
     let tileFeatureTable =
         Morgemil.Core.TileFeatureTable([ stairTileFeature; startingPointFeature ])
 
-    let (tileMap, results) = FloorGenerator.Create floorParameters tileFeatureTable rng
+    let tileMap, results = FloorGenerator.Create floorParameters tileFeatureTable rng
 
     Assert.Equal((17, 15) |> Rectangle.create, tileMap.MapSize)
     Assert.Equal(defaultTile, tileMap.Tile Point.Zero)

@@ -52,7 +52,7 @@ module Loop =
 
                     let newPosition = oldPosition + actionRequestMove.Direction
 
-                    let blocksMovement = context.TileMap.[newPosition] |> TileMap.blocksMovement
+                    let blocksMovement = context.TileMap[newPosition] |> TileMap.blocksMovement
 
                     if blocksMovement then
                         yield
@@ -90,15 +90,15 @@ module Loop =
                 match characterID |> Table.TryGetRowByKey context.Characters with
                 | None -> ()
                 | Some moveCharacter ->
-                    if context.TileMap.[moveCharacter.Position] |> TileMap.isExitPoint then
+                    if context.TileMap[moveCharacter.Position] |> TileMap.isExitPoint then
 
                         let rng = world.RNG
                         let nextFloor = context.GameContext.Value.FloorID.TempNext
 
-                        let (newTileMap, mapGenerationResults) =
+                        let newTileMap, mapGenerationResults =
                             FloorGenerator.Create
                                 (world.ScenarioData.FloorGenerationParameters.Items |> Seq.head)
-                                (world.ScenarioData.TileFeatures)
+                                world.ScenarioData.TileFeatures
                                 rng
 
                         Tracked.Replace context.TileMap (fun t -> newTileMap.TileMapData)
@@ -115,7 +115,7 @@ module Loop =
                         |> Table.Items
                         |> Seq.map (fun t ->
                             { t with
-                                Position = (context.TileMap.EntryPoints |> Seq.head) + int (t.ID.Key)
+                                Position = (context.TileMap.EntryPoints |> Seq.head) + int t.ID.Key
                                 FloorID = nextFloor })
                         |> Seq.iter (Table.AddRow context.Characters)
 
@@ -168,6 +168,6 @@ type Loop(world: StaticLoopContext, initialContext: LoopContext) =
 
         | ActionArchetype.CharacterEngineInput
         | ActionArchetype.CharacterPlayerInput ->
-            let (steps, nextContext) = Loop.processRequest world context builder event
+            let steps, nextContext = Loop.processRequest world context builder event
             context <- nextContext
             steps

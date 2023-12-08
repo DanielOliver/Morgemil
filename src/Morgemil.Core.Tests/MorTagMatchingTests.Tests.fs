@@ -11,9 +11,9 @@ let ancestry1: Ancestry =
       Ancestry.Noun = "Noun"
       Ancestry.RequireTags = Map.empty
       Ancestry.Tags =
-        [ nameof (MorTags.NoSkeleton), MorTags.Custom
-          nameof (MorTags.Modifier), MorTags.Modifier 6
-          nameof (MorTags.Humanoid), (MorTags.Placeholder "Green") ]
+        [ nameof MorTags.NoSkeleton, MorTags.Custom
+          nameof MorTags.Modifier, MorTags.Modifier 6
+          nameof MorTags.Humanoid, (MorTags.Placeholder "Green") ]
         |> Map.ofList }
 
 let ancestry2: Ancestry =
@@ -65,17 +65,17 @@ let CharacterTagMatchingTests () =
 let CharacterTagMergingTests () =
     let mergedTags = MorTagMatching.mergeTags heritage1.Tags ancestry1.Tags
 
-    match mergedTags[nameof (MorTags.Humanoid)] with
+    match mergedTags[nameof MorTags.Humanoid] with
     | MorTags.Placeholder any -> Assert.Equal("Blue", any)
     | _ -> Assert.Fail "Wrong placeholder"
 
-    match mergedTags[nameof (MorTags.Modifier)] with
+    match mergedTags[nameof MorTags.Modifier] with
     | MorTags.Modifier stat -> Assert.Equal(17, stat)
     | _ -> Assert.Fail "Wrong placeholder"
 
-    Assert.True(mergedTags.ContainsKey(nameof (MorTags.NoSkeleton)))
+    Assert.True(mergedTags.ContainsKey(nameof MorTags.NoSkeleton))
     let mergedTags = MorTagMatching.mergeTags heritage4.Tags mergedTags
 
-    match mergedTags[nameof (MorTags.Humanoid)] with
+    match mergedTags[nameof MorTags.Humanoid] with
     | MorTags.Placeholder any -> Assert.Equal("Red", any)
     | _ -> Assert.Fail "Wrong placeholder"

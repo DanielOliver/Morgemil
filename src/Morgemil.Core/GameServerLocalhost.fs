@@ -19,10 +19,10 @@ type GameServerLocalhost(loadScenarioData: (ScenarioData -> unit) -> unit, event
 
             let rng = RNG.SeedRNG(500)
 
-            let (tileMap, mapGenerationResults) =
+            let tileMap, mapGenerationResults =
                 FloorGenerator.Create
                     (scenarioData.FloorGenerationParameters.Items |> Seq.head)
-                    (scenarioData.TileFeatures)
+                    scenarioData.TileFeatures
                     rng
 
             let createTileMapFromData (data: TileMapData) =

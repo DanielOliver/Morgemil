@@ -42,7 +42,7 @@ type TimeTable() =
 
         member this.Update old next =
             if next.NextAction <> next.TickActions.Head then
-                inProgress.[next.ID] <- next
+                inProgress[next.ID] <- next
             else
                 inProgress.Remove(next.ID) |> ignore
 

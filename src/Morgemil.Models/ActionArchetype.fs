@@ -13,6 +13,6 @@ type ActionArchetype =
         let index = 1 + (items |> List.findIndex (fun t -> t = this))
 
         if items.Length > index then
-            items.[index]
+            items[index]
         else
-            items.[index - items.Length]
+            items[index - items.Length]
