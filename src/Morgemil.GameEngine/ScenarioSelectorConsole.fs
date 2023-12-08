@@ -10,8 +10,7 @@ type ScenarioSelectorConsole(scenarios: string list, chooseScenario: string -> u
         let cursor = base.Cursor
 
         scenarios
-        |> Seq.iteri (fun index scenarioName ->
-            cursor.Print $"%-5i{index} | %s{scenarioName}".NewLine() |> ignore)
+        |> Seq.iteri (fun index scenarioName -> (cursor.Print $"%-5i{index} | %s{scenarioName}").NewLine() |> ignore)
 
     override this.ProcessKeyboard(info: Keyboard) : bool =
         if info.KeysPressed.Count = 0 then
