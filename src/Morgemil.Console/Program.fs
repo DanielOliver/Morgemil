@@ -75,6 +75,6 @@ let main argv =
                 System.Console.WriteLine()
             | None -> ()
         with e ->
-            printfn "%s" e.Message
+            printfn $"%s{e.Message}"
 
     0 // return an integer exit code

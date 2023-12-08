@@ -55,7 +55,7 @@ let rec ColorOptionFromDto (color: DTO.Color) : Color option =
 
 ///DTO to TileRepresentation
 let TileRepresentationFromDto (tileRepresentation: DTO.TileRepresentation) : TileRepresentation =
-    { AnsiCharacter = (char) tileRepresentation.AnsiCharacter
+    { AnsiCharacter = char tileRepresentation.AnsiCharacter
       ForegroundColor = tileRepresentation.ForegroundColor |> ColorOptionFromDto
       BackGroundColor = tileRepresentation.BackGroundColor |> ColorOptionFromDto }
 
@@ -175,12 +175,12 @@ let TowerFromDto
 let TranslateFromDtosToPhase2 (dtos: RawDtoPhase0) : RawDtoPhase2 =
     let tiles =
         dtos.Tiles.Object
-        |> Seq.map (TileFromDto)
+        |> Seq.map TileFromDto
         |> Table.CreateReadonlyTable(fun (t: TileID) -> t.Key)
 
     let ancestries =
         dtos.Ancestries.Object
-        |> Seq.map (AncestorFromDto)
+        |> Seq.map AncestorFromDto
         |> Table.CreateReadonlyTable(fun (t: AncestryID) -> t.Key)
 
     let heritages =
@@ -190,7 +190,7 @@ let TranslateFromDtosToPhase2 (dtos: RawDtoPhase0) : RawDtoPhase2 =
 
     let items =
         dtos.Items.Object
-        |> Seq.map (ItemFromDto)
+        |> Seq.map ItemFromDto
         |> Table.CreateReadonlyTable(fun (t: ItemID) -> t.Key)
 
     let tileFeatures =
@@ -200,7 +200,7 @@ let TranslateFromDtosToPhase2 (dtos: RawDtoPhase0) : RawDtoPhase2 =
 
     let monsterGenerationParameters =
         dtos.MonsterGenerationParameters.Object
-        |> Seq.map (MonsterGenerationParameterFromDto)
+        |> Seq.map MonsterGenerationParameterFromDto
         |> Table.CreateReadonlyTable(fun (t: MonsterGenerationParameterID) -> t.Key)
 
     let floorGenerationParameters =
@@ -210,7 +210,7 @@ let TranslateFromDtosToPhase2 (dtos: RawDtoPhase0) : RawDtoPhase2 =
 
     let aspects =
         dtos.Aspects.Object
-        |> Seq.map (AspectFromDto)
+        |> Seq.map AspectFromDto
         |> Table.CreateReadonlyTable(fun (t: AspectID) -> t.Key)
 
     let towers =
@@ -232,12 +232,12 @@ let TranslateFromDtosToPhase2 (dtos: RawDtoPhase0) : RawDtoPhase2 =
 let TranslateFromDtosToScenario (dtos: RawDtoPhase0) : ScenarioData =
     let tiles =
         dtos.Tiles.Object
-        |> Seq.map (TileFromDto)
+        |> Seq.map TileFromDto
         |> Table.CreateReadonlyTable(fun (t: TileID) -> t.Key)
 
     let ancestries =
         dtos.Ancestries.Object
-        |> Seq.map (AncestorFromDto)
+        |> Seq.map AncestorFromDto
         |> Table.CreateReadonlyTable(fun (t: AncestryID) -> t.Key)
 
     let heritages =
@@ -247,12 +247,12 @@ let TranslateFromDtosToScenario (dtos: RawDtoPhase0) : ScenarioData =
 
     let items =
         dtos.Items.Object
-        |> Seq.map (ItemFromDto)
+        |> Seq.map ItemFromDto
         |> Table.CreateReadonlyTable(fun (t: ItemID) -> t.Key)
 
     let monsterGenerationParameters =
         dtos.MonsterGenerationParameters.Object
-        |> Seq.map (MonsterGenerationParameterFromDto)
+        |> Seq.map MonsterGenerationParameterFromDto
         |> Table.CreateReadonlyTable(fun (t: MonsterGenerationParameterID) -> t.Key)
 
     let tileFeatures =

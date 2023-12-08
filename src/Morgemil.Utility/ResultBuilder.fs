@@ -14,7 +14,7 @@ type ResultBuilder() =
     member __.ReturnFrom(m: Result<_, _>) = m
 
     member __.Bind(m, f) = Result.bind f m
-    member __.Bind((m, error): (Option<'T> * 'E), f) = m |> ofOption error |> Result.bind f
+    member __.Bind((m, error): Option<'T> * 'E, f) = m |> ofOption error |> Result.bind f
 
     member __.Zero() = None
 

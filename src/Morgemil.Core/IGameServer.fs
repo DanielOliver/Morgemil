@@ -40,7 +40,7 @@ type GameServerState =
 
     member this.GameServerStateType =
         match this with
-        | GameServerState.WaitingForCurrentPlayer _ -> GameServerStateType.WaitingForCurrentPlayer
+        | GameServerState.WaitingForCurrentPlayer -> GameServerStateType.WaitingForCurrentPlayer
         | GameServerState.GameBuilt _ -> GameServerStateType.GameBuilt
         | GameServerState.LoadingGameProgress _ -> GameServerStateType.LoadingGameProgress
         | GameServerState.LoadedScenarioData _ -> GameServerStateType.LoadedScenarioData

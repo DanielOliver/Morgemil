@@ -14,12 +14,12 @@ type BasicCrawlConsole
         initialGameData: InitialGameData,
         gameServerRequestCallback: GameServerRequest -> unit
     ) =
-    inherit SadConsole.Console(40, 40)
+    inherit Console(40, 40)
 
     let timeTable = TimeTable()
     let gameContext = TrackedEntity(initialGameData.GameContext, StepItem.GameContext)
-    let character1ID = initialGameData.Characters.[0].ID
-    let character1 () = initialGameData.Characters.[0]
+    let character1ID = initialGameData.Characters[0].ID
+    let character1 () = initialGameData.Characters[0]
 
     let loopContext: LoopContext =
         { LoopContext.Characters = CharacterTable(timeTable)
@@ -58,13 +58,13 @@ type BasicCrawlConsole
         base.Update(timeElapsed)
 
         let event =
-            if SadConsole.GameHost.Instance.Keyboard.IsKeyReleased Keys.Left then
+            if GameHost.Instance.Keyboard.IsKeyReleased Keys.Left then
                 (character1ID, Point.create (-1, 0)) |> Some
-            else if SadConsole.GameHost.Instance.Keyboard.IsKeyReleased Keys.Right then
+            else if GameHost.Instance.Keyboard.IsKeyReleased Keys.Right then
                 (character1ID, Point.create (1, 0)) |> Some
-            else if SadConsole.GameHost.Instance.Keyboard.IsKeyReleased Keys.Down then
+            else if GameHost.Instance.Keyboard.IsKeyReleased Keys.Down then
                 (character1ID, Point.create (0, 1)) |> Some
-            else if SadConsole.GameHost.Instance.Keyboard.IsKeyReleased Keys.Up then
+            else if GameHost.Instance.Keyboard.IsKeyReleased Keys.Up then
                 (character1ID, Point.create (0, -1)) |> Some
             else
                 None
@@ -73,7 +73,7 @@ type BasicCrawlConsole
                   ActionRequestMove.Direction = direction }
                 |> ActionRequest.Move)
             |> Option.orElseWith (fun () ->
-                if SadConsole.GameHost.Instance.Keyboard.IsKeyReleased Keys.LeftShift then
+                if GameHost.Instance.Keyboard.IsKeyReleased Keys.LeftShift then
                     character1ID |> ActionRequest.Pause |> Some
                 else
                     None)
@@ -81,7 +81,7 @@ type BasicCrawlConsole
         let event =
             event
             |> Option.orElseWith (fun () ->
-                if SadConsole.GameHost.Instance.Keyboard.IsKeyReleased Keys.Space then
+                if GameHost.Instance.Keyboard.IsKeyReleased Keys.Space then
                     character1ID |> ActionRequest.GoToNextLevel |> Some
                 else
                     None)
@@ -125,12 +125,12 @@ type BasicCrawlConsole
         base.Clear()
 
         for tileInstance in loopContext.TileMap.Tiles do
-            let (position, tile, tileFeature) =
+            let position, tile, tileFeature =
                 (tileInstance.Position, tileInstance.Tile, tileInstance.TileFeature)
 
             match tileFeature with
             | Some(feature) ->
-                let (showFeatureChar, foregroundColor) =
+                let showFeatureChar, foregroundColor =
                     if Char.IsWhiteSpace feature.Representation.AnsiCharacter then
                         false,
                         (tile.Representation.ForegroundColor
@@ -140,7 +140,7 @@ type BasicCrawlConsole
                             feature.Representation.ForegroundColor
                             |> Option.defaultValue SadRogue.Primitives.Color.TransparentBlack
 
-                        (foreground.A <> (byte 0)), (foreground)
+                        (foreground.A <> (byte 0)), foreground
 
                 let backgroundColor =
                     Color.blendColors
@@ -175,7 +175,7 @@ type BasicCrawlConsole
                 )
                 |> ignore
 
-        for (position, character) in loopContext.Characters.ByPositions do
+        for position, character in loopContext.Characters.ByPositions do
             let color1 = Color.Black
 
             let representation =

@@ -20,8 +20,8 @@ type UniqueIndex<'tRow, 'tKey when 'tKey: equality and 'tRow :> IRow>(getKey: 't
             with get key =
                 match _dictionary.TryGetValue key with
                 | true, value -> value
-                | _ -> failwithf "Couldn't find key %A" key
-            and set key row = _dictionary.[key] <- row
+                | _ -> failwith $"Couldn't find key %A{key}"
+            and set key row = _dictionary[key] <- row
 
         member this.RemoveByKey key = _dictionary.Remove key |> ignore
 
@@ -29,7 +29,7 @@ type UniqueIndex<'tRow, 'tKey when 'tKey: equality and 'tRow :> IRow>(getKey: 't
         member this.Remove row =
             _dictionary.Remove(getKey row) |> ignore
 
-        member this.Add row = _dictionary.[getKey row] <- row
+        member this.Add row = _dictionary[getKey row] <- row
 
         member this.Update oldRow row =
             let oldKey = getKey oldRow
@@ -38,7 +38,7 @@ type UniqueIndex<'tRow, 'tKey when 'tKey: equality and 'tRow :> IRow>(getKey: 't
             if oldKey <> newKey then
                 _dictionary.Remove oldKey |> ignore
 
-            _dictionary.[newKey] <- row
+            _dictionary[newKey] <- row
 
 
 type MultiIndex<'tRow, 'tKey when 'tKey: equality and 'tRow :> IRow>(getKey: 'tRow -> 'tKey) =
@@ -53,28 +53,28 @@ type MultiIndex<'tRow, 'tKey when 'tKey: equality and 'tRow :> IRow>(getKey: 'tR
                 if value.Length = 1 then
                     _dictionary.Remove key |> ignore
                 else
-                    _dictionary.[key] <- value |> List.filter (fun t -> t.Key <> row.Key)
+                    _dictionary[key] <- value |> List.filter (fun t -> t.Key <> row.Key)
             | _ -> ()
 
         member this.Add row =
             let key = getKey row
 
             match _dictionary.TryGetValue key with
-            | true, value -> _dictionary.[key] <- row :: value
-            | _ -> _dictionary.[key] <- [ row ]
+            | true, value -> _dictionary[key] <- row :: value
+            | _ -> _dictionary[key] <- [ row ]
 
         member this.Update oldRow row =
             let oldKey = getKey oldRow
             let newKey = getKey row
 
             if oldKey = newKey then
-                _dictionary.[newKey] <- row :: (_dictionary.[newKey] |> List.filter (fun t -> t.Key <> row.Key))
+                _dictionary[newKey] <- row :: (_dictionary[newKey] |> List.filter (fun t -> t.Key <> row.Key))
             else
-                _dictionary.[oldKey] <- (_dictionary.[oldKey] |> List.filter (fun t -> t.Key <> row.Key))
+                _dictionary[oldKey] <- (_dictionary[oldKey] |> List.filter (fun t -> t.Key <> row.Key))
 
                 match _dictionary.TryGetValue newKey with
-                | true, value -> _dictionary.[newKey] <- row :: (value |> List.filter (fun t -> t.Key <> row.Key))
-                | _ -> _dictionary.[newKey] <- [ row ]
+                | true, value -> _dictionary[newKey] <- row :: (value |> List.filter (fun t -> t.Key <> row.Key))
+                | _ -> _dictionary[newKey] <- [ row ]
 
     interface IMultiIndex<'tRow, 'tKey> with
         member this.TryGetRows(key: 'tKey) : 'tRow seq =
@@ -96,7 +96,7 @@ type PrimaryIndex<'tRow when 'tRow :> IRow>() =
         member this.Items = _dictionary.Values |> Seq.map id
         member this.Remove row = _dictionary.Remove row.Key |> ignore
         member this.RemoveByKey key = _dictionary.Remove key |> ignore
-        member this.Add row = _dictionary.[row.Key] <- row
+        member this.Add row = _dictionary[row.Key] <- row
 
         member this.TryGetRow key =
             match _dictionary.TryGetValue key with
@@ -107,8 +107,8 @@ type PrimaryIndex<'tRow when 'tRow :> IRow>() =
             with get key =
                 match _dictionary.TryGetValue key with
                 | true, value -> value
-                | _ -> failwithf "Couldn't find key %A" key
-            and set key row = _dictionary.[key] <- row
+                | _ -> failwith $"Couldn't find key %A{key}"
+            and set key row = _dictionary[key] <- row
 
         member this.Update oldRow row =
             let oldKey = oldRow.Key
@@ -117,7 +117,7 @@ type PrimaryIndex<'tRow when 'tRow :> IRow>() =
             if oldKey <> newKey then
                 _dictionary.Remove oldKey |> ignore
 
-            _dictionary.[newKey] <- row
+            _dictionary[newKey] <- row
 
 type KeyGeneration<'tKey>(toKey: int64 -> 'tKey) =
     let mutable _nextKey = 0L
@@ -153,7 +153,7 @@ type Table<'tRow, 'tKey when 'tRow :> IRow>
 
     interface IReadonlyTable<'tRow, 'tKey> with
         member this.Item
-            with get key = _primaryKey.[fromKey key]
+            with get key = _primaryKey[fromKey key]
 
         member this.Items = _primaryKey.Items
         member this.TryGetRow key = key |> fromKey |> _primaryKey.TryGetRow
@@ -162,7 +162,7 @@ type Table<'tRow, 'tKey when 'tRow :> IRow>
         member this.GenerateKey() = generator.GenerateKey()
 
         member this.Item
-            with get key = _primaryKey.[key |> fromKey]
+            with get key = _primaryKey[key |> fromKey]
             and set _ row = (this :> ITable<'tRow, 'tKey>).Add row
 
         member this.Remove row =
@@ -196,7 +196,7 @@ type Table<'tRow, 'tKey when 'tRow :> IRow>
 type ReadonlyTable<'tRow, 'tKey when 'tRow :> IRow>(rows: seq<'tRow>, fromKey: ^tKey -> int64) =
     let _rows: 'tRow[] = rows |> Seq.toArray
 
-    let _primaryKeys: int64[] = rows |> Seq.map (fun t -> t.Key) |> Seq.toArray
+    let _primaryKeys: int64[] = rows |> Seq.map (_.Key) |> Seq.toArray
 
     do System.Array.Sort(_primaryKeys, _rows)
 
@@ -208,16 +208,16 @@ type ReadonlyTable<'tRow, 'tKey when 'tRow :> IRow>(rows: seq<'tRow>, fromKey: ^
                 let index = System.Array.BinarySearch(_primaryKeys, intKey)
 
                 if index < 0 then
-                    failwithf "Can't find key %i" intKey
+                    failwith $"Can't find key %i{intKey}"
 
-                _rows.[index]
+                _rows[index]
 
         member this.Items = _rows |> Seq.cache
 
         member this.TryGetRow key =
             let index = System.Array.BinarySearch(_primaryKeys, fromKey key)
 
-            if index < 0 then None else _rows.[index] |> Some
+            if index < 0 then None else _rows[index] |> Some
 
 module Table =
     let Items (table: 'T :> IReadonlyTable<'U, _>) : 'U seq = table.Items
@@ -293,4 +293,4 @@ module TableQuery =
 module MultiIndex =
     let GetRowsByKey (index: IMultiIndex<'W, 'T>) (key: 'T) : 'W seq = index.TryGetRows key
 
-    let Item (index: IMultiIndex<_, 'T>) (key: 'T) = index.[key]
+    let Item (index: IMultiIndex<_, 'T>) (key: 'T) = index[key]

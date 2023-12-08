@@ -10,7 +10,7 @@ let IsMorgemilType (t: Type) : bool = t.Namespace.StartsWith("Morgemil")
 
 /// Exists with a Morgemil IRow Attribute, IE: is assignable via a numeric identifier
 let HasMorgemilRowKeyAttribute (currentType: Type) =
-    typeof<Morgemil.Models.Relational.IRow>.IsAssignableFrom (currentType)
+    typeof<Morgemil.Models.Relational.IRow>.IsAssignableFrom(currentType)
 
 let HasMorgemilRecordIdAttributeOnProperty (currentType: PropertyInfo) : bool =
     currentType.GetCustomAttributes(typeof<Morgemil.Models.RecordIdAttribute>)
@@ -47,16 +47,12 @@ let IsAnEnumUnionCase (t: Type) : bool =
     && FSharpType.GetUnionCases(t)
        |> Seq.forall (fun unionCase ->
            unionCase.GetFields().Length = 0
-           && unionCase.Name |> System.String.IsNullOrWhiteSpace |> not)
+           && unionCase.Name |> String.IsNullOrWhiteSpace |> not)
 
 /// If this type is a multiple case union where each case NO fields, return the case names
 let TryGetUnionEnumCaseNames (t: Type) : string list option =
     match IsAnEnumUnionCase t with
-    | true ->
-        FSharpType.GetUnionCases(t)
-        |> Array.map (fun u -> u.Name)
-        |> Array.toList
-        |> Some
+    | true -> FSharpType.GetUnionCases(t) |> Array.map (_.Name) |> Array.toList |> Some
     | false -> None
 
 /// Returns true if this union has only field on every case, with more than one case.
@@ -65,7 +61,7 @@ let IsAnUnionWithMultipleCaseOfSingleField (t: Type) : bool =
     && FSharpType.GetUnionCases(t)
        |> Seq.forall (fun unionCase ->
            unionCase.GetFields().Length = 1
-           && unionCase.Name |> System.String.IsNullOrWhiteSpace |> not)
+           && unionCase.Name |> String.IsNullOrWhiteSpace |> not)
     && FSharpType.GetUnionCases(t).Length > 1
 
 type SingleFieldCaseInfo =
@@ -98,9 +94,9 @@ type GenericTypeDeconstruct =
 /// If a generic type, decomposes this type into the generic hierarchy.
 /// The first item on the list is the inner-most wrapping generic type.
 let TryGetInnerTypes (t: Type) : GenericTypeDeconstruct option =
-    let rec recurse (t: Type) (generics: KnownGenericType list) : (Type * KnownGenericType list) =
+    let rec recurse (t: Type) (generics: KnownGenericType list) : Type * KnownGenericType list =
         if t.IsGenericType then
-            let arg0 = t.GenericTypeArguments.[0]
+            let arg0 = t.GenericTypeArguments[0]
             let genType = t.GetGenericTypeDefinition()
 
             if genType = typedefof<option<_>> then
@@ -108,13 +104,13 @@ let TryGetInnerTypes (t: Type) : GenericTypeDeconstruct option =
             else if genType = typedefof<list<_>> then
                 recurse arg0 (KnownGenericType.List :: generics)
             else
-                failwithf "What is generic type %s" (t.GetGenericTypeDefinition().Name)
+                failwith $"What is generic type %s{t.GetGenericTypeDefinition().Name}"
         else
             (t, generics)
 
     match recurse t [] with
     | _, [] -> None
-    | (innerType, wrappers) ->
+    | innerType, wrappers ->
         { GenericTypeDeconstruct.InnerType = innerType
           WrappingGenericTypes = wrappers }
         |> Some
@@ -174,36 +170,34 @@ and [<RequireQualifiedAccess>] AstCollectedType =
     | System of Type
 
 let rec AnalyzeType (t: Type) : AstCollectedType =
-    if (t.IsGenericType) then
+    if t.IsGenericType then
         match TryGetInnerTypes t with
-        | None -> failwithf "FAILURE TO GET GENERIC TYPE?!?!?!?! of %A" t
+        | None -> failwith $"FAILURE TO GET GENERIC TYPE?!?!?!?! of %A{t}"
         | Some deconstruction ->
             AstCollectedType.Generic
                 { Type = (AnalyzeType deconstruction.InnerType)
                   WrappingTypes = deconstruction.WrappingGenericTypes }
-    else
+    else if
 
-    if
         not (IsMorgemilType t)
     then
         AstCollectedType.System t
-    else
+    else if
 
-    if
         FSharpType.IsUnion t
     then
         match t with
-        | MatchUnionEnumCaseNames (caseNames) ->
+        | MatchUnionEnumCaseNames(caseNames) ->
             AstCollectedType.EnumUnion
                 { AstEnumUnion.Cases = caseNames
                   ActualType = t }
-        | MatchUnionSingleCase (case) ->
+        | MatchUnionSingleCase(case) ->
             AstCollectedType.SingleCaseUnion
                 { AstSingleCaseUnion.CaseName = case.Name
                   Type = AnalyzeType case.PropertyType
                   UnionName = t.Name
                   ActualType = t }
-        | MatchUnionMultipleCase (cases) ->
+        | MatchUnionMultipleCase(cases) ->
             { AstMultipleCaseUnion.Cases =
                 cases
                 |> List.map (fun case ->
@@ -215,10 +209,9 @@ let rec AnalyzeType (t: Type) : AstCollectedType =
               ActualType = t }
             |> AstCollectedType.MultipleCaseUnion
 
-        | _ -> failwithf "UNION FAILURE! -> %A" t
-    else
+        | _ -> failwith $"UNION FAILURE! -> %A{t}"
+    else if
 
-    if
         not (FSharpType.IsRecord t)
     then
         AstCollectedType.MorgemilBase t
@@ -235,10 +228,7 @@ let rec AnalyzeType (t: Type) : AstCollectedType =
                 (field.Name,
                  { AstRecordField.Type = field.PropertyType |> AnalyzeType
                    FieldName = field.Name
-                   MeasureBy =
-                     field
-                     |> TryGetMorgemilMeasureByAttributeOnProperty
-                     |> Option.map (fun i -> i.Name) }))
+                   MeasureBy = field |> TryGetMorgemilMeasureByAttributeOnProperty |> Option.map (_.Name) }))
             |> Map.ofSeq
 
         AstCollectedType.MorgemilRecord
@@ -259,7 +249,7 @@ let ReadDependencyGraph (t: AstCollectedType) (history: Dictionary<string, Depen
         match history.TryGetValue fullname with
         | true, value -> value.DependentTypes.TryAdd(foundType.FullName, foundType) |> ignore
         | _ ->
-            let dependentTypes = new Dictionary<string, Type>()
+            let dependentTypes = Dictionary<string, Type>()
             dependentTypes.Add(foundType.FullName, foundType)
 
             history.Add(
@@ -274,7 +264,7 @@ let ReadDependencyGraph (t: AstCollectedType) (history: Dictionary<string, Depen
         match t with
         | AstCollectedType.MorgemilRecord m ->
             m.Fields |> Map.toSeq |> Seq.iter (fun (_, f) -> descend2 f.Type m.ActualType)
-        | _ -> failwithf "FAILURE TO UNDERSTAND! %A" t
+        | _ -> failwith $"FAILURE TO UNDERSTAND! %A{t}"
 
     and descend2 (t: AstCollectedType) (parent: Type) : unit =
         match t with

@@ -26,8 +26,7 @@ type ExampleTable() as this =
             StepItem.CharacterAttributes
         )
 
-    let _multiIndexByName =
-        new MultiIndex<CharacterAttributes, string>(fun x -> x.Ancestry.Noun)
+    let _multiIndexByName = new MultiIndex<CharacterAttributes, string>(_.Ancestry.Noun)
 
     do this.AddIndex(_multiIndexByName)
 
@@ -205,10 +204,10 @@ let ``Check Joins on readonlyArrays`` () =
 
     Assert.Equal(3, joinedRows.Length)
 
-    let (row, exampleItem) = joinedRows.[2]
+    let row, exampleItem = joinedRows[2]
     Assert.True(exampleItem.IsNone)
     Assert.Equal(row3, row)
 
-    let (row, exampleItem) = joinedRows.[1]
+    let row, exampleItem = joinedRows[1]
     Assert.Equal(exampleItem2, exampleItem.Value)
     Assert.Equal(row2, row)

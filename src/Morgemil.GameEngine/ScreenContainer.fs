@@ -45,7 +45,7 @@ type ScreenContainer(initialState: ScreenGameState, gameServer: IGameServer) as 
                 new ScenarioSelectorConsole(
                     scenarios,
                     (fun t ->
-                        printfn "Scenario chosen %s" t
+                        printfn $"Scenario chosen %s{t}"
                         gameServer.Request(GameServerRequest.SelectScenario t))
                 )
                 |> select
@@ -55,7 +55,7 @@ type ScreenContainer(initialState: ScreenGameState, gameServer: IGameServer) as 
         | GameServerState.WaitingForCurrentPlayer ->
             gameServer.Request(GameServerRequest.AddCurrentPlayer(AncestryID 1L))
 
-        | _ -> printfn "%A" gameServer.CurrentState
+        | _ -> printfn $"%A{gameServer.CurrentState}"
 
         base.Update(timeElapsed)
 

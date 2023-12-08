@@ -28,7 +28,7 @@ let ChooseRatio (rng: DefaultRNG) (ratios: WeightedRatio<_> list) =
     if ratios.Length = 1 then
         ratios.Head.ID
     else
-        let weights = ratios |> Seq.sumBy (fun t -> t.Weight)
+        let weights = ratios |> Seq.sumBy (_.Weight)
         let choice = Range rng 0 (weights - 1)
 
         let rec next current remaining =

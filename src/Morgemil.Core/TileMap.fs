@@ -19,7 +19,7 @@ type TileMap(mapSize: Rectangle, defaultTile: Tile, ?chunkData: (Tile * TileFeat
     let getTileInstanceOrDefault (key: Point) =
         if mapSize.Contains key then
             let offset = getCoordinateOffset key
-            let (tile, tileFeature) = chunk.[offset]
+            let tile, tileFeature = chunk[offset]
 
             { TileInstance.ID = offset |> TileInstanceID
               Tile = tile
@@ -93,31 +93,31 @@ type TileMap(mapSize: Rectangle, defaultTile: Tile, ?chunkData: (Tile * TileFeat
         with get (key: Point): TileInstance = getTileInstanceOrDefault key
         and set (key: Point) (tile: Tile, tileFeature: TileFeature option) =
             if mapSize.Contains key then
-                chunk.[this.GetCoordinateOffset key] <- (tile, tileFeature)
+                chunk[this.GetCoordinateOffset key] <- (tile, tileFeature)
 
     member this.Tile
         with get (key: Point): Tile =
             if mapSize.Contains key then
-                let (tile, _) = chunk.[this.GetCoordinateOffset key]
+                let tile, _ = chunk[this.GetCoordinateOffset key]
                 tile
             else
                 defaultTile
         and set (key: Point) (tile: Tile) =
             if mapSize.Contains key then
-                let (_, tileFeature) = chunk.[this.GetCoordinateOffset key]
-                chunk.[this.GetCoordinateOffset key] <- (tile, tileFeature)
+                let _, tileFeature = chunk[this.GetCoordinateOffset key]
+                chunk[this.GetCoordinateOffset key] <- (tile, tileFeature)
 
     member this.TileFeature
         with get (key: Point): TileFeature option =
             if mapSize.Contains key then
-                let (_, tileFeature) = chunk.[this.GetCoordinateOffset key]
+                let _, tileFeature = chunk[this.GetCoordinateOffset key]
                 tileFeature
             else
                 None
         and set (key: Point) (tileFeature: TileFeature option) =
             if mapSize.Contains key then
-                let (tile, _) = chunk.[this.GetCoordinateOffset key]
-                chunk.[this.GetCoordinateOffset key] <- (tile, tileFeature)
+                let tile, _ = chunk[this.GetCoordinateOffset key]
+                chunk[this.GetCoordinateOffset key] <- (tile, tileFeature)
 
     member this.Tiles: TileInstance seq =
         chunk
