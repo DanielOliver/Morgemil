@@ -10,7 +10,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="FAKE" Version="5.16.0"/>
         <PackageReference Include="Fake.Core.Process" Version="6.0.0"/>
         <PackageReference Include="Fake.Core.Target" Version="6.0.0"/>
         <PackageReference Include="Fake.DotNet.Cli" Version="6.0.0"/>
