@@ -19,7 +19,7 @@ let private ExpectedUnique<'T>
 
     items
     |> Seq.tryFind (fun x -> property x.Object = currentItemProperty)
-    |> Option.map (fun duplicate -> $"Expected Unique %s{propertyName}: %A{currentItemProperty}")
+    |> Option.map (fun _ -> $"Expected Unique %s{propertyName}: %A{currentItemProperty}")
 
 ///The enumeration value should be defined
 let inline private DefinedEnum< ^T> (value: ^T) : string option =
@@ -33,7 +33,7 @@ let private DefinedMorTag (title: string) (value: JsonNode) : string option =
         let tag = FromDTO.ParseMorTag title value
 
         match tag with
-        | Morgemil.Models.MorTags.Custom _ ->
+        | Morgemil.Models.MorTags.Custom ->
             if value.ToString() |> System.String.IsNullOrWhiteSpace then
                 None
             else
@@ -170,7 +170,6 @@ let private ValidateDtoAncestries
 /// Validate Heritages
 let private ValidateDtoHeritages
     (item: DtoValidResult<Heritage[]>)
-    (ancestryTable: IReadonlyTable<Ancestry, int64>)
     : DtoValidResult<DtoValidResult<Heritage>[]> * IReadonlyTable<Heritage, int64> =
     item
     |> ValidateGameDataWithTable(fun acc element ->
@@ -183,7 +182,7 @@ let private ValidateDtoMonsterGenerationParameters
     (item: DtoValidResult<MonsterGenerationParameter[]>)
     : DtoValidResult<DtoValidResult<MonsterGenerationParameter>[]> * IReadonlyTable<MonsterGenerationParameter, int64> =
     item
-    |> ValidateGameDataWithTable(fun acc element ->
+    |> ValidateGameDataWithTable(fun _ element ->
         [ AllSatisfyCondition
               (element.GenerationRatios |> List.map (_.Ratio))
               "Ratios should be positive values"
@@ -258,8 +257,7 @@ let ValidateDtos (phase0: RawDtoPhase0InitialLoad) : RawDtoPhase1Validation =
 
     let ancestryResults, ancestryTable = ValidateDtoAncestries phase0.Ancestries
 
-    let heritageResults, heritageTable =
-        ValidateDtoHeritages phase0.Heritages ancestryTable
+    let heritageResults, heritageTable = ValidateDtoHeritages phase0.Heritages
 
     let monsterGenerationParameterResults, monsterGenerationParametersLinkTable =
         ValidateDtoMonsterGenerationParameters phase0.MonsterGenerationParameters
