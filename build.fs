@@ -27,6 +27,7 @@ Target.create "Build" (fun _ ->
     |> Seq.iter (
         DotNet.build (fun c ->
             { c with
+                NoLogo = true
                 Configuration = DotNet.Release })
     ))
 
