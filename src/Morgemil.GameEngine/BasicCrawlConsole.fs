@@ -95,20 +95,20 @@ type BasicCrawlConsole
                     if Char.IsWhiteSpace feature.Representation.AnsiCharacter then
                         false,
                         (tile.Representation.ForegroundColor
-                         |> Option.defaultValue SadRogue.Primitives.Color.Black)
+                         |> ValueOption.defaultValue SadRogue.Primitives.Color.Black)
                     else
                         let foreground =
                             feature.Representation.ForegroundColor
-                            |> Option.defaultValue SadRogue.Primitives.Color.TransparentBlack
+                            |> ValueOption.defaultValue SadRogue.Primitives.Color.TransparentBlack
 
                         (foreground.A <> (byte 0)), foreground
 
                 let backgroundColor =
                     Color.blendColors
                         (feature.Representation.BackgroundColor
-                         |> Option.defaultValue SadRogue.Primitives.Color.TransparentBlack)
+                         |> ValueOption.defaultValue SadRogue.Primitives.Color.TransparentBlack)
                         (tile.Representation.BackgroundColor
-                         |> Option.defaultValue SadRogue.Primitives.Color.TransparentBlack)
+                         |> ValueOption.defaultValue SadRogue.Primitives.Color.TransparentBlack)
 
                 let tileCharacter =
                     if showFeatureChar then
@@ -123,11 +123,11 @@ type BasicCrawlConsole
             | None ->
                 let backgroundColor =
                     tile.Representation.BackgroundColor
-                    |> Option.defaultValue SadRogue.Primitives.Color.Black
+                    |> ValueOption.defaultValue SadRogue.Primitives.Color.Black
 
                 let foregroundColor =
                     tile.Representation.ForegroundColor
-                    |> Option.defaultValue SadRogue.Primitives.Color.White
+                    |> ValueOption.defaultValue SadRogue.Primitives.Color.White
 
                 base.Cursor.Position <- position
 
@@ -141,11 +141,11 @@ type BasicCrawlConsole
 
             let representation =
                 { TileRepresentation.AnsiCharacter = if character.PlayerID.IsSome then '@' else 'M'
-                  BackgroundColor = None
-                  ForegroundColor = Some color1 }
+                  BackgroundColor = ValueNone
+                  ForegroundColor = ValueSome color1 }
 
             let foregroundColor =
                 representation.ForegroundColor
-                |> Option.defaultValue SadRogue.Primitives.Color.TransparentBlack
+                |> ValueOption.defaultValue SadRogue.Primitives.Color.TransparentBlack
 
             base.Print(position.X, position.Y, representation.AnsiCharacter.ToString(), foregroundColor)

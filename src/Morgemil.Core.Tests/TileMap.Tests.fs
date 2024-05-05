@@ -14,8 +14,8 @@ let defaultTile: Tile =
       BlocksSight = true
       Representation =
         { AnsiCharacter = '#'
-          ForegroundColor = Some <| Color.From(200, 200, 200, 255)
-          BackgroundColor = Some <| Color.Black } }
+          ForegroundColor = ValueSome <| Color.From(200, 200, 200, 255)
+          BackgroundColor = ValueSome <| Color.Black } }
 
 let tile2 =
     { defaultTile with
@@ -34,8 +34,8 @@ let stairTileFeature: TileFeature =
       BlocksSight = false
       Representation =
         { AnsiCharacter = char 242
-          ForegroundColor = Some <| Color.From(30, 30, 255, 255)
-          BackgroundColor = Some <| Color.From(0, 240, 0, 50) }
+          ForegroundColor = ValueSome <| Color.From(30, 30, 255, 255)
+          BackgroundColor = ValueSome <| Color.From(0, 240, 0, 50) }
       PossibleTiles = [ defaultTile; tile2 ]
       EntryPoint = false
       ExitPoint = true }
