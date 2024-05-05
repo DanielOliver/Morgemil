@@ -3,7 +3,7 @@ namespace Morgemil.Models
 /// Every inhabitant may have zero or more pieces of heritage.
 /// A heritage is a collection of attributes that modify and affect a creature for good or for ill.
 [<Record>]
-[<ScenarioData>]
+[<ScenarioStaticData>]
 type Heritage =
     {
         [<RecordId>]

@@ -1,7 +1,7 @@
 namespace Morgemil.Models
 
 [<Record>]
-[<ScenarioData>]
+[<ScenarioStaticData>]
 type Aspect =
     {
         [<RecordId>]

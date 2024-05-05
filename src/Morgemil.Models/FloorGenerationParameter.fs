@@ -4,7 +4,7 @@ namespace Morgemil.Models
 type FloorGenerationStrategy = | OpenFloor
 
 [<Record>]
-[<ScenarioData>]
+[<ScenarioStaticData>]
 type FloorGenerationParameter =
     {
         [<RecordId>]

@@ -4,7 +4,7 @@ open System
 
 /// This class is base static scenario data that will never be changed after initial load.
 [<AttributeUsage(AttributeTargets.Class)>]
-type ScenarioData() =
+type ScenarioStaticData() =
     inherit Attribute()
 
 [<AttributeUsage(AttributeTargets.Class)>]

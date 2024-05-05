@@ -20,6 +20,25 @@ type InitialGameData =
       Scenario: Scenario
       GameContext: GameContext }
 
+    member this.ToLoopContext() : LoopContext =
+        let timeTable = TimeTable()
+        let gameContext = TrackedEntity(this.GameContext, StepItem.GameContext)
+
+        let loopContext =
+            { LoopContext.Characters = CharacterTable(timeTable)
+              CharacterAttributes = CharacterAttributesTable()
+              TimeTable = timeTable
+              TileMap = this.TileMap
+              GameContext = gameContext }
+
+        for character in this.Characters do
+            Table.AddRow loopContext.Characters character
+
+        for characterAttributes in this.CharacterAttributes do
+            Table.AddRow loopContext.CharacterAttributes characterAttributes
+
+        loopContext
+
 [<RequireQualifiedAccess>]
 type GameServerWorkflow = | ScenarioSelection
 

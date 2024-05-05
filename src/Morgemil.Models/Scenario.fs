@@ -1,7 +1,7 @@
 ﻿namespace Morgemil.Models
 
 [<Record>]
-[<ScenarioData>]
+[<ScenarioStaticData>]
 type Scenario =
     { BasePath: string
       Version: string
