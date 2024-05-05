@@ -17,7 +17,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Update="FSharp.Core" Version="8.0.200" />
+        <PackageReference Update="FSharp.Core" Version="8.0.200"/>
+        <PackageReference Include="Fantomas.Core" Version="6.3.4"/>
     </ItemGroup>
 
 </Project>

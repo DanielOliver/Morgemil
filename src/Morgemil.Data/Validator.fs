@@ -4,6 +4,7 @@ open System.Text.Json
 open System.Text.Json.Nodes
 open Morgemil.Core
 open Morgemil.Data.DTO
+open Morgemil.Data.Phases
 open Morgemil.Data.Translation
 open Morgemil.Models.Relational
 
@@ -249,7 +250,7 @@ let private ValidateDtoTowers
           |> ExistsInTable element.DefaultFloorGenerationParameters "DefaultFloorGenerationParameters" ])
 
 /// Tie together all validation routines
-let ValidateDtos (phase0: RawDtoPhase0) : RawDtoPhase1 =
+let ValidateDtos (phase0: RawDtoPhase0InitialLoad) : RawDtoPhase1Validation =
     let tileResults, tileTable = ValidateDtoTiles phase0.Tiles
 
     let tileFeatureResults, tileFeatureTable =
@@ -273,7 +274,7 @@ let ValidateDtos (phase0: RawDtoPhase0) : RawDtoPhase1 =
     let towerResults, towerTable =
         ValidateDtoTowers phase0.Towers floorGenerationParametersLinkTable
 
-    { RawDtoPhase1.Tiles = tileResults
+    { RawDtoPhase1Validation.Tiles = tileResults
       TileFeatures = tileFeatureResults
       Ancestries = ancestryResults
       Heritages = heritageResults

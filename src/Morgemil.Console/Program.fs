@@ -1,6 +1,7 @@
 open Argu
 open Morgemil.Data
 open Morgemil.Data.Translation
+open Morgemil.Data.Phases
 
 [<CliPrefix(CliPrefix.DoubleDash)>]
 type CLIArguments =
@@ -43,7 +44,7 @@ let main argv =
             match results.TryGetResult WorkingDirectory with
             | Some path ->
                 let rawGameDataPhase0 =
-                    Lazy<DTO.RawDtoPhase0>(fun () -> JsonReader.ReadGameFiles path)
+                    Lazy<RawDtoPhase0InitialLoad>(fun () -> JsonReader.ReadGameFiles path)
 
                 if results.Contains GameDataValidate then
                     let rawGameDataPhase1 = Validator.ValidateDtos rawGameDataPhase0.Value

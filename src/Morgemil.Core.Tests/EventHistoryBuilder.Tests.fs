@@ -53,7 +53,7 @@ let defaultTile: Tile =
       Representation =
         { AnsiCharacter = '#'
           ForegroundColor = Some <| Color.From(200, 200, 200, 255)
-          BackGroundColor = Some <| Color.Black } }
+          BackgroundColor = Some <| Color.Black } }
 
 let exampleGameContext =
     { GameContext.CurrentTimeTick = 1L<TimeTick>

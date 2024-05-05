@@ -144,9 +144,9 @@ type BasicCrawlConsole
 
                 let backgroundColor =
                     Color.blendColors
-                        (feature.Representation.BackGroundColor
+                        (feature.Representation.BackgroundColor
                          |> Option.defaultValue SadRogue.Primitives.Color.TransparentBlack)
-                        (tile.Representation.BackGroundColor
+                        (tile.Representation.BackgroundColor
                          |> Option.defaultValue SadRogue.Primitives.Color.TransparentBlack)
 
                 let tileCharacter =
@@ -161,7 +161,7 @@ type BasicCrawlConsole
                 |> ignore
             | None ->
                 let backgroundColor =
-                    tile.Representation.BackGroundColor
+                    tile.Representation.BackgroundColor
                     |> Option.defaultValue SadRogue.Primitives.Color.Black
 
                 let foregroundColor =
@@ -180,7 +180,7 @@ type BasicCrawlConsole
 
             let representation =
                 { TileRepresentation.AnsiCharacter = if character.PlayerID.IsSome then '@' else 'M'
-                  BackGroundColor = None
+                  BackgroundColor = None
                   ForegroundColor = Some color1 }
 
             let foregroundColor =

@@ -1,6 +1,6 @@
 module Morgemil.Data.JsonReader
 
-open Morgemil.Data.DTO
+open Morgemil.Data.Phases
 open System.IO
 
 let ReadJsonFile<'T> (fileName: string) : DtoValidResult<'T[]> =
@@ -28,11 +28,11 @@ let ReadJsonFile<'T> (fileName: string) : DtoValidResult<'T[]> =
               Object = [||]
               Success = false }
 
-let ReadGameFiles (basePath: string) : RawDtoPhase0 =
+let ReadGameFiles (basePath: string) : RawDtoPhase0InitialLoad =
     let combinePaths fileName =
         Path.Combine(Path.GetFullPath(basePath), fileName)
 
-    { RawDtoPhase0.Tiles = ReadJsonFile <| combinePaths "tiles.json"
+    { RawDtoPhase0InitialLoad.Tiles = ReadJsonFile <| combinePaths "tiles.json"
       TileFeatures = ReadJsonFile <| combinePaths "tilefeatures.json"
       Ancestries = ReadJsonFile <| combinePaths "ancestries.json"
       Heritages = ReadJsonFile <| combinePaths "heritages.json"

@@ -44,7 +44,7 @@ let TileRepresentationToDto (tileRepresentation: TileRepresentation) : DTO.TileR
         |> Option.map ColorToDto
         |> Option.defaultValue (ZeroColorDto())
       BackGroundColor =
-        tileRepresentation.BackGroundColor
+        tileRepresentation.BackgroundColor
         |> Option.map ColorToDto
         |> Option.defaultValue (ZeroColorDto()) }
 

@@ -2,8 +2,8 @@
 
 open Morgemil.Math
 
-[<Record>]
+// [<Record>]
 type TileRepresentation =
     { AnsiCharacter: char
       ForegroundColor: Color option
-      BackGroundColor: Color option }
+      BackgroundColor: Color option }

@@ -8,6 +8,7 @@ open Microsoft.FSharp.Core
 open Microsoft.FSharp.Reflection
 open Morgemil.Core
 open Morgemil.Data.DTO
+open Morgemil.Data.Phases
 open Morgemil.Models
 open Morgemil.Math
 open Morgemil.Data
@@ -57,7 +58,7 @@ let rec ColorOptionFromDto (color: DTO.Color) : Color option =
 let TileRepresentationFromDto (tileRepresentation: DTO.TileRepresentation) : TileRepresentation =
     { AnsiCharacter = char tileRepresentation.AnsiCharacter
       ForegroundColor = tileRepresentation.ForegroundColor |> ColorOptionFromDto
-      BackGroundColor = tileRepresentation.BackGroundColor |> ColorOptionFromDto }
+      BackgroundColor = tileRepresentation.BackGroundColor |> ColorOptionFromDto }
 
 ///DTO to Tile
 let TileFromDto (tile: DTO.Tile) : Tile =
@@ -172,7 +173,7 @@ let TowerFromDto
         |> getFloorGenerationParameterByID }
 
 ///DTO to Phase2
-let TranslateFromDtosToPhase2 (dtos: RawDtoPhase0) : RawDtoPhase2 =
+let TranslateFromDtosToPhase2 (dtos: RawDtoPhase0InitialLoad) : RawDtoPhase2Flattened =
     let tiles =
         dtos.Tiles.Object
         |> Seq.map TileFromDto
@@ -218,7 +219,7 @@ let TranslateFromDtosToPhase2 (dtos: RawDtoPhase0) : RawDtoPhase2 =
         |> Seq.map (TowerFromDto(fun t -> floorGenerationParameters.Item(t)))
         |> Table.CreateReadonlyTable(fun (t: TowerID) -> t.Key)
 
-    { RawDtoPhase2.Tiles = tiles.Items |> Seq.toArray
+    { RawDtoPhase2Flattened.Tiles = tiles.Items |> Seq.toArray
       Heritages = heritages.Items |> Seq.toArray
       Ancestries = ancestries.Items |> Seq.toArray
       Items = items.Items |> Seq.toArray
@@ -229,7 +230,7 @@ let TranslateFromDtosToPhase2 (dtos: RawDtoPhase0) : RawDtoPhase2 =
       Towers = towers.Items |> Seq.toArray }
 
 ///DTO to Scenario
-let TranslateFromDtosToScenario (dtos: RawDtoPhase0) : ScenarioData =
+let TranslateFromDtosToScenario (dtos: RawDtoPhase0InitialLoad) : ScenarioData =
     let tiles =
         dtos.Tiles.Object
         |> Seq.map TileFromDto
