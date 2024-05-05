@@ -43,7 +43,8 @@ let main argv =
         try
             match results.TryGetResult WorkingDirectory with
             | Some path ->
-                let rawGameDataPhase0 = Lazy<RawDtoPhase0>(fun () -> JsonReader.ReadGameFiles path)
+                let rawGameDataPhase0 =
+                    Lazy<RawDtoPhase0InitialLoad>(fun () -> JsonReader.ReadGameFiles path)
 
                 if results.Contains GameDataValidate then
                     let rawGameDataPhase1 = Validator.ValidateDtos rawGameDataPhase0.Value
