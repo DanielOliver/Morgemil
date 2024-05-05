@@ -26,22 +26,34 @@ Target.create "Build" (fun _ ->
     !! "src/**/*.*proj"
     |> Seq.iter (
         DotNet.build (fun c ->
-            { c with
-                NoLogo = true
-                MSBuildParams =
-                    { c.MSBuildParams with
-                        BinaryLoggers = None
-                        DisableInternalBinLog = true
-                        Verbosity = Some MSBuildVerbosity.Diagnostic }
-                Configuration = DotNet.Release })
+            if Environment.isLinux then
+                { c with
+                    NoLogo = true
+                    MSBuildParams =
+                        { c.MSBuildParams with
+                            BinaryLoggers = None
+                            DisableInternalBinLog = true }
+                    Configuration = DotNet.Release }
+            else
+                { c with
+                    Configuration = DotNet.Release })
     ))
 
 Target.create "Test" (fun _ ->
     !! "src/**/*.*proj"
     |> Seq.iter (
         DotNet.test (fun p ->
-            { p with
-                Configuration = DotNet.BuildConfiguration.Release }
+            if Environment.isLinux then
+                { p with
+                    NoLogo = true
+                    MSBuildParams =
+                        { p.MSBuildParams with
+                            BinaryLoggers = None
+                            DisableInternalBinLog = true }
+                    Configuration = DotNet.BuildConfiguration.Release }
+            else
+                { p with
+                    Configuration = DotNet.BuildConfiguration.Release }
             |> Coverlet.withDotNetTestOptions (fun p ->
                 { p with
 
