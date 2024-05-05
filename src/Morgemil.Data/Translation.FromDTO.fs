@@ -57,7 +57,7 @@ let rec ColorOptionFromDto (color: DTO.Color) : Color option =
 let TileRepresentationFromDto (tileRepresentation: DTO.TileRepresentation) : TileRepresentation =
     { AnsiCharacter = char tileRepresentation.AnsiCharacter
       ForegroundColor = tileRepresentation.ForegroundColor |> ColorOptionFromDto
-      BackGroundColor = tileRepresentation.BackGroundColor |> ColorOptionFromDto }
+      BackgroundColor = tileRepresentation.BackGroundColor |> ColorOptionFromDto }
 
 ///DTO to Tile
 let TileFromDto (tile: DTO.Tile) : Tile =

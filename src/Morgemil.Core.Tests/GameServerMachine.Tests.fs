@@ -16,7 +16,7 @@ let defaultTile: Tile =
       Representation =
         { AnsiCharacter = '#'
           ForegroundColor = Some <| Color.From(200, 200, 200, 255)
-          BackGroundColor = Some <| Color.Black } }
+          BackgroundColor = Some <| Color.Black } }
 
 let tile2 =
     { defaultTile with
@@ -41,7 +41,7 @@ let stairTileFeature: TileFeature =
       Representation =
         { AnsiCharacter = char 242
           ForegroundColor = Some <| Color.From(30, 30, 255, 255)
-          BackGroundColor = Some <| Color.From(0, 240, 0, 50) }
+          BackgroundColor = Some <| Color.From(0, 240, 0, 50) }
       PossibleTiles = [ tile2 ]
       ExitPoint = true
       EntryPoint = false }
@@ -55,7 +55,7 @@ let startingPointFeature: TileFeature =
       Representation =
         { AnsiCharacter = '@'
           ForegroundColor = Some <| Color.Black
-          BackGroundColor = None }
+          BackgroundColor = None }
       PossibleTiles = [ tile2 ]
       ExitPoint = false
       EntryPoint = true }

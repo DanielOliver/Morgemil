@@ -66,7 +66,7 @@ let IsAnUnionWithMultipleCaseOfSingleField (t: Type) : bool =
 
 type SingleFieldCaseInfo =
     { Case: UnionCaseInfo
-      Property: PropertyInfo }
+      Property: PropertyInfo list }
 
 /// If this type is a multiple case union where each case only has one field each, return the cases.
 let TryGetUnionMultipleCases (t: Type) : SingleFieldCaseInfo list option =
@@ -74,46 +74,13 @@ let TryGetUnionMultipleCases (t: Type) : SingleFieldCaseInfo list option =
     | true ->
         FSharpType.GetUnionCases(t)
         |> Array.map (fun u ->
-            let field = u.GetFields().[0]
+            let fields = u.GetFields() |> Seq.toList
 
             { SingleFieldCaseInfo.Case = u
-              Property = field })
+              Property = fields })
         |> Array.toList
         |> Some
     | false -> None
-
-[<RequireQualifiedAccess>]
-type KnownGenericType =
-    | List
-    | Option
-
-type GenericTypeDeconstruct =
-    { InnerType: Type
-      WrappingGenericTypes: KnownGenericType list }
-
-/// If a generic type, decomposes this type into the generic hierarchy.
-/// The first item on the list is the inner-most wrapping generic type.
-let TryGetInnerTypes (t: Type) : GenericTypeDeconstruct option =
-    let rec recurse (t: Type) (generics: KnownGenericType list) : Type * KnownGenericType list =
-        if t.IsGenericType then
-            let arg0 = t.GenericTypeArguments[0]
-            let genType = t.GetGenericTypeDefinition()
-
-            if genType = typedefof<option<_>> then
-                recurse arg0 (KnownGenericType.Option :: generics)
-            else if genType = typedefof<list<_>> then
-                recurse arg0 (KnownGenericType.List :: generics)
-            else
-                failwith $"What is generic type %s{t.GetGenericTypeDefinition().Name}"
-        else
-            (t, generics)
-
-    match recurse t [] with
-    | _, [] -> None
-    | innerType, wrappers ->
-        { GenericTypeDeconstruct.InnerType = innerType
-          WrappingGenericTypes = wrappers }
-        |> Some
 
 /// Gets all fields from a record
 let GetRecordFields (t: Type) : PropertyInfo array =
@@ -122,7 +89,6 @@ let GetRecordFields (t: Type) : PropertyInfo array =
     else
         [||]
 
-let (|MatchInnerTypes|_|) (t: Type) : GenericTypeDeconstruct option = TryGetInnerTypes t
 let (|MatchUnionSingleCase|_|) (t: Type) : PropertyInfo option = TryGetUnionSingleCaseFieldType t
 let (|MatchUnionMultipleCase|_|) (t: Type) : SingleFieldCaseInfo list option = TryGetUnionMultipleCases t
 let (|MatchUnionEnumCaseNames|_|) (t: Type) : string list option = TryGetUnionEnumCaseNames t
@@ -139,7 +105,7 @@ type AstRecordType =
 
 and AstGenericType =
     { Type: AstCollectedType
-      WrappingTypes: KnownGenericType list }
+      GenericParamaterTypes: AstCollectedType list }
 
 and AstRecordField =
     { FieldName: string
@@ -157,40 +123,32 @@ and AstMultipleCaseUnion =
       UnionName: string
       ActualType: Type }
 
-and AstEnumUnion =
-    { Cases: string list; ActualType: Type }
-
 and [<RequireQualifiedAccess>] AstCollectedType =
     | MorgemilRecord of AstRecordType
     | MorgemilBase of Type
     | Generic of AstGenericType
     | SingleCaseUnion of AstSingleCaseUnion
     | MultipleCaseUnion of AstMultipleCaseUnion
-    | EnumUnion of AstEnumUnion
+    | EnumUnion of Type
     | System of Type
 
 let rec AnalyzeType (t: Type) : AstCollectedType =
+
     if t.IsGenericType then
-        match TryGetInnerTypes t with
-        | None -> failwith $"FAILURE TO GET GENERIC TYPE?!?!?!?! of %A{t}"
-        | Some deconstruction ->
-            AstCollectedType.Generic
-                { Type = (AnalyzeType deconstruction.InnerType)
-                  WrappingTypes = deconstruction.WrappingGenericTypes }
-    else if
+        AstCollectedType.Generic
+            { Type =
+                (if IsMorgemilType t then
+                     AstCollectedType.MorgemilBase t
+                 else
+                     AstCollectedType.System t)
+              GenericParamaterTypes = t.GenericTypeArguments |> Seq.map (AnalyzeType) |> Seq.toList }
 
-        not (IsMorgemilType t)
-    then
+    else if not (IsMorgemilType t) then
         AstCollectedType.System t
-    else if
 
-        FSharpType.IsUnion t
-    then
+    else if FSharpType.IsUnion t then
         match t with
-        | MatchUnionEnumCaseNames(caseNames) ->
-            AstCollectedType.EnumUnion
-                { AstEnumUnion.Cases = caseNames
-                  ActualType = t }
+        | MatchUnionEnumCaseNames(caseNames) -> AstCollectedType.EnumUnion t
         | MatchUnionSingleCase(case) ->
             AstCollectedType.SingleCaseUnion
                 { AstSingleCaseUnion.CaseName = case.Name
@@ -202,7 +160,7 @@ let rec AnalyzeType (t: Type) : AstCollectedType =
                 cases
                 |> List.map (fun case ->
                     { AstSingleCaseUnion.CaseName = case.Case.Name
-                      Type = AnalyzeType case.Property.PropertyType
+                      Type = AnalyzeType case.Property.Head.PropertyType
                       UnionName = t.Name
                       ActualType = t })
               UnionName = t.Name
@@ -210,13 +168,11 @@ let rec AnalyzeType (t: Type) : AstCollectedType =
             |> AstCollectedType.MultipleCaseUnion
 
         | _ -> failwith $"UNION FAILURE! -> %A{t}"
-    else if
 
-        not (FSharpType.IsRecord t)
-    then
+    else if not (FSharpType.IsRecord t) || not (HasMorgemilRecordAttribute t) then
         AstCollectedType.MorgemilBase t
-    else
 
+    else
         let mutable recordKeyId = None
 
         let fields =
@@ -281,7 +237,7 @@ let ReadDependencyGraph (t: AstCollectedType) (history: Dictionary<string, Depen
             m.Cases |> Seq.iter (fun f -> descend2 f.Type m.ActualType)
 
             addType m.ActualType parent
-        | AstCollectedType.EnumUnion m -> addType m.ActualType parent
+        | AstCollectedType.EnumUnion m -> addType m parent
         | AstCollectedType.System m -> addType m parent
 
     descend t
