@@ -24,11 +24,11 @@ let isOk =
 let ``ColorToDto Tests`` () =
     let s1 = """{ "A": 255, "B": 253, "G": 252, "R": 249 } """
 
-    let deserial1 = Newtonsoft.Json.JsonConvert.DeserializeObject<DTO.Color> s1
+    let deserialized1 = Newtonsoft.Json.JsonConvert.DeserializeObject<DTO.Color> s1
 
     let expected1 = Color.From(249, 252, 253, 255) |> ToDTO.ColorToDto
 
-    Assert.Equal(expected1, deserial1)
+    Assert.Equal(expected1, deserialized1)
 
 [<Fact>]
 let ``ColorFromDto Tests`` () =
@@ -42,7 +42,7 @@ let ``ColorFromDto Tests`` () =
 
 [<Fact>]
 let ``ParseMorTag Tests`` () =
-    let json2 = JsonSerializer.Serialize(MorTags.Humanoid, JsonSettings.options)
+    let _ = JsonSerializer.Serialize(MorTags.Humanoid, JsonSettings.options)
 
     let u1 = FromDTO.ParseMorTag "Placeholder" (JsonValue.Create("test"))
 
@@ -56,7 +56,7 @@ let ``ParseMorTag Tests`` () =
             (JsonObject([| KeyValuePair<string, JsonNode>("Any", JsonValue.Create("test")) |]))
 
     match u2 with
-    | MorTags.Custom _ -> ()
+    | MorTags.Custom -> ()
     | _ -> Assert.Fail("HOW YOU REACH?!")
 
 
