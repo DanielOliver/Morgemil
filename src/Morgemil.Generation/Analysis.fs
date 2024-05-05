@@ -132,6 +132,18 @@ and [<RequireQualifiedAccess>] AstCollectedType =
     | EnumUnion of Type
     | System of Type
 
+    member this.UnderlyingType =
+        match this with
+        | System t -> t
+        | EnumUnion t -> t
+        | MorgemilBase t -> t
+        | Generic t -> t.Type.UnderlyingType
+        | SingleCaseUnion t -> t.ActualType
+        | MorgemilRecord t -> t.ActualType
+        | MultipleCaseUnion t -> t.ActualType
+
+
+
 let rec AnalyzeType (t: Type) : AstCollectedType =
 
     if t.IsGenericType then

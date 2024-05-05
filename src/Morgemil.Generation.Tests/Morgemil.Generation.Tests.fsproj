@@ -10,6 +10,7 @@
 
     <ItemGroup>
         <Compile Include="Analysis.Tests.fs"/>
+        <Compile Include="Creation.Tests.fs"/>
         <Compile Include="Program.fs"/>
     </ItemGroup>
 

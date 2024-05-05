@@ -1,4 +1,4 @@
-module Tests
+module Morgemil.Generation.Tests.Analysis_Tests
 
 open Microsoft.FSharp.Core
 open Morgemil.Models
