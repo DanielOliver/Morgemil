@@ -46,7 +46,7 @@ let TileMapTests () =
     let tileMap = TileMap(mapSize, defaultTile)
 
     Assert.Equal(mapSize, tileMap.MapSize)
-    tileMap.TilePoint.Zero <- tile2
+    tileMap.Tile(Point.Zero) <- tile2
 
     Assert.Equal(false, (tileMap.Tile Point.Zero).BlocksMovement)
 
