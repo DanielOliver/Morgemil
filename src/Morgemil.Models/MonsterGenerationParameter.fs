@@ -11,6 +11,7 @@ type GenerationRatio =
     }
 
 [<Record>]
+[<ScenarioData>]
 type MonsterGenerationParameter =
     { [<RecordId>]
       ID: MonsterGenerationParameterID

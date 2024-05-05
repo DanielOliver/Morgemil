@@ -1,13 +1,14 @@
 namespace Morgemil.Models
 
 [<Record>]
+[<ScenarioData>]
 type TileFeature =
     {
         [<RecordId>]
         ID: TileFeatureID
-        /// A short name. eg: "Stairs Down"
+        /// A short name. e.g.: "Stairs Down"
         Name: string
-        ///A long description. eg: "Take these stairs down to the next level."
+        ///A long description. e.g.: "Take these stairs down to the next level."
         Description: string
         ///If true, this Tile Feature ALWAYS blocks ALL movement by ANYTHING.
         BlocksMovement: bool
@@ -22,7 +23,6 @@ type TileFeature =
         ///True if this tile is an entry point.  Usually stairs up to the previous level.
         EntryPoint: bool
     }
-
 
     interface Relational.IRow with
         [<System.Text.Json.Serialization.JsonIgnore>]

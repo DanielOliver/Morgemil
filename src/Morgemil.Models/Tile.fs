@@ -7,6 +7,7 @@ type TileType =
     | Ground
 
 [<Record>]
+[<ScenarioData>]
 type Tile =
     {
         [<RecordId>]

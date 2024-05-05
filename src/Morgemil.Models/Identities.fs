@@ -2,6 +2,10 @@ namespace Morgemil.Models
 
 open System
 
+/// This class is base static scenario data that will never be changed after initial load.
+[<AttributeUsage(AttributeTargets.Class)>]
+type ScenarioData() =
+    inherit Attribute()
 
 [<AttributeUsage(AttributeTargets.Class)>]
 type RecordAttribute() =
