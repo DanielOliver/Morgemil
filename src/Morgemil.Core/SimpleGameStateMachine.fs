@@ -44,7 +44,8 @@ type SimpleGameStateMachine
                             resultQ <- List.concat [ resultQ; results ]
 
                         match waitingType () with
-                        | GameStateWaitingType.WaitingForInput -> currentState <- GameState.WaitingForInput inputFunc
+                        | GameStateWaitingType.WaitingForInput characterID ->
+                            currentState <- GameState.WaitingForInput(characterID, inputFunc)
                         | GameStateWaitingType.WaitingForEngine ->
                             processRequest ActionRequest.Engine (GameStateRequest.SetResults >> inbox.Post)
                         | GameStateWaitingType.WaitingForAI ->
@@ -65,7 +66,7 @@ type SimpleGameStateMachine
                     | _ -> do! loop currentState
                 }
 
-            loop (GameState.WaitingForInput inputFunc))
+            loop (GameState.WaitingForInput((CharacterID -1), inputFunc)))
 
     do loopWorkAgent.Post(GameStateRequest.SetResults [])
 

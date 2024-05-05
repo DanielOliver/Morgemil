@@ -22,7 +22,7 @@ let ``Can transition states`` () =
     let stateMachine: IGameStateMachine =
         SimpleGameStateMachine(
             exampleLoop,
-            (fun () -> GameStateWaitingType.WaitingForInput),
+            (fun () -> GameStateWaitingType.WaitingForInput(CharacterID -1)),
             Table.EmptyScenarioData,
             (fun () -> ActionRequest.Pause(CharacterID 0L)),
             EventRecorder.Ignore
@@ -44,10 +44,10 @@ let ``Can transition states`` () =
 
 
     match stateMachine.CurrentState with
-    | GameState.WaitingForInput(inputCallback) ->
+    | GameState.WaitingForInput(waitingOnCharacterID, inputCallback) ->
         inputCallback (
             ActionRequest.Move
-                { ActionRequestMove.CharacterID = CharacterID 0L
+                { ActionRequestMove.CharacterID = waitingOnCharacterID
                   ActionRequestMove.Direction = Morgemil.Math.Point.Identity }
         )
     | _ -> ()
@@ -56,10 +56,10 @@ let ``Can transition states`` () =
 
 
     match stateMachine.CurrentState with
-    | GameState.WaitingForInput(inputCallback) ->
+    | GameState.WaitingForInput(waitingOnCharacterID, inputCallback) ->
         inputCallback (
             ActionRequest.Move
-                { ActionRequestMove.CharacterID = CharacterID 0L
+                { ActionRequestMove.CharacterID = waitingOnCharacterID
                   ActionRequestMove.Direction = Morgemil.Math.Point.Identity }
         )
     | _ -> ()

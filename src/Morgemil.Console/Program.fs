@@ -13,9 +13,9 @@ type CLIArguments =
     interface IArgParserTemplate with
         member s.Usage =
             match s with
-            | GameDataRead _ -> "read game data from a directory"
-            | GameDataValidate _ -> "validate game data while still in raw format"
-            | GameDataFinal _ -> "create final game data to be output"
+            | GameDataRead -> "read game data from a directory"
+            | GameDataValidate -> "validate game data while still in raw format"
+            | GameDataFinal -> "create final game data to be output"
             | WorkingDirectory _ -> "specify a working directory"
 
 [<EntryPoint>]

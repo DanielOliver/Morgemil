@@ -18,8 +18,6 @@ type BasicCrawlConsole
 
     let timeTable = TimeTable()
     let gameContext = TrackedEntity(initialGameData.GameContext, StepItem.GameContext)
-    let character1ID = initialGameData.Characters[0].ID
-    let character1 () = initialGameData.Characters[0]
 
     let loopContext: LoopContext =
         { LoopContext.Characters = CharacterTable(timeTable)
@@ -57,39 +55,41 @@ type BasicCrawlConsole
     override this.Update(timeElapsed: TimeSpan) =
         base.Update(timeElapsed)
 
-        let event =
-            if GameHost.Instance.Keyboard.IsKeyReleased Keys.Left then
-                (character1ID, Point.create (-1, 0)) |> Some
-            else if GameHost.Instance.Keyboard.IsKeyReleased Keys.Right then
-                (character1ID, Point.create (1, 0)) |> Some
-            else if GameHost.Instance.Keyboard.IsKeyReleased Keys.Down then
-                (character1ID, Point.create (0, 1)) |> Some
-            else if GameHost.Instance.Keyboard.IsKeyReleased Keys.Up then
-                (character1ID, Point.create (0, -1)) |> Some
-            else
-                None
-            |> Option.map (fun (characterID, direction) ->
-                { ActionRequestMove.CharacterID = characterID
-                  ActionRequestMove.Direction = direction }
-                |> ActionRequest.Move)
-            |> Option.orElseWith (fun () ->
-                if GameHost.Instance.Keyboard.IsKeyReleased Keys.LeftShift then
-                    character1ID |> ActionRequest.Pause |> Some
-                else
-                    None)
-
-        let event =
-            event
-            |> Option.orElseWith (fun () ->
-                if GameHost.Instance.Keyboard.IsKeyReleased Keys.Space then
-                    character1ID |> ActionRequest.GoToNextLevel |> Some
-                else
-                    None)
 
         match gameState.CurrentState with
-        | GameState.WaitingForInput(inputCallback) ->
+        | GameState.WaitingForInput(waitingOnCharacterID, inputCallback) ->
+            let event =
+                if GameHost.Instance.Keyboard.IsKeyReleased Keys.Left then
+                    (waitingOnCharacterID, Point.create (-1, 0)) |> Some
+                else if GameHost.Instance.Keyboard.IsKeyReleased Keys.Right then
+                    (waitingOnCharacterID, Point.create (1, 0)) |> Some
+                else if GameHost.Instance.Keyboard.IsKeyReleased Keys.Down then
+                    (waitingOnCharacterID, Point.create (0, 1)) |> Some
+                else if GameHost.Instance.Keyboard.IsKeyReleased Keys.Up then
+                    (waitingOnCharacterID, Point.create (0, -1)) |> Some
+                else
+                    None
+                |> Option.map (fun (characterID, direction) ->
+                    { ActionRequestMove.CharacterID = characterID
+                      ActionRequestMove.Direction = direction }
+                    |> ActionRequest.Move)
+                |> Option.orElseWith (fun () ->
+                    if GameHost.Instance.Keyboard.IsKeyReleased Keys.LeftShift then
+                        waitingOnCharacterID |> ActionRequest.Pause |> Some
+                    else
+                        None)
+
+            let event =
+                event
+                |> Option.orElseWith (fun () ->
+                    if GameHost.Instance.Keyboard.IsKeyReleased Keys.Space then
+                        waitingOnCharacterID |> ActionRequest.GoToNextLevel |> Some
+                    else
+                        None)
+
             if event.IsSome then
                 inputCallback event.Value
+
         | GameState.Processing -> printfn "processing"
         | GameState.Results(results, acknowledgeCallback) ->
             results

@@ -35,7 +35,7 @@ type TimeTable() =
         | ActionArchetype.CharacterAfterInput
         | ActionArchetype.CharacterBeforeInput -> GameStateWaitingType.WaitingForEngine
         | ActionArchetype.CharacterEngineInput -> GameStateWaitingType.WaitingForAI
-        | ActionArchetype.CharacterPlayerInput -> GameStateWaitingType.WaitingForInput
+        | ActionArchetype.CharacterPlayerInput -> GameStateWaitingType.WaitingForInput items.Min.ID
 
     interface IIndex<Character> with
         member this.Add next = next |> items.Add |> ignore
