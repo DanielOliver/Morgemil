@@ -14,6 +14,7 @@
     <ItemGroup>
         <Compile Include="JsonSettings.fs"/>
         <Compile Include="DTO.fs"/>
+        <Compile Include="Phases.fs"/>
         <Compile Include="JsonReader.fs"/>
         <Compile Include="Translation.FromDTO.fs"/>
         <Compile Include="Translation.ToDTO.fs"/>
@@ -53,9 +54,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="FSharp.SystemTextJson" Version="1.3.13" />
-        <PackageReference Include="System.Text.Json" Version="8.0.3" />
-        <PackageReference Update="FSharp.Core" Version="8.0.200" />
+        <PackageReference Include="FSharp.SystemTextJson" Version="1.3.13"/>
+        <PackageReference Include="System.Text.Json" Version="8.0.3"/>
+        <PackageReference Update="FSharp.Core" Version="8.0.200"/>
     </ItemGroup>
 
 </Project>
