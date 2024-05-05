@@ -28,6 +28,11 @@ Target.create "Build" (fun _ ->
         DotNet.build (fun c ->
             { c with
                 NoLogo = true
+                MSBuildParams =
+                    { c.MSBuildParams with
+                        BinaryLoggers = None
+                        DisableInternalBinLog = true
+                        Verbosity = Some MSBuildVerbosity.Diagnostic }
                 Configuration = DotNet.Release })
     ))
 
