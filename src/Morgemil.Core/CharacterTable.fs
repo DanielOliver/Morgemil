@@ -5,7 +5,7 @@ open Morgemil.Models
 type CharacterTable(timeTable: TimeTable) as this =
     inherit Table<Character, CharacterID>(CharacterID, (_.Key), StepItem.Character)
 
-    do this.AddIndex timeTable
+    // do this.AddIndex timeTable
 
     member this.ByPositions = this |> Table.Items |> Seq.map (fun t -> t.Position, t)
 

@@ -108,6 +108,10 @@ module Entity =
         match entity.Properties with
         | EntityProperties.FloorCharacter entityFloorCharacter -> entityFloorCharacter.FloorLocation |> ValueSome
 
+    let floorActor (entity: Entity) : EntityFloorActor voption =
+        match entity.Properties with
+        | EntityProperties.FloorCharacter entityFloorCharacter -> entityFloorCharacter.FloorActor |> ValueSome
+
     let applyProperty (property: EntityProperty) (entity: Entity) : Entity =
         let floorCharacter x =
             { entity with

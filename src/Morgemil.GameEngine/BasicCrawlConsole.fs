@@ -45,8 +45,8 @@ type BasicCrawlConsole
                     (waitingOnCharacterID, Point.create (0, -1)) |> Some
                 else
                     None
-                |> Option.map (fun (characterID, direction) ->
-                    { ActionRequestMove.CharacterID = characterID
+                |> Option.map (fun (entityID, direction) ->
+                    { ActionRequestMove.EntityID = entityID
                       ActionRequestMove.Direction = direction }
                     |> ActionRequest.Move)
                 |> Option.orElseWith (fun () ->
@@ -136,16 +136,22 @@ type BasicCrawlConsole
                 )
                 |> ignore
 
-        for position, character in loopContext.Characters.ByPositions do
+        for entity in loopContext.Entities |> Table.Items do
             let color1 = Color.Black
 
-            let representation =
-                { TileRepresentation.AnsiCharacter = if character.PlayerID.IsSome then '@' else 'M'
-                  BackgroundColor = ValueNone
-                  ForegroundColor = ValueSome color1 }
+            match Entity.floorLocation entity with
+            | ValueNone -> ()
+            | ValueSome entityFloorLocation ->
+                let position = entityFloorLocation.Position
+                let playerID = entity |> Entity.floorActor |> ValueOption.bind (_.PlayerID)
 
-            let foregroundColor =
-                representation.ForegroundColor
-                |> ValueOption.defaultValue SadRogue.Primitives.Color.TransparentBlack
+                let representation =
+                    { TileRepresentation.AnsiCharacter = if playerID.IsSome then '@' else 'M'
+                      BackgroundColor = ValueNone
+                      ForegroundColor = ValueSome color1 }
 
-            base.Print(position.X, position.Y, representation.AnsiCharacter.ToString(), foregroundColor)
+                let foregroundColor =
+                    representation.ForegroundColor
+                    |> ValueOption.defaultValue SadRogue.Primitives.Color.TransparentBlack
+
+                base.Print(position.X, position.Y, representation.AnsiCharacter.ToString(), foregroundColor)

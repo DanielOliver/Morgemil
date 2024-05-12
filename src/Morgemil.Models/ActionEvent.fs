@@ -4,16 +4,16 @@ open Morgemil.Math
 open Morgemil.Models
 
 type EventAfterMove =
-    { CharacterID: CharacterID
+    { EntityID: EntityID
       OldPosition: Point
       NewPosition: Point }
 
 type EventRefusedMoved =
-    { CharacterID: CharacterID
+    { EntityID: EntityID
       OldPosition: Point
       RequestedPosition: Point }
 
-type EventPause = { CharacterID: CharacterID }
+type EventPause = { EntityID: EntityID }
 
 type TileMapData =
     { Tiles: Tile array

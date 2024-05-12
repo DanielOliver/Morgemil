@@ -41,7 +41,7 @@ type GameServerLocalhost(loadScenarioData: (ScenarioData -> unit) -> unit, event
 
             let characterTable = CharacterTable(timeTable)
             let characterAttributesTable = CharacterAttributesTable()
-            let entityTable = EntityTable()
+            let entityTable = EntityTable(timeTable)
 
             let gameContext =
                 { GameContext.CurrentTimeTick = 0L<TimeTick>
@@ -118,8 +118,8 @@ type GameServerLocalhost(loadScenarioData: (ScenarioData -> unit) -> unit, event
                       FloorActor =
                         { ID = npc1ID
                           NextTick = 0L<TimeTick>
-                          NextAction = Character.DefaultPlayerTickActions.Head
-                          TickActions = Character.DefaultPlayerTickActions
+                          NextAction = Character.DefaultTickActions.Head
+                          TickActions = Character.DefaultTickActions
                           PlayerID = ValueNone }
                       FloorLocation =
                         { ID = npc1ID
@@ -157,6 +157,7 @@ type GameServerLocalhost(loadScenarioData: (ScenarioData -> unit) -> unit, event
             let initialGameData =
                 { InitialGameData.Characters = characterTable.ByTicks |> Seq.toArray
                   CharacterAttributes = characterAttributesTable |> Table.Items |> Seq.toArray
+                  Entities = entityTable |> Table.Items |> Seq.toArray
                   TileMap = tileMap
                   CurrentPlayerID = currentPlayerID.Value
                   Scenario =

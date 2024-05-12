@@ -3,7 +3,7 @@ namespace Morgemil.Core
 open Morgemil.Models
 open Morgemil.Models.Relational
 
-module Entity =
+module EntityTable =
     let private diffProperty old next map =
         if old <> next then Some(map old, map next) else None
 
@@ -39,12 +39,23 @@ module Entity =
                 |> StepItem.EntityProperties
 
 
-type EntityTable() as this =
-    inherit Table<Entity, EntityID>(EntityID, (_.Key), StepItem.Entity)
+type EntityTable(timeTable: TimeTable) as this =
+    inherit Table<Entity, EntityID>(EntityID, (_.Key), EntityTable.entityTableEventToStepItems)
+    do this.AddIndex timeTable
 
     member this.Update(next: EntityPropertyList) =
         (this :> ITable<Entity, EntityID>).MapUpdate next.ID (Entity.applyPropertyList next)
         |> ignore
+
+    member this.Update(next: EntityFloorLocation) =
+        (this :> ITable<Entity, EntityID>).MapUpdate next.ID (Entity.applyProperty (EntityProperty.FloorLocation next))
+        |> ignore
+
+
+    member this.Update(next: EntityFloorActor) =
+        (this :> ITable<Entity, EntityID>).MapUpdate next.ID (Entity.applyProperty (EntityProperty.FloorActor next))
+        |> ignore
+
 
     member this.AddOrUpdate(next: EntityFloorCharacter) =
         (this :> ITable<Entity, EntityID>)

@@ -21,7 +21,7 @@ type Step =
 
 [<RequireQualifiedAccess>]
 type GameStateWaitingType =
-    | WaitingForInput of CharacterID: CharacterID
+    | WaitingForInput of EntityID: EntityID
     | WaitingForAI
     | WaitingForEngine
 
@@ -34,7 +34,7 @@ type GameStateType =
 type GameState =
     | Processing
     | Results of Steps: Step list * AcknowledgeCallback: (unit -> unit)
-    | WaitingForInput of CharacterID: CharacterID * InputCallback: (ActionRequest -> unit)
+    | WaitingForInput of EntityID: EntityID * InputCallback: (ActionRequest -> unit)
 
     member this.GameStateType =
         match this with
