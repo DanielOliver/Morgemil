@@ -70,6 +70,8 @@ type EntityProperty =
         member this.Key = this.EntityID.Key
 
 /// Assume that all properties in this list belong to the same entity.
+/// Creating a subset of properties as the short list of what has been updated/changed should make performance
+///   for updating indices better. At the very least, makes everything easier to reason about when debugging.
 type EntityPropertyList =
     | Items of EntityProperty list
 

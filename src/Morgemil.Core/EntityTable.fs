@@ -54,11 +54,15 @@ type EntityTable(timeTable: TimeTable) as this =
         (this :> ITable<Entity, EntityID>).MapUpdate next.ID (Entity.applyProperty (EntityProperty.FloorLocation next))
         |> ignore
 
-
     member this.Update(next: EntityFloorActor) =
         (this :> ITable<Entity, EntityID>).MapUpdate next.ID (Entity.applyProperty (EntityProperty.FloorActor next))
         |> ignore
 
+    member this.Update(next: EntityFloorCharacter) =
+        (this :> ITable<Entity, EntityID>).MapUpdate next.ID (fun e ->
+            { e with
+                Properties = EntityProperties.FloorCharacter next })
+        |> ignore
 
     member this.AddOrUpdate(next: EntityFloorCharacter) =
         (this :> ITable<Entity, EntityID>)

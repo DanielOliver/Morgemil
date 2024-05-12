@@ -66,96 +66,100 @@ module Loop =
                 match actionRequestMove.EntityID |> Table.TryGetRowByKey context.Entities with
                 | None -> ()
                 | Some moveCharacter ->
-                    let floorLocation = moveCharacter |> Entity.floorLocation |> ValueOption.get
+                    match moveCharacter.Properties with
+                    | EntityProperties.FloorCharacter entityFloorCharacter ->
+                        let floorLocation = entityFloorCharacter.FloorLocation
+                        let newPosition = floorLocation.Position + actionRequestMove.Direction
 
-                    let newPosition = floorLocation.Position + actionRequestMove.Direction
+                        let blocksMovement = context.TileMap[newPosition] |> TileMap.blocksMovement
 
-                    let blocksMovement = context.TileMap[newPosition] |> TileMap.blocksMovement
-
-                    if blocksMovement then
-                        yield
-                            { EntityID = moveCharacter.ID
-                              OldPosition = floorLocation.Position
-                              RequestedPosition = newPosition }
-                            |> ActionEvent.RefusedMove
-                    else
-                        let isFreeFromOtherCharacters =
-                            context.Entities
-                            |> Table.Items
-                            |> Seq.where (fun e ->
-                                (e |> Entity.floorLocation |> ValueOption.get).Position = newPosition)
-                            |> Seq.isEmpty
-
-                        if not isFreeFromOtherCharacters then
+                        if blocksMovement then
                             yield
                                 { EntityID = moveCharacter.ID
                                   OldPosition = floorLocation.Position
                                   RequestedPosition = newPosition }
                                 |> ActionEvent.RefusedMove
-
                         else
+                            let isFreeFromOtherCharacters =
+                                context.Entities
+                                |> Table.Items
+                                |> Seq.where (fun e ->
+                                    (e |> Entity.floorLocation |> ValueOption.get).Position = newPosition)
+                                |> Seq.isEmpty
 
-                            let floorActor = (moveCharacter |> Entity.floorActor |> ValueOption.get)
+                            if not isFreeFromOtherCharacters then
+                                yield
+                                    { EntityID = moveCharacter.ID
+                                      OldPosition = floorLocation.Position
+                                      RequestedPosition = newPosition }
+                                    |> ActionEvent.RefusedMove
 
-                            context.Entities.Update
-                                { floorActor with
-                                    NextTick = floorActor.NextTick + 1000L<TimeTick>
-                                    NextAction = floorActor.NextAction.NextInList floorActor.TickActions }
+                            else
+                                let floorActor = entityFloorCharacter.FloorActor
 
-                            context.Entities.Update
-                                { floorLocation with
-                                    Position = newPosition }
+                                context.Entities.Update
+                                    { entityFloorCharacter with
+                                        FloorActor =
+                                            { floorActor with
+                                                NextTick = floorActor.NextTick + 1000L<TimeTick>
+                                                NextAction = floorActor.NextAction.NextInList floorActor.TickActions }
+                                        FloorLocation =
+                                            { floorLocation with
+                                                Position = newPosition } }
 
-                            yield
-                                { EntityID = moveCharacter.ID
-                                  OldPosition = floorLocation.Position
-                                  NewPosition = newPosition }
-                                |> ActionEvent.AfterMove
+                                yield
+                                    { EntityID = moveCharacter.ID
+                                      OldPosition = floorLocation.Position
+                                      NewPosition = newPosition }
+                                    |> ActionEvent.AfterMove
             | ActionRequest.GoToNextLevel(entityID) ->
                 match entityID |> Table.TryGetRowByKey context.Entities with
                 | None -> ()
                 | Some moveCharacter ->
-                    if
-                        context.TileMap[moveCharacter |> Entity.floorLocation |> ValueOption.get |> (_.Position)]
-                        |> TileMap.isExitPoint
-                    then
+                    match moveCharacter.Properties with
+                    | EntityProperties.FloorCharacter entityFloorCharacter ->
+                        if
+                            context.TileMap[entityFloorCharacter.FloorLocation.Position]
+                            |> TileMap.isExitPoint
+                        then
 
-                        let rng = world.RNG
-                        let nextFloor = context.GameContext.Value.FloorID.TempNext
+                            let rng = world.RNG
+                            let nextFloor = context.GameContext.Value.FloorID.TempNext
 
-                        let newTileMap, mapGenerationResults =
-                            FloorGenerator.Create
-                                (world.ScenarioData.FloorGenerationParameters.Items |> Seq.head)
-                                world.ScenarioData.TileFeatures
-                                rng
+                            let newTileMap, mapGenerationResults =
+                                FloorGenerator.Create
+                                    (world.ScenarioData.FloorGenerationParameters.Items |> Seq.head)
+                                    world.ScenarioData.TileFeatures
+                                    rng
 
-                        Tracked.Replace context.TileMap (fun t -> newTileMap.TileMapData)
-                        Tracked.Replace context.GameContext (fun t -> { t with FloorID = nextFloor })
+                            Tracked.Replace context.TileMap (fun t -> newTileMap.TileMapData)
+                            Tracked.Replace context.GameContext (fun t -> { t with FloorID = nextFloor })
 
 
-                        match moveCharacter |> Entity.floorActor, moveCharacter |> Entity.floorLocation with
-                        | ValueNone, ValueNone
-                        | ValueNone, ValueSome _
-                        | ValueSome _, ValueNone -> ()
-                        | ValueSome entityFloorActor, ValueSome entityFloorLocation ->
-                            context.Entities.Update
-                                { entityFloorActor with
-                                    NextTick = entityFloorActor.NextTick + 1000L<TimeTick>
-                                    NextAction = entityFloorActor.NextAction.NextInList entityFloorActor.TickActions }
+                            let floorActor = entityFloorCharacter.FloorActor
+                            let floorLocation = entityFloorCharacter.FloorLocation
 
                             context.Entities.Update
-                                { entityFloorLocation with
-                                    FloorID = nextFloor }
+                                { entityFloorCharacter with
+                                    FloorActor =
+                                        { floorActor with
+                                            NextTick = floorActor.NextTick + 1000L<TimeTick>
+                                            NextAction = floorActor.NextAction.NextInList floorActor.TickActions }
+                                    FloorLocation =
+                                        { floorLocation with
+                                            FloorID = nextFloor
 
-                        context.Entities
-                        |> Table.Items
-                        |> Seq.map (fun t ->
-                            { EntityFloorLocation.ID = t.ID
-                              Position = (context.TileMap.EntryPoints |> Seq.head) + int t.ID.Key
-                              FloorID = nextFloor })
-                        |> Seq.iter (context.Entities.Update)
+                                        } }
 
-                        yield ActionEvent.MapChange
+                            context.Entities
+                            |> Table.Items
+                            |> Seq.map (fun t ->
+                                { EntityFloorLocation.ID = t.ID
+                                  Position = (context.TileMap.EntryPoints |> Seq.head) + int t.ID.Key
+                                  FloorID = nextFloor })
+                            |> Seq.iter (context.Entities.Update)
+
+                            yield ActionEvent.MapChange
 
             yield ActionEvent.EndResponse 0
         },
