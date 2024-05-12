@@ -4,7 +4,6 @@ open System
 open Morgemil.Core
 open Morgemil.Models
 open Morgemil.Math
-open Morgemil.Models.Relational
 open SadConsole
 open SadConsole.Input
 
@@ -16,31 +15,10 @@ type BasicCrawlConsole
     ) =
     inherit Console(40, 40)
 
-    let timeTable = TimeTable()
-    let gameContext = TrackedEntity(initialGameData.GameContext, StepItem.GameContext)
-
-    let loopContext: LoopContext =
-        { LoopContext.Characters = CharacterTable(timeTable)
-          CharacterAttributes = CharacterAttributesTable()
-          TimeTable = timeTable
-          TileMap = initialGameData.TileMap
-          GameContext = gameContext }
+    let loopContext = initialGameData.ToLoopContext()
 
     let sidebar = new CrawlSidebar(20, 40, 20, initialGameData, loopContext)
     do base.Children.Add(sidebar)
-
-    let createTileMapFromData (data: TileMapData) =
-        let result =
-            TileMap(Rectangle(0, 0, data.Size.X, data.Size.Y), data.DefaultTile, Array.zip data.Tiles data.TileFeatures)
-
-        result
-
-    do
-        for character in initialGameData.Characters do
-            Table.AddRow loopContext.Characters character
-
-        for characterAttributes in initialGameData.CharacterAttributes do
-            Table.AddRow loopContext.CharacterAttributes characterAttributes
 
     member this.Reposition() = sidebar.Reposition()
 
@@ -51,10 +29,8 @@ type BasicCrawlConsole
         else
             false
 
-
     override this.Update(timeElapsed: TimeSpan) =
         base.Update(timeElapsed)
-
 
         match gameState.CurrentState with
         | GameState.WaitingForInput(waitingOnCharacterID, inputCallback) ->
@@ -101,22 +77,7 @@ type BasicCrawlConsole
                 | ActionEvent.MapChange -> printfn "Changed Map"
                 | _ -> ()
 
-                event.Updates
-                |> List.iter (fun tableEvent ->
-                    match tableEvent with
-                    | StepItem.Character character ->
-                        match character with
-                        | TableEvent.Added(row) -> Table.AddRow loopContext.Characters row
-                        | TableEvent.Updated(_, row) -> Table.AddRow loopContext.Characters row
-                        | TableEvent.Removed(row) -> Table.RemoveRow loopContext.Characters row
-                    | StepItem.CharacterAttributes characterAttributes ->
-                        match characterAttributes with
-                        | TableEvent.Added(row) -> Table.AddRow loopContext.CharacterAttributes row
-                        | TableEvent.Updated(_, row) -> Table.AddRow loopContext.CharacterAttributes row
-                        | TableEvent.Removed(row) -> Table.RemoveRow loopContext.CharacterAttributes row
-                    | StepItem.GameContext context -> Tracked.Update gameContext context.NewValue
-                    | StepItem.CompleteMapChange context -> Tracked.Update loopContext.TileMap context.NewValue
-                    | StepItem.TileInstance _ -> failwith "NotImplemented"))
+                event.Updates |> List.iter loopContext.ApplyStepItem)
 
             acknowledgeCallback ()
 
@@ -134,20 +95,20 @@ type BasicCrawlConsole
                     if Char.IsWhiteSpace feature.Representation.AnsiCharacter then
                         false,
                         (tile.Representation.ForegroundColor
-                         |> Option.defaultValue SadRogue.Primitives.Color.Black)
+                         |> ValueOption.defaultValue SadRogue.Primitives.Color.Black)
                     else
                         let foreground =
                             feature.Representation.ForegroundColor
-                            |> Option.defaultValue SadRogue.Primitives.Color.TransparentBlack
+                            |> ValueOption.defaultValue SadRogue.Primitives.Color.TransparentBlack
 
                         (foreground.A <> (byte 0)), foreground
 
                 let backgroundColor =
                     Color.blendColors
                         (feature.Representation.BackgroundColor
-                         |> Option.defaultValue SadRogue.Primitives.Color.TransparentBlack)
+                         |> ValueOption.defaultValue SadRogue.Primitives.Color.TransparentBlack)
                         (tile.Representation.BackgroundColor
-                         |> Option.defaultValue SadRogue.Primitives.Color.TransparentBlack)
+                         |> ValueOption.defaultValue SadRogue.Primitives.Color.TransparentBlack)
 
                 let tileCharacter =
                     if showFeatureChar then
@@ -162,11 +123,11 @@ type BasicCrawlConsole
             | None ->
                 let backgroundColor =
                     tile.Representation.BackgroundColor
-                    |> Option.defaultValue SadRogue.Primitives.Color.Black
+                    |> ValueOption.defaultValue SadRogue.Primitives.Color.Black
 
                 let foregroundColor =
                     tile.Representation.ForegroundColor
-                    |> Option.defaultValue SadRogue.Primitives.Color.White
+                    |> ValueOption.defaultValue SadRogue.Primitives.Color.White
 
                 base.Cursor.Position <- position
 
@@ -180,11 +141,11 @@ type BasicCrawlConsole
 
             let representation =
                 { TileRepresentation.AnsiCharacter = if character.PlayerID.IsSome then '@' else 'M'
-                  BackgroundColor = None
-                  ForegroundColor = Some color1 }
+                  BackgroundColor = ValueNone
+                  ForegroundColor = ValueSome color1 }
 
             let foregroundColor =
                 representation.ForegroundColor
-                |> Option.defaultValue SadRogue.Primitives.Color.TransparentBlack
+                |> ValueOption.defaultValue SadRogue.Primitives.Color.TransparentBlack
 
             base.Print(position.X, position.Y, representation.AnsiCharacter.ToString(), foregroundColor)

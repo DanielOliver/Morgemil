@@ -5,5 +5,5 @@ open Morgemil.Math
 // [<Record>]
 type TileRepresentation =
     { AnsiCharacter: char
-      ForegroundColor: Color option
-      BackgroundColor: Color option }
+      ForegroundColor: Color voption
+      BackgroundColor: Color voption }

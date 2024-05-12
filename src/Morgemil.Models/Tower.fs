@@ -18,6 +18,7 @@ type TowerOverworldConnection =
     | NoExit
 
 [<Record>]
+[<ScenarioStaticData>]
 type Tower =
     { [<RecordId>]
       ID: TowerID

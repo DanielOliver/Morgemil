@@ -19,10 +19,11 @@ Here is the list of projects and their purpose.
 * Morgemil.GameEngine
     * The graphical game engine lives in here, built on top of SadConsole engine.
 * Morgemil.Generation
-    * An experimental addition to enable code generation of boiler-plate. Especially relevant for purposes of
+    * An experimental addition to enable code generation of boilerplate. Especially relevant for purposes of
       serialization and deserialization of data.
 * Morgemil.Math
-    * A custom math library dedicated to ease of use and composability.
+    * A custom math library dedicated to ease of use and composition. Has recently been replaced with
+      SadRogue.Primitives.
 * Morgemil.Models
     * These are the rich domain models that the game is built on top of.
 * Morgemil.Utility
@@ -36,7 +37,7 @@ These coding guidelines are not absolute. There are always cases not considered 
 set aside.
 
 1. Consider using F# code type annotations to be specifically clear about expected purpose.
-2. Every field on a F# record should be immutable (which is the default).
+2. Every field on an F# record should be immutable (which is the default).
 3. Every piece of randomness should use a provided RNG (Random Number Generator) in order for the game logic to be
    completely deterministic.
 4. Every F# discriminated union should use the `RequireQualifiedAccess` attribute by default.
@@ -58,4 +59,6 @@ are associated with and expected to be used with the same version program.
 ## Tools used
 
 * JetBrains Rider
-* .NET 7.0
+* .NET 8.0
+* [TheSadRogue.Primitives](https://github.com/thesadrogue/TheSadRogue.Primitives)
+* [SadConsole](https://sadconsole.com)

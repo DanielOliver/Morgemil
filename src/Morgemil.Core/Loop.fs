@@ -3,6 +3,7 @@ namespace Morgemil.Core
 open Morgemil.Core
 open Morgemil.Models
 open Morgemil.Math
+open Morgemil.Models.Relational
 
 type LoopContext =
     { Characters: CharacterTable
@@ -10,6 +11,22 @@ type LoopContext =
       TileMap: TileMap
       GameContext: GameContext TrackedEntity
       TimeTable: TimeTable }
+
+    member this.ApplyStepItem (stepItem: StepItem) =
+        match stepItem with
+        | StepItem.Character character ->
+            match character with
+            | TableEvent.Added(row) -> Table.AddRow this.Characters row
+            | TableEvent.Updated(_, row) -> Table.AddRow this.Characters row
+            | TableEvent.Removed(row) -> Table.RemoveRow this.Characters row
+        | StepItem.CharacterAttributes characterAttributes ->
+            match characterAttributes with
+            | TableEvent.Added(row) -> Table.AddRow this.CharacterAttributes row
+            | TableEvent.Updated(_, row) -> Table.AddRow this.CharacterAttributes row
+            | TableEvent.Removed(row) -> Table.RemoveRow this.CharacterAttributes row
+        | StepItem.GameContext context -> Tracked.Update this.GameContext context.NewValue
+        | StepItem.CompleteMapChange context -> Tracked.Update this.TileMap context.NewValue
+        | StepItem.TileInstance _ -> failwith "NotImplemented"
 
 type StaticLoopContext =
     { ScenarioData: ScenarioData

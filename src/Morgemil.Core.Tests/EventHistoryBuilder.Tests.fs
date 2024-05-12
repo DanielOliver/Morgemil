@@ -52,8 +52,8 @@ let defaultTile: Tile =
       BlocksSight = true
       Representation =
         { AnsiCharacter = '#'
-          ForegroundColor = Some <| Color.From(200, 200, 200, 255)
-          BackgroundColor = Some <| Color.Black } }
+          ForegroundColor = ValueSome <| Color.From(200, 200, 200, 255)
+          BackgroundColor = ValueSome <| Color.Black } }
 
 let exampleGameContext =
     { GameContext.CurrentTimeTick = 1L<TimeTick>

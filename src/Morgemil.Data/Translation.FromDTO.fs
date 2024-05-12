@@ -48,11 +48,11 @@ let RectangleFromDto (rectangle: DTO.Rectangle) : Rectangle =
     Rectangle(rectangle.X, rectangle.Y, rectangle.W, rectangle.H)
 
 ///DTO to Color Option
-let rec ColorOptionFromDto (color: DTO.Color) : Color option =
+let rec ColorOptionFromDto (color: DTO.Color) : Color voption =
     if color.A = Byte.MinValue then
-        None
+        ValueNone
     else
-        Some(ColorFromDto color)
+        ValueSome(ColorFromDto color)
 
 ///DTO to TileRepresentation
 let TileRepresentationFromDto (tileRepresentation: DTO.TileRepresentation) : TileRepresentation =
