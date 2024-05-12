@@ -3,12 +3,12 @@ namespace Morgemil.Models
 
 
 type ActionRequestMove =
-    { CharacterID: CharacterID
+    { EntityID: EntityID
       Direction: SadRogue.Primitives.Point }
 
 [<RequireQualifiedAccess>]
 type ActionRequest =
     | Move of ActionRequestMove
-    | GoToNextLevel of CharacterID: CharacterID
-    | Pause of CharacterID: CharacterID
+    | GoToNextLevel of EntityID: EntityID
+    | Pause of EntityID: EntityID
     | Engine

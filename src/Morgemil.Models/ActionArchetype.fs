@@ -16,3 +16,17 @@ type ActionArchetype =
             items[index]
         else
             items[index - items.Length]
+
+module ActionArchetype =
+    /// A typical monster or npc entity follows these three steps in their every turn.
+    let DefaultTickActions =
+        [ ActionArchetype.CharacterBeforeInput
+          ActionArchetype.CharacterEngineInput
+          ActionArchetype.CharacterAfterInput ]
+
+    /// A typical player controlled entity follows these three steps in their every turn.
+    let DefaultPlayerTickActions =
+        [ ActionArchetype.CharacterBeforeInput
+          ActionArchetype.CharacterPlayerInput
+          ActionArchetype.CharacterAfterInput ]
+

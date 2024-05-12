@@ -6,27 +6,26 @@ open Morgemil.Math
 open Morgemil.Models.Relational
 
 type LoopContext =
-    { Characters: CharacterTable
-      CharacterAttributes: CharacterAttributesTable
-      TileMap: TileMap
+    { TileMap: TileMap
       GameContext: GameContext TrackedEntity
+      Entities: EntityTable
       TimeTable: TimeTable }
 
-    member this.ApplyStepItem (stepItem: StepItem) =
+    member this.ApplyStepItem(stepItem: StepItem) =
         match stepItem with
-        | StepItem.Character character ->
-            match character with
-            | TableEvent.Added(row) -> Table.AddRow this.Characters row
-            | TableEvent.Updated(_, row) -> Table.AddRow this.Characters row
-            | TableEvent.Removed(row) -> Table.RemoveRow this.Characters row
-        | StepItem.CharacterAttributes characterAttributes ->
-            match characterAttributes with
-            | TableEvent.Added(row) -> Table.AddRow this.CharacterAttributes row
-            | TableEvent.Updated(_, row) -> Table.AddRow this.CharacterAttributes row
-            | TableEvent.Removed(row) -> Table.RemoveRow this.CharacterAttributes row
         | StepItem.GameContext context -> Tracked.Update this.GameContext context.NewValue
         | StepItem.CompleteMapChange context -> Tracked.Update this.TileMap context.NewValue
         | StepItem.TileInstance _ -> failwith "NotImplemented"
+        | StepItem.Entity entity ->
+            match entity with
+            | TableEvent.Added(row) -> Table.AddRow this.Entities row
+            | TableEvent.Updated(_, row) -> Table.AddRow this.Entities row
+            | TableEvent.Removed(row) -> Table.RemoveRow this.Entities row
+        | StepItem.EntityProperties entityProperties ->
+            match entityProperties with
+            | TableEvent.Added _ -> failwithf "Adding EntityProperties is unsupported"
+            | TableEvent.Updated(_, row) -> this.Entities.Update row
+            | TableEvent.Removed _ -> failwithf "Removing EntityProperties is unsupported"
 
 type StaticLoopContext =
     { ScenarioData: ScenarioData
@@ -45,69 +44,81 @@ module Loop =
         builder {
             Tracked.Replace context.GameContext (fun t ->
                 { t with
-                    CurrentTimeTick = context.TimeTable.Next.NextTick })
+                    CurrentTimeTick = context.TimeTable.NextFloorActor.NextTick })
 
             match event with
             | ActionRequest.Engine -> ()
-            | ActionRequest.Pause characterID ->
-                match characterID |> Table.TryGetRowByKey context.Characters with
+            | ActionRequest.Pause entityID ->
+                match entityID |> Table.TryGetRowByKey context.Entities with
                 | None -> ()
                 | Some pauseCharacter ->
-                    Table.AddRow
-                        context.Characters
-                        { pauseCharacter with
-                            NextTick = pauseCharacter.NextTick + 1000L<TimeTick>
-                            NextAction = pauseCharacter.NextAction.NextInList pauseCharacter.TickActions }
+                    match pauseCharacter |> Entity.floorActor with
+                    | ValueNone -> ()
+                    | ValueSome entityFloorActor ->
+                        context.Entities.Update
+                            { entityFloorActor with
+                                NextTick = entityFloorActor.NextTick + 1000L<TimeTick>
+                                NextAction = entityFloorActor.NextAction.NextInList entityFloorActor.TickActions }
 
-                    yield { EventPause.CharacterID = characterID } |> ActionEvent.Pause
+                        yield { EventPause.EntityID = pauseCharacter.ID } |> ActionEvent.Pause
 
             | ActionRequest.Move actionRequestMove ->
-                match actionRequestMove.CharacterID |> Table.TryGetRowByKey context.Characters with
+                match actionRequestMove.EntityID |> Table.TryGetRowByKey context.Entities with
                 | None -> ()
                 | Some moveCharacter ->
-                    let oldPosition = moveCharacter.Position
+                    let floorLocation = moveCharacter |> Entity.floorLocation |> ValueOption.get
 
-                    let newPosition = oldPosition + actionRequestMove.Direction
+                    let newPosition = floorLocation.Position + actionRequestMove.Direction
 
                     let blocksMovement = context.TileMap[newPosition] |> TileMap.blocksMovement
 
                     if blocksMovement then
                         yield
-                            { CharacterID = moveCharacter.ID
-                              OldPosition = oldPosition
+                            { EntityID = moveCharacter.ID
+                              OldPosition = floorLocation.Position
                               RequestedPosition = newPosition }
                             |> ActionEvent.RefusedMove
                     else
                         let isFreeFromOtherCharacters =
-                            context.Characters.ByPositions
-                            |> Seq.where (fun (pos, c) -> pos = newPosition)
+                            context.Entities
+                            |> Table.Items
+                            |> Seq.where (fun e ->
+                                (e |> Entity.floorLocation |> ValueOption.get).Position = newPosition)
                             |> Seq.isEmpty
 
                         if not isFreeFromOtherCharacters then
                             yield
-                                { CharacterID = moveCharacter.ID
-                                  OldPosition = oldPosition
+                                { EntityID = moveCharacter.ID
+                                  OldPosition = floorLocation.Position
                                   RequestedPosition = newPosition }
                                 |> ActionEvent.RefusedMove
 
                         else
-                            Table.AddRow
-                                context.Characters
-                                { moveCharacter with
-                                    Position = newPosition
-                                    NextTick = moveCharacter.NextTick + 1000L<TimeTick>
-                                    NextAction = moveCharacter.NextAction.NextInList moveCharacter.TickActions }
+
+                            let floorActor = (moveCharacter |> Entity.floorActor |> ValueOption.get)
+
+                            context.Entities.Update
+                                { floorActor with
+                                    NextTick = floorActor.NextTick + 1000L<TimeTick>
+                                    NextAction = floorActor.NextAction.NextInList floorActor.TickActions }
+
+                            context.Entities.Update
+                                { floorLocation with
+                                    Position = newPosition }
 
                             yield
-                                { CharacterID = moveCharacter.ID
-                                  OldPosition = oldPosition
+                                { EntityID = moveCharacter.ID
+                                  OldPosition = floorLocation.Position
                                   NewPosition = newPosition }
                                 |> ActionEvent.AfterMove
-            | ActionRequest.GoToNextLevel(characterID) ->
-                match characterID |> Table.TryGetRowByKey context.Characters with
+            | ActionRequest.GoToNextLevel(entityID) ->
+                match entityID |> Table.TryGetRowByKey context.Entities with
                 | None -> ()
                 | Some moveCharacter ->
-                    if context.TileMap[moveCharacter.Position] |> TileMap.isExitPoint then
+                    if
+                        context.TileMap[moveCharacter |> Entity.floorLocation |> ValueOption.get |> (_.Position)]
+                        |> TileMap.isExitPoint
+                    then
 
                         let rng = world.RNG
                         let nextFloor = context.GameContext.Value.FloorID.TempNext
@@ -121,20 +132,28 @@ module Loop =
                         Tracked.Replace context.TileMap (fun t -> newTileMap.TileMapData)
                         Tracked.Replace context.GameContext (fun t -> { t with FloorID = nextFloor })
 
-                        Table.AddRow
-                            context.Characters
-                            { moveCharacter with
-                                NextTick = moveCharacter.NextTick + 1000L<TimeTick>
-                                NextAction = moveCharacter.NextAction.NextInList moveCharacter.TickActions
-                                FloorID = nextFloor }
 
-                        context.Characters
+                        match moveCharacter |> Entity.floorActor, moveCharacter |> Entity.floorLocation with
+                        | ValueNone, ValueNone
+                        | ValueNone, ValueSome _
+                        | ValueSome _, ValueNone -> ()
+                        | ValueSome entityFloorActor, ValueSome entityFloorLocation ->
+                            context.Entities.Update
+                                { entityFloorActor with
+                                    NextTick = entityFloorActor.NextTick + 1000L<TimeTick>
+                                    NextAction = entityFloorActor.NextAction.NextInList entityFloorActor.TickActions }
+
+                            context.Entities.Update
+                                { entityFloorLocation with
+                                    FloorID = nextFloor }
+
+                        context.Entities
                         |> Table.Items
                         |> Seq.map (fun t ->
-                            { t with
-                                Position = (context.TileMap.EntryPoints |> Seq.head) + int t.ID.Key
-                                FloorID = nextFloor })
-                        |> Seq.iter (Table.AddRow context.Characters)
+                            { EntityFloorLocation.ID = t.ID
+                              Position = (context.TileMap.EntryPoints |> Seq.head) + int t.ID.Key
+                              FloorID = nextFloor })
+                        |> Seq.iter (context.Entities.Update)
 
                         yield ActionEvent.MapChange
 
@@ -155,17 +174,12 @@ type Loop(world: StaticLoopContext, initialContext: LoopContext) =
             ActionRequest.Pause context.TimeTable.Next.ID
         else
             ActionRequest.Move
-                { ActionRequestMove.CharacterID = context.TimeTable.Next.ID
+                { ActionRequestMove.EntityID = context.TimeTable.Next.ID
                   Direction = direction }
 
     member this.ProcessRequest(event: ActionRequest) : Step list =
         use builder =
-            new EventHistoryBuilder(
-                [ context.Characters
-                  context.CharacterAttributes
-                  context.GameContext
-                  context.TileMap ]
-            )
+            new EventHistoryBuilder([ context.GameContext; context.TileMap; context.Entities ])
 
         let nextAction = context.TimeTable.NextAction
 
@@ -173,10 +187,9 @@ type Loop(world: StaticLoopContext, initialContext: LoopContext) =
         | ActionArchetype.CharacterAfterInput
         | ActionArchetype.CharacterBeforeInput ->
             builder {
-                let nextCharacter = context.TimeTable.Next
+                let nextCharacter = context.TimeTable.NextFloorActor
 
-                Table.AddRow
-                    context.Characters
+                context.Entities.Update
                     { nextCharacter with
                         NextAction = nextCharacter.NextAction.NextInList nextCharacter.TickActions }
 

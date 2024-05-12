@@ -61,14 +61,6 @@ type TileInstanceID =
         rowID
 
 [<Struct>]
-type CharacterID =
-    | CharacterID of int64
-
-    member this.Key =
-        let (CharacterID characterID) = this
-        characterID
-
-[<Struct>]
 type ItemID =
     | ItemID of int64
 
@@ -128,6 +120,13 @@ type FloorID =
         let (FloorID rowID) = this
         FloorID(rowID + 1L)
 
+[<Struct>]
+type EntityID =
+    | EntityID of int64
+
+    member this.Key =
+        let (EntityID rowID) = this
+        rowID
 
 [<Measure>]
 type TileDistance

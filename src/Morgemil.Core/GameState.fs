@@ -6,11 +6,11 @@ open Morgemil.Models.Tracked
 
 [<RequireQualifiedAccess>]
 type StepItem =
-    | Character of Character TableEvent
-    | CharacterAttributes of CharacterAttributes TableEvent
     | GameContext of GameContext TrackedEvent
     | CompleteMapChange of TileMapData TrackedEvent
     | TileInstance of TileInstance TableEvent
+    | Entity of Entity TableEvent
+    | EntityProperties of EntityPropertyList TableEvent
 
 type Step =
     { Event: ActionEvent
@@ -18,7 +18,7 @@ type Step =
 
 [<RequireQualifiedAccess>]
 type GameStateWaitingType =
-    | WaitingForInput of CharacterID: CharacterID
+    | WaitingForInput of EntityID: EntityID
     | WaitingForAI
     | WaitingForEngine
 
@@ -31,7 +31,7 @@ type GameStateType =
 type GameState =
     | Processing
     | Results of Steps: Step list * AcknowledgeCallback: (unit -> unit)
-    | WaitingForInput of CharacterID: CharacterID * InputCallback: (ActionRequest -> unit)
+    | WaitingForInput of EntityID: EntityID * InputCallback: (ActionRequest -> unit)
 
     member this.GameStateType =
         match this with

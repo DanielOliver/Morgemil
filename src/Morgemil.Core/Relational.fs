@@ -3,9 +3,10 @@ namespace Morgemil.Core
 open Morgemil.Models.Relational
 open Morgemil.Models
 
+type TrackedHistoryCallback = (StepItem -> unit) voption
 
 type ITrackedHistory =
-    abstract member HistoryCallback: (StepItem -> unit) with get, set
+    abstract member HistoryCallback: TrackedHistoryCallback with get, set
 
 type UniqueIndex<'tRow, 'tKey when 'tKey: equality and 'tRow :> IRow>(getKey: 'tRow -> 'tKey) =
     let _dictionary = new System.Collections.Generic.Dictionary<'tKey, 'tRow>()
@@ -139,7 +140,7 @@ type Table<'tRow, 'tKey when 'tRow :> IRow>
 
     let _primaryKeyIndexCast = _primaryKey :> IIndex<'tRow>
     let mutable _indices = [ _primaryKeyIndexCast ]
-    let mutable _trackedRecordEvent = ignore
+    let mutable _trackedRecordEvent: (StepItem -> unit) voption = ValueNone
 
     new(toKey, fromKey, history) = Table(fromKey, KeyGeneration(toKey), history)
 
@@ -167,7 +168,9 @@ type Table<'tRow, 'tKey when 'tRow :> IRow>
 
         member this.Remove row =
             _indices |> List.iter (fun t -> t.Remove row)
-            (TableEvent.Removed row) |> historyIdentity |> _trackedRecordEvent
+
+            _trackedRecordEvent
+            |> ValueOption.iter (fun callback -> (TableEvent.Removed row) |> historyIdentity |> callback)
 
         member this.RemoveByKey key =
             match key |> fromKey |> _primaryKey.TryGetRow with
@@ -180,18 +183,37 @@ type Table<'tRow, 'tKey when 'tRow :> IRow>
             match _primaryKey.TryGetRow key with
             | Some oldRow ->
                 _indices |> List.iter (fun t -> t.Update oldRow row)
-                TableEvent.Updated(oldRow, row) |> historyIdentity |> _trackedRecordEvent
+
+                _trackedRecordEvent
+                |> ValueOption.iter (fun callback -> TableEvent.Updated(oldRow, row) |> historyIdentity |> callback)
             | None ->
                 generator.CheckKey key
                 _indices |> List.iter (fun t -> t.Add row)
-                TableEvent.Added row |> historyIdentity |> _trackedRecordEvent
+
+                _trackedRecordEvent
+                |> ValueOption.iter (fun callback -> TableEvent.Added row |> historyIdentity |> callback)
 
         member this.Update _ row =
             match _primaryKey.TryGetRow (row :> IRow).Key with
             | Some oldRow ->
                 _indices |> List.iter (fun t -> t.Update oldRow row)
-                TableEvent.Updated(oldRow, row) |> historyIdentity |> _trackedRecordEvent
+
+                _trackedRecordEvent
+                |> ValueOption.iter (fun callback -> TableEvent.Updated(oldRow, row) |> historyIdentity |> callback)
             | None -> ()
+
+
+        member this.MapUpdate key map =
+            match _primaryKey.TryGetRow(fromKey key) with
+            | Some oldRow ->
+                let row = map oldRow
+                _indices |> List.iter (fun t -> t.Update oldRow row)
+
+                _trackedRecordEvent
+                |> ValueOption.iter (fun callback -> TableEvent.Updated(oldRow, row) |> historyIdentity |> callback)
+
+                row
+            | None -> failwith $"Unable to update %A{key}"
 
 type ReadonlyTable<'tRow, 'tKey when 'tRow :> IRow>(rows: seq<'tRow>, fromKey: ^tKey -> int64) =
     let _rows: 'tRow[] = rows |> Seq.toArray

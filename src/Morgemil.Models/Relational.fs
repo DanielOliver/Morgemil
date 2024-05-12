@@ -44,6 +44,7 @@ type IMultiIndex<'tRow, 'tKey when 'tRow :> IRow> =
     abstract member Item: 'tKey -> 'tRow seq with get
     abstract member TryGetRows: 'tKey -> 'tRow seq
 
+/// A table can only have one primary index
 type IPrimaryIndex<'tRow, 'tKey when 'tRow :> IRow> =
     inherit IIndex<'tRow>
     abstract member RemoveByKey: 'tKey -> unit
@@ -51,16 +52,20 @@ type IPrimaryIndex<'tRow, 'tKey when 'tRow :> IRow> =
     abstract member Item: 'tKey -> 'tRow with get, set
     abstract member TryGetRow: 'tKey -> 'tRow option
 
+/// A readonly table is used for static reference material.
 type IReadonlyTable<'tRow, 'tKey when 'tRow :> IRow> =
     abstract member TryGetRow: 'tKey -> 'tRow option
     abstract member Items: 'tRow seq
     abstract member Item: 'tKey -> 'tRow with get
 
+/// Every table has a unique key to reference rows by.
 type ITable<'tRow, 'tKey when 'tRow :> IRow> =
     inherit IReadonlyTable<'tRow, 'tKey>
     abstract member GenerateKey: unit -> 'tKey
     abstract member Add: 'tRow -> unit
     abstract member Update: 'tRow -> 'tRow -> unit
+    /// A MapUpdate is meant for operations where only a subset of properties is being updated.
+    abstract member MapUpdate: 'tKey -> ('tRow -> 'tRow) -> 'tRow
     abstract member Remove: 'tRow -> unit
     abstract member Item: 'tKey -> 'tRow with get, set
     abstract member RemoveByKey: 'tKey -> unit

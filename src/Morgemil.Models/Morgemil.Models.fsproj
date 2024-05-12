@@ -18,8 +18,7 @@
         <Compile Include="TileFeature.fs"/>
         <Compile Include="TileInstance.fs"/>
         <Compile Include="Aspect.fs"/>
-        <Compile Include="Character.fs"/>
-        <Compile Include="CharacterAttributes.fs"/>
+        <Compile Include="Entity.fs"/>
         <Compile Include="Weapon.fs"/>
         <Compile Include="Wearable.fs"/>
         <Compile Include="Consumable.fs"/>
@@ -35,8 +34,8 @@
         <Compile Include="ActionEvent.fs"/>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="System.Text.Json" Version="8.0.3" />
-        <PackageReference Update="FSharp.Core" Version="8.0.200" />
+        <PackageReference Include="System.Text.Json" Version="8.0.3"/>
+        <PackageReference Update="FSharp.Core" Version="8.0.200"/>
         <PackageReference Include="TheSadRogue.Primitives" Version="1.6.0-rc3"/>
     </ItemGroup>
 </Project>

@@ -2,6 +2,7 @@ namespace Morgemil.GameEngine
 
 open Morgemil.Core
 open Morgemil.Math
+open Morgemil.Models
 open SadConsole
 
 type CrawlSidebar(width: int, height: int, xOffset: int, initialGameData: InitialGameData, loopContext: LoopContext) as this
@@ -37,12 +38,15 @@ type CrawlSidebar(width: int, height: int, xOffset: int, initialGameData: Initia
 
         let mutable index = 2
 
-        for character in loopContext.Characters |> Table.Items do
-            let attributes = loopContext.CharacterAttributes.ByID character.ID
+        for character in loopContext.Entities |> Table.Items do
+            match character.Properties with
+            | EntityProperties.FloorCharacter entityFloorCharacter ->
 
-            if character.PlayerID.IsSome then
-                base.Print(0, index, ColoredString("@ " + attributes.Ancestry.Noun, Color.Black, Color.White))
-            else
-                base.Print(0, index, ColoredString("M " + attributes.Ancestry.Noun, Color.Black, Color.Transparent))
+                let attributes = entityFloorCharacter.Attributes
 
-            index <- index + 1
+                if entityFloorCharacter.FloorActor.PlayerID.IsSome then
+                    base.Print(0, index, ColoredString("@ " + attributes.Ancestry.Noun, Color.Black, Color.White))
+                else
+                    base.Print(0, index, ColoredString("M " + attributes.Ancestry.Noun, Color.Black, Color.Transparent))
+
+                index <- index + 1
