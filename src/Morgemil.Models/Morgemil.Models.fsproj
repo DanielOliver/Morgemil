@@ -18,7 +18,6 @@
         <Compile Include="TileFeature.fs"/>
         <Compile Include="TileInstance.fs"/>
         <Compile Include="Aspect.fs"/>
-        <Compile Include="Character.fs"/>
         <Compile Include="Entity.fs"/>
         <Compile Include="Weapon.fs"/>
         <Compile Include="Wearable.fs"/>

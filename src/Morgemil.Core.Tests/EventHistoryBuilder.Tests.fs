@@ -18,9 +18,9 @@ let makeExampleItem (entityID: EntityID) (makeFloorFactor) =
               FloorActor =
                 makeFloorFactor (
                     { EntityFloorActor.ID = entityID
-                      NextAction = Character.DefaultTickActions.Head
+                      NextAction = ActionArchetype.DefaultTickActions.Head
                       NextTick = 1L<TimeTick>
-                      TickActions = Character.DefaultTickActions
+                      TickActions = ActionArchetype.DefaultTickActions
                       PlayerID = ValueNone }
                 )
               FloorLocation =

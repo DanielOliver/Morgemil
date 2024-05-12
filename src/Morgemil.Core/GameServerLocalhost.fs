@@ -57,8 +57,8 @@ type GameServerLocalhost(loadScenarioData: (ScenarioData -> unit) -> unit, event
                   FloorActor =
                     { ID = entity1ID
                       NextTick = 0L<TimeTick>
-                      NextAction = Character.DefaultPlayerTickActions.Head
-                      TickActions = Character.DefaultPlayerTickActions
+                      NextAction = ActionArchetype.DefaultPlayerTickActions.Head
+                      TickActions = ActionArchetype.DefaultPlayerTickActions
                       PlayerID = currentPlayerID.Value |> ValueSome }
                   FloorLocation =
                     { ID = entity1ID
@@ -78,8 +78,8 @@ type GameServerLocalhost(loadScenarioData: (ScenarioData -> unit) -> unit, event
                       FloorActor =
                         { ID = npc1ID
                           NextTick = 0L<TimeTick>
-                          NextAction = Character.DefaultTickActions.Head
-                          TickActions = Character.DefaultTickActions
+                          NextAction = ActionArchetype.DefaultTickActions.Head
+                          TickActions = ActionArchetype.DefaultTickActions
                           PlayerID = ValueNone }
                       FloorLocation =
                         { ID = npc1ID
