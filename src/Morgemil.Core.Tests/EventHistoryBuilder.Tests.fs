@@ -9,12 +9,11 @@ open Morgemil.Models.Relational
 
 
 let makeExampleItem (entityID: EntityID) (makeFloorFactor) =
-
     { Entity.ID = entityID
       Type = EntityType.FloorCharacter
       Properties =
         EntityProperties.FloorCharacter
-            { EntityFloorCharacter.EntityID = entityID
+            { EntityFloorCharacter.ID = entityID
               Attributes = (EntityAttributes.Zero entityID)
               FloorActor =
                 makeFloorFactor (
@@ -29,35 +28,11 @@ let makeExampleItem (entityID: EntityID) (makeFloorFactor) =
                   Position = Point.Identity
                   FloorID = FloorID 2L } } }
 
-let exampleItem1 =
-    // { Character.PlayerID = None
-    //   Character.Position = Point.Identity
-    //   Character.ID = CharacterID 51L
-    //   Character.NextAction = Character.DefaultTickActions.Head
-    //   Character.TickActions = Character.DefaultTickActions
-    //   Character.FloorID = FloorID 1L
-    //   Character.NextTick = 1L<TimeTick> }
-    makeExampleItem (EntityID 51L) id
+let exampleItem1 = makeExampleItem (EntityID 51L) id
 
-let exampleItem2 =
-    // { Character.PlayerID = None
-    //   Character.Position = Point.Identity
-    //   Character.ID = CharacterID 52L
-    //   Character.NextAction = Character.DefaultTickActions.Head
-    //   Character.TickActions = Character.DefaultTickActions
-    //   Character.FloorID = FloorID 1L
-    //   Character.NextTick = 1L<TimeTick> }
-    makeExampleItem (EntityID 52L) id
+let exampleItem2 = makeExampleItem (EntityID 52L) id
 
-let exampleItem3 =
-    // { Character.PlayerID = None
-    //   Character.Position = Point.Identity
-    //   Character.ID = CharacterID 53L
-    //   Character.NextAction = Character.DefaultTickActions.Head
-    //   Character.TickActions = Character.DefaultTickActions
-    //   Character.FloorID = FloorID 1L
-    //   Character.NextTick = 1L<TimeTick> }
-    makeExampleItem (EntityID 53L) id
+let exampleItem3 = makeExampleItem (EntityID 53L) id
 
 
 let defaultTile: Tile =

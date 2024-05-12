@@ -85,7 +85,7 @@ type EntityPropertyList =
 ///A player, a NPC, or a monster.
 type EntityFloorCharacter =
     { [<RecordId>]
-      EntityID: EntityID
+      ID: EntityID
       Attributes: EntityAttributes
       FloorLocation: EntityFloorLocation
       FloorActor: EntityFloorActor }

@@ -48,7 +48,7 @@ type GameServerLocalhost(loadScenarioData: (ScenarioData -> unit) -> unit, event
             let entity1ID = Table.GenerateKey entityTable
 
             entityTable.AddOrUpdate
-                { EntityFloorCharacter.EntityID = entity1ID
+                { EntityFloorCharacter.ID = entity1ID
                   Attributes =
                     { EntityAttributes.ID = entity1ID
                       Ancestry = Table.GetRowByKey scenarioData.Ancestries chosenAncestryID.Value
@@ -69,7 +69,7 @@ type GameServerLocalhost(loadScenarioData: (ScenarioData -> unit) -> unit, event
                 let npc1ID = Table.GenerateKey entityTable
 
                 entityTable.AddOrUpdate
-                    { EntityFloorCharacter.EntityID = npc1ID
+                    { EntityFloorCharacter.ID = npc1ID
                       Attributes =
                         { EntityAttributes.ID = npc1ID
                           Ancestry = Table.GetRowByKey scenarioData.Ancestries chosenAncestryID.Value

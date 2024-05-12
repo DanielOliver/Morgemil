@@ -34,7 +34,7 @@ let setID (entity: Entity) (entityID) =
             Properties =
                 EntityProperties.FloorCharacter
                     { entityFloorCharacter with
-                        EntityID = entityID
+                        ID = entityID
                         Attributes =
                             { entityFloorCharacter.Attributes with
                                 ID = entityID }
@@ -75,7 +75,7 @@ let makeExampleItem (entityID: EntityID) =
       Type = EntityType.FloorCharacter
       Properties =
         EntityProperties.FloorCharacter
-            { EntityFloorCharacter.EntityID = entityID
+            { EntityFloorCharacter.ID = entityID
               Attributes =
                 { ID = entityID
                   Ancestry =

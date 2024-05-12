@@ -60,7 +60,7 @@ type EntityTable(timeTable: TimeTable) as this =
     member this.AddOrUpdate(next: EntityFloorCharacter) =
         (this :> ITable<Entity, EntityID>)
             .Add(
-                { Entity.ID = next.EntityID
+                { Entity.ID = next.ID
                   Type = EntityType.FloorCharacter
                   Properties = EntityProperties.FloorCharacter next }
             )
