@@ -79,6 +79,11 @@ type EntityProperties =
         match this with
         | FloorCharacter _ -> EntityType.FloorCharacter
 
+/// An entity is a generic bundle of components grouped together in a nice type.
+/// An entity usually refers to actionable existence on the TileMap with a location and engine prompts.
+/// An entity could mean most anything you like so long you extend the EntityProperties and EntityType.
+/// Every component (property) is expected to have an EntityID reference so that an individual property may be updated
+///   on its own without requiring a full Entity refresh.
 [<Record>]
 type Entity =
     { [<RecordId>]

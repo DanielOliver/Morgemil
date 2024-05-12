@@ -27,6 +27,7 @@ type InitialGameData =
         let loopContext =
             { LoopContext.Characters = CharacterTable(timeTable)
               CharacterAttributes = CharacterAttributesTable()
+              Entities = EntityTable()
               TimeTable = timeTable
               TileMap = this.TileMap
               GameContext = gameContext }

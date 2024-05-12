@@ -6,7 +6,7 @@ open Morgemil.Models
 type TileMap(mapSize: Rectangle, defaultTile: Tile, ?chunkData: (Tile * TileFeature option) array) =
     let mutable defaultTile = defaultTile
     let mutable mapSize = mapSize
-    let mutable _trackedRecordEvent = ignore
+    let mutable _trackedRecordEvent: TrackedHistoryCallback = ValueNone
 
     let mutable chunk: (Tile * TileFeature option) array =
         chunkData |> defaultArg <| Array.create mapSize.Area (defaultTile, None)
@@ -48,9 +48,11 @@ type TileMap(mapSize: Rectangle, defaultTile: Tile, ?chunkData: (Tile * TileFeat
                 defaultTile <- newTileMapData.DefaultTile
 
                 _trackedRecordEvent
-                <| StepItem.CompleteMapChange
-                    { NewValue = newTileMapData
-                      OldValue = oldValue }
+                |> ValueOption.iter (fun callback ->
+                    callback
+                    <| StepItem.CompleteMapChange
+                        { NewValue = newTileMapData
+                          OldValue = oldValue })
 
         member this.Value
             with get () = this.TileMapData
@@ -64,10 +66,11 @@ type TileMap(mapSize: Rectangle, defaultTile: Tile, ?chunkData: (Tile * TileFeat
                     defaultTile <- newTileMapData.DefaultTile
 
                     _trackedRecordEvent
-                    <| StepItem.CompleteMapChange
-                        { NewValue = newTileMapData
-                          OldValue = oldValue }
-
+                    |> ValueOption.iter (fun callback ->
+                        callback
+                        <| StepItem.CompleteMapChange
+                            { NewValue = newTileMapData
+                              OldValue = oldValue })
 
     member this.EntryPoints =
         chunk

@@ -10,9 +10,10 @@ type LoopContext =
       CharacterAttributes: CharacterAttributesTable
       TileMap: TileMap
       GameContext: GameContext TrackedEntity
+      Entities: EntityTable
       TimeTable: TimeTable }
 
-    member this.ApplyStepItem (stepItem: StepItem) =
+    member this.ApplyStepItem(stepItem: StepItem) =
         match stepItem with
         | StepItem.Character character ->
             match character with

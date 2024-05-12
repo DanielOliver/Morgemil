@@ -41,6 +41,7 @@ type GameServerLocalhost(loadScenarioData: (ScenarioData -> unit) -> unit, event
 
             let characterTable = CharacterTable(timeTable)
             let characterAttributesTable = CharacterAttributesTable()
+            let entityTable = EntityTable()
 
             let gameContext =
                 { GameContext.CurrentTimeTick = 0L<TimeTick>
@@ -95,6 +96,7 @@ type GameServerLocalhost(loadScenarioData: (ScenarioData -> unit) -> unit, event
                           BasePath = "empty" }
                       RNG = rng },
                     { LoopContext.Characters = characterTable
+                      Entities = entityTable
                       CharacterAttributes = characterAttributesTable
                       TileMap = tileMap
                       TimeTable = timeTable

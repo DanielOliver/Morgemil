@@ -11,7 +11,7 @@ type EventHistoryBuilder(tracked: ITrackedHistory list) =
 
     do
         historyCallbacks
-        |> List.iter (fun (tracked, _) -> tracked.HistoryCallback <- (fun t -> _events <- t :: _events))
+        |> List.iter (fun (tracked, _) -> tracked.HistoryCallback <- ValueSome(fun t -> _events <- t :: _events))
 
     member this.Bind(m, f) = f m
 

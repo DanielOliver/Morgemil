@@ -3,7 +3,7 @@ namespace Morgemil.Core
 open Morgemil.Models.Tracked
 
 type TrackedEntity<'T when 'T: equality>(initialValue: 'T, history: 'T TrackedEvent -> StepItem) =
-    let mutable _recordTrackedEvent = ignore
+    let mutable _recordTrackedEvent: TrackedHistoryCallback = ValueNone
     let mutable _value = initialValue
 
     member this.Value = _value
@@ -21,10 +21,12 @@ type TrackedEntity<'T when 'T: equality>(initialValue: 'T, history: 'T TrackedEv
                 _value <- x
 
                 if _value <> oldValue then
-                    { TrackedEvent.NewValue = _value
-                      OldValue = oldValue }
-                    |> history
-                    |> _recordTrackedEvent
+                    _recordTrackedEvent
+                    |> ValueOption.iter (fun callback ->
+                        { TrackedEvent.NewValue = _value
+                          OldValue = oldValue }
+                        |> history
+                        |> callback)
 
         member this.Get = _value
 
@@ -33,10 +35,12 @@ type TrackedEntity<'T when 'T: equality>(initialValue: 'T, history: 'T TrackedEv
             _value <- x
 
             if _value <> oldValue then
-                { TrackedEvent.NewValue = _value
-                  OldValue = oldValue }
-                |> history
-                |> _recordTrackedEvent
+                _recordTrackedEvent
+                |> ValueOption.iter (fun callback ->
+                    { TrackedEvent.NewValue = _value
+                      OldValue = oldValue }
+                    |> history
+                    |> callback)
 
 module Tracked =
     let Update (entity: 'T :> ITrackedEntity<'U>) (value: 'U) : unit = entity.Set value
