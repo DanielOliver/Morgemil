@@ -46,23 +46,29 @@ type EntityProperty =
     | FloorLocation of EntityFloorLocation
     | FloorActor of EntityFloorActor
 
+    [<System.Text.Json.Serialization.JsonIgnore>]
+    member this.EntityID =
+        match this with
+        | Attributes a -> a.ID
+        | FloorActor fa -> fa.ID
+        | FloorLocation fl -> fl.ID
+
     interface Relational.IRow with
         [<System.Text.Json.Serialization.JsonIgnore>]
-        member this.Key =
-            match this with
-            | Attributes a -> a.ID.Key
-            | FloorActor fa -> fa.ID.Key
-            | FloorLocation fl -> fl.ID.Key
+        member this.Key = this.EntityID.Key
 
 /// Assume that all properties in this list belong to the same entity.
 type EntityPropertyList =
     | Items of EntityProperty list
 
+    [<System.Text.Json.Serialization.JsonIgnore>]
+    member this.ID =
+        match this with
+        | Items i -> i.Head.EntityID
+
     interface Relational.IRow with
         [<System.Text.Json.Serialization.JsonIgnore>]
-        member this.Key =
-            match this with
-            | Items i -> (i.Head :> Relational.IRow).Key
+        member this.Key = this.ID.Key
 
 ///A player, a NPC, or a monster.
 type EntityFloorCharacter =
@@ -102,35 +108,37 @@ module Entity =
         match entity.Properties with
         | EntityProperties.FloorCharacter entityFloorCharacter -> entityFloorCharacter.FloorLocation |> ValueSome
 
-    let applyProperty (entity: Entity) (property: EntityProperty) : Entity =
+    let applyProperty (property: EntityProperty) (entity: Entity) : Entity =
         let floorCharacter x =
             { entity with
                 Properties = EntityProperties.FloorCharacter x }
 
-        match entity.Properties, property with
-        | EntityProperties.FloorCharacter entityFloorCharacter, EntityProperty.Attributes entityAttributes ->
-            floorCharacter
-                { entityFloorCharacter with
-                    Attributes = entityAttributes }
-        | EntityProperties.FloorCharacter entityFloorCharacter, EntityProperty.FloorLocation entityFloorLocation ->
-            floorCharacter
-                { entityFloorCharacter with
-                    FloorLocation = entityFloorLocation }
-        | EntityProperties.FloorCharacter entityFloorCharacter, EntityProperty.FloorActor entityFloorActor ->
-            floorCharacter
-                { entityFloorCharacter with
-                    FloorActor = entityFloorActor }
+        match entity.Properties with
+        | EntityProperties.FloorCharacter entityFloorCharacter ->
+            match property with
+            | EntityProperty.Attributes entityAttributes ->
+                floorCharacter
+                    { entityFloorCharacter with
+                        Attributes = entityAttributes }
+            | EntityProperty.FloorLocation entityFloorLocation ->
+                floorCharacter
+                    { entityFloorCharacter with
+                        FloorLocation = entityFloorLocation }
+            | EntityProperty.FloorActor entityFloorActor ->
+                floorCharacter
+                    { entityFloorCharacter with
+                        FloorActor = entityFloorActor }
 
-    let rec applyProperties (entity: Entity) (properties: EntityProperty list) : Entity =
+    let rec applyProperties (properties: EntityProperty list) (entity: Entity) : Entity =
         match properties with
         | [] -> entity
         | head :: tail ->
-            let entity = applyProperty entity head
-            applyProperties entity tail
+            let entity = applyProperty head entity
+            applyProperties tail entity
 
-    let rec applyPropertyList (entity: Entity) (properties: EntityPropertyList) : Entity =
+    let rec applyPropertyList (properties: EntityPropertyList) (entity: Entity) : Entity =
         match properties with
-        | Items entityProperties -> applyProperties entity entityProperties
+        | Items entityProperties -> applyProperties entityProperties entity
 
 [<RequireQualifiedAccess>]
 type EntityEventType =

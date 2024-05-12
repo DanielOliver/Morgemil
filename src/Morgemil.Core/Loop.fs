@@ -28,8 +28,16 @@ type LoopContext =
         | StepItem.GameContext context -> Tracked.Update this.GameContext context.NewValue
         | StepItem.CompleteMapChange context -> Tracked.Update this.TileMap context.NewValue
         | StepItem.TileInstance _ -> failwith "NotImplemented"
-        | StepItem.Entity tableEvent -> failwith "todo"
-        | StepItem.EntityProperties tableEvent -> failwith "todo"
+        | StepItem.Entity entity ->
+            match entity with
+            | TableEvent.Added(row) -> Table.AddRow this.Entities row
+            | TableEvent.Updated(_, row) -> Table.AddRow this.Entities row
+            | TableEvent.Removed(row) -> Table.RemoveRow this.Entities row
+        | StepItem.EntityProperties entityProperties ->
+            match entityProperties with
+            | TableEvent.Added _ -> failwithf "Adding EntityProperties is unsupported"
+            | TableEvent.Updated(_, row) -> this.Entities.Update row
+            | TableEvent.Removed _ -> failwithf "Removing EntityProperties is unsupported"
 
 type StaticLoopContext =
     { ScenarioData: ScenarioData

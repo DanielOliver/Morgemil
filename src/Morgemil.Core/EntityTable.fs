@@ -42,6 +42,10 @@ module Entity =
 type EntityTable() as this =
     inherit Table<Entity, EntityID>(EntityID, (_.Key), StepItem.Entity)
 
+    member this.Update(next: EntityPropertyList) =
+        (this :> ITable<Entity, EntityID>).MapUpdate next.ID (Entity.applyPropertyList next)
+        |> ignore
+
     member this.AddOrUpdate(next: EntityFloorCharacter) =
         (this :> ITable<Entity, EntityID>)
             .Add(
