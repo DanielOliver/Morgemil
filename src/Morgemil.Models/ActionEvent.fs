@@ -21,10 +21,6 @@ type TileMapData =
       TileFeatures: TileFeature option array
       Size: Point }
 
-type EventMapChange =
-    { Characters: Character array
-      TileMapData: TileMapData }
-
 type EventTileFeatureChanged =
     { Position: Point
       OldTileFeature: TileFeature option

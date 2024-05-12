@@ -6,25 +6,13 @@ open Morgemil.Math
 open Morgemil.Models.Relational
 
 type LoopContext =
-    { Characters: CharacterTable
-      CharacterAttributes: CharacterAttributesTable
-      TileMap: TileMap
+    { TileMap: TileMap
       GameContext: GameContext TrackedEntity
       Entities: EntityTable
       TimeTable: TimeTable }
 
     member this.ApplyStepItem(stepItem: StepItem) =
         match stepItem with
-        | StepItem.Character character ->
-            match character with
-            | TableEvent.Added(row) -> Table.AddRow this.Characters row
-            | TableEvent.Updated(_, row) -> Table.AddRow this.Characters row
-            | TableEvent.Removed(row) -> Table.RemoveRow this.Characters row
-        | StepItem.CharacterAttributes characterAttributes ->
-            match characterAttributes with
-            | TableEvent.Added(row) -> Table.AddRow this.CharacterAttributes row
-            | TableEvent.Updated(_, row) -> Table.AddRow this.CharacterAttributes row
-            | TableEvent.Removed(row) -> Table.RemoveRow this.CharacterAttributes row
         | StepItem.GameContext context -> Tracked.Update this.GameContext context.NewValue
         | StepItem.CompleteMapChange context -> Tracked.Update this.TileMap context.NewValue
         | StepItem.TileInstance _ -> failwith "NotImplemented"
@@ -191,13 +179,7 @@ type Loop(world: StaticLoopContext, initialContext: LoopContext) =
 
     member this.ProcessRequest(event: ActionRequest) : Step list =
         use builder =
-            new EventHistoryBuilder(
-                [ context.Characters
-                  context.CharacterAttributes
-                  context.GameContext
-                  context.TileMap
-                  context.Entities ]
-            )
+            new EventHistoryBuilder([ context.GameContext; context.TileMap; context.Entities ])
 
         let nextAction = context.TimeTable.NextAction
 
@@ -210,11 +192,6 @@ type Loop(world: StaticLoopContext, initialContext: LoopContext) =
                 context.Entities.Update
                     { nextCharacter with
                         NextAction = nextCharacter.NextAction.NextInList nextCharacter.TickActions }
-
-                // Table.AddRow
-                //     context.Characters
-                //     { nextCharacter with
-                //         NextAction = nextCharacter.NextAction.NextInList nextCharacter.TickActions }
 
                 yield ActionEvent.ActionArchetype nextAction
             }

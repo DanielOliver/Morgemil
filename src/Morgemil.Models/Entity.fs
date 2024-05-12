@@ -40,6 +40,18 @@ type EntityAttributes =
         [<System.Text.Json.Serialization.JsonIgnore>]
         member this.Key = this.ID.Key
 
+    static member Zero(entityID: EntityID) =
+        { EntityAttributes.ID = entityID
+          Ancestry =
+            { Ancestry.Noun = ""
+              Ancestry.Adjective = ""
+              Ancestry.Description = ""
+              Ancestry.ID = AncestryID 50L
+              Ancestry.Tags = Map.empty
+              Ancestry.RequireTags = Map.empty }
+          Heritage = []
+          Tags = Map.empty }
+
 [<RequireQualifiedAccess>]
 type EntityProperty =
     | Attributes of EntityAttributes

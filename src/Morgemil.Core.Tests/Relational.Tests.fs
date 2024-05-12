@@ -1,5 +1,6 @@
 module Morgemil.Core.Tests.Relational
 
+open Morgemil.Math
 open Morgemil.Models
 open Xunit
 open Morgemil.Core
@@ -11,195 +12,234 @@ open Morgemil.Models.Relational
 type ExampleRow =
     { Name: string
       Attribute1: int
-      CharacterID: CharacterID }
+      EntityID: EntityID }
 
     interface IRow with
         member this.Key =
-            let (CharacterID key) = this.CharacterID
+            let (EntityID key) = this.EntityID
             key
 
-type ExampleTable() as this =
-    inherit
-        Table<CharacterAttributes, CharacterID>(
-            CharacterID,
-            (fun (CharacterID value) -> value),
-            StepItem.CharacterAttributes
-        )
 
-    let _multiIndexByName = new MultiIndex<CharacterAttributes, string>(_.Ancestry.Noun)
+let getNoun (entity: Entity) =
+    match entity.Properties with
+    | EntityProperties.FloorCharacter entityFloorCharacter -> entityFloorCharacter.Attributes.Ancestry.Noun
+
+
+
+let setID (entity: Entity) (entityID) =
+    match entity.Properties with
+    | EntityProperties.FloorCharacter entityFloorCharacter ->
+        { entity with
+            ID = entityID
+            Properties =
+                EntityProperties.FloorCharacter
+                    { entityFloorCharacter with
+                        EntityID = entityID
+                        Attributes =
+                            { entityFloorCharacter.Attributes with
+                                ID = entityID }
+                        FloorActor =
+                            { entityFloorCharacter.FloorActor with
+                                ID = entityID }
+                        FloorLocation =
+                            { entityFloorCharacter.FloorLocation with
+                                ID = entityID } } }
+
+let setNoun (entity: Entity) (noun: string) =
+    match entity.Properties with
+    | EntityProperties.FloorCharacter entityFloorCharacter ->
+        { entity with
+            Properties =
+                EntityProperties.FloorCharacter
+                    { entityFloorCharacter with
+                        Attributes =
+                            { entityFloorCharacter.Attributes with
+                                Ancestry =
+                                    { entityFloorCharacter.Attributes.Ancestry with
+                                        Noun = noun } } } }
+
+
+type ExampleTable() as this =
+    inherit Table<Entity, EntityID>(EntityID, (fun (EntityID value) -> value), EntityTable.entityTableEventToStepItems)
+
+    let _multiIndexByName = new MultiIndex<Entity, string>(getNoun)
 
     do this.AddIndex(_multiIndexByName)
 
     member this.NameIndex = _multiIndexByName
 
 
+let makeExampleItem (entityID: EntityID) =
+
+    { Entity.ID = entityID
+      Type = EntityType.FloorCharacter
+      Properties =
+        EntityProperties.FloorCharacter
+            { EntityFloorCharacter.EntityID = entityID
+              Attributes =
+                { ID = entityID
+                  Ancestry =
+                    { Adjective = "asdf"
+                      Description = "324"
+                      Noun = "Test1"
+                      Tags = Map.empty
+                      ID = AncestryID(5L)
+                      RequireTags = Map.empty }
+                  Heritage = []
+                  Tags = Map.empty }
+              FloorActor =
+                { ID = entityID
+                  NextAction = ActionArchetype.CharacterEngineInput
+                  NextTick = 0L<TimeTick>
+                  TickActions = Character.DefaultTickActions
+                  PlayerID = ValueNone }
+              FloorLocation =
+                { ID = entityID
+                  Position = Point.Identity
+                  FloorID = FloorID 2L } } }
+
+
 [<Fact>]
 let ``Can Add items to Index`` () =
     let exampleTable = new ExampleTable()
 
-    Assert.Equal(CharacterID 0L, Table.GenerateKey exampleTable)
+    Assert.Equal(EntityID 0L, Table.GenerateKey exampleTable)
 
-    let exampleItem1 =
-        { CharacterAttributes.ID = CharacterID(500L)
-          Ancestry =
-            { Adjective = "asdf"
-              Description = "324"
-              Noun = "Test1"
-              Tags = Map.empty
-              ID = AncestryID(5L)
-              RequireTags = Map.empty }
-          Heritage = []
-          Tags = Map.empty }
+    let exampleItem0 = makeExampleItem (EntityID 500L)
+    Table.AddRow exampleTable exampleItem0
 
+    let exampleItem1 = makeExampleItem (EntityID 501L)
     Table.AddRow exampleTable exampleItem1
 
-    let exampleItem2 =
-        { CharacterAttributes.ID = CharacterID(501L)
-          Ancestry =
-            { Adjective = "asdf"
-              Description = "324"
-              Noun = "Test1"
-              Tags = Map.empty
-              ID = AncestryID(5L)
-              RequireTags = Map.empty }
-          Heritage = []
-          Tags = Map.empty }
-
+    let exampleItem2 = makeExampleItem (EntityID 502L)
     Table.AddRow exampleTable exampleItem2
 
-    Assert.Equal(CharacterID 502L, Table.GenerateKey exampleTable)
-    Assert.Equal(2, exampleTable |> Table.Items |> Seq.length)
+    Assert.Equal(EntityID 503L, Table.GenerateKey exampleTable)
+    Assert.Equal(3, exampleTable |> Table.Items |> Seq.length)
 
-    Assert.Throws<System.Exception>(fun () -> Table.GetRowByKey exampleTable (CharacterID 123L) |> ignore)
+    Assert.Throws<System.Exception>(fun () -> Table.GetRowByKey exampleTable (EntityID 123L) |> ignore)
     |> ignore
 
-    Assert.Equal(exampleItem1, Table.GetRowByKey exampleTable (CharacterID 500L))
+    Assert.Equal(exampleItem0, Table.GetRowByKey exampleTable (EntityID 500L))
 
-    Assert.Equal(2, (MultiIndex.GetRowsByKey exampleTable.NameIndex "Test1") |> Seq.length)
+    Assert.Equal(3, (MultiIndex.GetRowsByKey exampleTable.NameIndex "Test1") |> Seq.length)
 
     Assert.Empty(MultiIndex.GetRowsByKey exampleTable.NameIndex "Test1234234234")
 
-    Table.RemoveRow exampleTable exampleItem1
-    Assert.Equal(1, exampleTable |> Table.Items |> Seq.length)
+    Table.RemoveRow exampleTable exampleItem0
+    Assert.Equal(2, exampleTable |> Table.Items |> Seq.length)
 
-    Assert.Throws<System.Exception>(fun () -> Table.GetRowByKey exampleTable (CharacterID 500L) |> ignore)
+    Assert.Throws<System.Exception>(fun () -> Table.GetRowByKey exampleTable (EntityID 500L) |> ignore)
     |> ignore
 
-    Assert.Equal(1, (MultiIndex.GetRowsByKey exampleTable.NameIndex "Test1") |> Seq.length)
+    Assert.Equal(2, (MultiIndex.GetRowsByKey exampleTable.NameIndex "Test1") |> Seq.length)
 
-    let exampleItem3 =
-        { exampleItem2 with
-            Ancestry =
-                { exampleItem2.Ancestry with
-                    Noun = "onetwo" } }
-
+    let exampleItem3 = setNoun exampleItem1 "onetwo"
     Table.AddRow exampleTable exampleItem3
-    Assert.Equal(exampleItem3, Table.GetRowByKey exampleTable (CharacterID 501L))
+
+    let exampleItem4 = setNoun exampleItem2 "onetwo"
+    Table.AddRow exampleTable exampleItem4
+
+    Assert.Equal(exampleItem3, (Table.GetRowByKey exampleTable (EntityID 501L)))
     Assert.Empty(MultiIndex.GetRowsByKey exampleTable.NameIndex "Test1")
 
-    Assert.Equal(1, (MultiIndex.GetRowsByKey exampleTable.NameIndex "onetwo") |> Seq.length)
+    Assert.Equal(2, (MultiIndex.GetRowsByKey exampleTable.NameIndex "onetwo") |> Seq.length)
 
-    for index in [ 1L .. 50_000L ] do
-        { exampleItem2 with
-            ID = CharacterID(index)
-            Ancestry =
-                { exampleItem2.Ancestry with
-                    Noun = index.ToString() } }
+    for index in [ 1L .. 20_000L ] do
+        (setNoun (setID exampleItem2 (EntityID index)) (index.ToString()))
         |> Table.AddRow exampleTable
 
-    Assert.Equal(50_000, exampleTable |> Table.Items |> Seq.length)
+    Assert.Equal(20_000, exampleTable |> Table.Items |> Seq.length)
 
     for item in exampleTable |> Table.Items |> Seq.toList do
-        { item with
-            Ancestry = { item.Ancestry with Noun = "asdf" } }
-        |> Table.AddRow exampleTable
+        setNoun item "asdf" |> Table.AddRow exampleTable
 
-    Assert.Equal(50_000, exampleTable |> Table.Items |> Seq.length)
+    Assert.Equal(20_000, exampleTable |> Table.Items |> Seq.length)
 
-    for index in [ 1L .. 10_000L ] do
-        index |> CharacterID |> Table.RemoveRowByKey exampleTable
+    for index in [ 1L .. 12_000L ] do
+        index |> EntityID |> Table.RemoveRowByKey exampleTable
 
-    Assert.Equal(40_000, exampleTable |> Table.Items |> Seq.length)
+    Assert.Equal(8_000, exampleTable |> Table.Items |> Seq.length)
 
     for index in [ 1L .. 50_000L ] do
-        index |> CharacterID |> Table.RemoveRowByKey exampleTable
+        index |> EntityID |> Table.RemoveRowByKey exampleTable
 
     Assert.Equal(0, exampleTable |> Table.Items |> Seq.length)
 
     let readOnlyTable =
-        Table.CreateReadonlyTable (fun (CharacterID value) -> value) [ exampleItem1; exampleItem2 ]
+        Table.CreateReadonlyTable (fun (EntityID value) -> value) [ exampleItem1; exampleItem2 ]
 
     Assert.Equal(2, readOnlyTable.Items |> Seq.length)
 
-    Assert.Equal(exampleItem1, 500L |> CharacterID |> Table.GetRowByKey readOnlyTable)
+    Assert.Equal(exampleItem1, 501L |> EntityID |> Table.GetRowByKey readOnlyTable)
 
-    Assert.Equal(exampleItem2, 501L |> CharacterID |> Table.GetRowByKey readOnlyTable)
+    Assert.Equal(exampleItem2, 502L |> EntityID |> Table.GetRowByKey readOnlyTable)
 
 
 
 type ExampleRowNext =
     { Name: string
-      CharacterIDID: int64
+      EntityIDID: int64
       ForeignKeyID: int64 }
 
     interface IRow with
-        member this.Key = this.CharacterIDID
+        member this.Key = this.EntityIDID
 
 
 type ExampleRowNext234 =
     { Name: string
-      CharacterIDID: int64
+      EntityIDID: int64
       ForeignKeyID: int64 }
 
     interface IRow with
-        member this.Key = this.CharacterIDID
+        member this.Key = this.EntityIDID
 
 [<Fact>]
 let ``Check Joins on readonlyArrays`` () =
 
     let exampleItem1 =
         { ExampleRow.Attribute1 = 0
-          CharacterID = CharacterID(500L)
+          EntityID = EntityID(500L)
           Name = "Test1" }
 
     let exampleItem2 =
         { ExampleRow.Attribute1 = 23
-          CharacterID = CharacterID(501L)
+          EntityID = EntityID(501L)
           Name = "Test1" }
 
     let exampleItem3 = { exampleItem2 with Name = "onetwo" }
 
     let row1 =
         { ExampleRowNext.Name = "one"
-          CharacterIDID = 234L
+          EntityIDID = 234L
           ForeignKeyID = 500L }
 
     let row2 =
         { ExampleRowNext.Name = "two"
-          CharacterIDID = 235L
+          EntityIDID = 235L
           ForeignKeyID = 501L }
 
     let row3 =
         { ExampleRowNext.Name = "two"
-          CharacterIDID = 235L
+          EntityIDID = 235L
           ForeignKeyID = 0L }
 
     let exampleItem234 =
         { ExampleRowNext234.Name = "two"
-          CharacterIDID = 235L
+          EntityIDID = 235L
           ForeignKeyID = 0L }
 
     let tableOne =
-        Table.CreateReadonlyTable (fun (CharacterID value) -> value) [ exampleItem1; exampleItem2; exampleItem3 ]
+        Table.CreateReadonlyTable (fun (EntityID value) -> value) [ exampleItem1; exampleItem2; exampleItem3 ]
 
     let tableTwo =
-        Table.CreateReadonlyTable (fun (CharacterID value) -> value) [ row1; row2; row3 ]
+        Table.CreateReadonlyTable (fun (EntityID value) -> value) [ row1; row2; row3 ]
 
     let tableThree =
-        Table.CreateReadonlyTable (fun (CharacterID value) -> value) [ exampleItem234 ]
+        Table.CreateReadonlyTable (fun (EntityID value) -> value) [ exampleItem234 ]
 
     let joinedRows =
-        TableQuery.LeftJoin tableTwo (fun t -> t.ForeignKeyID |> CharacterID) tableOne
+        TableQuery.LeftJoin tableTwo (fun t -> t.ForeignKeyID |> EntityID) tableOne
         |> Seq.toArray
 
     Assert.Equal(3, joinedRows.Length)

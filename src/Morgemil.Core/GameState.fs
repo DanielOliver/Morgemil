@@ -6,13 +6,10 @@ open Morgemil.Models.Tracked
 
 [<RequireQualifiedAccess>]
 type StepItem =
-    | Character of Character TableEvent
-    | CharacterAttributes of CharacterAttributes TableEvent
     | GameContext of GameContext TrackedEvent
     | CompleteMapChange of TileMapData TrackedEvent
     | TileInstance of TileInstance TableEvent
     | Entity of Entity TableEvent
-    // | EntityProperty of EntityProperty TableEvent
     | EntityProperties of EntityPropertyList TableEvent
 
 type Step =

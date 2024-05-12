@@ -7,40 +7,57 @@ open Morgemil.Models
 open Morgemil.Math
 open Morgemil.Models.Relational
 
-let exampleAncestry1 =
-    { Ancestry.Noun = ""
-      Ancestry.Adjective = ""
-      Ancestry.Description = ""
-      Ancestry.ID = AncestryID 50L
-      Ancestry.Tags = Map.empty
-      Ancestry.RequireTags = Map.empty }
+
+let makeExampleItem (entityID: EntityID) (makeFloorFactor) =
+
+    { Entity.ID = entityID
+      Type = EntityType.FloorCharacter
+      Properties =
+        EntityProperties.FloorCharacter
+            { EntityFloorCharacter.EntityID = entityID
+              Attributes = (EntityAttributes.Zero entityID)
+              FloorActor =
+                makeFloorFactor (
+                    { EntityFloorActor.ID = entityID
+                      NextAction = Character.DefaultTickActions.Head
+                      NextTick = 1L<TimeTick>
+                      TickActions = Character.DefaultTickActions
+                      PlayerID = ValueNone }
+                )
+              FloorLocation =
+                { ID = entityID
+                  Position = Point.Identity
+                  FloorID = FloorID 2L } } }
 
 let exampleItem1 =
-    { Character.PlayerID = None
-      Character.Position = Point.Identity
-      Character.ID = CharacterID 51L
-      Character.NextAction = Character.DefaultTickActions.Head
-      Character.TickActions = Character.DefaultTickActions
-      Character.FloorID = FloorID 1L
-      Character.NextTick = 1L<TimeTick> }
+    // { Character.PlayerID = None
+    //   Character.Position = Point.Identity
+    //   Character.ID = CharacterID 51L
+    //   Character.NextAction = Character.DefaultTickActions.Head
+    //   Character.TickActions = Character.DefaultTickActions
+    //   Character.FloorID = FloorID 1L
+    //   Character.NextTick = 1L<TimeTick> }
+    makeExampleItem (EntityID 51L) id
 
 let exampleItem2 =
-    { Character.PlayerID = None
-      Character.Position = Point.Identity
-      Character.ID = CharacterID 52L
-      Character.NextAction = Character.DefaultTickActions.Head
-      Character.TickActions = Character.DefaultTickActions
-      Character.FloorID = FloorID 1L
-      Character.NextTick = 1L<TimeTick> }
+    // { Character.PlayerID = None
+    //   Character.Position = Point.Identity
+    //   Character.ID = CharacterID 52L
+    //   Character.NextAction = Character.DefaultTickActions.Head
+    //   Character.TickActions = Character.DefaultTickActions
+    //   Character.FloorID = FloorID 1L
+    //   Character.NextTick = 1L<TimeTick> }
+    makeExampleItem (EntityID 52L) id
 
 let exampleItem3 =
-    { Character.PlayerID = None
-      Character.Position = Point.Identity
-      Character.ID = CharacterID 53L
-      Character.NextAction = Character.DefaultTickActions.Head
-      Character.TickActions = Character.DefaultTickActions
-      Character.FloorID = FloorID 1L
-      Character.NextTick = 1L<TimeTick> }
+    // { Character.PlayerID = None
+    //   Character.Position = Point.Identity
+    //   Character.ID = CharacterID 53L
+    //   Character.NextAction = Character.DefaultTickActions.Head
+    //   Character.TickActions = Character.DefaultTickActions
+    //   Character.FloorID = FloorID 1L
+    //   Character.NextTick = 1L<TimeTick> }
+    makeExampleItem (EntityID 53L) id
 
 
 let defaultTile: Tile =
@@ -62,13 +79,11 @@ let exampleGameContext =
 [<Fact>]
 let ``Can yield Results without updates`` () =
     let timeTable = TimeTable()
-    let table1 = CharacterTable(timeTable)
+    let table1 = EntityTable(timeTable)
     let trackedGameContext = TrackedEntity(exampleGameContext, StepItem.GameContext)
     let tileMap = TileMap(Rectangle.create (10, 10), defaultTile)
-    let attributesTable1 = CharacterAttributesTable()
 
-    use eventBuilder =
-        new EventHistoryBuilder([ table1; attributesTable1; trackedGameContext; tileMap ])
+    use eventBuilder = new EventHistoryBuilder([ table1; trackedGameContext; tileMap ])
 
     let results =
         eventBuilder {
@@ -113,9 +128,9 @@ let ``Can yield Results without updates`` () =
                       FloorID = FloorID 1L } }
                 |> StepItem.GameContext ] }
           { Step.Event = ActionEvent.Empty 3
-            Step.Updates = [ exampleItem2 |> TableEvent.Added |> StepItem.Character ] }
+            Step.Updates = [ exampleItem2 |> TableEvent.Added |> StepItem.Entity ] }
           { Step.Event = ActionEvent.Empty 4
-            Step.Updates = [ exampleItem1 |> TableEvent.Added |> StepItem.Character ] } ]
+            Step.Updates = [ exampleItem1 |> TableEvent.Added |> StepItem.Entity ] } ]
         |> List.rev,
         results
     )

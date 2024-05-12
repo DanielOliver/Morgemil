@@ -14,8 +14,6 @@ type GameServerStateType =
 /// The initial game data returned
 type InitialGameData =
     { TileMap: TileMap
-      Characters: Character[]
-      CharacterAttributes: CharacterAttributes[]
       CurrentPlayerID: PlayerID
       Scenario: Scenario
       Entities: Entity[]
@@ -26,21 +24,13 @@ type InitialGameData =
         let gameContext = TrackedEntity(this.GameContext, StepItem.GameContext)
 
         let loopContext =
-            { LoopContext.Characters = CharacterTable(timeTable)
-              CharacterAttributes = CharacterAttributesTable()
-              Entities = EntityTable(timeTable)
+            { LoopContext.Entities = EntityTable(timeTable)
               TimeTable = timeTable
               TileMap = this.TileMap
               GameContext = gameContext }
 
-        for character in this.Characters do
-            Table.AddRow loopContext.Characters character
-
         for entity in this.Entities do
             Table.AddRow loopContext.Entities entity
-
-        for characterAttributes in this.CharacterAttributes do
-            Table.AddRow loopContext.CharacterAttributes characterAttributes
 
         loopContext
 

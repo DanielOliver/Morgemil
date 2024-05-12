@@ -2,7 +2,7 @@
 
 [<EntryPoint>]
 let main argv =
-    let assembly = typeof<Morgemil.Models.Character>.Assembly
+    let assembly = typeof<Morgemil.Models.Entity>.Assembly
 
     assembly.ExportedTypes
     |> Seq.filter IsMorgemilType
