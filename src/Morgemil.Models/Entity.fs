@@ -54,6 +54,7 @@ type EntityProperty =
             | FloorActor fa -> fa.ID.Key
             | FloorLocation fl -> fl.ID.Key
 
+/// Assume that all properties in this list belong to the same entity.
 type EntityPropertyList =
     | Items of EntityProperty list
 
@@ -63,6 +64,7 @@ type EntityPropertyList =
             match this with
             | Items i -> (i.Head :> Relational.IRow).Key
 
+///A player, a NPC, or a monster.
 type EntityFloorCharacter =
     { [<RecordId>]
       EntityID: EntityID
@@ -94,6 +96,41 @@ type Entity =
     interface Relational.IRow with
         [<System.Text.Json.Serialization.JsonIgnore>]
         member this.Key = this.ID.Key
+
+module Entity =
+    let floorLocation (entity: Entity) : EntityFloorLocation voption =
+        match entity.Properties with
+        | EntityProperties.FloorCharacter entityFloorCharacter -> entityFloorCharacter.FloorLocation |> ValueSome
+
+    let applyProperty (entity: Entity) (property: EntityProperty) : Entity =
+        let floorCharacter x =
+            { entity with
+                Properties = EntityProperties.FloorCharacter x }
+
+        match entity.Properties, property with
+        | EntityProperties.FloorCharacter entityFloorCharacter, EntityProperty.Attributes entityAttributes ->
+            floorCharacter
+                { entityFloorCharacter with
+                    Attributes = entityAttributes }
+        | EntityProperties.FloorCharacter entityFloorCharacter, EntityProperty.FloorLocation entityFloorLocation ->
+            floorCharacter
+                { entityFloorCharacter with
+                    FloorLocation = entityFloorLocation }
+        | EntityProperties.FloorCharacter entityFloorCharacter, EntityProperty.FloorActor entityFloorActor ->
+            floorCharacter
+                { entityFloorCharacter with
+                    FloorActor = entityFloorActor }
+
+    let rec applyProperties (entity: Entity) (properties: EntityProperty list) : Entity =
+        match properties with
+        | [] -> entity
+        | head :: tail ->
+            let entity = applyProperty entity head
+            applyProperties entity tail
+
+    let rec applyPropertyList (entity: Entity) (properties: EntityPropertyList) : Entity =
+        match properties with
+        | Items entityProperties -> applyProperties entity entityProperties
 
 [<RequireQualifiedAccess>]
 type EntityEventType =
