@@ -10,7 +10,7 @@ let ``Can transition states`` () =
     let exampleLoop (request: ActionRequest) : Step list =
         Assert.Equal(
             (ActionRequest.Move
-                { ActionRequestMove.CharacterID = CharacterID 0L
+                { ActionRequestMove.EntityID = EntityID 0L
                   ActionRequestMove.Direction = Morgemil.Math.Point.Identity }),
             request
         )
@@ -22,9 +22,9 @@ let ``Can transition states`` () =
     let stateMachine: IGameStateMachine =
         SimpleGameStateMachine(
             exampleLoop,
-            (fun () -> GameStateWaitingType.WaitingForInput(CharacterID -1)),
+            (fun () -> GameStateWaitingType.WaitingForInput(EntityID -1)),
             Table.EmptyScenarioData,
-            (fun () -> ActionRequest.Pause(CharacterID 0L)),
+            (fun () -> ActionRequest.Pause(EntityID 0L)),
             EventRecorder.Ignore
         )
         :> IGameStateMachine
@@ -47,7 +47,7 @@ let ``Can transition states`` () =
     | GameState.WaitingForInput(waitingOnCharacterID, inputCallback) ->
         inputCallback (
             ActionRequest.Move
-                { ActionRequestMove.CharacterID = waitingOnCharacterID
+                { ActionRequestMove.EntityID = waitingOnCharacterID
                   ActionRequestMove.Direction = Morgemil.Math.Point.Identity }
         )
     | _ -> ()
@@ -59,7 +59,7 @@ let ``Can transition states`` () =
     | GameState.WaitingForInput(waitingOnCharacterID, inputCallback) ->
         inputCallback (
             ActionRequest.Move
-                { ActionRequestMove.CharacterID = waitingOnCharacterID
+                { ActionRequestMove.EntityID = waitingOnCharacterID
                   ActionRequestMove.Direction = Morgemil.Math.Point.Identity }
         )
     | _ -> ()
