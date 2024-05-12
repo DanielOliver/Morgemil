@@ -7,7 +7,7 @@ type EntityFloorLocation =
     { [<RecordId>]
       ID: EntityID
       FloorID: FloorID
-      Location: Morgemil.Math.Point }
+      Position: Morgemil.Math.Point }
 
     interface Relational.IRow with
         [<System.Text.Json.Serialization.JsonIgnore>]
@@ -20,7 +20,7 @@ type EntityFloorActor =
       NextTick: int64<TimeTick>
       NextAction: ActionArchetype
       TickActions: ActionArchetype list
-      PlayerID: PlayerID option }
+      PlayerID: PlayerID voption }
 
     interface Relational.IRow with
         [<System.Text.Json.Serialization.JsonIgnore>]

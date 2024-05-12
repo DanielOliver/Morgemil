@@ -28,6 +28,8 @@ type LoopContext =
         | StepItem.GameContext context -> Tracked.Update this.GameContext context.NewValue
         | StepItem.CompleteMapChange context -> Tracked.Update this.TileMap context.NewValue
         | StepItem.TileInstance _ -> failwith "NotImplemented"
+        | StepItem.Entity tableEvent -> failwith "todo"
+        | StepItem.EntityProperties tableEvent -> failwith "todo"
 
 type StaticLoopContext =
     { ScenarioData: ScenarioData
@@ -165,7 +167,8 @@ type Loop(world: StaticLoopContext, initialContext: LoopContext) =
                 [ context.Characters
                   context.CharacterAttributes
                   context.GameContext
-                  context.TileMap ]
+                  context.TileMap
+                  context.Entities ]
             )
 
         let nextAction = context.TimeTable.NextAction

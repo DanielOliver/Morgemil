@@ -41,3 +41,11 @@ module Entity =
 
 type EntityTable() as this =
     inherit Table<Entity, EntityID>(EntityID, (_.Key), StepItem.Entity)
+
+    member this.AddOrUpdate(next: EntityFloorCharacter) =
+        (this :> ITable<Entity, EntityID>)
+            .Add(
+                { Entity.ID = next.EntityID
+                  Type = EntityType.FloorCharacter
+                  Properties = EntityProperties.FloorCharacter next }
+            )

@@ -65,6 +65,26 @@ type GameServerLocalhost(loadScenarioData: (ScenarioData -> unit) -> unit, event
             Table.AddRow characterTable character1
             Table.AddRow characterAttributesTable character1Attributes
 
+            let entity1ID = Table.GenerateKey entityTable
+
+            entityTable.AddOrUpdate
+                { EntityFloorCharacter.EntityID = entity1ID
+                  Attributes =
+                    { EntityAttributes.ID = entity1ID
+                      Ancestry = Table.GetRowByKey scenarioData.Ancestries chosenAncestryID.Value
+                      Heritage = []
+                      Tags = Map.empty }
+                  FloorActor =
+                    { ID = entity1ID
+                      NextTick = 0L<TimeTick>
+                      NextAction = Character.DefaultPlayerTickActions.Head
+                      TickActions = Character.DefaultPlayerTickActions
+                      PlayerID = currentPlayerID.Value |> ValueSome }
+                  FloorLocation =
+                    { ID = entity1ID
+                      FloorID = gameContext.FloorID
+                      Position = mapGenerationResults.EntranceCoordinate } }
+
             for i in [ 2 .. (RNG.Range rng 4 6) ] do
 
                 let npc1 =
@@ -84,6 +104,27 @@ type GameServerLocalhost(loadScenarioData: (ScenarioData -> unit) -> unit, event
 
                 Table.AddRow characterTable npc1
                 Table.AddRow characterAttributesTable npc1Attributes
+
+
+                let npc1ID = Table.GenerateKey entityTable
+
+                entityTable.AddOrUpdate
+                    { EntityFloorCharacter.EntityID = npc1ID
+                      Attributes =
+                        { EntityAttributes.ID = npc1ID
+                          Ancestry = Table.GetRowByKey scenarioData.Ancestries chosenAncestryID.Value
+                          Heritage = []
+                          Tags = Map.empty }
+                      FloorActor =
+                        { ID = npc1ID
+                          NextTick = 0L<TimeTick>
+                          NextAction = Character.DefaultPlayerTickActions.Head
+                          TickActions = Character.DefaultPlayerTickActions
+                          PlayerID = ValueNone }
+                      FloorLocation =
+                        { ID = npc1ID
+                          FloorID = gameContext.FloorID
+                          Position = mapGenerationResults.EntranceCoordinate + Point.create (i, i) } }
 
             let gameLoop =
                 Loop(
