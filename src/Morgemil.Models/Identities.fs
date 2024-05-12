@@ -128,6 +128,13 @@ type FloorID =
         let (FloorID rowID) = this
         FloorID(rowID + 1L)
 
+[<Struct>]
+type EntityID =
+    | EntityID of int64
+
+    member this.Key =
+        let (EntityID rowID) = this
+        rowID
 
 [<Measure>]
 type TileDistance

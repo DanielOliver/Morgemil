@@ -146,6 +146,9 @@ type Table<'tRow, 'tKey when 'tRow :> IRow>
     member this.AddIndex index = _indices <- index :: _indices
     member this.PrimaryIndex = _primaryKeyIndexCast
 
+    member internal this.UpdatedStepItems (oldRow: 'tRow) (row: 'tRow) =
+        TableEvent.Updated(oldRow, row) |> historyIdentity |> _trackedRecordEvent
+
     interface ITrackedHistory with
         member this.HistoryCallback
             with get () = _trackedRecordEvent

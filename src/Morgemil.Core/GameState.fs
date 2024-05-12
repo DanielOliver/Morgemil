@@ -11,6 +11,9 @@ type StepItem =
     | GameContext of GameContext TrackedEvent
     | CompleteMapChange of TileMapData TrackedEvent
     | TileInstance of TileInstance TableEvent
+    | Entity of Entity TableEvent
+    // | EntityProperty of EntityProperty TableEvent
+    | EntityProperties of EntityPropertyList TableEvent
 
 type Step =
     { Event: ActionEvent
