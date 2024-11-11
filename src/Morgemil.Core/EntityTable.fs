@@ -5,17 +5,20 @@ open Morgemil.Models.Relational
 
 module EntityTable =
     let private diffProperty old next map =
-        if old <> next then Some(map old, map next) else None
+        seq {
+            if old <> next then
+                yield (map old, map next)
+        }
 
     let rec private diffFloorCharacter
         (oldFloorCharacter: EntityFloorCharacter)
         (newFloorCharacter: EntityFloorCharacter)
-        : (EntityProperty * EntityProperty) option list =
+        : (EntityProperty * EntityProperty) list =
         seq {
-            yield diffProperty (oldFloorCharacter.Attributes) (newFloorCharacter.Attributes) EntityProperty.Attributes
-            yield diffProperty (oldFloorCharacter.FloorActor) (newFloorCharacter.FloorActor) EntityProperty.FloorActor
+            yield! diffProperty (oldFloorCharacter.Attributes) (newFloorCharacter.Attributes) EntityProperty.Attributes
+            yield! diffProperty (oldFloorCharacter.FloorActor) (newFloorCharacter.FloorActor) EntityProperty.FloorActor
 
-            yield
+            yield!
                 diffProperty
                     (oldFloorCharacter.FloorLocation)
                     (newFloorCharacter.FloorLocation)
@@ -32,8 +35,8 @@ module EntityTable =
             | EntityProperties.FloorCharacter oldFloorCharacter, EntityProperties.FloorCharacter newFloorCharacter ->
                 let properties = diffFloorCharacter oldFloorCharacter newFloorCharacter
 
-                let oldProperties = properties |> List.choose id |> List.map fst
-                let newProperties = properties |> List.choose id |> List.map snd
+                let oldProperties = properties |> List.map fst
+                let newProperties = properties |> List.map snd
 
                 TableEvent.Updated(EntityPropertyList.Items oldProperties, EntityPropertyList.Items newProperties)
                 |> StepItem.EntityProperties
@@ -51,11 +54,15 @@ type EntityTable(timeTable: TimeTable) as this =
         (this :> ITable<Entity, EntityID>).MapUpdate next.ID (Entity.applyProperty (EntityProperty.FloorLocation next))
         |> ignore
 
-
     member this.Update(next: EntityFloorActor) =
         (this :> ITable<Entity, EntityID>).MapUpdate next.ID (Entity.applyProperty (EntityProperty.FloorActor next))
         |> ignore
 
+    member this.Update(next: EntityFloorCharacter) =
+        (this :> ITable<Entity, EntityID>).MapUpdate next.ID (fun e ->
+            { e with
+                Properties = EntityProperties.FloorCharacter next })
+        |> ignore
 
     member this.AddOrUpdate(next: EntityFloorCharacter) =
         (this :> ITable<Entity, EntityID>)
