@@ -139,11 +139,11 @@ type BasicCrawlConsole
         for entity in loopContext.Entities |> Table.Items do
             let color1 = Color.Black
 
-            match Entity.floorLocation entity with
+            match entity.FloorLocation with
             | ValueNone -> ()
             | ValueSome entityFloorLocation ->
                 let position = entityFloorLocation.Position
-                let playerID = entity |> Entity.floorActor |> ValueOption.bind (_.PlayerID)
+                let playerID = entity.FloorActor |> ValueOption.bind (_.PlayerID)
 
                 let representation =
                     { TileRepresentation.AnsiCharacter = if playerID.IsSome then '@' else 'M'

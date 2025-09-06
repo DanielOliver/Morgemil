@@ -8,7 +8,7 @@ open Morgemil.Models.Relational
 type TimeComparer() =
     interface IComparer<Entity> with
         member x.Compare(a, b) =
-            match Entity.floorActor a, Entity.floorActor b with
+            match a.FloorActor, b.FloorActor with
             | ValueNone, ValueNone
             | ValueNone, ValueSome _
             | ValueSome _, ValueNone -> 0
@@ -26,11 +26,14 @@ type TimeTable() =
     let mutable inProgress = Dictionary<EntityID, Entity>()
 
     let nextAction (entity: Entity) =
-        match Entity.floorActor entity with
+        match entity.FloorActor with
         | ValueNone -> failwith "oof"
         | ValueSome floorActor -> floorActor.NextAction
 
-    member this.NextFloorActor = this.Next |> Entity.floorActor |> ValueOption.get
+    member this.NextTick =
+        this.Next.FloorActor
+        |> ValueOption.map (fun t -> t.NextTick)
+        |> ValueOption.defaultValue 0L<TimeTick>
 
     member this.Next =
         if inProgress.Count = 0 then
@@ -38,8 +41,7 @@ type TimeTable() =
         else
             (inProgress |> Seq.head).Value
 
-    member this.NextAction =
-        this.Next |> Entity.floorActor |> ValueOption.get |> (_.NextAction)
+    member this.NextAction = this.Next.FloorActor |> ValueOption.get |> (_.NextAction)
 
     member this.Items = items
 
@@ -52,12 +54,12 @@ type TimeTable() =
 
     interface IIndex<Entity> with
         member this.Add next =
-            match Entity.floorActor next with
+            match next.FloorActor with
             | ValueNone -> ()
             | ValueSome _ -> next |> items.Add |> ignore
 
         member this.Update old next =
-            match Entity.floorActor old, Entity.floorActor next with
+            match old.FloorActor, next.FloorActor with
             | ValueNone, ValueNone -> ()
             | ValueNone, ValueSome _ -> next |> items.Add |> ignore
             | ValueSome _, ValueNone -> old |> items.Remove |> ignore
@@ -72,6 +74,6 @@ type TimeTable() =
                     next |> items.Add |> ignore
 
         member this.Remove old =
-            match Entity.floorActor old with
+            match old.FloorActor with
             | ValueNone -> ()
             | ValueSome _ -> old |> items.Remove |> ignore
