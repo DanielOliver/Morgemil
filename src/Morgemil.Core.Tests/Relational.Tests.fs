@@ -1,10 +1,9 @@
 module Morgemil.Core.Tests.Relational
 
-open Morgemil.Math
 open Morgemil.Models
-open Xunit
 open Morgemil.Core
 open Morgemil.Models.Relational
+open Xunit
 
 // [<Struct>]
 // type CharacterID = CharacterID of int64
@@ -21,42 +20,27 @@ type ExampleRow =
 
 
 let getNoun (entity: Entity) =
-    match entity.Properties with
-    | EntityProperties.FloorCharacter entityFloorCharacter -> entityFloorCharacter.Attributes.Ancestry.Noun
+    entity.Attributes
+    |> ValueOption.map (fun t -> t.Ancestry.Noun)
+    |> ValueOption.defaultValue ""
 
 
 
 let setID (entity: Entity) (entityID) =
-    match entity.Properties with
-    | EntityProperties.FloorCharacter entityFloorCharacter ->
-        { entity with
-            ID = entityID
-            Properties =
-                EntityProperties.FloorCharacter
-                    { entityFloorCharacter with
-                        ID = entityID
-                        Attributes =
-                            { entityFloorCharacter.Attributes with
-                                ID = entityID }
-                        FloorActor =
-                            { entityFloorCharacter.FloorActor with
-                                ID = entityID }
-                        FloorLocation =
-                            { entityFloorCharacter.FloorLocation with
-                                ID = entityID } } }
+
+    { entity with
+        ID = entityID
+        Attributes = entity.Attributes |> ValueOption.map (fun t -> { t with ID = entityID })
+        FloorActor = entity.FloorActor |> ValueOption.map (fun t -> { t with ID = entityID })
+        FloorLocation = entity.FloorLocation |> ValueOption.map (fun t -> { t with ID = entityID }) }
 
 let setNoun (entity: Entity) (noun: string) =
-    match entity.Properties with
-    | EntityProperties.FloorCharacter entityFloorCharacter ->
-        { entity with
-            Properties =
-                EntityProperties.FloorCharacter
-                    { entityFloorCharacter with
-                        Attributes =
-                            { entityFloorCharacter.Attributes with
-                                Ancestry =
-                                    { entityFloorCharacter.Attributes.Ancestry with
-                                        Noun = noun } } } }
+    { entity with
+        Attributes =
+            entity.Attributes
+            |> ValueOption.map (fun t ->
+                { t with
+                    EntityAttributes.Ancestry.Noun = noun }) }
 
 
 type ExampleTable() as this =
@@ -72,31 +56,30 @@ type ExampleTable() as this =
 let makeExampleItem (entityID: EntityID) =
 
     { Entity.ID = entityID
-      Type = EntityType.FloorCharacter
-      Properties =
-        EntityProperties.FloorCharacter
-            { EntityFloorCharacter.ID = entityID
-              Attributes =
-                { ID = entityID
-                  Ancestry =
-                    { Adjective = "asdf"
-                      Description = "324"
-                      Noun = "Test1"
-                      Tags = Map.empty
-                      ID = AncestryID(5L)
-                      RequireTags = Map.empty }
-                  Heritage = []
-                  Tags = Map.empty }
-              FloorActor =
-                { ID = entityID
-                  NextAction = ActionArchetype.CharacterEngineInput
-                  NextTick = 0L<TimeTick>
-                  TickActions = ActionArchetype.DefaultTickActions
-                  PlayerID = ValueNone }
-              FloorLocation =
-                { ID = entityID
-                  Position = Point.Identity
-                  FloorID = FloorID 2L } } }
+      Attributes =
+        { ID = entityID
+          Ancestry =
+            { Adjective = "asdf"
+              Description = "324"
+              Noun = "Test1"
+              Tags = Map.empty
+              ID = AncestryID(5L)
+              RequireTags = Map.empty }
+          Heritage = []
+          Tags = Map.empty }
+        |> ValueSome
+      FloorActor =
+        { ID = entityID
+          NextAction = ActionArchetype.CharacterEngineInput
+          NextTick = 0L<TimeTick>
+          TickActions = ActionArchetype.DefaultTickActions
+          PlayerID = ValueNone }
+        |> ValueSome
+      FloorLocation =
+        { ID = entityID
+          Position = Morgemil.Math.Point.Identity
+          FloorID = FloorID 2L }
+        |> ValueSome }
 
 
 [<Fact>]

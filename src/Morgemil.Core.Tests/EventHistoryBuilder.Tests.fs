@@ -10,23 +10,22 @@ open Morgemil.Models.Relational
 
 let makeExampleItem (entityID: EntityID) (makeFloorFactor) =
     { Entity.ID = entityID
-      Type = EntityType.FloorCharacter
-      Properties =
-        EntityProperties.FloorCharacter
-            { EntityFloorCharacter.ID = entityID
-              Attributes = (EntityAttributes.Zero entityID)
-              FloorActor =
-                makeFloorFactor (
-                    { EntityFloorActor.ID = entityID
-                      NextAction = ActionArchetype.DefaultTickActions.Head
-                      NextTick = 1L<TimeTick>
-                      TickActions = ActionArchetype.DefaultTickActions
-                      PlayerID = ValueNone }
-                )
-              FloorLocation =
-                { ID = entityID
-                  Position = Point.Identity
-                  FloorID = FloorID 2L } } }
+      Attributes = (EntityAttributes.Zero entityID) |> ValueSome
+      FloorActor =
+        makeFloorFactor (
+            { EntityFloorActor.ID = entityID
+              NextAction = ActionArchetype.DefaultTickActions.Head
+              NextTick = 1L<TimeTick>
+              TickActions = ActionArchetype.DefaultTickActions
+              PlayerID = ValueNone }
+        )
+        |> ValueSome
+      FloorLocation =
+        { ID = entityID
+          Position = Point.Identity
+          FloorID = FloorID 2L }
+        |> ValueSome }
+
 
 let exampleItem1 = makeExampleItem (EntityID 51L) id
 

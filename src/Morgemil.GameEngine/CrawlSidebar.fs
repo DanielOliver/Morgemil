@@ -39,14 +39,13 @@ type CrawlSidebar(width: int, height: int, xOffset: int, initialGameData: Initia
         let mutable index = 2
 
         for character in loopContext.Entities |> Table.Items do
-            match character.Properties with
-            | EntityProperties.FloorCharacter entityFloorCharacter ->
+            match character.FloorActor, character.Attributes with
+            | ValueSome floorActor, ValueSome attributes ->
 
-                let attributes = entityFloorCharacter.Attributes
-
-                if entityFloorCharacter.FloorActor.PlayerID.IsSome then
+                if floorActor.PlayerID.IsSome then
                     base.Print(0, index, ColoredString("@ " + attributes.Ancestry.Noun, Color.Black, Color.White))
                 else
                     base.Print(0, index, ColoredString("M " + attributes.Ancestry.Noun, Color.Black, Color.Transparent))
 
                 index <- index + 1
+            | _ -> ()
