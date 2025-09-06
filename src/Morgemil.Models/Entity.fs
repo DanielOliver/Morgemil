@@ -78,7 +78,6 @@ type EntityPropertyList =
 type Entity =
     { [<RecordId>]
       ID: EntityID
-      Type: EntityType
       Attributes: EntityAttributes voption
       FloorLocation: EntityFloorLocation voption
       FloorActor: EntityFloorActor voption }
@@ -117,6 +116,16 @@ module Entity =
 
     let applyPropertyList (properties: EntityPropertyList) (entity: Entity) : Entity =
         applyProperties properties.Items entity
+
+    let (|FloorActor|_|) (entity: Entity) =
+        match entity.FloorActor with
+        | ValueNone -> ValueNone
+        | ValueSome floorActor -> ValueSome floorActor
+
+    let (|FloorLocation|_|) (entity: Entity) =
+        match entity.FloorLocation with
+        | ValueNone -> ValueNone
+        | ValueSome floorLocation -> ValueSome floorLocation
 
 [<RequireQualifiedAccess>]
 type EntityEventType =

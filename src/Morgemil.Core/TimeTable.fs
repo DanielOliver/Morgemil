@@ -30,7 +30,10 @@ type TimeTable() =
         | ValueNone -> failwith "oof"
         | ValueSome floorActor -> floorActor.NextAction
 
-    member this.NextFloorActor = this.Next
+    member this.NextTick =
+        this.Next.FloorActor
+        |> ValueOption.map (fun t -> t.NextTick)
+        |> ValueOption.defaultValue 0L<TimeTick>
 
     member this.Next =
         if inProgress.Count = 0 then

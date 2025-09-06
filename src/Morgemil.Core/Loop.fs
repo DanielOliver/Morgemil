@@ -44,7 +44,7 @@ module Loop =
         builder {
             Tracked.Replace context.GameContext (fun t ->
                 { t with
-                    CurrentTimeTick = context.TimeTable.NextFloorActor.NextTick })
+                    CurrentTimeTick = context.TimeTable.NextTick })
 
             match event with
             | ActionRequest.Engine -> ()
@@ -52,7 +52,7 @@ module Loop =
                 match entityID |> Table.TryGetRowByKey context.Entities with
                 | None -> ()
                 | Some pauseCharacter ->
-                    match pauseCharacter |> Entity.floorActor with
+                    match pauseCharacter.FloorActor with
                     | ValueNone -> ()
                     | ValueSome entityFloorActor ->
                         context.Entities.Update
@@ -66,9 +66,9 @@ module Loop =
                 match actionRequestMove.EntityID |> Table.TryGetRowByKey context.Entities with
                 | None -> ()
                 | Some moveCharacter ->
-                    match moveCharacter.Properties with
-                    | EntityProperties.FloorCharacter entityFloorCharacter ->
-                        let floorLocation = entityFloorCharacter.FloorLocation
+                    match moveCharacter.FloorLocation, moveCharacter.FloorActor with
+                    | ValueSome floorLocation, ValueSome floorActor ->
+                        let floorLocation = floorLocation
                         let newPosition = floorLocation.Position + actionRequestMove.Direction
 
                         let blocksMovement = context.TileMap[newPosition] |> TileMap.blocksMovement
@@ -83,8 +83,7 @@ module Loop =
                             let isFreeFromOtherCharacters =
                                 context.Entities
                                 |> Table.Items
-                                |> Seq.where (fun e ->
-                                    (e |> Entity.floorLocation |> ValueOption.get).Position = newPosition)
+                                |> Seq.where (fun e -> (e.FloorLocation |> ValueOption.get).Position = newPosition)
                                 |> Seq.isEmpty
 
                             if not isFreeFromOtherCharacters then
@@ -95,33 +94,33 @@ module Loop =
                                     |> ActionEvent.RefusedMove
 
                             else
-                                let floorActor = entityFloorCharacter.FloorActor
 
                                 context.Entities.Update
-                                    { entityFloorCharacter with
+                                    { moveCharacter with
                                         FloorActor =
                                             { floorActor with
                                                 NextTick = floorActor.NextTick + 1000L<TimeTick>
                                                 NextAction = floorActor.NextAction.NextInList floorActor.TickActions }
+                                            |> ValueSome
                                         FloorLocation =
                                             { floorLocation with
-                                                Position = newPosition } }
+                                                Position = newPosition }
+                                            |> ValueSome }
 
                                 yield
                                     { EntityID = moveCharacter.ID
                                       OldPosition = floorLocation.Position
                                       NewPosition = newPosition }
                                     |> ActionEvent.AfterMove
+                    | _ -> ()
+
             | ActionRequest.GoToNextLevel(entityID) ->
                 match entityID |> Table.TryGetRowByKey context.Entities with
                 | None -> ()
                 | Some moveCharacter ->
-                    match moveCharacter.Properties with
-                    | EntityProperties.FloorCharacter entityFloorCharacter ->
-                        if
-                            context.TileMap[entityFloorCharacter.FloorLocation.Position]
-                            |> TileMap.isExitPoint
-                        then
+                    match moveCharacter.FloorLocation, moveCharacter.FloorActor with
+                    | ValueSome floorLocation, ValueSome floorActor ->
+                        if context.TileMap[floorLocation.Position] |> TileMap.isExitPoint then
 
                             let rng = world.RNG
                             let nextFloor = context.GameContext.Value.FloorID.TempNext
@@ -135,21 +134,17 @@ module Loop =
                             Tracked.Replace context.TileMap (fun t -> newTileMap.TileMapData)
                             Tracked.Replace context.GameContext (fun t -> { t with FloorID = nextFloor })
 
-
-                            let floorActor = entityFloorCharacter.FloorActor
-                            let floorLocation = entityFloorCharacter.FloorLocation
-
                             context.Entities.Update
-                                { entityFloorCharacter with
+                                { moveCharacter with
                                     FloorActor =
                                         { floorActor with
                                             NextTick = floorActor.NextTick + 1000L<TimeTick>
                                             NextAction = floorActor.NextAction.NextInList floorActor.TickActions }
+                                        |> ValueSome
                                     FloorLocation =
                                         { floorLocation with
-                                            FloorID = nextFloor
-
-                                        } }
+                                            FloorID = nextFloor }
+                                        |> ValueSome }
 
                             context.Entities
                             |> Table.Items
@@ -160,6 +155,7 @@ module Loop =
                             |> Seq.iter (context.Entities.Update)
 
                             yield ActionEvent.MapChange
+                    | _ -> ()
 
             yield ActionEvent.EndResponse 0
         },
@@ -191,11 +187,15 @@ type Loop(world: StaticLoopContext, initialContext: LoopContext) =
         | ActionArchetype.CharacterAfterInput
         | ActionArchetype.CharacterBeforeInput ->
             builder {
-                let nextCharacter = context.TimeTable.NextFloorActor
+                let nextCharacter = context.TimeTable.Next
 
                 context.Entities.Update
                     { nextCharacter with
-                        NextAction = nextCharacter.NextAction.NextInList nextCharacter.TickActions }
+                        FloorActor =
+                            nextCharacter.FloorActor
+                            |> ValueOption.map (fun t ->
+                                { t with
+                                    NextAction = t.NextAction.NextInList t.TickActions }) }
 
                 yield ActionEvent.ActionArchetype nextAction
             }
