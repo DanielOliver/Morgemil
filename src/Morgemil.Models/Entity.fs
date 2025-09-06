@@ -54,52 +54,20 @@ type EntityAttributes =
 
 [<RequireQualifiedAccess>]
 type EntityProperty =
-    | Attributes of EntityAttributes
-    | FloorLocation of EntityFloorLocation
-    | FloorActor of EntityFloorActor
-
-    [<System.Text.Json.Serialization.JsonIgnore>]
-    member this.EntityID =
-        match this with
-        | Attributes a -> a.ID
-        | FloorActor fa -> fa.ID
-        | FloorLocation fl -> fl.ID
-
-    interface Relational.IRow with
-        [<System.Text.Json.Serialization.JsonIgnore>]
-        member this.Key = this.EntityID.Key
+    | Attributes of EntityAttributes voption
+    | FloorLocation of EntityFloorLocation voption
+    | FloorActor of EntityFloorActor voption
 
 /// Assume that all properties in this list belong to the same entity.
 /// Creating a subset of properties as the short list of what has been updated/changed should make performance
 ///   for updating indices better. At the very least, makes everything easier to reason about when debugging.
 type EntityPropertyList =
-    | Items of EntityProperty list
-
-    [<System.Text.Json.Serialization.JsonIgnore>]
-    member this.ID =
-        match this with
-        | Items i -> i.Head.EntityID
+    { Items: EntityProperty list
+      EntityID: EntityID }
 
     interface Relational.IRow with
         [<System.Text.Json.Serialization.JsonIgnore>]
-        member this.Key = this.ID.Key
-
-///A player, a NPC, or a monster.
-type EntityFloorCharacter =
-    { [<RecordId>]
-      ID: EntityID
-      Attributes: EntityAttributes
-      FloorLocation: EntityFloorLocation
-      FloorActor: EntityFloorActor }
-
-[<RequireQualifiedAccess>]
-type EntityProperties =
-    | FloorCharacter of EntityFloorCharacter
-
-    [<System.Text.Json.Serialization.JsonIgnore>]
-    member this.EntityType =
-        match this with
-        | FloorCharacter _ -> EntityType.FloorCharacter
+        member this.Key = this.EntityID.Key
 
 /// An entity is a generic bundle of components grouped together in a nice type.
 /// An entity usually refers to actionable existence on the TileMap with a location and engine prompts.
@@ -111,41 +79,34 @@ type Entity =
     { [<RecordId>]
       ID: EntityID
       Type: EntityType
-      Properties: EntityProperties }
+      Attributes: EntityAttributes voption
+      FloorLocation: EntityFloorLocation voption
+      FloorActor: EntityFloorActor voption }
 
     interface Relational.IRow with
         [<System.Text.Json.Serialization.JsonIgnore>]
         member this.Key = this.ID.Key
 
-module Entity =
-    let floorLocation (entity: Entity) : EntityFloorLocation voption =
-        match entity.Properties with
-        | EntityProperties.FloorCharacter entityFloorCharacter -> entityFloorCharacter.FloorLocation |> ValueSome
+    member this.Properties: EntityPropertyList =
+        { EntityPropertyList.EntityID = this.ID
+          Items =
+            [ (EntityProperty.Attributes this.Attributes)
+              (EntityProperty.FloorLocation this.FloorLocation)
+              (EntityProperty.FloorActor this.FloorActor) ] }
 
-    let floorActor (entity: Entity) : EntityFloorActor voption =
-        match entity.Properties with
-        | EntityProperties.FloorCharacter entityFloorCharacter -> entityFloorCharacter.FloorActor |> ValueSome
+module Entity =
 
     let applyProperty (property: EntityProperty) (entity: Entity) : Entity =
-        let floorCharacter x =
+        match property with
+        | EntityProperty.Attributes entityAttributes ->
             { entity with
-                Properties = EntityProperties.FloorCharacter x }
-
-        match entity.Properties with
-        | EntityProperties.FloorCharacter entityFloorCharacter ->
-            match property with
-            | EntityProperty.Attributes entityAttributes ->
-                floorCharacter
-                    { entityFloorCharacter with
-                        Attributes = entityAttributes }
-            | EntityProperty.FloorLocation entityFloorLocation ->
-                floorCharacter
-                    { entityFloorCharacter with
-                        FloorLocation = entityFloorLocation }
-            | EntityProperty.FloorActor entityFloorActor ->
-                floorCharacter
-                    { entityFloorCharacter with
-                        FloorActor = entityFloorActor }
+                Attributes = entityAttributes }
+        | EntityProperty.FloorLocation entityFloorLocation ->
+            { entity with
+                FloorLocation = entityFloorLocation }
+        | EntityProperty.FloorActor entityFloorActor ->
+            { entity with
+                FloorActor = entityFloorActor }
 
     let rec applyProperties (properties: EntityProperty list) (entity: Entity) : Entity =
         match properties with
@@ -154,9 +115,8 @@ module Entity =
             let entity = applyProperty head entity
             applyProperties tail entity
 
-    let rec applyPropertyList (properties: EntityPropertyList) (entity: Entity) : Entity =
-        match properties with
-        | Items entityProperties -> applyProperties entityProperties entity
+    let applyPropertyList (properties: EntityPropertyList) (entity: Entity) : Entity =
+        applyProperties properties.Items entity
 
 [<RequireQualifiedAccess>]
 type EntityEventType =
@@ -185,26 +145,24 @@ type EntityEvent =
             | ValueSome old, ValueNone -> yield EntityEvent.Removed old
             | ValueNone, ValueSome next -> yield EntityEvent.Added next
             | ValueSome old, ValueSome next ->
-                match old.Properties, next.Properties with
-                | EntityProperties.FloorCharacter oldFloorCharacter, EntityProperties.FloorCharacter nextFloorCharacter ->
-                    if oldFloorCharacter.Attributes <> nextFloorCharacter.Attributes then
-                        yield
-                            EntityEvent.UpdatedProperty(
-                                oldFloorCharacter.Attributes |> EntityProperty.Attributes,
-                                nextFloorCharacter.Attributes |> EntityProperty.Attributes
-                            )
+                if old.Attributes <> next.Attributes then
+                    yield
+                        EntityEvent.UpdatedProperty(
+                            old.Attributes |> EntityProperty.Attributes,
+                            next.Attributes |> EntityProperty.Attributes
+                        )
 
-                    if oldFloorCharacter.FloorActor <> nextFloorCharacter.FloorActor then
-                        yield
-                            EntityEvent.UpdatedProperty(
-                                oldFloorCharacter.FloorActor |> EntityProperty.FloorActor,
-                                nextFloorCharacter.FloorActor |> EntityProperty.FloorActor
-                            )
+                if old.FloorActor <> next.FloorActor then
+                    yield
+                        EntityEvent.UpdatedProperty(
+                            old.FloorActor |> EntityProperty.FloorActor,
+                            next.FloorActor |> EntityProperty.FloorActor
+                        )
 
-                    if oldFloorCharacter.FloorLocation <> nextFloorCharacter.FloorLocation then
-                        yield
-                            EntityEvent.UpdatedProperty(
-                                oldFloorCharacter.FloorLocation |> EntityProperty.FloorLocation,
-                                nextFloorCharacter.FloorLocation |> EntityProperty.FloorLocation
-                            )
+                if old.FloorLocation <> next.FloorLocation then
+                    yield
+                        EntityEvent.UpdatedProperty(
+                            old.FloorLocation |> EntityProperty.FloorLocation,
+                            next.FloorLocation |> EntityProperty.FloorLocation
+                        )
         }
