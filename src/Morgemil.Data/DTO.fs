@@ -1,7 +1,12 @@
 module Morgemil.Data.DTO
 
-open System.Text.Json.Nodes
+open System.Text.Json.Serialization
 open Morgemil.Models.Relational
+
+[<JsonFSharpConverter(unionTagName = "tag")>]
+type MorTags = Morgemil.Models.MorTags
+
+type MorTagMatches = Morgemil.Models.MorTagMatches
 
 type Color = { A: byte; B: byte; G: byte; R: byte }
 
@@ -14,7 +19,7 @@ type TileRepresentation =
       ForegroundColor: Color
       BackGroundColor: Color }
 
-type Ancestry =
+type AncestryDto =
     {
         ID: int64
         ///Proper noun
@@ -24,15 +29,34 @@ type Ancestry =
         ///User-visible description
         Description: string
         ///Tags this ancestry has
-        Tags: Map<string, JsonNode> option
+        Tags: MorTags list option
         ///Required tags for procedural matching.
-        RequireTags: Map<string, Morgemil.Models.MorTagMatches> option
+        RequireTags: Map<string, MorTagMatches> option
     }
 
     interface IRow with
         member this.Key = this.ID
 
-type Aspect =
+    static member from(ancestry: Morgemil.Models.Ancestry) : AncestryDto =
+        { AncestryDto.ID = ancestry.ID.Key
+          Noun = ancestry.Noun
+          Adjective = ancestry.Adjective
+          Description = ancestry.Description
+          Tags = ancestry.Tags |> Seq.map _.Value |> Seq.toList |> Some
+          RequireTags = Some ancestry.RequireTags }
+
+    member this.ToModel() : Morgemil.Models.Ancestry =
+        { ID = this.ID |> Morgemil.Models.AncestryID
+          Noun = this.Noun
+          Adjective = this.Adjective
+          Description = this.Description
+          Tags =
+            this.Tags
+            |> Option.map (Seq.map (fun t -> t.Name, t) >> Map.ofSeq)
+            |> (Option.defaultValue Map.empty)
+          RequireTags = this.RequireTags |> Option.defaultValue Map.empty }
+
+type AspectDto =
     {
         ID: int64
         ///Proper noun
@@ -46,7 +70,19 @@ type Aspect =
     interface IRow with
         member this.Key = this.ID
 
-type Heritage =
+    static member from(aspect: Morgemil.Models.Aspect) : AspectDto =
+        { ID = aspect.ID.Key
+          Noun = aspect.Noun
+          Adjective = aspect.Adjective
+          Description = aspect.Description }
+
+    member this.ToModel() : Morgemil.Models.Aspect =
+        { ID = this.ID |> Morgemil.Models.AspectID
+          Noun = this.Noun
+          Adjective = this.Adjective
+          Description = this.Description }
+
+type HeritageDto =
     {
         ID: int64
         ///Proper noun
@@ -56,13 +92,32 @@ type Heritage =
         ///User-visible description
         Description: string
         ///Tags this heritage has
-        Tags: Map<string, JsonNode> option
+        Tags: MorTags list option
         ///Required tags for procedural matching.
         RequireTags: Map<string, Morgemil.Models.MorTagMatches> option
     }
 
     interface IRow with
         member this.Key = this.ID
+
+    static member from(heritage: Morgemil.Models.Heritage) : HeritageDto =
+        { ID = heritage.ID.Key
+          Noun = heritage.Noun
+          Adjective = heritage.Adjective
+          Description = heritage.Description
+          Tags = heritage.Tags |> Seq.map _.Value |> Seq.toList |> Some
+          RequireTags = Some heritage.RequireTags }
+
+    member this.ToModel() : Morgemil.Models.Heritage =
+        { ID = this.ID |> Morgemil.Models.HeritageID
+          Noun = this.Noun
+          Adjective = this.Adjective
+          Description = this.Description
+          Tags =
+            this.Tags
+            |> Option.map (Seq.map (fun t -> t.Name, t) >> Map.ofSeq)
+            |> (Option.defaultValue Map.empty)
+          RequireTags = this.RequireTags |> Option.defaultValue Map.empty }
 
 type GenerationRatio =
     {
@@ -180,6 +235,7 @@ type FloorGenerationParameter =
     interface IRow with
         member this.Key = this.ID
 
+[<JsonFSharpConverter(BaseUnionEncoding = JsonUnionEncoding.ExternalTag, unionTagName = "case2")>]
 type Tower =
     { ID: int64
       Name: string
