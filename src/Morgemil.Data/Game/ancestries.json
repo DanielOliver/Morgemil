@@ -30,9 +30,9 @@
     "Noun": "Minotaur",
     "Adjective": "Minotaur",
     "Description": "Head and tail of a bull, body of a man, rage of a volcano. Your eulogy will be delivered to a closed casket.",
-    "Tags": [
-      "humanoid"
-    ]
+    "Tags": {
+      "humanoid": ""
+    }
   },
   {
     "ID": "4",

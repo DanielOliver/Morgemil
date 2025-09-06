@@ -9,16 +9,14 @@ let createOptions () =
             .WithUnionUnwrapFieldlessTags()
             .WithSkippableOptionFields()
             .WithUnionTagCaseInsensitive()
-            .WithUnionInternalTag()
+            .WithUnionExternalTag()
             .WithUnionUnwrapRecordCases()
-            .WithUnionTagCaseInsensitive()
             .WithUnionUnwrapSingleFieldCases()
-            .WithUnionUnwrapSingleCaseUnions()
+            //default includes .WithUnionUnwrapSingleCaseUnions()
             .ToJsonSerializerOptions()
 
     options.NumberHandling <- JsonNumberHandling.AllowReadingFromString
     options.PropertyNameCaseInsensitive <- true
-    options.PropertyNamingPolicy <- System.Text.Json.JsonNamingPolicy.SnakeCaseLower
     options
 
 let options = createOptions ()

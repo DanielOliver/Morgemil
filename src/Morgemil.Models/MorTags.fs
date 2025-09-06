@@ -14,7 +14,7 @@ type MorTagMatches =
 /// * If prefix "No" is used, then assume that's the more likely unusual case.
 [<RequireQualifiedAccess>]
 type MorTags =
-    | Custom of Any: string
+    | Custom
     | Placeholder of Any: string
     | Playable
     | Undead
@@ -22,18 +22,6 @@ type MorTags =
     | NoBlood
     | Humanoid
     | Modifier of Stat: int
-
-    member this.Name =
-        match this with
-        | Custom any -> any.ToLowerInvariant()
-        | Placeholder _ -> "placeholder"
-        | Playable -> "playable"
-        | Undead -> "undead"
-        | NoSkeleton -> "noskeleton"
-        | NoBlood -> "noblood"
-        | Humanoid -> "humanoid"
-        | Modifier _ -> "modifier"
-
 
 module MorTags =
     let merge (priority: MorTags) (tag: MorTags) : MorTags =
